@@ -3139,3 +3139,13 @@ Caused by: java.io.IOException: error=2, Нет такого файла или �
 	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:271)
 	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1107)
 	... 6 more
+
+!ENTRY org.eclipse.core.resources 4 77 2022-01-08 10:06:42.865
+!MESSAGE Invalid project description.
+!SUBENTRY 1 unknown 0 0 2022-01-08 10:06:42.865
+!MESSAGE OK
+!SUBENTRY 1 org.eclipse.core.resources 4 77 2022-01-08 10:06:42.865
+!MESSAGE /home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display overlaps the location of another project: 'gdmx-display'
+
+!ENTRY com.st.stm32cube.common.projectcreation 4 0 2022-01-08 10:06:42.865
+!MESSAGE Project is null

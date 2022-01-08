@@ -1,0 +1,7 @@
+09:45:42 **** Incremental Build of configuration Debug for project gdmx-display ****
+make -j12 all 
+arm-none-eabi-size   gdmx-display.elf 
+   text	   data	    bss	    dec	    hex	filename
+  40520	    492	  10036	  51048	   c768	gdmx-display.elf
+Finished building: default.size.stdout
+ 

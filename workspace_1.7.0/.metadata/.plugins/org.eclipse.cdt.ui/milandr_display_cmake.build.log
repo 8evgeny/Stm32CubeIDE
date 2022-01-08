@@ -1,0 +1,7 @@
+09:30:42 **** Clean-only build of configuration Release for project milandr_display_cmake ****
+make clean 
+rm -rf  ./src/gpio.o ./src/logic.o ./src/main.o ./src/mt20s4.o ./src/rcc_delay.o ./src/usb.o ./src/var.o  ./cmake-build-debug/CMakeFiles/3.16.5/CompilerIdCXX/CMakeCXXCompilerId.o  ./cmake-build-debug/CMakeFiles/3.16.5/CompilerIdC/CMakeCCompilerId.o  ./build_release/CMakeFiles/3.16.3/CompilerIdCXX/CMakeCXXCompilerId.o  ./build_release/CMakeFiles/3.16.3/CompilerIdC/CMakeCCompilerId.o  ./src/gpio.d ./src/logic.d ./src/mt20s4.d ./src/rcc_delay.d ./src/usb.d ./src/var.d  ./cmake-build-debug/CMakeFiles/3.16.5/CompilerIdC/CMakeCCompilerId.d  ./build_release/CMakeFiles/3.16.3/CompilerIdC/CMakeCCompilerId.d  ./src/main.d  ./cmake-build-debug/CMakeFiles/3.16.5/CompilerIdCXX/CMakeCXXCompilerId.d  ./build_release/CMakeFiles/3.16.3/CompilerIdCXX/CMakeCXXCompilerId.d  milandr_display_cmake
+ 
+
+09:30:42 Build Finished. 0 errors, 0 warnings. (took 224ms)
+

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="gdmx_display"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gdmx_display.elf">
+				<Option output="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/gdmx_display.elf" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DSTM32F103xB"/>
+					<Add option="-DUSE_HAL_DRIVER"/>
+					<Add option="-DGV_INFOBOARD_V1"/>
+					<Add option="-DDEBUG"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/CMSIS/Include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/CMSIS/Device/ST/STM32F1xx/Include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Core/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 gdmx_display.elf"/>
+					<CompileFile command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="gdmx_display.elf/fast">
+				<Option output="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/gdmx_display.elf" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DSTM32F103xB"/>
+					<Add option="-DUSE_HAL_DRIVER"/>
+					<Add option="-DGV_INFOBOARD_V1"/>
+					<Add option="-DDEBUG"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/CMSIS/Include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/CMSIS/Device/ST/STM32F1xx/Include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Core/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 gdmx_display.elf/fast"/>
+					<CompileFile command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="CMSIS">
+				<Option output="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/libCMSIS.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DSTM32F103xB"/>
+					<Add option="-DUSE_HAL_DRIVER"/>
+					<Add option="-DGV_INFOBOARD_V1"/>
+					<Add option="-DDEBUG"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/CMSIS/Include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/CMSIS/Device/ST/STM32F1xx/Include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Core/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 CMSIS"/>
+					<CompileFile command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="CMSIS/fast">
+				<Option output="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/libCMSIS.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DSTM32F103xB"/>
+					<Add option="-DUSE_HAL_DRIVER"/>
+					<Add option="-DGV_INFOBOARD_V1"/>
+					<Add option="-DDEBUG"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/CMSIS/Include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/CMSIS/Device/ST/STM32F1xx/Include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/include"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Core/Inc"/>
+					<Add directory="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/include-fixed"/>
+					<Add directory="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 CMSIS/fast"/>
+					<CompileFile command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/share/gcc-arm-none-eabi/samples/src/Makefile -f &quot;/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd_ex.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_usb.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/croutine.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/list.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/queue.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/tasks.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Middlewares/Third_Party/FreeRTOS/Source/timers.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/STM32F103C8TX_FLASH.ld">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/buzzer.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/display.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/freertos.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/hd44780.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/led.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/main.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/stm32f1xx_hal_msp.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/stm32f1xx_hal_timebase_tim.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/stm32f1xx_it.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/syscalls.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/sysmem.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/system_stm32f1xx.c">
+			<Option target="gdmx_display.elf"/>
+			<Option target="CMSIS"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/usb_device.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/usbd_cdc_if.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/usbd_conf.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Src/usbd_desc.c">
+			<Option target="gdmx_display.elf"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/Startup/startup_stm32f103c8tx.s">
+			<Option target="CMSIS"/>
+		</Unit>
+		<Unit filename="/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

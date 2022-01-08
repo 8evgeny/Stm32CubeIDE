@@ -1,0 +1,44 @@
+/home/evg/CLion/clion-2020.1.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-gcc-10.3.1 -DCMAKE_CXX_COMPILER=/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-c++ -G "CodeBlocks - Unix Makefiles" /home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display
+-- The C compiler identification is GNU 10.3.1
+-- The CXX compiler identification is GNU 10.3.1
+-- The ASM compiler identification is GNU
+-- Found assembler: /home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-gcc-10.3.1
+-- Check for working C compiler: /home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-gcc-10.3.1
+-- Check for working C compiler: /home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-gcc-10.3.1 -- broken
+CMake Error at /home/evg/CLion/clion-2020.1.1/bin/cmake/linux/share/cmake-3.16/Modules/CMakeTestCCompiler.cmake:60 (message):
+  The C compiler
+
+    "/home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-gcc-10.3.1"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: /home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/CMakeFiles/CMakeTmp
+    
+    Run Build Command(s):/usr/bin/make cmTC_a544e/fast && /usr/bin/make -f CMakeFiles/cmTC_a544e.dir/build.make CMakeFiles/cmTC_a544e.dir/build
+    make[1]: вход в каталог «/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/CMakeFiles/CMakeTmp»
+    Building C object CMakeFiles/cmTC_a544e.dir/testCCompiler.c.o
+    /home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-gcc-10.3.1    -o CMakeFiles/cmTC_a544e.dir/testCCompiler.c.o   -c /home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/CMakeFiles/CMakeTmp/testCCompiler.c
+    Linking C executable cmTC_a544e
+    /home/evg/CLion/clion-2020.1.1/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a544e.dir/link.txt --verbose=1
+    /home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-gcc-10.3.1      CMakeFiles/cmTC_a544e.dir/testCCompiler.c.o  -o cmTC_a544e 
+    /home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/bin/ld: /home/evg/toolchain/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/libc.a(lib_a-exit.o): in function `exit':
+    exit.c:(.text.exit+0x2c): undefined reference to `_exit'
+    collect2: error: ld returned 1 exit status
+    make[1]: *** [CMakeFiles/cmTC_a544e.dir/build.make:87: cmTC_a544e] Ошибка 1
+    make[1]: выход из каталога «/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/CMakeFiles/CMakeTmp»
+    make: *** [Makefile:121: cmTC_a544e/fast] Ошибка 2
+    
+    
+
+  
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:7 (project)
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "/home/evg/STM32CubeIDE/workspace_1.7.0/gdmx-display/cmake-build-debug/CMakeFiles/CMakeError.log".

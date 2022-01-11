@@ -1,4 +1,4 @@
-21:50:04 **** Incremental Build of configuration Release for project gdmx-display ****
+23:03:48 **** Incremental Build of configuration Release for project gdmx-display ****
 make -j12 all 
 arm-none-eabi-size   gdmx-display.elf 
    text	   data	    bss	    dec	    hex	filename

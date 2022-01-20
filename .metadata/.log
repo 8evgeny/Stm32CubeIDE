@@ -5906,3 +5906,15 @@ org.eclipse.ui.PartInitException: Invalid Input: Must be IFileEditorInput
 
 !ENTRY org.eclipse.cdt.core 1 0 2022-01-20 13:11:28.425
 !MESSAGE Indexed 'GV_infoboard' (41 sources, 55 headers) in 1.44 sec: 6,239 declarations; 34,781 references; 30 unresolved inclusions; 0 syntax errors; 3,841 unresolved names (8.6%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 13:13:52.599
+!MESSAGE Indexed 'ips_sc4_pdo' (0 sources, 0 headers) in 0 sec: 0 declarations; 0 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 13:14:00.455
+!MESSAGE Indexed 'ips_sc4_pdo' (115 sources, 129 headers) in 3.87 sec: 11,472 declarations; 100,320 references; 45 unresolved inclusions; 0 syntax errors; 8,306 unresolved names (6.9%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 13:14:04.380
+!MESSAGE Indexed 'GV_infoboard' (41 sources, 55 headers) in 0.982 sec: 6,239 declarations; 34,781 references; 30 unresolved inclusions; 0 syntax errors; 3,841 unresolved names (8.6%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 13:14:07.501
+!MESSAGE Indexed 'GV_infoboard' (41 sources, 55 headers) in 0.885 sec: 6,239 declarations; 34,781 references; 30 unresolved inclusions; 0 syntax errors; 3,841 unresolved names (8.6%)

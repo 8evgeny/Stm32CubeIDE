@@ -5918,3 +5918,18 @@ org.eclipse.ui.PartInitException: Invalid Input: Must be IFileEditorInput
 
 !ENTRY org.eclipse.cdt.core 1 0 2022-01-20 13:14:07.501
 !MESSAGE Indexed 'GV_infoboard' (41 sources, 55 headers) in 0.885 sec: 6,239 declarations; 34,781 references; 30 unresolved inclusions; 0 syntax errors; 3,841 unresolved names (8.6%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 14:39:26.710
+!MESSAGE Indexed 'GV_infoboard' (41 sources, 76 headers) in 1.58 sec: 9,123 declarations; 39,009 references; 44 unresolved inclusions; 36 syntax errors; 6,808 unresolved names (12%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 14:39:36.489
+!MESSAGE Indexed 'GV_infoboard' (41 sources, 76 headers) in 1.61 sec: 9,123 declarations; 39,009 references; 44 unresolved inclusions; 36 syntax errors; 6,808 unresolved names (12%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 14:39:55.445
+!MESSAGE Indexed 'ips_sc4_pdo' (115 sources, 129 headers) in 3.69 sec: 11,472 declarations; 100,320 references; 45 unresolved inclusions; 0 syntax errors; 8,306 unresolved names (6.9%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 14:40:15.875
+!MESSAGE Indexed 'sc4_test' (32 sources, 40 headers) in 1.77 sec: 8,885 declarations; 84,448 references; 17 unresolved inclusions; 0 syntax errors; 8,017 unresolved names (7.9%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-01-20 14:40:18.298
+!MESSAGE Indexed 'sc4_test' (32 sources, 40 headers) in 1.72 sec: 8,885 declarations; 84,448 references; 17 unresolved inclusions; 0 syntax errors; 8,017 unresolved names (7.9%)

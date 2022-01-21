@@ -1,6 +1,0 @@
-default=com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.base.gnu-arm-embedded.10.3-2021.10
-eclipse.preferences.version=1
-local.format=1
-local/0/location=/home/evg/toolchain/gcc-arm-none-eabi-new/bin
-local/0/name=arm
-local/0/prefix=arm-none-eabi-

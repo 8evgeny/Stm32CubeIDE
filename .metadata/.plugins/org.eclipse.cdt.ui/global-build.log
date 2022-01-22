@@ -1,7 +1,0 @@
-14:29:31 **** Incremental Build of configuration Debug for project ips_sc4_pdo ****
-make -j12 all 
-arm-none-eabi-size   ips_sc4_pdo.elf 
-   text	   data	    bss	    dec	    hex	filename
-  89076	   6436	  15452	 110964	  1b174	ips_sc4_pdo.elf
-Finished building: default.size.stdout
- 

@@ -532,7 +532,11 @@ void StartTask04(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
+      osDelay(20);
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+      osDelay(2000);
+      osDelay(1);
   }
   /* USER CODE END StartTask04 */
 }
@@ -550,7 +554,11 @@ void StartTask05(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+      osDelay(20);
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+      osDelay(3000);
+      osDelay(1);
   }
   /* USER CODE END StartTask05 */
 }
@@ -568,7 +576,11 @@ void StartTask06(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+      osDelay(20);
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+      osDelay(4000);
+      osDelay(1);
   }
   /* USER CODE END StartTask06 */
 }

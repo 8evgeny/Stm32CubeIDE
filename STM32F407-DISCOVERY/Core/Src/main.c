@@ -56,6 +56,8 @@ osThreadId Led2_PD13_testHandle;
 osThreadId Led3_PD14_testHandle;
 osThreadId Led4_PD15_testHandle;
 /* USER CODE BEGIN PV */
+uint16_t countF0Reset = 0;
+
 
 /* USER CODE END PV */
 
@@ -161,6 +163,28 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+
+  while (1)
+  {
+//      Считываю состояние пина SIGNAL_FO_ORANGE_Pin
+       while (HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
+       {
+           //FO сбросился
+           ++countF0Reset;
+           if (countF0Reset == 10000)
+           {
+               uint8_t str[]="Count F0 = 10 000\r\n";
+               HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
+               countF0Reset = 0;
+           }
+
+           //Ждем пока установится в 1
+           while (HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET)
+           {}
+       }
+
+  }
+
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */

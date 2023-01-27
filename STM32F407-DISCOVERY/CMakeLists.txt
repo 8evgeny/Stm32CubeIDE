@@ -40,6 +40,7 @@ include_directories(
     Drivers/CMSIS/Core/Include
     Drivers/CMSIS/Include
     USB_HOST/App
+    Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
     )
 file (GLOB SOURCES_C
     Core/Src/*.c

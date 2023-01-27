@@ -38,6 +38,7 @@ include_directories(
     Drivers/CMSIS/Device/ST/STM32F4xx/Include
     Drivers/STM32F4xx_HAL_Driver/Inc
     Drivers/CMSIS/Core/Include
+    Drivers/CMSIS/Include
     USB_HOST/App
     )
 file (GLOB SOURCES_C

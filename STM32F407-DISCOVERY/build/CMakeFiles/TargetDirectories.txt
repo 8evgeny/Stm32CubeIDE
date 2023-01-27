@@ -1,3 +1,0 @@
-/home/evg/SOFT/Github/GIT/11_Converter/STM32F407/build/CMakeFiles/edit_cache.dir
-/home/evg/SOFT/Github/GIT/11_Converter/STM32F407/build/CMakeFiles/rebuild_cache.dir
-/home/evg/SOFT/Github/GIT/11_Converter/STM32F407/build/CMakeFiles/11_Converter.elf.dir

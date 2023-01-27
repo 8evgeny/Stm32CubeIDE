@@ -164,26 +164,32 @@ int main(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
 
-  while (1)
-  {
-//      Считываю состояние пина SIGNAL_FO_ORANGE_Pin
-       while (HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
-       {
-           //FO сбросился
-           ++countF0Reset;
-           if (countF0Reset == 10000)
-           {
-               uint8_t str[]="Count F0 = 10 000\r\n";
-               HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
-               countF0Reset = 0;
-           }
+    uint8_t otherTasks = 0;
+    while (1)
+    {
+        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) &&
+                     otherTasks == 1)
+        {//FO сбросился - сторонние задачи
+            otherTasks = 0;
+            ++countF0Reset;
+            if (countF0Reset == 10000)
+            {
+                uint8_t str[]="Count F0 = 10 000\r\n";
+                HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
+                countF0Reset = 0;
+            }
+        }
 
-           //Ждем пока установится в 1
-           while (HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET)
-           {}
-       }
+        if (HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET)
+        {//Прием байтов
+            otherTasks = 1;
 
-  }
+
+
+        }
+
+
+    }
 
   /* USER CODE END RTOS_THREADS */
 

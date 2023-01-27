@@ -1,7 +1,7 @@
 #MicroXplorer Configuration settings - do not modify
 FREERTOS.FootprintOK=true
 FREERTOS.IPParameters=Tasks01,FootprintOK
-FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL;UART_ping,-3,128,StartTask02,Default,NULL,Dynamic,NULL,NULL
+FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL;UART_ping,-3,128,StartTask02,Default,NULL,Dynamic,NULL,NULL;Led1_PD12_test,-3,128,StartTask03,Default,NULL,Dynamic,NULL,NULL;Led2_PD13_test,-3,128,StartTask04,Default,NULL,Dynamic,NULL,NULL;Led3_PD14_test,-3,128,StartTask05,Default,NULL,Dynamic,NULL,NULL;Led4_PD15_test,-3,128,StartTask06,Default,NULL,Dynamic,NULL,NULL
 File.Version=6
 I2S3.AudioFreq-Half_Duplex_Master=I2S_AUDIOFREQ_96K
 I2S3.ErrorAudioFreq=-2.34 %

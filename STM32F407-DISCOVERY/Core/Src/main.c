@@ -51,6 +51,10 @@ UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
 osThreadId UART_pingHandle;
+osThreadId Led1_PD12_testHandle;
+osThreadId Led2_PD13_testHandle;
+osThreadId Led3_PD14_testHandle;
+osThreadId Led4_PD15_testHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -64,6 +68,10 @@ static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void const * argument);
 void StartTask02(void const * argument);
+void StartTask03(void const * argument);
+void StartTask04(void const * argument);
+void StartTask05(void const * argument);
+void StartTask06(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -134,6 +142,22 @@ int main(void)
   /* definition and creation of UART_ping */
   osThreadDef(UART_ping, StartTask02, osPriorityIdle, 0, 128);
   UART_pingHandle = osThreadCreate(osThread(UART_ping), NULL);
+
+  /* definition and creation of Led1_PD12_test */
+  osThreadDef(Led1_PD12_test, StartTask03, osPriorityIdle, 0, 128);
+  Led1_PD12_testHandle = osThreadCreate(osThread(Led1_PD12_test), NULL);
+
+  /* definition and creation of Led2_PD13_test */
+  osThreadDef(Led2_PD13_test, StartTask04, osPriorityIdle, 0, 128);
+  Led2_PD13_testHandle = osThreadCreate(osThread(Led2_PD13_test), NULL);
+
+  /* definition and creation of Led3_PD14_test */
+  osThreadDef(Led3_PD14_test, StartTask05, osPriorityIdle, 0, 128);
+  Led3_PD14_testHandle = osThreadCreate(osThread(Led3_PD14_test), NULL);
+
+  /* definition and creation of Led4_PD15_test */
+  osThreadDef(Led4_PD15_test, StartTask06, osPriorityIdle, 0, 128);
+  Led4_PD15_testHandle = osThreadCreate(osThread(Led4_PD15_test), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -462,15 +486,91 @@ void StartDefaultTask(void const * argument)
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
-    uint8_t str[]="USART Transmit\r\n";
+    uint8_t str[]="USART Transmit from RTOS\r\n";
   /* Infinite loop */
   for(;;)
   {
-      HAL_UART_Transmit(&huart2,str,16,0xFFFF);
+      HAL_UART_Transmit(&huart2, str, 26, 0xFFFF);
       HAL_Delay(3000);
       osDelay(1);
   }
   /* USER CODE END StartTask02 */
+}
+
+/* USER CODE BEGIN Header_StartTask03 */
+/**
+* @brief Function implementing the Led1_PD12_test thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask03 */
+void StartTask03(void const * argument)
+{
+  /* USER CODE BEGIN StartTask03 */
+  /* Infinite loop */
+  for(;;)
+  {
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
+      osDelay(20);
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
+      osDelay(1000);
+    osDelay(1);
+  }
+  /* USER CODE END StartTask03 */
+}
+
+/* USER CODE BEGIN Header_StartTask04 */
+/**
+* @brief Function implementing the Led2_PD13_test thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask04 */
+void StartTask04(void const * argument)
+{
+  /* USER CODE BEGIN StartTask04 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartTask04 */
+}
+
+/* USER CODE BEGIN Header_StartTask05 */
+/**
+* @brief Function implementing the Led3_PD14_test thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask05 */
+void StartTask05(void const * argument)
+{
+  /* USER CODE BEGIN StartTask05 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartTask05 */
+}
+
+/* USER CODE BEGIN Header_StartTask06 */
+/**
+* @brief Function implementing the Led4_PD15_test thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask06 */
+void StartTask06(void const * argument)
+{
+  /* USER CODE BEGIN StartTask06 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartTask06 */
 }
 
 /**

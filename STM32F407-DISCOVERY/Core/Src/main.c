@@ -15,6 +15,8 @@
   *
   ******************************************************************************
   */
+
+#include "stdio.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -56,8 +58,8 @@ osThreadId Led2_PD13_testHandle;
 osThreadId Led3_PD14_testHandle;
 osThreadId Led4_PD15_testHandle;
 /* USER CODE BEGIN PV */
-uint16_t countF0Reset = 0;
-
+uint16_t countF0 = 0;
+uint32_t countByte = 0;
 
 /* USER CODE END PV */
 
@@ -167,29 +169,35 @@ int main(void)
     uint8_t otherTasks = 0;
     while (1)
     {
-        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) &&
-                     otherTasks == 1)
+        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET) && otherTasks == 0)
+        {//Прием байтов
+            otherTasks = 1;
+            for(int bytes = 0; bytes < 64; ++bytes)
+            {
+                for(int bit = 0; bit < 8; ++bit)
+                {
+                    if (HAL_GPIO_ReadPin(SIGNAL_IN_GREEN_GPIO_Port,SIGNAL_IN_GREEN_Pin) == GPIO_PIN_RESET)
+                    {
+                    }
+                }//Получен последний бит
+                countByte +=1;
+
+            }//Получен последний байт
+
+        }
+
+        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)
         {//FO сбросился - сторонние задачи
             otherTasks = 0;
-            ++countF0Reset;
-            if (countF0Reset == 10000)
+            ++countF0;
+            if (countF0 == 10000)
             {
                 uint8_t str[]="Count F0 = 10 000\r\n";
                 HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
-                countF0Reset = 0;
+                countF0 = 0;
             }
         }
-
-        if (HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET)
-        {//Прием байтов
-            otherTasks = 1;
-
-
-
-        }
-
-
-    }
+    }//while (1)
 
   /* USER CODE END RTOS_THREADS */
 

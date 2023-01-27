@@ -199,6 +199,65 @@ int main(void)
         }
     }//while (1)
 
+
+//    uint8_t otherTasks = 0;
+//    uint8_t singleByte = 0;
+//    const uint16_t maxLenPacket = 640;
+//    uint8_t allByte[maxLenPacket];
+//    uint16_t indexByte = 0;
+//    uint32_t countF0 = 0;
+//    while (1)
+//    {
+//        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET) && otherTasks == 0)
+//        {//Прием байтов
+//            otherTasks = 1;
+//            for(uint8_t numByte = 0; numByte < 64; ++numByte, ++indexByte)
+//            {
+//                for(uint8_t bit = 0; bit < 8; ++bit)
+//                {
+//                    if (HAL_GPIO_ReadPin(SIGNAL_IN_GREEN_GPIO_Port,SIGNAL_IN_GREEN_Pin) == GPIO_PIN_RESET)
+//                    {
+//                        singleByte <<=1;
+//                    }
+//                    else
+//                    {
+//                        singleByte <<=1;
+//                        singleByte |=1;
+//                    }
+//                }//Получен последний бит
+//                allByte[indexByte] = singleByte;
+//                singleByte = 0;
+
+
+//            }//Получен последний байт
+//            if (indexByte == maxLenPacket - 1)
+//            {
+//                indexByte = 0;
+//                //Отправка файлов в сеть
+
+
+
+
+//            }
+
+//        }
+
+//        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)
+//        {//FO сбросился - сторонние задачи
+//            otherTasks = 0;
+//            ++countF0;
+//            if (countF0 == 80000)
+//            {
+//                uint8_t str[]="Count F0 = 80 000\r\n";
+//                HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
+//                countF0 = 0;
+//            }
+//        }
+//    }//while (1)
+
+
+
+
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */

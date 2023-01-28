@@ -18,15 +18,13 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
     -std=gnu11 \
     -DUSE_HAL_DRIVER \
     -DSTM32F407xx \
+    -c \
     -Os \
     -ffunction-sections \
     -fdata-sections \
     -Wall \
-    -mno-unaligned-access \
     -fstack-usage \
-    -MMD \
-    -MP \
-    -mfpu=fpv5-d16 \
+    -mfpu=fpv4-sp-d16 \
     -mfloat-abi=hard \
     -mthumb \
     -Xlinker -Map=${PROJECT_NAME}.map \
@@ -34,6 +32,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
 #    --specs=nano.specs \
 
 include_directories(
+    USB_HOST/App
+    USB_HOST/Target
+    Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+    Middlewares/ST/STM32_USB_Host_Library/Core/Inc
+    Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc
     Core/Inc
     Drivers/CMSIS/Device/ST/STM32F4xx/Include
     Drivers/STM32F4xx_HAL_Driver/Inc
@@ -41,6 +44,8 @@ include_directories(
     Drivers/CMSIS/Include
     USB_HOST/App
     Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
+    Middlewares/Third_Party/FreeRTOS/Source/include
+    Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
     )
 file (GLOB SOURCES_C
     Core/Src/*.c

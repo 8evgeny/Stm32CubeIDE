@@ -53,13 +53,14 @@ include_directories(
 file (GLOB SOURCES_C
     Core/Src/*.c
     Core/Startup/startup_stm32f407vgtx.s
-    USB_HOST/App/usb_host.c
-    Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
     Drivers/STM32F4xx_HAL_Driver/Src/*.c
+    USB_HOST/App/usb_host.c
+    USB_HOST/Target/*.c
     Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/*.c
     Middlewares/ST/STM32_USB_Host_Library/Core/Src/*.c
+    Middlewares/Third_Party/FreeRTOS/Source/Src/*.c
     Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
-    USB_HOST/Target/*.c
+    Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
     )
 
 

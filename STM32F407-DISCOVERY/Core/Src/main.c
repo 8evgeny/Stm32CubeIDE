@@ -145,9 +145,12 @@ int main(void)
                 allByte[numByte] = singleByte;
                 singleByte = 0;
             }//Получен последний байт
-            //Отправка пекета в сеть
-
-
+            //Отправка пакета в сеть
+            if (countF0 % 1000 == 0)
+            {
+                HAL_UART_Transmit(&huart2, (uint8_t *)allByte, 64, 0xFFFF);
+                HAL_UART_Transmit(&huart2, (uint8_t *)"                ", 16, 0xFFFF);
+            }
         }
         if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)
         {//FO сбросился - сторонние задачи
@@ -155,8 +158,8 @@ int main(void)
             ++countF0;
             if (countF0 == 50000)
             {
-                uint8_t str[]="Count F0 = 50 000\r\n";
-                HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
+//                uint8_t str[]="Count F0 = 50 000\r\n";
+//                HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
                 countF0 = 0;
             }
         }

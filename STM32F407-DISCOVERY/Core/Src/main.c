@@ -51,7 +51,7 @@ SPI_HandleTypeDef hspi1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint16_t countF0 = 0;
+uint32_t countF0 = 0;
 uint32_t countByte = 0;
 
 /* USER CODE END PV */
@@ -113,16 +113,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-    MX_USB_HOST_Process();
-
-    /* USER CODE BEGIN 3 */
 
     uint8_t otherTasks = 0;
     while (1)
     {
+    /* USER CODE END WHILE */
+//    MX_USB_HOST_Process();
+
+    /* USER CODE BEGIN 3 */
+
         if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET) && otherTasks == 0)
         {//Прием байтов
             otherTasks = 1;
@@ -137,21 +136,19 @@ int main(void)
                 countByte +=1;
 
             }//Получен последний байт
-
         }
 
         if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)
         {//FO сбросился - сторонние задачи
             otherTasks = 0;
             ++countF0;
-            if (countF0 == 10000)
+            if (countF0 == 50000)
             {
-                uint8_t str[]="Count F0 = 10 000\r\n";
+                uint8_t str[]="Count F0 = 50 000\r\n";
                 HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
                 countF0 = 0;
             }
         }
-    }//while (1)
 
 
 //    uint8_t otherTasks = 0;
@@ -220,7 +217,7 @@ int main(void)
 
 
 
-  }
+    }//while (1)
   /* USER CODE END 3 */
 }
 

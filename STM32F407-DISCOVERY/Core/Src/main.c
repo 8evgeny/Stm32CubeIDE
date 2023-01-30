@@ -117,6 +117,7 @@ int main(void)
     uint8_t singleByte = 0;
     const uint16_t maxLenPacket = 64;
     uint8_t allByte[maxLenPacket];
+    char tmp2[16]={0x00};
 
     while (1)
     {
@@ -146,10 +147,10 @@ int main(void)
                 singleByte = 0;
             }//Получен последний байт
             //Отправка пакета в сеть
-            if (countF0 % 1000 == 0)
+            if (countF0 % 5000 == 0)
             {
                 HAL_UART_Transmit(&huart2, (uint8_t *)allByte, 64, 0xFFFF);
-                HAL_UART_Transmit(&huart2, (uint8_t *)"                ", 16, 0xFFFF);
+                HAL_UART_Transmit(&huart2, (uint8_t *)tmp2, 16, 0xFFFF);
             }
         }
         if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)

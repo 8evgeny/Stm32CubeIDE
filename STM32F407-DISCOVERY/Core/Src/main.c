@@ -49,6 +49,7 @@ I2S_HandleTypeDef hi2s3;
 SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
@@ -61,6 +62,7 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2S3_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 void MX_USB_HOST_Process(void);
 
@@ -105,6 +107,7 @@ int main(void)
   MX_I2S3_Init();
   MX_SPI1_Init();
   MX_USB_HOST_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
@@ -122,7 +125,7 @@ int main(void)
     while (1)
     {
     /* USER CODE END WHILE */
-//    MX_USB_HOST_Process();
+    MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
 
@@ -147,10 +150,9 @@ int main(void)
                 singleByte = 0;
             }//Получен последний байт
             //Отправка пакета в сеть
-            if (countF0 % 5000 == 0)
+            if (countF0 % 1000 == 0)
             {
-                HAL_UART_Transmit(&huart2, (uint8_t *)allByte, 64, 0xFFFF);
-                HAL_UART_Transmit(&huart2, (uint8_t *)tmp2, 16, 0xFFFF);
+                HAL_UART_Transmit_DMA(&huart2, (uint8_t *)allByte, 64);
             }
         }
         if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)
@@ -160,7 +162,7 @@ int main(void)
             if (countF0 == 50000)
             {
 //                uint8_t str[]="Count F0 = 50 000\r\n";
-//                HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
+//                HAL_UART_Transmit_DMA(&huart2, str, 19);
                 countF0 = 0;
             }
         }
@@ -348,6 +350,22 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
 
 }
 

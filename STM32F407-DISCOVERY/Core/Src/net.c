@@ -2,6 +2,7 @@
 //-----------------------------------------------
 struct udp_pcb *upcb;
 char str1[30];
+extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16_t port);
 //-----------------------------------------------
@@ -12,7 +13,7 @@ void udp_client_connect(void)
   upcb = udp_new();
   if (upcb!=NULL)
   {
-  	IP4_ADDR(&DestIPaddr, 192, 168, 1, 107);
+    IP4_ADDR(&DestIPaddr, 192, 168, 1, 255);
   	upcb->local_port = 1555;
   	err= udp_connect(upcb, &DestIPaddr, 1556);
   	if (err == ERR_OK)
@@ -25,7 +26,7 @@ void udp_client_connect(void)
 void udp_client_send(void)
 {
   struct pbuf *p;
-  sprintf(str1,"%lu\r\n",HAL_GetTick());
+  sprintf(str1,"%lu",HAL_GetTick());
   p = pbuf_alloc(PBUF_TRANSPORT, strlen(str1), PBUF_POOL);
   if (p != NULL)
   {
@@ -46,6 +47,6 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 void TIM1_Callback(void)
 {
 	udp_client_send();
-  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
 }
 //--------------------------------------------------

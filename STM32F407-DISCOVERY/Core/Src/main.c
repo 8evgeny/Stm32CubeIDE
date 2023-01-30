@@ -16,7 +16,6 @@
   ******************************************************************************
   */
 
-#include "stdio.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -25,7 +24,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stdio.h"
+#include "net.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +50,8 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
-
+extern struct netif gnetif;
+extern char str[30];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -67,6 +68,10 @@ void MX_USB_HOST_Process(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+
+
+
 
 /* USER CODE END 0 */
 
@@ -104,7 +109,7 @@ int main(void)
   MX_USART6_UART_Init();
   MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
-
+    udp_client_connect();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -121,6 +126,9 @@ int main(void)
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
+
+    ethernetif_input(&gnetif);
+    sys_check_timeouts();
 
         if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET) && otherTasks == 0)
         {//Прием байтов
@@ -145,17 +153,17 @@ int main(void)
             //Отправка пакета в сеть
             if (countF0 % 1000 == 0)
             {
-                HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);
+//                HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);
             }
         }
         if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)
         {//FO сбросился - сторонние задачи
             otherTasks = 0;
             ++countF0;
-            if (countF0 == 50000)
+            if (countF0 == 10000)
             {
-//                uint8_t str[]="Count F0 = 50 000\r\n";
-//                HAL_UART_Transmit_DMA(&huart6, str, 19);
+                uint8_t str[]="Count F0 = 10 000\r\n";
+                HAL_UART_Transmit_DMA(&huart6, str, 19);
                 countF0 = 0;
             }
         }

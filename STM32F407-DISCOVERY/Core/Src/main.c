@@ -20,7 +20,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
 #include "usb_host.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -51,12 +50,6 @@ SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart2;
 
-osThreadId defaultTaskHandle;
-osThreadId UART_pingHandle;
-osThreadId Led1_PD12_testHandle;
-osThreadId Led2_PD13_testHandle;
-osThreadId Led3_PD14_testHandle;
-osThreadId Led4_PD15_testHandle;
 /* USER CODE BEGIN PV */
 uint16_t countF0 = 0;
 uint32_t countByte = 0;
@@ -70,12 +63,7 @@ static void MX_I2C1_Init(void);
 static void MX_I2S3_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
-void StartDefaultTask(void const * argument);
-void StartTask02(void const * argument);
-void StartTask03(void const * argument);
-void StartTask04(void const * argument);
-void StartTask05(void const * argument);
-void StartTask06(void const * argument);
+void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
 
@@ -117,158 +105,18 @@ int main(void)
   MX_I2C1_Init();
   MX_I2S3_Init();
   MX_SPI1_Init();
+  MX_USB_HOST_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
-
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
-  /* definition and creation of UART_ping */
-  osThreadDef(UART_ping, StartTask02, osPriorityIdle, 0, 128);
-  UART_pingHandle = osThreadCreate(osThread(UART_ping), NULL);
-
-  /* definition and creation of Led1_PD12_test */
-  osThreadDef(Led1_PD12_test, StartTask03, osPriorityIdle, 0, 128);
-  Led1_PD12_testHandle = osThreadCreate(osThread(Led1_PD12_test), NULL);
-
-  /* definition and creation of Led2_PD13_test */
-  osThreadDef(Led2_PD13_test, StartTask04, osPriorityIdle, 0, 128);
-  Led2_PD13_testHandle = osThreadCreate(osThread(Led2_PD13_test), NULL);
-
-  /* definition and creation of Led3_PD14_test */
-  osThreadDef(Led3_PD14_test, StartTask05, osPriorityIdle, 0, 128);
-  Led3_PD14_testHandle = osThreadCreate(osThread(Led3_PD14_test), NULL);
-
-  /* definition and creation of Led4_PD15_test */
-  osThreadDef(Led4_PD15_test, StartTask06, osPriorityIdle, 0, 128);
-  Led4_PD15_testHandle = osThreadCreate(osThread(Led4_PD15_test), NULL);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-
-    uint8_t otherTasks = 0;
-    while (1)
-    {
-        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET) && otherTasks == 0)
-        {//Прием байтов
-            otherTasks = 1;
-            for(int bytes = 0; bytes < 64; ++bytes)
-            {
-                for(int bit = 0; bit < 8; ++bit)
-                {
-                    if (HAL_GPIO_ReadPin(SIGNAL_IN_GREEN_GPIO_Port,SIGNAL_IN_GREEN_Pin) == GPIO_PIN_RESET)
-                    {
-                    }
-                }//Получен последний бит
-                countByte +=1;
-
-            }//Получен последний байт
-
-        }
-
-        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)
-        {//FO сбросился - сторонние задачи
-            otherTasks = 0;
-            ++countF0;
-            if (countF0 == 10000)
-            {
-                uint8_t str[]="Count F0 = 10 000\r\n";
-                HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
-                countF0 = 0;
-            }
-        }
-    }//while (1)
-
-
-//    uint8_t otherTasks = 0;
-//    uint8_t singleByte = 0;
-//    const uint16_t maxLenPacket = 640;
-//    uint8_t allByte[maxLenPacket];
-//    uint16_t indexByte = 0;
-//    uint32_t countF0 = 0;
-//    while (1)
-//    {
-//        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET) && otherTasks == 0)
-//        {//Прием байтов
-//            otherTasks = 1;
-//            for(uint8_t numByte = 0; numByte < 64; ++numByte, ++indexByte)
-//            {
-//                for(uint8_t bit = 0; bit < 8; ++bit)
-//                {
-//                    if (HAL_GPIO_ReadPin(SIGNAL_IN_GREEN_GPIO_Port,SIGNAL_IN_GREEN_Pin) == GPIO_PIN_RESET)
-//                    {
-//                        singleByte <<=1;
-//                    }
-//                    else
-//                    {
-//                        singleByte <<=1;
-//                        singleByte |=1;
-//                    }
-//                }//Получен последний бит
-//                allByte[indexByte] = singleByte;
-//                singleByte = 0;
-
-
-//            }//Получен последний байт
-//            if (indexByte == maxLenPacket - 1)
-//            {
-//                indexByte = 0;
-//                //Отправка файлов в сеть
-
-
-
-
-//            }
-
-//        }
-
-//        if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET) && otherTasks == 1)
-//        {//FO сбросился - сторонние задачи
-//            otherTasks = 0;
-//            ++countF0;
-//            if (countF0 == 80000)
-//            {
-//                uint8_t str[]="Count F0 = 80 000\r\n";
-//                HAL_UART_Transmit(&huart2, str, 19, 0xFFFF);
-//                countF0 = 0;
-//            }
-//        }
-//    }//while (1)
-
-
-
-
-  /* USER CODE END RTOS_THREADS */
-
-  /* Start scheduler */
-  osKernelStart();
-
-  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
+    MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
   }
@@ -564,135 +412,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
-/* USER CODE BEGIN Header_StartDefaultTask */
-/**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
-{
-  /* init code for USB_HOST */
-  MX_USB_HOST_Init();
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END 5 */
-}
-
-/* USER CODE BEGIN Header_StartTask02 */
-/**
-* @brief Function implementing the UART_ping thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask02 */
-void StartTask02(void const * argument)
-{
-  /* USER CODE BEGIN StartTask02 */
-    uint8_t str[]="USART Transmit from RTOS\r\n";
-  /* Infinite loop */
-  for(;;)
-  {
-      HAL_UART_Transmit(&huart2, str, 26, 0xFFFF);
-      HAL_Delay(3000);
-      osDelay(1);
-  }
-  /* USER CODE END StartTask02 */
-}
-
-/* USER CODE BEGIN Header_StartTask03 */
-/**
-* @brief Function implementing the Led1_PD12_test thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask03 */
-void StartTask03(void const * argument)
-{
-  /* USER CODE BEGIN StartTask03 */
-  /* Infinite loop */
-  for(;;)
-  {
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
-      osDelay(20);
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
-      osDelay(1000);
-    osDelay(1);
-  }
-  /* USER CODE END StartTask03 */
-}
-
-/* USER CODE BEGIN Header_StartTask04 */
-/**
-* @brief Function implementing the Led2_PD13_test thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask04 */
-void StartTask04(void const * argument)
-{
-  /* USER CODE BEGIN StartTask04 */
-  /* Infinite loop */
-  for(;;)
-  {
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
-      osDelay(20);
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
-      osDelay(2000);
-      osDelay(1);
-  }
-  /* USER CODE END StartTask04 */
-}
-
-/* USER CODE BEGIN Header_StartTask05 */
-/**
-* @brief Function implementing the Led3_PD14_test thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask05 */
-void StartTask05(void const * argument)
-{
-  /* USER CODE BEGIN StartTask05 */
-  /* Infinite loop */
-  for(;;)
-  {
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-      osDelay(20);
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
-      osDelay(3000);
-      osDelay(1);
-  }
-  /* USER CODE END StartTask05 */
-}
-
-/* USER CODE BEGIN Header_StartTask06 */
-/**
-* @brief Function implementing the Led4_PD15_test thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask06 */
-void StartTask06(void const * argument)
-{
-  /* USER CODE BEGIN StartTask06 */
-  /* Infinite loop */
-  for(;;)
-  {
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
-      osDelay(20);
-      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
-      osDelay(4000);
-      osDelay(1);
-  }
-  /* USER CODE END StartTask06 */
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.

@@ -49,6 +49,10 @@ include_directories(
     Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
     Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc
     Middlewares/ST/STM32_USB_Host_Library/Core/Inc
+    LWIP/App
+    LWIP/Target
+    Middlewares/Third_Party/LwIP/src/include
+    Middlewares/Third_Party/LwIP/system
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
@@ -61,6 +65,13 @@ file (GLOB SOURCES_C
     Middlewares/Third_Party/FreeRTOS/Source/Src/*.c
     Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
     Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
+    LWIP/App/lwip.c
+    LWIP/Target/ethernetif.c
+    Middlewares/Third_Party/LwIP/src/api/*.c
+    Middlewares/Third_Party/LwIP/src/core/*.c
+    Middlewares/Third_Party/LwIP/src/core/ipv4/*.c
+    Middlewares/Third_Party/LwIP/src/netif/*.c
+    Middlewares/Third_Party/LwIP/src/netif/ppp/*.c
     )
 
 

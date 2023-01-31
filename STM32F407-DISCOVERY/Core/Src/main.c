@@ -128,7 +128,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
     ethernetif_input(&gnetif);
-    sys_check_timeouts();
+//    sys_check_timeouts();
 
         if ((HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET) && otherTasks == 0)
         {//Прием байтов

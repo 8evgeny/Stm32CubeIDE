@@ -134,8 +134,6 @@ void MX_LWIP_Process(void)
 
 /* USER CODE BEGIN 4_2 */
 /* USER CODE END 4_2 */
-  /* Handle timeouts */
-  sys_check_timeouts();
 
 /* USER CODE BEGIN 4_3 */
 /* USER CODE END 4_3 */

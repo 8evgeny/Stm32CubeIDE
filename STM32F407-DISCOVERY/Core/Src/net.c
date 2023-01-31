@@ -44,7 +44,7 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 }
 //-----------------------------------------------
-void TIM1_Callback(void)
+void packetSendUDP(void)
 {
 	udp_client_send();
     HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);

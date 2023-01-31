@@ -49,7 +49,7 @@ TIM_HandleTypeDef htim2;
 
 UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
-
+void packetSendUDP(void);
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
 extern struct netif gnetif;
@@ -166,7 +166,7 @@ int main(void)
             ++countF0;
             if (countF0 == 100)
             {
-                TIM1_Callback();
+                packetSendUDP();
 //                uint8_t str[]="Count F0 = 10 000\r\n";
 //                HAL_UART_Transmit_DMA(&huart6, str, 19);
                 countF0 = 0;
@@ -443,7 +443,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if(htim==&htim2)
   {
-    TIM1_Callback();
+//    TIM1_Callback();
   }
 }
 

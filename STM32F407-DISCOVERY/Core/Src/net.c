@@ -1,7 +1,8 @@
 #include "net.h"
 //-----------------------------------------------
 struct udp_pcb *upcb;
-char str1[30];
+char str1[65];
+uint8_t allByte[MAX_PACKET_LEN];
 extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16_t port);
@@ -13,24 +14,23 @@ void udp_client_connect(void)
   upcb = udp_new();
   if (upcb!=NULL)
   {
-    IP4_ADDR(&DestIPaddr, 192, 168, 1, 255);
+    IP4_ADDR(&DestIPaddr, 192, 168, 1, 108);
   	upcb->local_port = 1555;
   	err= udp_connect(upcb, &DestIPaddr, 1556);
   	if (err == ERR_OK)
   	{
   	  udp_recv(upcb, udp_receive_callback, NULL);
-  	}
+    }
   }
 }
 //-----------------------------------------------
-void udp_client_send(void)
+void udp_client_send()
 {
   struct pbuf *p;
-  sprintf(str1,"%lu",HAL_GetTick());
-  p = pbuf_alloc(PBUF_TRANSPORT, strlen(str1), PBUF_POOL);
+  p = pbuf_alloc(PBUF_TRANSPORT, MAX_PACKET_LEN, PBUF_POOL);
   if (p != NULL)
   {
-    pbuf_take(p, (void *) str1, strlen(str1));
+    pbuf_take(p, (void *) allByte, MAX_PACKET_LEN);
     udp_send(upcb, p);
     pbuf_free(p);
   }
@@ -44,9 +44,9 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
 }
 //-----------------------------------------------
-void packetSendUDP(void)
+void packetSendUDP()
 {
-	udp_client_send();
+    udp_client_send();
     HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
 }
 //--------------------------------------------------

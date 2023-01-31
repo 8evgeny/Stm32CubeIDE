@@ -52,6 +52,8 @@ DMA_HandleTypeDef hdma_usart6_tx;
 uint32_t countF0 = 0;
 extern struct netif gnetif;
 extern char str[30];
+uint8_t allByte[MAX_PACKET_LEN];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -98,7 +100,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-    void packetSendUDP(void);
+    void packetSendUDP(uint8_t *allByte);
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -117,8 +119,6 @@ int main(void)
 
     uint8_t otherTasks = 0;
     uint8_t singleByte = 0;
-    const uint16_t maxLenPacket = 64;
-    uint8_t allByte[maxLenPacket];
 
     while (1)
     {
@@ -151,6 +151,7 @@ int main(void)
                 singleByte = 0;
             }//Получен последний байт
             //Отправка пакета в сеть
+            packetSendUDP(allByte);
             if (countF0 % 1000 == 0)
             {
 //                HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);
@@ -162,7 +163,7 @@ int main(void)
             ++countF0;
             if (countF0 == 100)
             {
-                packetSendUDP();
+
 //                uint8_t str[]="Count F0 = 10 000\r\n";
 //                HAL_UART_Transmit_DMA(&huart6, str, 19);
                 countF0 = 0;

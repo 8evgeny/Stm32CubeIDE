@@ -100,7 +100,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-    void packetSendUDP(uint8_t *allByte);
+    void packetSendUDP();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -151,7 +151,7 @@ int main(void)
                 singleByte = 0;
             }//Получен последний байт
             //Отправка пакета в сеть
-            packetSendUDP(allByte);
+            packetSendUDP();
             if (countF0 % 1000 == 0)
             {
 //                HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);

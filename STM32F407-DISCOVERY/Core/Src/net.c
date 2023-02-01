@@ -48,6 +48,7 @@ void packetSendUDP()
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
     udp_client_send();
+    udp_client_send();
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
 }
 //--------------------------------------------------

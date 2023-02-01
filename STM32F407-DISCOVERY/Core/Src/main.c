@@ -158,6 +158,7 @@ while (1)
                 while(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_RESET){}
             }//Получен последний бит
             allByte[numByte] = singleByte;
+            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
             singleByte = 0;
         }//Получен последний байт
         //Отправка пакета в сеть

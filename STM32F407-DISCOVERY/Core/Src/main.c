@@ -140,7 +140,7 @@ while (1)
             while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET){}
         }
         //Начало пакета
-
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
         for(int numByte = 0; numByte < 64; ++numByte)
         {
             for(int bit = 0; bit < 8; ++bit)
@@ -166,7 +166,7 @@ while (1)
         {
 //             HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);
         }
-
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
     }
 
 }//while (1)

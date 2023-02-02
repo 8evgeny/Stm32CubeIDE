@@ -135,6 +135,7 @@ int main(void)
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
+    uint8_t buf[4];
 while (1)
 {
 //    ethernetif_input(&gnetif);
@@ -146,6 +147,7 @@ while (1)
             if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET)
             {
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//                HAL_SPI_Transmit_DMA(&hspi1, 0b00010000, 1);
             }
             else
             {
@@ -155,6 +157,11 @@ while (1)
             }
 
         }
+        HAL_SPI_Receive_DMA(&hspi1, buf, 4);
+        delay_50_ns();
+        delay_50_ns();
+//        while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET);
+        HAL_SPI_Transmit_DMA(&hspi1, buf, 4);
 
 //        while(!(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_RESET));
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);

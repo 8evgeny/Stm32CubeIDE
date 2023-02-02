@@ -131,7 +131,8 @@ while (1)
 
     //ловим синхро F0
         while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET);
-        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+        if (HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
+            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
 //        while(!(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_RESET));
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
 

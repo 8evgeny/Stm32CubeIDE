@@ -83,15 +83,6 @@ void delay_50_ns()
         ++i;
     }
 }
-void delay_10_ns()
-{
-    for(uint8_t i = 0; i<2; )
-    {
-        ++i;
-    }
-}
-
-
 
 /* USER CODE END 0 */
 

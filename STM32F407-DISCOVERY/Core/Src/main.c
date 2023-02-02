@@ -120,55 +120,63 @@ int main(void)
     uint8_t beginPacket = 0;
     uint8_t singleByte = 0;
 
-while (1)
-{
+
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
+while (1)
+{
+//    ethernetif_input(&gnetif);
 
-    ethernetif_input(&gnetif);
+    //ловим синхро F0
+        while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+//        while(!(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_RESET));
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+
 //    sys_check_timeouts();
 
-    while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET)
-    {
-        if (beginPacket == 0) //Первый заход середина пакета
-        {
-            //ждем строб
-            while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET){}
-            beginPacket = 1;
-            while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET){}
-        }
-        //Начало пакета
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
-        for(int numByte = 0; numByte < 64; ++numByte)
-        {
-            for(int bit = 0; bit < 8; ++bit)
-            {
-                while(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_SET){}
-                if (HAL_GPIO_ReadPin(SIGNAL_IN_GREEN_GPIO_Port,SIGNAL_IN_GREEN_Pin) == GPIO_PIN_RESET)
-                {
-                    singleByte <<= 1;
-                }
-                else
-                {
-                    singleByte <<=1;
-                    singleByte |=1;
-                }
-                while(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_RESET){}
-            }//Получен последний бит
-            allByte[numByte] = singleByte;
-            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-            singleByte = 0;
-        }//Получен последний байт
-        //Отправка пакета в сеть
-        packetSendUDP();
-        if (countF0 % 1000 == 0)
-        {
-//             HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);
-        }
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
-    }
+//    while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET)
+//    {
+//        if (beginPacket == 0) //Первый заход середина пакета
+//        {
+//            //ждем строб
+//            while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET){}
+//            beginPacket = 1;
+//            while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET){}
+
+//        }
+//        //Начало пакета
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
+//        for(int numByte = 0; numByte < 64; ++numByte)
+//        {
+//            for(int bit = 0; bit < 8; ++bit)
+//            {
+//                while(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_SET){}
+//                if (HAL_GPIO_ReadPin(SIGNAL_IN_GREEN_GPIO_Port,SIGNAL_IN_GREEN_Pin) == GPIO_PIN_RESET)
+//                {
+//                    singleByte <<= 1;
+//                }
+//                else
+//                {
+//                    singleByte <<=1;
+//                    singleByte |=1;
+//                }
+//                while(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_RESET){}
+//            }//Получен последний бит
+//            allByte[numByte] = singleByte;
+//            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+//            singleByte = 0;
+//        }//Получен последний байт
+//        //Отправка пакета в сеть
+//        packetSendUDP();
+//        if (countF0 % 1000 == 0)
+//        {
+////             HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);
+//        }
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+//    }
 
 }//while (1)
   /* USER CODE END 3 */

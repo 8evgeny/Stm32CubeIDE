@@ -157,11 +157,10 @@ while (1)
             }
 
         }
-        HAL_SPI_Receive_DMA(&hspi1, buf, 4);
-        delay_50_ns();
-        delay_50_ns();
-//        while(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET);
-        HAL_SPI_Transmit_DMA(&hspi1, buf, 4);
+//        HAL_SPI_Receive_DMA(&hspi1, buf, 4);
+//        delay_50_ns();
+//        delay_50_ns();
+//        HAL_SPI_Transmit_DMA(&hspi1, buf, 4);
 
 //        while(!(HAL_GPIO_ReadPin(SIGNAL_SYN_RED_GPIO_Port,SIGNAL_SYN_RED_Pin) == GPIO_PIN_RESET));
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);

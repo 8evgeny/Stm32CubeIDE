@@ -30,6 +30,15 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+#define delayUS_ASM(us) do {                           \
+asm volatile ("MOV R0,%[loops]\n                       \
+              1: \n                                    \
+              SUB R0, #1\n                             \
+              CMP R0, #0\n                             \
+              BNE 1b \t"                               \
+              : : [loops] "r" (us/30) : "memory"        \
+              );                                       \
+} while(0)
 
 /* USER CODE END PTD */
 
@@ -143,7 +152,7 @@ int main(void)
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
-//    uint8_t buf[4];
+    uint8_t buf[16];
 
     HAL_TIM_Base_Start_IT(&htim6);
 while (1)
@@ -151,24 +160,11 @@ while (1)
         if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
         {
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-            delay_50_ns();
-            if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_SET)
-            {
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//                HAL_SPI_Transmit_DMA(&hspi1, 0b00010000, 1);
-            }
-            else
-            {
-                delay_50_ns();
-                delay_50_ns();
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-            }
-
+            HAL_SPI_Receive_DMA(&hspi1, buf, 16);
+            delayUS_ASM(50000); //150 ns
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+            HAL_SPI_Transmit_DMA(&hspi1, buf, 16);
         }
-//        HAL_SPI_Receive_DMA(&hspi1, buf, 4);
-//        delay_50_ns();
-//        delay_50_ns();
-//        HAL_SPI_Transmit_DMA(&hspi1, buf, 4);
 
 
 

@@ -73,7 +73,11 @@ static void MX_TIM6_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+// Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
+    if(htim->Instance == TIM6)
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+    }
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -140,6 +144,8 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 //    uint8_t buf[4];
+
+    HAL_TIM_Base_Start_IT(&htim6);
 while (1)
 {
         if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
@@ -315,7 +321,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 47999;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 499;
+  htim6.Init.Period = 9;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {

@@ -107,14 +107,6 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void delay_50_ns()
-{
-    for(uint8_t i = 0; i<50; )
-    {
-        ++i;
-    }
-}
-
 /* USER CODE END 0 */
 
 /**

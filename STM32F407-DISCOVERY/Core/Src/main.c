@@ -96,14 +96,14 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     {
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
         {
-            HAL_SPI_Receive_DMA(&hspi1, buf, 32);
+            HAL_SPI_Receive_DMA(&hspi1, buf, 15);
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
         }
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
         {
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
             delayUS_ASM(70000);
-            HAL_SPI_Transmit_DMA(&hspi1, buf, 32);
+            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
         }
     }
 }

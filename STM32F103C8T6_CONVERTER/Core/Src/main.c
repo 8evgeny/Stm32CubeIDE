@@ -39,7 +39,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
               SUB R0, #1\n                             \
               CMP R0, #0\n                             \
               BNE 1b \t"                               \
-              : : [loops] "r" (3000*us) : "memory"        \
+              : : [loops] "r" (8000*us) : "memory"        \
               );                                       \
 } while(0)
 /* USER CODE END PTD */
@@ -112,12 +112,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  char data[20];
   while (1)
   {
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-      delayUS_ASM(4000);
+      HAL_UART_Transmit(&huart1,"data\r\n",6,10);
+      delayUS_ASM(8000);
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-      delayUS_ASM(200);
+      delayUS_ASM(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

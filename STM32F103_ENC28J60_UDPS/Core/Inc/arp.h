@@ -16,7 +16,7 @@ void arp_table_fill(enc28j60_frame_ptr *frame);
 typedef struct arp_record{
   uint8_t ipaddr[4];
   uint8_t macaddr[6];
-  uint32_t sec; //какое было количество секунд в переменной clock_cnt, когда была сделана запись
+  uint32_t sec; //РєР°РєРѕРµ Р±С‹Р»Рѕ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃРµРєСѓРЅРґ РІ РїРµСЂРµРјРµРЅРЅРѕР№ clock_cnt, РєРѕРіРґР° Р±С‹Р»Р° СЃРґРµР»Р°РЅР° Р·Р°РїРёСЃСЊ
 } arp_record_ptr;
 //-------------------------------------------------- 
 #endif /* ARP_H_ */

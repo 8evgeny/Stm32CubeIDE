@@ -180,6 +180,7 @@ void net_poll(void)
 	enc28j60_frame_ptr *frame=(void*)net_buf;
 	while((len=enc28j60_packetReceive(net_buf,sizeof(net_buf)))>0)
 	{
+        HAL_UART_Transmit(&huart1,(uint8_t*)"Packet\r\n",8, 100);
 		eth_read(frame,len);
 	}
 //	if(usartprop.is_ip==1)//статус отправки ARP-запроса

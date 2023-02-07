@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "enc28j60.h"
 //--------------------------------------------------
-#define IP_ADDR {192,168,10,108}
+#define IP_ADDR {172,17,10,200}
 #define MAC_BROADCAST {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}
 #define MAC_NULL {0x00,0x00,0x00,0x00,0x00,0x00} 
 //--------------------------------------------------

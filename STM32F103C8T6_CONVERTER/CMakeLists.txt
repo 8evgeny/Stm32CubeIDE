@@ -8,70 +8,39 @@ set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 #set(CMAKE_CXX_LINKER_LAUNCHER ${TOOLS_PATH}/bin/arm-none-eabi-g++)
 set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
-project(11_Converter_F407 C CXX ASM)
+project(11_Converter_F103 C CXX ASM)
 
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
-    -mcpu=cortex-m4 \
+    -mcpu=cortex-m3 \
     -std=gnu11 \
     -DUSE_HAL_DRIVER \
-    -DSTM32F407xx \
+    -DSTM32F103xB \
     -c \
     -Os \
     -ffunction-sections \
     -fdata-sections \
     -Wall \
     -fstack-usage \
-    -mfpu=fpv4-sp-d16 \
-    -mfloat-abi=hard \
+    --specs=nano.specs \
+    -mfloat-abi=soft \
     -mthumb \
-    -Xlinker -Map=${PROJECT_NAME}.map \
     ")
 #    --specs=nano.specs \
 
 include_directories(
-    USB_HOST/App
-    USB_HOST/Target
-    Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
-    Middlewares/ST/STM32_USB_Host_Library/Core/Inc
-    Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc
     Core/Inc
-    Drivers/CMSIS/Device/ST/STM32F4xx/Include
-    Drivers/STM32F4xx_HAL_Driver/Inc
-    Drivers/CMSIS/Core/Include
+    Drivers/STM32F1xx_HAL_Driver/Inc
+    Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
+    Drivers/CMSIS/Device/ST/STM32F1xx/Include
     Drivers/CMSIS/Include
-    USB_HOST/App
-    USB_HOST/Target
-    Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
-    Middlewares/Third_Party/FreeRTOS/Source/include
-    Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
-    Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc
-    Middlewares/ST/STM32_USB_Host_Library/Core/Inc
-    LWIP/App
-    LWIP/Target
-    Middlewares/Third_Party/LwIP/src/include
-    Middlewares/Third_Party/LwIP/system
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
-    Core/Startup/startup_stm32f407vgtx.s
-    Drivers/STM32F4xx_HAL_Driver/Src/*.c
-    USB_HOST/App/usb_host.c
-    USB_HOST/Target/*.c
-    Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/*.c
-    Middlewares/ST/STM32_USB_Host_Library/Core/Src/*.c
-    Middlewares/Third_Party/FreeRTOS/Source/Src/*.c
-    Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
-    Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
-    LWIP/App/lwip.c
-    LWIP/Target/ethernetif.c
-    Middlewares/Third_Party/LwIP/src/api/*.c
-    Middlewares/Third_Party/LwIP/src/core/*.c
-    Middlewares/Third_Party/LwIP/src/core/ipv4/*.c
-    Middlewares/Third_Party/LwIP/src/netif/*.c
-    Middlewares/Third_Party/LwIP/src/netif/ppp/*.c
+    Core/Startup/startup_stm32f103c8tx.s
+    Drivers/STM32F1xx_HAL_Driver/Src/*.c
     )
 
 
@@ -80,23 +49,22 @@ add_executable(${PROJECT_NAME}.elf
     )
 
 set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINKER_LANGUAGE CXX)
-set(LINKER_SCRIPT_FLASH "${CMAKE_SOURCE_DIR}/STM32F407VGTX_FLASH.ld")
+set(LINKER_SCRIPT_FLASH "${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld")
 set(LINKER_FLAGS "SHELL: \
     -T${LINKER_SCRIPT_FLASH} \
-    -mcpu=cortex-m4 \
+    -mcpu=cortex-m3 \
     --specs=nosys.specs \
     -Wl,--gc-sections \
     -static \
     --specs=nano.specs \
-    -mfpu=fpv5-d16 \
-    -mfloat-abi=hard \
+    -mfloat-abi=soft \
     -mthumb
     -Wl,--start-group \
     -lc \
     -lm \
     -Wl,--end-group \
     ")
-
+#-Wl,-Map="${BuildArtifactFileBaseName}.map"
 target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
 
@@ -119,5 +87,5 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
 #    COMMENT "Erasing . . .")
 
 add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-    COMMAND st-flash write ${BIN_FILE} 0x8000000
+    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
     COMMENT "Write Flash ")

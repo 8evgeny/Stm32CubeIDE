@@ -115,9 +115,9 @@ int main(void)
   while (1)
   {
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-	  delayUS_ASM(4000);
+      delayUS_ASM(4000);
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-	  delayUS_ASM(200);
+      delayUS_ASM(200);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

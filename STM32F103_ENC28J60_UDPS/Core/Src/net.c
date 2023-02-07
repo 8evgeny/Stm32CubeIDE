@@ -5,7 +5,7 @@ extern UART_HandleTypeDef huart1;
 uint8_t net_buf[ENC28J60_MAXFRAME];
 extern uint8_t macaddr[6];
 uint8_t ipaddr[4]=IP_ADDR;
-uint32_t clock_cnt=0;//счетчик секунд
+uint32_t clock_cnt=0;//СЃС‡РµС‚С‡РёРє СЃРµРєСѓРЅРґ
 char str1[60]={0};
 extern char str[20];
 USART_prop_ptr usartprop;
@@ -49,7 +49,7 @@ uint8_t ip_send(enc28j60_frame_ptr *frame, uint16_t len)
 {
 	uint8_t res=0;
 	ip_pkt_ptr *ip_pkt = (void*)(frame->data);
-	//Заполним заголовок пакета IP
+	//Р—Р°РїРѕР»РЅРёРј Р·Р°РіРѕР»РѕРІРѕРє РїР°РєРµС‚Р° IP
 	ip_pkt->len=be16toword(len);
 	ip_pkt->fl_frg_of=0;
 	ip_pkt->ttl=128;
@@ -57,7 +57,7 @@ uint8_t ip_send(enc28j60_frame_ptr *frame, uint16_t len)
 	memcpy(ip_pkt->ipaddr_dst,ip_pkt->ipaddr_src,4);
 	memcpy(ip_pkt->ipaddr_src,ipaddr,4);
 	ip_pkt->cs=checksum((void*)ip_pkt,sizeof(ip_pkt_ptr),0);
-	//отправим фрейм
+	//РѕС‚РїСЂР°РІРёРј С„СЂРµР№Рј
 	eth_send(frame,len);
 	return res;
 }
@@ -89,7 +89,7 @@ uint8_t ip_read(enc28j60_frame_ptr *frame, uint16_t len)
 	ip_pkt_ptr *ip_pkt = (void*)(frame->data);
 	if((ip_pkt->verlen==0x45)&&(!memcmp(ip_pkt->ipaddr_dst,ipaddr,4)))
 	{
-		//длина данных
+		//РґР»РёРЅР° РґР°РЅРЅС‹С…
 		len = be16toword(ip_pkt->len) - sizeof(ip_pkt_ptr);
 		if(ip_pkt->prt==IP_ICMP)
 		{
@@ -182,7 +182,7 @@ void net_poll(void)
 	{
 		eth_read(frame,len);
 	}
-//	if(usartprop.is_ip==1)//статус отправки ARP-запроса
+//	if(usartprop.is_ip==1)//СЃС‚Р°С‚СѓСЃ РѕС‚РїСЂР°РІРєРё ARP-Р·Р°РїСЂРѕСЃР°
 //	{
 //		HAL_UART_Transmit(&huart1,usartprop.usart_buf,usartprop.usart_cnt,0x1000);
 //    HAL_UART_Transmit(&huart1,(uint8_t*)"\r\n",2,0x1000);
@@ -196,7 +196,7 @@ void net_poll(void)
 void net_cmd(void)
 {
   uint8_t ip[4]={0};
-  if(usartprop.is_ip==1)//статус отправки ARP-запроса
+  if(usartprop.is_ip==1)//СЃС‚Р°С‚СѓСЃ РѕС‚РїСЂР°РІРєРё ARP-Р·Р°РїСЂРѕСЃР°
   {
     HAL_UART_Transmit(&huart1,usartprop.usart_buf,usartprop.usart_cnt,0x1000);
     HAL_UART_Transmit(&huart1,(uint8_t*)"\r\n",2,0x1000);
@@ -211,14 +211,14 @@ void UART1_RxCpltCallback(void)
 {
 	uint8_t b;
 	b=str[0];
-	//если вдруг случайно превысим длину буфера
+	//РµСЃР»Рё РІРґСЂСѓРі СЃР»СѓС‡Р°Р№РЅРѕ РїСЂРµРІС‹СЃРёРј РґР»РёРЅСѓ Р±СѓС„РµСЂР°
 	if(usartprop.usart_cnt>20)
 	{
 		usartprop.usart_cnt=0;
 	}
 	else if(b == 'a')
 	{
-		usartprop.is_ip=1;//статус отправки ARP-запроса
+		usartprop.is_ip=1;//СЃС‚Р°С‚СѓСЃ РѕС‚РїСЂР°РІРєРё ARP-Р·Р°РїСЂРѕСЃР°
 		net_cmd();
 	}
 	else
@@ -231,7 +231,7 @@ void UART1_RxCpltCallback(void)
 //-----------------------------------------------
 void TIM_PeriodElapsedCallback(void)
 {
-  //считаем секунды и записываем их в clock_cnt
+  //СЃС‡РёС‚Р°РµРј СЃРµРєСѓРЅРґС‹ Рё Р·Р°РїРёСЃС‹РІР°РµРј РёС… РІ clock_cnt
   clock_cnt++;
 }
 //-----------------------------------------------

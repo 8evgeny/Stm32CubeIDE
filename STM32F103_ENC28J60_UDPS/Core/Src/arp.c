@@ -4,7 +4,7 @@ extern UART_HandleTypeDef huart1;
 extern uint8_t ipaddr[4];
 extern uint8_t macaddr[6];
 extern char str1[60];
-extern uint32_t clock_cnt;//счетчик секунд
+extern uint32_t clock_cnt;//СЃС‡РµС‚С‡РёРє СЃРµРєСѓРЅРґ
 extern uint8_t net_buf[ENC28J60_MAXFRAME];
 uint8_t macbroadcast[6]=MAC_BROADCAST;
 uint8_t macnull[6]=MAC_NULL;
@@ -86,17 +86,17 @@ void arp_send(enc28j60_frame_ptr *frame)
 uint8_t arp_request(uint8_t *ip_addr)
 {
 	uint8_t i;
-	//проверим, может такой адрес уже есть в таблице ARP, а задодно и удалим оттуда просроченные записи
+	//РїСЂРѕРІРµСЂРёРј, РјРѕР¶РµС‚ С‚Р°РєРѕР№ Р°РґСЂРµСЃ СѓР¶Рµ РµСЃС‚СЊ РІ С‚Р°Р±Р»РёС†Рµ ARP, Р° Р·Р°РґРѕРґРЅРѕ Рё СѓРґР°Р»РёРј РѕС‚С‚СѓРґР° РїСЂРѕСЃСЂРѕС‡РµРЅРЅС‹Рµ Р·Р°РїРёСЃРё
 	for(i=0;i<5;i++)
   {
-		//Если записи уже более 12 часов, то удалим её
+		//Р•СЃР»Рё Р·Р°РїРёСЃРё СѓР¶Рµ Р±РѕР»РµРµ 12 С‡Р°СЃРѕРІ, С‚Рѕ СѓРґР°Р»РёРј РµС‘
 		if((clock_cnt-arp_rec[i].sec)>43200)
 		{
 			memset(arp_rec+(sizeof(arp_record_ptr)*i),0,sizeof(arp_record_ptr));
 		}
 		if(!memcmp(arp_rec[i].ipaddr,ip_addr,4))
 		{
-			//смотрим ARP-таблицу
+			//СЃРјРѕС‚СЂРёРј ARP-С‚Р°Р±Р»РёС†Сѓ
 			for(i=0;i<5;i++)
 			{
 				sprintf(str1,"%d.%d.%d.%d - %02X:%02X:%02X:%02X:%02X:%02X - %lu\r\n",

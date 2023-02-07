@@ -26,12 +26,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-void delay()
-{
-    for (int i = 0; i < 2000000; i++)
-        __asm__("nop");
-}
-
 
 #define delayUS_ASM(us) do {                           \
 asm volatile ("MOV R0,%[loops]\n                       \
@@ -39,7 +33,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
               SUB R0, #1\n                             \
               CMP R0, #0\n                             \
               BNE 1b \t"                               \
-              : : [loops] "r" (8000*us) : "memory"        \
+              : : [loops] "r" (8*us) : "memory"        \
               );                                       \
 } while(0)
 /* USER CODE END PTD */
@@ -120,9 +114,9 @@ int main(void)
   {
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
       HAL_UART_Transmit_DMA(&huart1,(uint8_t *)data, 6);
-      delayUS_ASM(5000);
+      delayUS_ASM(5000000); //5сек
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-      delayUS_ASM(100);
+      delayUS_ASM(200000); //0.2сек
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

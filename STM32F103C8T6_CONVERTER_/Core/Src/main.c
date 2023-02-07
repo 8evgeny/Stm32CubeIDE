@@ -121,7 +121,7 @@ int main(void)
 //      sendto(sn, "12345678\r\n", 10, ip_adr, 9899);
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
       HAL_UART_Transmit_DMA(&huart1,(uint8_t *)data, 6);
-      delayUS_ASM(5000000); //5сек
+      delayUS_ASM(1000000);
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
       delayUS_ASM(200000); //0.2сек
     /* USER CODE END WHILE */

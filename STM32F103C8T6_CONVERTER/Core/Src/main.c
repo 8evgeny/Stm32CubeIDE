@@ -15,6 +15,8 @@
   *
   ******************************************************************************
   */
+
+#include "socket.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -110,8 +112,13 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   const char data[20] = "data\r\n";
+  uint8_t sn = 0;
+    socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
+    uint8_t ip_adr[4] = {192,168,10,20};
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
   while (1)
   {
+//      sendto(sn, "12345678\r\n", 10, ip_adr, 9899);
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
       HAL_UART_Transmit_DMA(&huart1,(uint8_t *)data, 6);
       delayUS_ASM(5000000); //5сек

@@ -112,11 +112,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  char data[20];
+  const char data[20] = "data\r\n";
   while (1)
   {
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-      HAL_UART_Transmit(&huart1,"data\r\n",6,10);
+      HAL_UART_Transmit(&huart1,(uint8_t *)data,6,10);
       delayUS_ASM(8000);
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
       delayUS_ASM(100);

@@ -17,6 +17,8 @@
   */
 
 #include "socket.h"
+#include "w5500.h"
+#include "net.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -106,7 +108,7 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+    net_ini();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -124,6 +126,7 @@ int main(void)
       delayUS_ASM(1000000);
 	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
       delayUS_ASM(200000); //0.2сек
+      net_poll();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

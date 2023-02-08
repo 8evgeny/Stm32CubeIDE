@@ -104,6 +104,10 @@
   #define HSE_STARTUP_TIMEOUT    ((uint32_t)100)   /*!< Time out for HSE start up, in ms */
 #endif /* HSE_STARTUP_TIMEOUT */
 
+#if !defined  (LSI_VALUE)
+ #define LSI_VALUE               40000U    /*!< LSI Typical Value in Hz */
+#endif /* LSI_VALUE */
+
 /**
   * @brief Internal High Speed oscillator (HSI) value.
   *        This value is used by the RCC HAL module to compute the system frequency

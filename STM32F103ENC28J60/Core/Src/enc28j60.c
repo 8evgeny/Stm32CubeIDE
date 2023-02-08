@@ -47,7 +47,7 @@ static uint8_t enc28j60_readOp(uint8_t op, uint8_t addres)
 	SS_SELECT();
 	SPI_SendByte(op|(addres&ADDR_MASK));
 	SPI_SendByte(0x00);
-	//пропускаем ложный байт
+	//РїСЂРѕРїСѓСЃРєР°РµРј Р»РѕР¶РЅС‹Р№ Р±Р°Р№С‚
 	if(addres & 0x80) SPI_ReceiveByte();
 	result = SPI_ReceiveByte();
 	SS_DESELECT();
@@ -114,10 +114,10 @@ void enc28j60_ini(void)
 	LD_OFF;
 	enc28j60_writeOp(ENC28J60_SOFT_RESET,ENC28J60_SOFT_RESET,0);
 	HAL_Delay(2);
-	//проверим, что всё перезагрузилось
+	//РїСЂРѕРІРµСЂРёРј, С‡С‚Рѕ РІСЃС‘ РїРµСЂРµР·Р°РіСЂСѓР·РёР»РѕСЃСЊ
 	while(!enc28j60_readOp(ENC28J60_READ_CTRL_REG,ESTAT)&ESTAT_CLKRDY)
 		;
-	//настроим буферы
+	//РЅР°СЃС‚СЂРѕРёРј Р±СѓС„РµСЂС‹
 	enc28j60_writeReg(ERXST,RXSTART_INIT);
 	enc28j60_writeReg(ERXRDPT,RXSTART_INIT);
 	enc28j60_writeReg(ERXND,RXSTOP_INIT);
@@ -125,27 +125,27 @@ void enc28j60_ini(void)
 	enc28j60_writeReg(ETXND,TXSTOP_INIT);
 	//Enable Broadcast
 	enc28j60_writeRegByte(ERXFCON,enc28j60_readRegByte(ERXFCON)|ERXFCON_BCEN);
-	//настраиваем канальный уровень
+	//РЅР°СЃС‚СЂР°РёРІР°РµРј РєР°РЅР°Р»СЊРЅС‹Р№ СѓСЂРѕРІРµРЅСЊ
 	enc28j60_writeRegByte(MACON1,MACON1_MARXEN|MACON1_TXPAUS|MACON1_RXPAUS);
 	enc28j60_writeRegByte(MACON2,0x00);
 	enc28j60_writeOp(ENC28J60_BIT_FIELD_SET,MACON3,MACON3_PADCFG0|MACON3_TXCRCEN|MACON3_FRMLNEN);
 	enc28j60_writeReg(MAIPG,0x0C12);
-	enc28j60_writeRegByte(MABBIPG,0x12);//промежуток между фреймами
-	enc28j60_writeReg(MAMXFL,MAX_FRAMELEN);//максимальный размер фрейма
+	enc28j60_writeRegByte(MABBIPG,0x12);//РїСЂРѕРјРµР¶СѓС‚РѕРє РјРµР¶РґСѓ С„СЂРµР№РјР°РјРё
+	enc28j60_writeReg(MAMXFL,MAX_FRAMELEN);//РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ С„СЂРµР№РјР°
 	enc28j60_writeRegByte(MAADR5,macaddr[0]);//Set MAC addres
 	enc28j60_writeRegByte(MAADR4,macaddr[1]);
 	enc28j60_writeRegByte(MAADR3,macaddr[2]);
 	enc28j60_writeRegByte(MAADR2,macaddr[3]);
 	enc28j60_writeRegByte(MAADR1,macaddr[4]);
 	enc28j60_writeRegByte(MAADR0,macaddr[5]);
-	//настраиваем физический уровень
-	enc28j60_writePhy(PHCON2,PHCON2_HDLDIS);//отключаем loopback
-	enc28j60_writePhy(PHLCON,PHLCON_LACFG2| //светодиоды
+	//РЅР°СЃС‚СЂР°РёРІР°РµРј С„РёР·РёС‡РµСЃРєРёР№ СѓСЂРѕРІРµРЅСЊ
+	enc28j60_writePhy(PHCON2,PHCON2_HDLDIS);//РѕС‚РєР»СЋС‡Р°РµРј loopback
+	enc28j60_writePhy(PHLCON,PHLCON_LACFG2| //СЃРІРµС‚РѕРґРёРѕРґС‹
 		PHLCON_LBCFG2|PHLCON_LBCFG1|PHLCON_LBCFG0|
 		PHLCON_LFRQ0|PHLCON_STRCH);
 	enc28j60_SetBank(ECON1);
 	enc28j60_writeOp(ENC28J60_BIT_FIELD_SET,EIE,EIE_INTIE|EIE_PKTIE);
-	enc28j60_writeOp(ENC28J60_BIT_FIELD_SET,ECON1,ECON1_RXEN);//разрешаем приём пакетов
+	enc28j60_writeOp(ENC28J60_BIT_FIELD_SET,ECON1,ECON1_RXEN);//СЂР°Р·СЂРµС€Р°РµРј РїСЂРёС‘Рј РїР°РєРµС‚РѕРІ
 }
 //-----------------------------------------------
 uint16_t enc28j60_packetReceive(uint8_t* buf, uint16_t buflen)
@@ -154,7 +154,7 @@ uint16_t enc28j60_packetReceive(uint8_t* buf, uint16_t buflen)
 	if(enc28j60_readRegByte(EPKTCNT)>0)
 	{
 		enc28j60_writeReg(ERDPT,gNextPacketPtr);
-		//считаем заголовок
+		//СЃС‡РёС‚Р°РµРј Р·Р°РіРѕР»РѕРІРѕРє
 		struct{
 			uint16_t nextPacket;
 			uint16_t byteCount;

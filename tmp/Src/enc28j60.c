@@ -7,6 +7,13 @@ static uint8_t Enc28j60Bank;
 static int gNextPacketPtr;
 uint8_t macaddr[6]=MAC_ADDR;
 //-----------------------------------------------
+__STATIC_INLINE void DelayMicro(__IO uint32_t micros)
+{
+	micros *= (SystemCoreClock / 1000000) / 5;
+	/* Wait till done */
+	while (micros--) ;
+}
+//-----------------------------------------------
 static void Error (void)
 {
 	LD_ON;
@@ -146,6 +153,9 @@ void enc28j60_ini(void)
 	enc28j60_SetBank(ECON1);
 	enc28j60_writeOp(ENC28J60_BIT_FIELD_SET,EIE,EIE_INTIE|EIE_PKTIE);
 	enc28j60_writeOp(ENC28J60_BIT_FIELD_SET,ECON1,ECON1_RXEN);//разрешаем приЄм пакетов
+	//¬ключим делитель частоты генератора 2, то есть частота будет 12,5MHz
+	enc28j60_writeRegByte(ECOCON,0x02);
+	DelayMicro(15);
 }
 //-----------------------------------------------
 uint16_t enc28j60_packetReceive(uint8_t* buf, uint16_t buflen)

@@ -374,7 +374,7 @@ void http_request(uint8_t sn)
 	}
 	if(httpsockprop[sn].data_stat==DATA_ONE)
 	{
-		 tcp_send_http_one(sn);
+         tcp_send_http_one(sn);
 		DisconnectSocket(sn); //Разъединяемся
 		SocketClosedWait(sn);
 		sprintf(str1,"S%d (one) closed\r\n",sn);

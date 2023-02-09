@@ -378,7 +378,6 @@ void w5500_testReceive(uint8_t sn)
             //Отобразим размер принятых данных
             sprintf(str1,"In socket %d data len: 0x%04X\r\n",sn,len);
             HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
-            //здесь обмениваемся информацией: на запрос документа от клиента отправляем ему запрошенный документ
             //указатель на начало чтения приёмного буфера
             point = GetReadPointer(sn);
             w5500_readSockBuf(sn, point, (uint8_t*)tmpbuf, 32);
@@ -390,8 +389,17 @@ void w5500_testReceive(uint8_t sn)
             //Ждём инициализации сокета (статус SOCK_INIT)
             SocketInitWait(sn);
             //Продолжаем слушать сокет
-            ListenSocket(sn);
-            SocketListenWait(sn);
+//            ListenSocket(sn);
+//            SocketListenWait(sn);
+
+            SendSocket(sn);
+            SetWritePointer(sn, point);
+            point = GetWritePointer(sn);
+            w5500_writeSockBuf(sn, point, (uint8_t*)tmpbuf, len);
+
+
+//            RecvSocket(sn);
+
         }
 
      }

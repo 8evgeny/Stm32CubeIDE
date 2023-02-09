@@ -389,16 +389,20 @@ void w5500_testReceive(uint8_t sn)
             //Ждём инициализации сокета (статус SOCK_INIT)
             SocketInitWait(sn);
             //Продолжаем слушать сокет
-//            ListenSocket(sn);
-//            SocketListenWait(sn);
+            ListenSocket(sn);
+            SocketListenWait(sn);
 
-            SendSocket(sn);
-            SetWritePointer(sn, point);
-            point = GetWritePointer(sn);
-            w5500_writeSockBuf(sn, point, (uint8_t*)tmpbuf, len);
-
-
+//            uint16_t end_point;
+//            end_point = GetWritePointer(sn);
+//            end_point+=len;
+//            //Заполним данными буфер для отправки пакета
+//            SetWritePointer(sn, end_point);
+//            end_point = GetWritePointer(sn);
+//            w5500_writeSockBuf(sn, end_point, (uint8_t*)tmpbuf, len);
+//            //отправим данные
 //            RecvSocket(sn);
+//            SendSocket(sn);
+
 
         }
 

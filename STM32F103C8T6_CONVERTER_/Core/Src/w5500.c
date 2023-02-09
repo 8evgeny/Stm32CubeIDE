@@ -22,8 +22,8 @@ void w5500_writeReg(uint8_t op, uint16_t addres, uint8_t data)
   HAL_SPI_Transmit(&hspi1, buf, 4, 0xFFFFFFFF);
   SS_DESELECT();
 
-      sprintf(tmp,"w5500_writeReg addres %.2X data %.2X", addres, data);
-      HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 32, 0x1000);
+      sprintf(tmp,"w5500_writeReg addres %.4X data %.2X", addres, data);
+      HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 34, 0x1000);
       HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 }
 //-----------------------------------------------
@@ -32,6 +32,10 @@ void w5500_writeBuf(data_sect_ptr *datasect, uint16_t len)
   SS_SELECT();
   HAL_SPI_Transmit(&hspi1, (uint8_t*) datasect, len, 0xFFFFFFFF);
   SS_DESELECT();
+
+  sprintf(tmp,"w5500_writeBuf");
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 14, 0x1000);
+  HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 }
 //-----------------------------------------------
 void w5500_writeSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t len)
@@ -49,10 +53,6 @@ void w5500_writeSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t
 
 uint8_t w5500_readReg(uint8_t op, uint16_t addres)
 {
-//    sprintf(tmp,"w5500_readReg addres %2d", addres);
-//    HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 23, 0x1000);
-//    HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
-
   uint8_t data;
   uint8_t wbuf[] = {addres >> 8, addres, op, 0x0};
   uint8_t rbuf[4];
@@ -60,6 +60,11 @@ uint8_t w5500_readReg(uint8_t op, uint16_t addres)
   HAL_SPI_TransmitReceive(&hspi1, wbuf, rbuf, 4, 0xFFFFFFFF);
   SS_DESELECT();
   data = rbuf[3];
+
+//  sprintf(tmp,"w5500_readReg addres %.4X - %.2x", addres, data);
+//  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 30, 0x1000);
+//  HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
+
   return data;
 }
 //-----------------------------------------------
@@ -70,13 +75,17 @@ void w5500_readBuf(data_sect_ptr *datasect, uint16_t len)
   HAL_SPI_Receive(&hspi1, (uint8_t*) datasect, len, 0xFFFFFFFF);
   SS_DESELECT();
 
-  sprintf(tmp,"w5500_readBuf len %2d", len);
-  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 20, 0x1000);
+  sprintf(tmp,"w5500_readBuf len %.4X", len);
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 22, 0x1000);
   HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 }
 //-----------------------------------------------
 uint8_t w5500_readSockBufByte(uint8_t sock_num, uint16_t point)
 {
+    sprintf(tmp,"w5500_readSockBufByte");
+    HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 21, 0x1000);
+    HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
+
   uint8_t opcode, bt;
   opcode = (((sock_num<<2)|BSB_S0_RX)<<3)|OM_FDM1;
   bt = w5500_readReg(opcode, point);
@@ -90,8 +99,8 @@ void w5500_readSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t 
   datasect->addr = be16toword(point);
   w5500_readBuf(datasect,len);
 
-  sprintf(tmp,"socket %d read bufer len %2d",sock_num, len);
-  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 26, 0x1000);
+  sprintf(tmp,"socket %X read bufer len %.4X",sock_num, len);
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 28, 0x1000);
   HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 }
 //-----------------------------------------------
@@ -102,8 +111,8 @@ void SetSockPort(uint8_t sock_num, uint16_t port)
   w5500_writeReg(opcode, Sn_PORT0,port>>8);
   w5500_writeReg(opcode, Sn_PORT1,port);
 
-  sprintf(tmp,"socket %d set port %d",sock_num, port);
-  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 19, 0x1000);
+  sprintf(tmp,"Socket %.2d set port %.5d",sock_num, port);
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 24, 0x1000);
   HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 }
 //-----------------------------------------------
@@ -114,8 +123,8 @@ void OpenSocket(uint8_t sock_num, uint16_t mode)
     w5500_writeReg(opcode, Sn_MR, mode);
     w5500_writeReg(opcode, Sn_CR, 0x01);
 
-    sprintf(tmp,"socket %d open",sock_num);
-    HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 13, 0x1000);
+    sprintf(tmp,"Socket %.2d open mode - %d",sock_num, mode);
+    HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 23, 0x1000);
     HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 }
 //-----------------------------------------------
@@ -123,6 +132,11 @@ void SocketInitWait(uint8_t sock_num)
 {
   uint8_t opcode=0;
   opcode = (((sock_num<<2)|BSB_S0)<<3)|OM_FDM1;
+
+  sprintf(tmp,"Socket %.2d InitWait",sock_num);
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 18, 0x1000);
+  HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
+
   while(1)
   {
     if(w5500_readReg(opcode, Sn_SR)==SOCK_INIT)
@@ -130,6 +144,11 @@ void SocketInitWait(uint8_t sock_num)
       break;
     }
   }
+
+  sprintf(tmp,"Socket %.2d InitOK",sock_num);
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 16, 0x1000);
+  HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
+
 }
 //-----------------------------------------------
 void ListenSocket(uint8_t sock_num)
@@ -138,8 +157,8 @@ void ListenSocket(uint8_t sock_num)
   opcode = (((sock_num<<2)|BSB_S0)<<3)|OM_FDM1;
   w5500_writeReg(opcode, Sn_CR, 0x02); //LISTEN SOCKET
 
-  sprintf(tmp,"socket %d listen",sock_num);
-  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 15, 0x1000);
+  sprintf(tmp,"socket %.2d listen",sock_num);
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 16, 0x1000);
   HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 }
 //-----------------------------------------------
@@ -147,6 +166,11 @@ void SocketListenWait(uint8_t sock_num)
 {
   uint8_t opcode=0;
   opcode = (((sock_num<<2)|BSB_S0)<<3)|OM_FDM1;
+
+  sprintf(tmp,"Socket %.2d ListenWait",sock_num);
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 20, 0x1000);
+  HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
+
   while(1)
   {
     if(w5500_readReg(opcode, Sn_SR)==SOCK_LISTEN)
@@ -268,11 +292,11 @@ void w5500_ini(void)
 	w5500_writeReg(opcode, SIPR2,ipaddr[2]);
 	w5500_writeReg(opcode, SIPR3,ipaddr[3]);
 	//Настраиваем сокеты
-for(i=3;i<8;i++)
+for(i=0;i<8;i++)
   {
     SetSockPort(i, local_port);
     //Открываем сокет
-    OpenSocket(i,Mode_UDP);
+    OpenSocket(i,Mode_TCP);
     SocketInitWait(i);
     //Начинаем слушать сокет
     ListenSocket(i);
@@ -280,10 +304,10 @@ for(i=3;i<8;i++)
   }
   HAL_Delay(500);
   //Посмотрим статусы
-  for(i=3;i<8;i++)
+  for(i=0;i<8;i++)
   {
     dtt = GetSocketStatus(i);
-    sprintf(str1,"First Status Sn%d: 0x%02X\r\n",i,dtt);
+    sprintf(str1,"First Status socket %d: 0x%02X\r\n",i,dtt);
     HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
   }	
 }

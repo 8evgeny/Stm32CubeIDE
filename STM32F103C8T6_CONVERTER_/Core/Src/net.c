@@ -1,6 +1,6 @@
 #include "net.h"
 //-----------------------------------------------
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart1;
 //-----------------------------------------------
 uint8_t ipaddr[4]=IP_ADDR;
 uint8_t ipgate[4]=IP_GATE;

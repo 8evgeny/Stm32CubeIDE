@@ -1,6 +1,6 @@
 #include "httpd.h"
 //-----------------------------------------------
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart1;
 //-----------------------------------------------
 extern char str1[60];
 extern char tmpbuf[30];
@@ -92,7 +92,7 @@ void tcp_send_http_one(uint8_t sn)
 	else
 	{
 		sprintf(str1,"S%d file not found\r\n",sn);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
+        HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
 		header_len = strlen(error_header);
 		data_len = sizeof(e404_htm);
 		end_point = GetWritePointer(sn);
@@ -274,6 +274,7 @@ void tcp_send_http_last(uint8_t sn)
 //-----------------------------------------------
 void http_request(uint8_t sn)
 {
+    HAL_UART_Transmit(&huart1,"http_request\r\n",14,100);
 /*
   uint16_t point;
   uint8_t RXbyte;

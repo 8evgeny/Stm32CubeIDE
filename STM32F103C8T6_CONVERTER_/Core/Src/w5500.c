@@ -5,7 +5,7 @@ extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart1;
 //-----------------------------------------------
 extern char str1[60];
-char tmpbuf[30];
+char tmpbuf[40];
 char tmp[40];
 uint8_t sect[515];
 extern http_sock_prop_ptr httpsockprop[8];
@@ -94,14 +94,13 @@ uint8_t w5500_readSockBufByte(uint8_t sock_num, uint16_t point)
 //-----------------------------------------------
 void w5500_readSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t len)
 {
-  data_sect_ptr *datasect = (void*)buf;
-  datasect->opcode = (((sock_num<<2)|BSB_S0_RX)<<3)|OM_FDM0;
-  datasect->addr = be16toword(point);
-  w5500_readBuf(datasect,len);
+    data_sect_ptr *datasect = (void*)buf;
+    datasect->opcode = (((sock_num<<2)|BSB_S0_RX)<<3)|OM_FDM0;
+    datasect->addr = be16toword(point);
+    w5500_readBuf(datasect,len);
 
-  sprintf(tmp,"w5500_readSockBuf\r\n");
-  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, strlen(tmp), 0x1000);
-
+    sprintf(tmp,"w5500_readSockBuf\r\n");
+    HAL_UART_Transmit(&huart1,(uint8_t *)tmp, strlen(tmp), 0x1000);
 }
 //-----------------------------------------------
 void SetSockPort(uint8_t sock_num, uint16_t port)
@@ -382,10 +381,10 @@ void w5500_testReceive(uint8_t sn)
             //здесь обмениваемся информацией: на запрос документа от клиента отправляем ему запрошенный документ
             //указатель на начало чтения приёмного буфера
             point = GetReadPointer(sn);
-            w5500_readSockBuf(sn, point, (uint8_t*)tmpbuf, 5);
+            w5500_readSockBuf(sn, point, (uint8_t*)tmpbuf, 32);
 
-            HAL_UART_Transmit(&huart1,(uint8_t*)point,20,0x1000);
-
+            HAL_UART_Transmit(&huart1,(uint8_t*)tmpbuf, 32, 0x1000);
+            HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 //            if (strncmp(tmpbuf,"GET /", 5) == 0)
 //            {
 //                httpsockprop[sn].prt_tp = PRT_TCP_HTTP;

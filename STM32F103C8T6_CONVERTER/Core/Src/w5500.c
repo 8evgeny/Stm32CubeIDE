@@ -5,7 +5,6 @@ extern UART_HandleTypeDef huart1;
 //-----------------------------------------------
 extern char str1[60];
 char tmpbuf[30];
-char tmp[30];
 uint8_t sect[515];
 //extern http_sock_prop_ptr httpsockprop[8];
 //-----------------------------------------------
@@ -81,20 +80,14 @@ void SetSockPort(uint8_t sock_num, uint16_t port)
   opcode = (((sock_num<<2)|BSB_S0)<<3)|OM_FDM1;
   w5500_writeReg(opcode, Sn_PORT0,port>>8);
   w5500_writeReg(opcode, Sn_PORT1,port);
-  sprintf(tmp,"socket %d set port %d",sock_num, port);
-  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 19, 0x1000);
-  HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
 }
 //-----------------------------------------------
 void OpenSocket(uint8_t sock_num, uint16_t mode)
 {
-    uint8_t opcode=0;
-    opcode = (((sock_num<<2)|BSB_S0)<<3)|OM_FDM1;
-    w5500_writeReg(opcode, Sn_MR, mode);
-    w5500_writeReg(opcode, Sn_CR, 0x01);
-    sprintf(tmp,"socket %d open",sock_num);
-    HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 13, 0x1000);
-    HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
+  uint8_t opcode=0;
+  opcode = (((sock_num<<2)|BSB_S0)<<3)|OM_FDM1;
+  w5500_writeReg(opcode, Sn_MR, mode);
+  w5500_writeReg(opcode, Sn_CR, 0x01);
 }
 //-----------------------------------------------
 void SocketInitWait(uint8_t sock_num)
@@ -246,7 +239,7 @@ for(i=3;i<8;i++)
   {
     SetSockPort(i, local_port);
     //Открываем сокет
-    OpenSocket(i,Mode_UDP);
+    OpenSocket(i,Mode_TCP);
     SocketInitWait(i);
     //Начинаем слушать сокет
     ListenSocket(i);

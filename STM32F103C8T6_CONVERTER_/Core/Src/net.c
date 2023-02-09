@@ -13,7 +13,8 @@ void packet_receive(void)
 	uint8_t i;
     for(i=0;i<8;i++)
   {
-    w5500_packetReceive(i);
+//    w5500_packetReceive(i);
+    w5500_testReceive(i);
   }
 }
 //-----------------------------------------------

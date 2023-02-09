@@ -76,9 +76,8 @@ void w5500_readBuf(data_sect_ptr *datasect, uint16_t len)
   HAL_SPI_Receive(&hspi1, (uint8_t*) datasect, len, 0xFFFFFFFF);
   SS_DESELECT();
 
-  sprintf(tmp,"w5500_readBuf len %.4X", len);
-  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 22, 0x1000);
-  HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
+  sprintf(tmp,"w5500_readBuf\r\n");
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, strlen(tmp), 0x1000);
 }
 //-----------------------------------------------
 uint8_t w5500_readSockBufByte(uint8_t sock_num, uint16_t point)
@@ -100,9 +99,9 @@ void w5500_readSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t 
   datasect->addr = be16toword(point);
   w5500_readBuf(datasect,len);
 
-  sprintf(tmp,"socket %X read bufer len %.4X",sock_num, len);
-  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, 28, 0x1000);
-  HAL_UART_Transmit(&huart1,"\r\n", 2, 0x1000);
+  sprintf(tmp,"w5500_readSockBuf\r\n");
+  HAL_UART_Transmit(&huart1,(uint8_t *)tmp, strlen(tmp), 0x1000);
+
 }
 //-----------------------------------------------
 void SetSockPort(uint8_t sock_num, uint16_t port)
@@ -365,4 +364,61 @@ void w5500_packetReceive(uint8_t sn)
 	
 	
 }
+
+void w5500_testReceive(uint8_t sn)
+{
+  uint16_t point;
+  uint16_t len;
+    if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
+    {
+        if(httpsockprop[sn].data_stat == DATA_COMPLETED)
+        {
+            len = GetSizeRX(sn);
+            //Если пришел пустой пакет, то уходим из функции
+            if(!len) return;
+            //Отобразим размер принятых данных
+            sprintf(str1,"Data in socket %d :0x%04X\r\n",sn,len);
+            HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
+            //здесь обмениваемся информацией: на запрос документа от клиента отправляем ему запрошенный документ
+            //указатель на начало чтения приёмного буфера
+            point = GetReadPointer(sn);
+            w5500_readSockBuf(sn, point, (uint8_t*)tmpbuf, 5);
+
+            HAL_UART_Transmit(&huart1,(uint8_t*)point,20,0x1000);
+
+//            if (strncmp(tmpbuf,"GET /", 5) == 0)
+//            {
+//                httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
+//                http_request(sn);
+//            }
+        }
+        else if(httpsockprop[sn].data_stat==DATA_MIDDLE)
+    {
+      if(httpsockprop[sn].prt_tp == PRT_TCP_HTTP)
+      {
+                tcp_send_http_middle(sn);
+      }
+    }
+    else if(httpsockprop[sn].data_stat==DATA_LAST)
+    {
+      if(httpsockprop[sn].prt_tp == PRT_TCP_HTTP)
+      {
+                tcp_send_http_last(sn);
+        DisconnectSocket(sn); //Разъединяемся
+        SocketClosedWait(sn);
+                sprintf(str1,"S%d (one) closed\r\n",sn);
+                HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
+        OpenSocket(sn,Mode_TCP);
+        //Ждём инициализации сокета (статус SOCK_INIT)
+        SocketInitWait(sn);
+        //Продолжаем слушать сокет
+        ListenSocket(sn);
+        SocketListenWait(sn);
+      }
+    }
+    }
+
+
+}
+
 //-----------------------------------------------

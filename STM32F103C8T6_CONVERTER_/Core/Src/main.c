@@ -19,6 +19,9 @@
 #include "socket.h"
 #include "w5500.h"
 #include "net.h"
+#include "loopback.h"
+#include "my_function.h"
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -30,6 +33,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+
+#define DATA_BUF_SIZE   2048
+#define SOCK_TCPS        0
+#define SOCK_UDPS        1
 
 #define delayUS_ASM(us) do {                           \
 asm volatile ("MOV R0,%[loops]\n                       \
@@ -58,7 +65,7 @@ UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
 
 /* USER CODE BEGIN PV */
-
+extern uint8_t gDATABUF[DATA_BUF_SIZE];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,7 +75,8 @@ static void MX_SPI1_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
+int32_t loopback_tcps(uint8_t, uint8_t*, uint16_t);
+int32_t loopback_udps(uint8_t, uint8_t*, uint16_t);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -83,7 +91,7 @@ static void MX_USART1_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  int32_t ret = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -108,22 +116,44 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-    net_ini();
+//    net_ini();
+
+    /* Chip selection call back */
+     Chip_selection_call_back();
+    /* SPI Read & Write callback function */
+    reg_wizchip_spi_cbfunc(wizchip_read, wizchip_write);
+    /* wizchip initialize*/
+    wizchip_initialize();
+    /* Network initialization */
+    network_init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  const char data[20] = "data\r\n";
 
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+//  const char data[20] = "data\r\n";
+//    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+
   while (1)
   {
+      //		/* Loopback Test */
+      //    	// TCP server loopback test
+      //    	if( (ret = loopback_tcps(SOCK_TCPS, gDATABUF, 5000)) < 0) {
+      //			UART_Printf("SOCKET ERROR : %ld\r\n", ret);
+      //		}
 
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-      delayUS_ASM(400000);
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-      delayUS_ASM(400000);
-      net_poll();
+              // UDP server loopback test
+              //if( (ret = loopback_udps(SOCK_UDPS, gDATABUF, 3000)) < 0) {
+              if( (ret = loopback_udps(SOCK_UDPS, gDATABUF, 3000)) < 0) {
+                  UART_Printf("SOCKET ERROR : %ld\r\n", ret);
+              }
+
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+//      delayUS_ASM(400000);
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+//      delayUS_ASM(400000);
+//      net_poll();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -294,7 +324,28 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void  wizchip_select(void)
+{
+     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+}
 
+void  wizchip_deselect(void)
+{
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+}
+
+void  wizchip_write(uint8_t wb)
+{
+//HAL_SPI_TransmitReceive(&hspi2, &wb, &wb, 1,1000);
+HAL_SPI_Transmit(&hspi1, &wb, 1, 1000);
+}
+
+uint8_t wizchip_read()
+{
+uint8_t wb=0xFF;
+HAL_SPI_TransmitReceive(&hspi1, &wb, &wb, 1,1000);
+return	wb;
+}
 /* USER CODE END 4 */
 
 /**

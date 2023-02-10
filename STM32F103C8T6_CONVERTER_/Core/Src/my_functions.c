@@ -47,8 +47,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-extern SPI_HandleTypeDef hspi2;
-extern UART_HandleTypeDef huart2;
+extern SPI_HandleTypeDef hspi1;
+extern UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 uint8_t gDATABUF[DATA_BUF_SIZE];
@@ -60,7 +60,7 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
                             .dhcp = NETINFO_STATIC };
 
 uint8_t tmp;//int32_t ret = 0;
-// задание размеров буферов W5500 для сокетов по 2 Кбайта 														
+// Р·Р°РґР°РЅРёРµ СЂР°Р·РјРµСЂРѕРІ Р±СѓС„РµСЂРѕРІ W5500 РґР»СЏ СЃРѕРєРµС‚РѕРІ РїРѕ 2 РљР±Р°Р№С‚Р° 														
 uint8_t memsize[2][8] = { {2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};													
 /* USER CODE END PV */
 
@@ -76,7 +76,7 @@ void UART_Printf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vsnprintf(buff, sizeof(buff), fmt, args);
-    HAL_UART_Transmit(&huart2, (uint8_t*)buff, strlen(buff),
+    HAL_UART_Transmit(&huart1, (uint8_t*)buff, strlen(buff),
                       HAL_MAX_DELAY);
     va_end(args);
 }

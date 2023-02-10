@@ -203,12 +203,12 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
             char tmp[10];
             while(sentsize != size)
             {
-                for(uint16_t i = 0;i<1000;++i)
+                for(uint16_t i = 0;i<100;++i)
                 {
                     sprintf(tmp,"  %04d\r\n",i);
                     ret = sendto(sn, buf+sentsize, size-sentsize, destip, destport);
                     sendto(sn, tmp, 8, destip, destport);
-                    HAL_Delay(10);
+//                    HAL_Delay(1);
                 }
 								UART_Printf("Message was returned.\r\n");
 								UART_Printf("\r\n");

@@ -177,12 +177,12 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
    uint8_t  destip[4];
    uint16_t destport;
 
-   switch(getSn_SR(sn)) // Ïîëó÷àåì ñîñòîÿíèå ñîêåòà sn – íîìåð ñîêåòà
+   switch(getSn_SR(sn)) // ÐŸÐ¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ ÑÐ¾ÐºÐµÑ‚Ð° sn â€“ Ð½Ð¾Ð¼ÐµÑ€ ÑÐ¾ÐºÐµÑ‚Ð°
    {
       case SOCK_UDP :
          if((size = getSn_RX_RSR(sn)) > 0)
          {
-					 HAL_GPIO_WritePin(Led_Red_GPIO_Port, Led_Red_Pin, GPIO_PIN_SET);
+                     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
 					 UART_Printf("Was receve message.\r\n");
 					 HAL_Delay(300);
             if(size > DATA_BUF_SIZE) size = DATA_BUF_SIZE;
@@ -203,7 +203,7 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
                ret = sendto(sn, buf+sentsize, size-sentsize, destip, destport);
 								UART_Printf("Message was returned.\r\n");
 								UART_Printf("\r\n");
-								HAL_GPIO_WritePin(Led_Red_GPIO_Port, Led_Red_Pin, GPIO_PIN_RESET);
+                                HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 								//HAL_Delay(500);
                if(ret < 0)
                {
@@ -223,7 +223,7 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
 #ifdef _LOOPBACK_DEBUG_
          
 #endif
-				//îòêðûòèå UDP ñîêåòà 
+				//Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ðµ UDP ÑÐ¾ÐºÐµÑ‚Ð° 
          if((ret = socket(sn, Sn_MR_UDP, port, 0x00)) != sn)	 
             return ret;
 #ifdef _LOOPBACK_DEBUG_

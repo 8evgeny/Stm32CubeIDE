@@ -53,9 +53,9 @@ extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 uint8_t gDATABUF[DATA_BUF_SIZE];
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
-                            .ip = {192, 168, 10, 1},		
+                            .ip = {192, 168, 1, 197},
                             .sn = {255,255,255,0},			
-                            .gw = {192, 168, 10, 2},		
+                            .gw = {192, 168, 1, 1},
                             .dns = {0,0,0,0},
                             .dhcp = NETINFO_STATIC };
 

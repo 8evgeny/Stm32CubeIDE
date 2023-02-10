@@ -3,6 +3,7 @@
 #include "socket.h"
 #include "wizchip_conf.h"
 #include "main.h"
+#include "my_function.h"
 
 #if LOOPBACK_MODE == LOOPBACK_MAIN_NOBLCOK
 
@@ -182,8 +183,10 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
       case SOCK_UDP :
          if((size = getSn_RX_RSR(sn)) > 0)
          {
-                     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-					 UART_Printf("Was receve message.\r\n");
+             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+             UART_Printf("Was receve message.\r\n");
+//             UART_Printf((uint8_t*)buf);
+//             UART_Printf("\r\n");
 					 HAL_Delay(300);
             if(size > DATA_BUF_SIZE) size = DATA_BUF_SIZE;
             ret = recvfrom(sn, buf, size, destip, (uint16_t*)&destport);
@@ -197,10 +200,16 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
 					
             size = (uint16_t) ret;
             sentsize = 0;
+            char tmp[10];
             while(sentsize != size)
             {
-						
-               ret = sendto(sn, buf+sentsize, size-sentsize, destip, destport);
+                for(uint16_t i = 0;i<1000;++i)
+                {
+                    sprintf(tmp,"  %04d\r\n",i);
+                    ret = sendto(sn, buf+sentsize, size-sentsize, destip, destport);
+                    sendto(sn, tmp, 8, destip, destport);
+                    HAL_Delay(10);
+                }
 								UART_Printf("Message was returned.\r\n");
 								UART_Printf("\r\n");
                                 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
@@ -227,7 +236,9 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
          if((ret = socket(sn, Sn_MR_UDP, port, 0x00)) != sn)	 
             return ret;
 #ifdef _LOOPBACK_DEBUG_
-         UART_Printf("%d:Opened, UDP loopback, port [%d]\r\n", sn, port);
+
+//         UART_Printf("%d:Opened, UDP loopback, port [%d]\r\n", sn, port);
+
 #endif
          break;
       default :

@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "stdarg.h"
 #include "net.h"
 /* USER CODE END Includes */
 
@@ -172,7 +173,7 @@ int main(void)
 //    HAL_TIM_Base_Start_IT(&htim12);
     HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
     HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
-//    UART_Printf("Start");
+    UART_Printf("Start\r\n");
 while (1)
 {
 //        if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)

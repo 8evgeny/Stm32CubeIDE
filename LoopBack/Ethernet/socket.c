@@ -101,6 +101,7 @@ uint8_t  sock_pack_info[_WIZCHIP_SOCK_NUM_] = {0,};
    }while(0);              \
 
 
+
 int8_t socket(uint8_t sn, uint8_t protocol, uint16_t port, uint8_t flag)
 {
 	CHECK_SOCKNUM();
@@ -116,7 +117,6 @@ int8_t socket(uint8_t sn, uint8_t protocol, uint16_t port, uint8_t flag)
             uint32_t taddr;
             getSIPR((uint8_t*)&taddr);
             if(taddr == 0) return SOCKERR_SOCKINIT;
-	    break;
          }
       case Sn_MR_UDP :
       case Sn_MR_MACRAW :
@@ -252,6 +252,7 @@ int8_t listen(uint8_t sn)
    return SOCK_OK;
 }
 
+
 int8_t connect(uint8_t sn, uint8_t * addr, uint16_t port)
 {
    CHECK_SOCKNUM();
@@ -378,6 +379,7 @@ int32_t send(uint8_t sn, uint8_t * buf, uint16_t len)
    //return len;
    return (int32_t)len;
 }
+
 
 int32_t recv(uint8_t sn, uint8_t * buf, uint16_t len)
 {
@@ -586,6 +588,8 @@ int32_t sendto(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t
    return (int32_t)len;
 }
 
+
+
 int32_t recvfrom(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t *port)
 {
 //M20150601 : For W5300   
@@ -767,6 +771,7 @@ int32_t recvfrom(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16
    return (int32_t)pack_len;
 }
 
+
 int8_t  ctlsocket(uint8_t sn, ctlsock_type cstype, void* arg)
 {
    uint8_t tmp = 0;
@@ -853,7 +858,7 @@ int8_t  setsockopt(uint8_t sn, sockopt_type sotype, void* arg)
          		}
             }
          break;
-   #if !( (_WIZCHIP_ == 5100) || (_WIZCHIP_ == 5200) )
+   #if _WIZCHIP_ > 5200
       case SO_KEEPALIVEAUTO:
          CHECK_SOCKMODE(Sn_MR_TCP);
          setSn_KPALVTR(sn,*(uint8_t*)arg);

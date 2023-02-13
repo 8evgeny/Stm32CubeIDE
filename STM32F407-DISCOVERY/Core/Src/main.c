@@ -84,10 +84,11 @@ static void MX_TIM12_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
+void UART_Printf(const char* fmt, ...);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
     if(htim->Instance == TIM6)
-        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+        HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
     }
     uint8_t buf[32];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
@@ -171,25 +172,26 @@ int main(void)
 //    HAL_TIM_Base_Start_IT(&htim12);
     HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
     HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
+//    UART_Printf("Start");
 while (1)
 {
-        if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
-            //Вход F0 перевел на таймер TIM12 - PB14
-        {
+//        if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
+//            //Вход F0 перевел на таймер TIM12 - PB14
+//        {
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-            HAL_SPI_Receive_DMA(&hspi1, buf, 16);
+//            HAL_SPI_Receive_DMA(&hspi1, buf, 16);
             delayUS_ASM(50000); //150 ns
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-            HAL_SPI_Transmit_DMA(&hspi1, buf, 16);
-        }
+//            HAL_SPI_Transmit_DMA(&hspi1, buf, 16);
+//        }
 
 
 
-//        ethernetif_input(&gnetif);
+        ethernetif_input(&gnetif);
 //        sys_check_timeouts();
 
 //        //Отправка пакета в сеть
-//        packetSendUDP();
+        packetSendUDP();
 //        if (countF0 % 1000 == 0)
 //        {
 //             HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);
@@ -425,7 +427,7 @@ static void MX_USART6_UART_Init(void)
 
   /* USER CODE END USART6_Init 1 */
   huart6.Instance = USART6;
-  huart6.Init.BaudRate = 115200;
+  huart6.Init.BaudRate = 230400;
   huart6.Init.WordLength = UART_WORDLENGTH_8B;
   huart6.Init.StopBits = UART_STOPBITS_1;
   huart6.Init.Parity = UART_PARITY_NONE;
@@ -491,7 +493,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin
+  HAL_GPIO_WritePin(GPIOD, Green_Led_Pin|Orange_Led_Pin|Red_Led_Pin|Blue_Led_Pin
                           |Audio_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : CS_I2C_SPI_Pin */
@@ -526,10 +528,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD11 LD4_Pin LD3_Pin LD5_Pin
-                           LD6_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_11|LD4_Pin|LD3_Pin|LD5_Pin
-                          |LD6_Pin;
+  /*Configure GPIO pins : PD11 Green_Led_Pin Orange_Led_Pin Red_Led_Pin
+                           Blue_Led_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_11|Green_Led_Pin|Orange_Led_Pin|Red_Led_Pin
+                          |Blue_Led_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -557,7 +559,15 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void UART_Printf(const char* fmt, ...) {
+    char buff[256];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buff, sizeof(buff), fmt, args);
+    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff),
+                      HAL_MAX_DELAY);
+    va_end(args);
+}
 /* USER CODE END 4 */
 
 /**

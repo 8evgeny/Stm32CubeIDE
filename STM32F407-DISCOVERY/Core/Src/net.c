@@ -14,7 +14,7 @@ void udp_client_connect(void)
   upcb = udp_new();
   if (upcb!=NULL)
   {
-    IP4_ADDR(&DestIPaddr, 192, 168, 1, 108);
+    IP4_ADDR(&DestIPaddr, 192, 168, 1, 17);
   	upcb->local_port = 1555;
   	err= udp_connect(upcb, &DestIPaddr, 1556);
   	if (err == ERR_OK)
@@ -41,13 +41,13 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
   strncpy(str1,p->payload,p->len);
   str1[p->len]=0;
   pbuf_free(p);
-  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+  HAL_GPIO_TogglePin(GPIOD, Green_Led_Pin);
 }
 //-----------------------------------------------
 void packetSendUDP()
 {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
     udp_client_send();
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
 }
 //--------------------------------------------------

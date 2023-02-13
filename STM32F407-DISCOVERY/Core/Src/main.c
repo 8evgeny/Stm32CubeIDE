@@ -96,16 +96,20 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
     if(htim->Instance == TIM12)
     {
-        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-        {
-            HAL_SPI_Receive_DMA(&hspi1, buf, 15);
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
-        }
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
         {
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
-            delayUS_ASM(70000);
-            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
+             HAL_SPI_Receive(&hspi1, buf, 16, 0x1000);
+             HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_11);
+             HAL_SPI_Transmit(&hspi1, buf, 16, 0x1000);
+//            delayUS_ASM(40000);
+//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
+        }
+        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+        {
+
+//            delayUS_ASM(100000);
+//            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
         }
     }
 }
@@ -179,10 +183,10 @@ while (1)
 //        if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
 //            //Вход F0 перевел на таймер TIM12 - PB14
 //        {
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //            HAL_SPI_Receive_DMA(&hspi1, buf, 16);
-            delayUS_ASM(50000); //150 ns
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//            delayUS_ASM(50000); //150 ns
+//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 //            HAL_SPI_Transmit_DMA(&hspi1, buf, 16);
 //        }
 
@@ -192,7 +196,7 @@ while (1)
 //        sys_check_timeouts();
 
 //        //Отправка пакета в сеть
-        packetSendUDP();
+//        packetSendUDP();
 //        if (countF0 % 1000 == 0)
 //        {
 //             HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);

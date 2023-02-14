@@ -101,22 +101,26 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     {
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
         {
-             HAL_SPI_Receive(&hspi1, allByte, 20, 0x1000);
+             HAL_SPI_Receive(&hspi1, allByte, 16, 0x1000);
              HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-             delayUS_ASM(20);
+//             delayUS_ASM(20);
 
              packetSendUDP();
-
              HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-             HAL_SPI_Transmit(&hspi2, allByte, 20, 0x1000);
+             delayUS_ASM(1);
+             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+             packetSendUDP();
+             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+
+             HAL_SPI_Transmit(&hspi2, allByte, 16, 0x1000);
 
         }
-        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-        {
+//        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+//        {
 
 //            delayUS_ASM(100000);
 //            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
-        }
+//        }
     }
 }
 

@@ -191,28 +191,23 @@ int main(void)
     UART_Printf("Start\r\n");
 while (1)
 {
-//        if(HAL_GPIO_ReadPin(SIGNAL_FO_ORANGE_GPIO_Port,SIGNAL_FO_ORANGE_Pin) == GPIO_PIN_RESET)
-//            //Вход F0 перевел на таймер TIM12 - PB14
-//        {
-//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//            HAL_SPI_Receive_DMA(&hspi1, buf, 16);
-//            delayUS_ASM(50000); //150 ns
-//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//            HAL_SPI_Transmit_DMA(&hspi1, buf, 16);
-//        }
+#if(0)
+Весь код в функции void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+SPI1 - (режим Full duplex Slave) получаем данные
+        SYN - PA5  (синхро с телефона)
+        MOSI - PB5 (входной сигнал с телефона)
+SPI2 - тестовая выдача данных (режим Full duplex Slave)
+        SYN - PB10  (синхро с телефона)
+        MISO - PC2  (тестовая выдача)
 
+F0 подаем на вход таймера TIM12 (PB14) и по переднему входу захват и переход в обработчик
 
+Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
+Контроллер воспринимает как 64 байта (в два раза чаще)
+Считываем 16 байт (в реальности это 8 байт - 8 каналов) испольгуется у нас только 4 или 5 каналов
 
+#endif
         ethernetif_input(&gnetif);
-//        sys_check_timeouts();
-
-//        //Отправка пакета в сеть
-//        packetSendUDP();
-//        if (countF0 % 1000 == 0)
-//        {
-//             HAL_UART_Transmit_DMA(&huart6, (uint8_t *)allByte, 64);
-//        }
-
 
 }//while (1)
   /* USER CODE END 3 */

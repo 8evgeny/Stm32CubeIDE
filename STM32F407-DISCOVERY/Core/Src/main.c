@@ -37,7 +37,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
               SUB R0, #1\n                             \
               CMP R0, #0\n                             \
               BNE 1b \t"                               \
-              : : [loops] "r" (us/30) : "memory"        \
+              : : [loops] "r" (34*us) : "memory"        \
               );                                       \
 } while(0)
 
@@ -56,6 +56,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 I2C_HandleTypeDef hi2c1;
 
 SPI_HandleTypeDef hspi1;
+SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi1_tx;
 DMA_HandleTypeDef hdma_spi1_rx;
 
@@ -82,28 +83,33 @@ static void MX_USART6_UART_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM6_Init(void);
 static void MX_TIM12_Init(void);
+static void MX_SPI2_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
+void packetSendUDP();
 void UART_Printf(const char* fmt, ...);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
     if(htim->Instance == TIM6)
         HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
     }
-    uint8_t buf[32];
+    uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
     if(htim->Instance == TIM12)
     {
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
         {
-             HAL_SPI_Receive(&hspi1, buf, 16, 0x1000);
-             HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_11);
-             HAL_SPI_Transmit(&hspi1, buf, 16, 0x1000);
-//            delayUS_ASM(40000);
-//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
+             HAL_SPI_Receive(&hspi1, allByte, 20, 0x1000);
+             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+             delayUS_ASM(20);
+
+             packetSendUDP();
+
+             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+             HAL_SPI_Transmit(&hspi2, allByte, 20, 0x1000);
+
         }
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
         {
@@ -144,7 +150,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-    void packetSendUDP();
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -157,6 +163,7 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM6_Init();
   MX_TIM12_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
     udp_client_connect();
   /* USER CODE END 2 */
@@ -318,6 +325,44 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * @brief SPI2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI2_Init(void)
+{
+
+  /* USER CODE BEGIN SPI2_Init 0 */
+
+  /* USER CODE END SPI2_Init 0 */
+
+  /* USER CODE BEGIN SPI2_Init 1 */
+
+  /* USER CODE END SPI2_Init 1 */
+  /* SPI2 parameter configuration*/
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi2.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI2_Init 2 */
+
+  /* USER CODE END SPI2_Init 2 */
 
 }
 
@@ -507,18 +552,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : SIGNAL_IN_GREEN_Pin SIGNAL_SYN_RED_Pin */
-  GPIO_InitStruct.Pin = SIGNAL_IN_GREEN_Pin|SIGNAL_SYN_RED_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : SIGNAL_FO_ORANGE_Pin */
-  GPIO_InitStruct.Pin = SIGNAL_FO_ORANGE_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(SIGNAL_FO_ORANGE_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
   GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;

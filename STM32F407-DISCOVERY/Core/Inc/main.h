@@ -59,12 +59,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define CS_I2C_SPI_Pin GPIO_PIN_3
 #define CS_I2C_SPI_GPIO_Port GPIOE
-#define SIGNAL_IN_GREEN_Pin GPIO_PIN_4
-#define SIGNAL_IN_GREEN_GPIO_Port GPIOE
-#define SIGNAL_SYN_RED_Pin GPIO_PIN_5
-#define SIGNAL_SYN_RED_GPIO_Port GPIOE
-#define SIGNAL_FO_ORANGE_Pin GPIO_PIN_13
-#define SIGNAL_FO_ORANGE_GPIO_Port GPIOC
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15

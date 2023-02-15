@@ -209,8 +209,8 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 #endif
         ethernetif_input(&gnetif);
 
-             delayUS_ASM(100);
-             packetSendUDP();
+//             delayUS_ASM(50);
+//             packetSendUDP();
 
 }//while (1)
   /* USER CODE END 3 */

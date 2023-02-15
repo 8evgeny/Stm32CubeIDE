@@ -107,11 +107,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
              packetSendUDP();
              HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//             delayUS_ASM(1);
-//             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//             packetSendUDP();
-//             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-
+//            HAL_SPI_Transmit(&hspi1, allByte, 16, 0x1000);
              HAL_SPI_Transmit(&hspi2, allByte, 16, 0x1000);
 
         }
@@ -195,7 +191,8 @@ while (1)
 Весь код в функции void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 SPI1 - (режим Full duplex Slave) получаем данные
         SYN - PA5  (синхро с телефона)
-        MOSI - PB5 (входной сигнал с телефона)
+        MOSI - PB5 (DSTI сигнал с телефона)
+        MISO - PA6 (Подмена DSTO - то что получали из линии)
 SPI2 - тестовая выдача данных (режим Full duplex Slave)
         SYN - PB10  (синхро с телефона)
         MISO - PC2  (тестовая выдача)

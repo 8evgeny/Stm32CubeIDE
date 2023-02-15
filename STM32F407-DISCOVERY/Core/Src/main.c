@@ -538,11 +538,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|Green_Led_Pin|Orange_Led_Pin|Red_Led_Pin
+                          |Blue_Led_Pin|Audio_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, Green_Led_Pin|Orange_Led_Pin|Red_Led_Pin|Blue_Led_Pin
-                          |Audio_RST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 
   /*Configure GPIO pin : CS_I2C_SPI_Pin */
   GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
@@ -564,10 +564,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD11 Green_Led_Pin Orange_Led_Pin Red_Led_Pin
-                           Blue_Led_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_11|Green_Led_Pin|Orange_Led_Pin|Red_Led_Pin
-                          |Blue_Led_Pin;
+  /*Configure GPIO pins : PD9 PD11 Green_Led_Pin Orange_Led_Pin
+                           Red_Led_Pin Blue_Led_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_11|Green_Led_Pin|Orange_Led_Pin
+                          |Red_Led_Pin|Blue_Led_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;

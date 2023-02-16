@@ -15,6 +15,7 @@
   *
   ******************************************************************************
   */
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -23,11 +24,22 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stdio.h"
+#include "stdarg.h"
+#include "net.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+#define delayUS_ASM(us) do {                           \
+asm volatile ("MOV R0,%[loops]\n                       \
+              1: \n                                    \
+              SUB R0, #1\n                             \
+              CMP R0, #0\n                             \
+              BNE 1b \t"                               \
+              : : [loops] "r" (34*us) : "memory"        \
+              );                                       \
+} while(0)
 
 /* USER CODE END PTD */
 
@@ -55,6 +67,10 @@ UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
+uint32_t countF0 = 0;
+extern struct netif gnetif;
+extern char str[30];
+uint8_t allByte[MAX_PACKET_LEN];
 
 /* USER CODE END PV */
 
@@ -71,6 +87,38 @@ static void MX_SPI2_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
+void packetSendUDP();
+void UART_Printf(const char* fmt, ...);
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+// Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
+    if(htim->Instance == TIM6)
+        HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
+    }
+    uint8_t buf[16];
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+    if(htim->Instance == TIM12)
+    {
+        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
+        {
+             HAL_SPI_Receive(&hspi1, allByte, 16, 0x1000);
+             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//             delayUS_ASM(20);
+
+             packetSendUDP();
+             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//            HAL_SPI_Transmit(&hspi1, allByte, 16, 0x1000);
+             HAL_SPI_Transmit(&hspi1, allByte, 16, 0x1000);
+
+        }
+//        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+//        {
+
+//            delayUS_ASM(100000);
+//            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
+//        }
+    }
+}
 
 /* USER CODE END PFP */
 
@@ -117,18 +165,51 @@ int main(void)
   MX_TIM12_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-
+    udp_client_connect();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+
+//    uint8_t beginPacket = 0;
+//    uint8_t singleByte = 0;
+
+
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
-  }
+
+    HAL_TIM_Base_Start_IT(&htim6);
+//    HAL_TIM_Base_Start_IT(&htim12);
+    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
+    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
+    UART_Printf("Start\r\n");
+while (1)
+{
+#if(0)
+Весь код в функции void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+SPI1 - (режим Full duplex Slave) получаем данные
+        SYN - PA5  (синхро с телефона)
+        MOSI - PB5 (DSTI сигнал с телефона)
+        MISO - PA6 (Подмена DSTO - то что получали из линии)
+SPI2 - тестовая выдача данных (режим Full duplex Slave)
+        SYN - PB10  (синхро с телефона)
+        MISO - PC2  (тестовая выдача)
+
+F0 подаем на вход таймера TIM12 (PB14) и по переднему входу захват и переход в обработчик
+
+Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
+Контроллер воспринимает как 64 байта (в два раза чаще)
+Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
+
+#endif
+        ethernetif_input(&gnetif);
+
+//             delayUS_ASM(50);
+//             packetSendUDP();
+
+}//while (1)
   /* USER CODE END 3 */
 }
 
@@ -514,7 +595,15 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void UART_Printf(const char* fmt, ...) {
+    char buff[256];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buff, sizeof(buff), fmt, args);
+    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff),
+                      HAL_MAX_DELAY);
+    va_end(args);
+}
 /* USER CODE END 4 */
 
 /**

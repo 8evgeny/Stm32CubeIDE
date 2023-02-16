@@ -55,7 +55,6 @@ asm volatile ("MOV R0,%[loops]\n                       \
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 extern char str1[20];
-uint8_t PacketReceived = 0;
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi1_tx;
@@ -102,7 +101,6 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     {
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
         {
-             PacketReceived = 0;
              HAL_SPI_Receive(&hspi1, allByte, 16, 0x1000);
              HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 //             delayUS_ASM(20);
@@ -206,11 +204,11 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 
 #endif
         ethernetif_input(&gnetif);
-     if (PacketReceived == 1)
-     {
-         PacketReceived = 0;
-         HAL_SPI_Transmit(&hspi1, (uint8_t*)str1, 16, 0x1000);
-     }
+//     if (PacketReceived == 1)
+//     {
+//         PacketReceived = 0;
+//         HAL_SPI_Transmit(&hspi1, (uint8_t*)str1, 16, 0x1000);
+//     }
 
 }//while (1)
   /* USER CODE END 3 */

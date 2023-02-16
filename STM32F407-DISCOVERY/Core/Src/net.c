@@ -27,13 +27,15 @@ void udp_client_connect(void)
 //-----------------------------------------------
 void udp_client_send()
 {
-  struct pbuf *p;
-  p = pbuf_alloc(PBUF_TRANSPORT, MAX_PACKET_LEN, PBUF_POOL);
-  if (p != NULL)
-  {
-    pbuf_take(p, (void *) toSend, MAX_PACKET_LEN);
-    udp_send(upcb, p);
-    pbuf_free(p);
+    struct pbuf *p;
+  //  p = pbuf_alloc(PBUF_TRANSPORT, MAX_PACKET_LEN, PBUF_POOL);
+    p = pbuf_alloc(PBUF_TRANSPORT, 10, PBUF_POOL);
+    if (p != NULL)
+    {
+  //    pbuf_take(p, (void *) toSend, MAX_PACKET_LEN);
+      pbuf_take(p, (void *) toSend, 10);
+      udp_send(upcb, p);
+      pbuf_free(p);
   }
 }
 //-----------------------------------------------

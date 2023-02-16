@@ -28,10 +28,12 @@ void udp_client_connect(void)
 void udp_client_send()
 {
   struct pbuf *p;
-  p = pbuf_alloc(PBUF_TRANSPORT, MAX_PACKET_LEN, PBUF_POOL);
+//  p = pbuf_alloc(PBUF_TRANSPORT, MAX_PACKET_LEN, PBUF_POOL);
+  p = pbuf_alloc(PBUF_TRANSPORT, 10, PBUF_POOL);
   if (p != NULL)
   {
-    pbuf_take(p, (void *) toSend, MAX_PACKET_LEN);
+//    pbuf_take(p, (void *) toSend, MAX_PACKET_LEN);
+    pbuf_take(p, (void *) toSend, 10);
     udp_send(upcb, p);
     pbuf_free(p);
   }
@@ -42,7 +44,7 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 //    HAL_SPI_Transmit(&hspi1, (uint8_t*)p->payload, p->len, 0x1000);
     strncpy(toRecive,p->payload,p->len);
-//    toRecive[p->len]=0;
+    toRecive[p->len]=0;
     pbuf_free(p);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
     HAL_GPIO_TogglePin(GPIOD, Green_Led_Pin);

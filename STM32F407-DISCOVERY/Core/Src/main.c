@@ -54,7 +54,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
-extern char str1[20];
+
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi1_tx;

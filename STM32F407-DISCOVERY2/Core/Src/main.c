@@ -181,20 +181,21 @@ int main(void)
 while (1)
 {
 #if(0)
-Весь код в функции void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
-SPI1 - (режим Full duplex Slave) получаем данные
-        SYN - PA5  (синхро с телефона)
-        MOSI - PB5 (DSTI сигнал с телефона)
-        MISO - PA6 (Подмена DSTO - то что получали из линии)
+    f4DISCOVERY2
+    Весь код в функции void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+    SPI1 - (режим Full duplex Slave) получаем данные
+            SYN - PA5  (синхро с телефона)
+            MOSI - PB5 (DSTI сигнал с телефона)
+            MISO - PA6 (Подмена DSTO - то что получали из линии)
 
-SPI2 - тестовая выдача данных (режим Full duplex Slave)
-        SYN - PB10  (синхро с телефона)
-        MISO - PC2  (тестовая выдача)
+    SPI2 - тестовая выдача данных (режим Full duplex Slave)
+            SYN - PB10  (синхро с телефона)
+            MISO - PC2  (тестовая выдача)
 
-SPI1 SPI2 отключил теперь SPI3
-        SYN - PC10
-        MOSI - PC12
-        MISO - PC11
+    SPI1 SPI2 отключил теперь SPI3
+            SYN - PC10
+            MOSI - PC12
+            MISO - PC11
 
 F0 подаем на вход таймера TIM12 (PB14) и по переднему входу захват и переход в обработчик
 

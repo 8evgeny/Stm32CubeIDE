@@ -205,11 +205,6 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 
 #endif
         ethernetif_input(&gnetif);
-//     if (PacketReceived == 1)
-//     {
-//         PacketReceived = 0;
-//         HAL_SPI_Transmit(&hspi1, (uint8_t*)str1, 16, 0x1000);
-//     }
 
 }//while (1)
   /* USER CODE END 3 */

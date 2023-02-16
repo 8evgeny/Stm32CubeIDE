@@ -107,8 +107,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
              packetSendUDP();
              HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//            HAL_SPI_Transmit(&hspi1, allByte, 16, 0x1000);
-             HAL_SPI_Transmit(&hspi1, allByte, 16, 0x1000);
+//             HAL_SPI_Transmit(&hspi1, allByte, 16, 0x1000);
 
         }
 //        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)

@@ -44,7 +44,7 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 //    HAL_SPI_Transmit(&hspi1, (uint8_t*)p->payload, p->len, 0x1000);
     strncpy(toRecive,p->payload,p->len);
-    toRecive[p->len]=0;
+//    toRecive[p->len]=0;
     pbuf_free(p);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
     HAL_GPIO_TogglePin(GPIOD, Green_Led_Pin);

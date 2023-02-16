@@ -99,7 +99,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
         {
              HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, 10, 0x1000);
              HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//             delayUS_ASM(20);
+             delayUS_ASM(40);
              packetSendUDP();
              HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //             HAL_SPI_Transmit(&hspi1, toSend, 16, 0x1000);

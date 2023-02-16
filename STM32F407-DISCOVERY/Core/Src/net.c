@@ -52,8 +52,7 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 //-----------------------------------------------
 void packetSendUDP()
 {
-    HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
     udp_client_send();
-    HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);
 }
 //--------------------------------------------------

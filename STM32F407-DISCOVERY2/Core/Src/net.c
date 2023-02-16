@@ -1,7 +1,8 @@
 #include "net.h"
 //-----------------------------------------------
 struct udp_pcb *upcb;
-char str1[65];
+extern uint8_t PacketReceived;
+char str1[20];
 uint8_t allByte[MAX_PACKET_LEN];
 extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
@@ -41,6 +42,7 @@ void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
   strncpy(str1,p->payload,p->len);
   str1[p->len]=0;
   pbuf_free(p);
+  PacketReceived = 1;
   HAL_GPIO_TogglePin(GPIOD, Green_Led_Pin);
 }
 //-----------------------------------------------

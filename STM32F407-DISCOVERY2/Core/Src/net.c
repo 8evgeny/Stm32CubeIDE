@@ -3,6 +3,7 @@
 struct udp_pcb *upcb;
 extern SPI_HandleTypeDef hspi1;
 extern uint8_t toSend[MAX_PACKET_LEN];
+uint8_t testSend[16] = {0x55, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 extern uint8_t toRecive[MAX_PACKET_LEN];
 extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
@@ -34,6 +35,7 @@ void udp_client_send()
   {
 //    pbuf_take(p, (void *) toSend, MAX_PACKET_LEN);
     pbuf_take(p, (void *) toSend, 10);
+//      pbuf_take(p, (void *) testSend, 10);
     udp_send(upcb, p);
     pbuf_free(p);
   }

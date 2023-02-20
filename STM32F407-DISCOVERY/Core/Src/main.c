@@ -65,6 +65,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
+uint8_t send = 0;
 extern struct netif gnetif;
 extern char str[30];
 uint8_t toSend[MAX_PACKET_LEN];
@@ -97,10 +98,11 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     {
         if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
         {
-             HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, 10, 0x1000);
-             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-             packetSendUDP();
-             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//             HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, 10, 0x1000);
+//             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+             send = 1;
+//             packetSendUDP();
+//             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
         }
 //        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
 //        {
@@ -151,7 +153,7 @@ int main(void)
   MX_USB_HOST_Init();
   MX_USART6_UART_Init();
   MX_LWIP_Init();
-  MX_TIM6_Init();
+//  MX_TIM6_Init();
   MX_TIM12_Init();
   MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
@@ -202,7 +204,14 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 
 #endif
         ethernetif_input(&gnetif);
-
+    if (send == 1)
+    {
+        HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN, 0x1000);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+        packetSendUDP();
+        send = 0;
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+    }
 }//while (1)
   /* USER CODE END 3 */
 }

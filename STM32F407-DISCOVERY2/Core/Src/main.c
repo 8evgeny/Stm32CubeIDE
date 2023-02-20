@@ -57,7 +57,6 @@ I2C_HandleTypeDef hi2c1;
 
 SPI_HandleTypeDef hspi3;
 
-TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim12;
 
 UART_HandleTypeDef huart6;
@@ -78,7 +77,6 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART6_UART_Init(void);
-static void MX_TIM6_Init(void);
 static void MX_TIM12_Init(void);
 static void MX_SPI3_Init(void);
 void MX_USB_HOST_Process(void);
@@ -94,23 +92,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-    if(htim->Instance == TIM12)
-    {
-        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
-        {
+//    if(htim->Instance == TIM12)
+//    {
+//        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+//        {
 //             HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, 10, 0x1000);
 //             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-             send = 1;
+//             send = 1;
 //             packetSendUDP();
 //             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-        }
+//        }
 //        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
 //        {
 
 //            delayUS_ASM(100000);
 //            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
 //        }
-    }
+//    }
 }
 
 /* USER CODE END PFP */
@@ -153,7 +151,6 @@ int main(void)
   MX_USB_HOST_Init();
   MX_USART6_UART_Init();
   MX_LWIP_Init();
-//  MX_TIM6_Init();
   MX_TIM12_Init();
   MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
@@ -172,10 +169,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    HAL_TIM_Base_Start_IT(&htim6);
+//    HAL_TIM_Base_Start_IT(&htim6);
 //    HAL_TIM_Base_Start_IT(&htim12);
     HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
-    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
+//    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
     UART_Printf("Start\r\n");
 while (1)
 {
@@ -331,44 +328,6 @@ static void MX_SPI3_Init(void)
 }
 
 /**
-  * @brief TIM6 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM6_Init(void)
-{
-
-  /* USER CODE BEGIN TIM6_Init 0 */
-
-  /* USER CODE END TIM6_Init 0 */
-
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM6_Init 1 */
-
-  /* USER CODE END TIM6_Init 1 */
-  htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 47999;
-  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 9;
-  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM6_Init 2 */
-
-  /* USER CODE END TIM6_Init 2 */
-
-}
-
-/**
   * @brief TIM12 Initialization Function
   * @param None
   * @retval None
@@ -405,17 +364,11 @@ static void MX_TIM12_Init(void)
   {
     Error_Handler();
   }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
   sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
   sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
   sConfigIC.ICFilter = 0;
   if (HAL_TIM_IC_ConfigChannel(&htim12, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
-  sConfigIC.ICSelection = TIM_ICSELECTION_INDIRECTTI;
-  if (HAL_TIM_IC_ConfigChannel(&htim12, &sConfigIC, TIM_CHANNEL_2) != HAL_OK)
   {
     Error_Handler();
   }
@@ -498,8 +451,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|Green_Led_Pin|Orange_Led_Pin|Red_Led_Pin
-                          |Blue_Led_Pin|Audio_RST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|GPIO_PIN_10|Green_Led_Pin|Orange_Led_Pin
+                          |Red_Led_Pin|Blue_Led_Pin|Audio_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
@@ -524,10 +477,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD9 PD11 Green_Led_Pin Orange_Led_Pin
-                           Red_Led_Pin Blue_Led_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_11|Green_Led_Pin|Orange_Led_Pin
-                          |Red_Led_Pin|Blue_Led_Pin;
+  /*Configure GPIO pins : PD9 PD10 PD11 Green_Led_Pin
+                           Orange_Led_Pin Red_Led_Pin Blue_Led_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|Green_Led_Pin
+                          |Orange_Led_Pin|Red_Led_Pin|Blue_Led_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;

@@ -92,24 +92,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-    if(htim->Instance == TIM12)
-    {
-        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-        {
-            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
+//    if(htim->Instance == TIM12)
+//    {
+//        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+//        {
 //             HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, 10, 0x1000);
 //             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-             send = 1;
+//             send = 1;
 //             packetSendUDP();
 //             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-        }
+//        }
 //        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
 //        {
 
 //            delayUS_ASM(100000);
 //            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
 //        }
-    }
+//    }
 }
 
 /* USER CODE END PFP */
@@ -452,8 +451,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|Green_Led_Pin|Orange_Led_Pin|Red_Led_Pin
-                          |Blue_Led_Pin|Audio_RST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|GPIO_PIN_10|Green_Led_Pin|Orange_Led_Pin
+                          |Red_Led_Pin|Blue_Led_Pin|Audio_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
@@ -478,10 +477,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD9 PD11 Green_Led_Pin Orange_Led_Pin
-                           Red_Led_Pin Blue_Led_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_11|Green_Led_Pin|Orange_Led_Pin
-                          |Red_Led_Pin|Blue_Led_Pin;
+  /*Configure GPIO pins : PD9 PD10 PD11 Green_Led_Pin
+                           Orange_Led_Pin Red_Led_Pin Blue_Led_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|Green_Led_Pin
+                          |Orange_Led_Pin|Red_Led_Pin|Blue_Led_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;

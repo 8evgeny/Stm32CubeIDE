@@ -32,6 +32,10 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 extern uint8_t send;
+void packetSendUDP();
+extern SPI_HandleTypeDef hspi3;
+extern uint8_t toSend[MAX_PACKET_LEN];
+extern uint8_t toRecive[MAX_PACKET_LEN];
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -207,14 +211,17 @@ void SysTick_Handler(void)
   */
 void TIM8_BRK_TIM12_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 0 */
-    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
-    send = 1;
-  /* USER CODE END TIM8_BRK_TIM12_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim12);
-  /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 1 */
+    /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 0 */
+      HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
+      HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN, 0x1000);
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+      packetSendUDP();
+      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+    /* USER CODE END TIM8_BRK_TIM12_IRQn 0 */
+    HAL_TIM_IRQHandler(&htim12);
+    /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 1 */
 
-  /* USER CODE END TIM8_BRK_TIM12_IRQn 1 */
+    /* USER CODE END TIM8_BRK_TIM12_IRQn 1 */
 }
 
 /**

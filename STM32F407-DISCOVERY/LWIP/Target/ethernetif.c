@@ -202,7 +202,7 @@ static void low_level_init(struct netif *netif)
   MACAddr[2] = 0x37;
   MACAddr[3] = 0x01;
   MACAddr[4] = 0x23;
-  MACAddr[5] = 0x45;
+  MACAddr[5] = 0x46;
   heth.Init.MACAddr = &MACAddr[0];
   heth.Init.RxMode = ETH_RXPOLLING_MODE;
   heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;

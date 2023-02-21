@@ -32,6 +32,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 extern uint8_t send;
+extern uint8_t dmaEnd;
 void packetSendUDP();
 extern SPI_HandleTypeDef hspi3;
 extern uint8_t toSend[MAX_PACKET_LEN];
@@ -61,6 +62,8 @@ extern uint8_t toRecive[MAX_PACKET_LEN];
 /* External variables --------------------------------------------------------*/
 extern ETH_HandleTypeDef heth;
 extern HCD_HandleTypeDef hhcd_USB_OTG_FS;
+extern DMA_HandleTypeDef hdma_spi3_rx;
+extern DMA_HandleTypeDef hdma_spi3_tx;
 extern TIM_HandleTypeDef htim12;
 extern DMA_HandleTypeDef hdma_usart6_tx;
 extern UART_HandleTypeDef huart6;
@@ -207,13 +210,41 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles DMA1 stream0 global interrupt.
+  */
+void DMA1_Stream0_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Stream0_IRQn 0 */
+    dmaEnd = 1;
+  /* USER CODE END DMA1_Stream0_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_spi3_rx);
+  /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */
+
+  /* USER CODE END DMA1_Stream0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 stream5 global interrupt.
+  */
+void DMA1_Stream5_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Stream5_IRQn 0 */
+
+  /* USER CODE END DMA1_Stream5_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_spi3_tx);
+  /* USER CODE BEGIN DMA1_Stream5_IRQn 1 */
+
+  /* USER CODE END DMA1_Stream5_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM8 break interrupt and TIM12 global interrupt.
   */
 void TIM8_BRK_TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 0 */
     HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
-    HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN, 0x1000);
+    HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN,0x1000);
     send = 1;
 //    packetSendUDP();
   /* USER CODE END TIM8_BRK_TIM12_IRQn 0 */

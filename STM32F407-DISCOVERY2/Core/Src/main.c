@@ -56,6 +56,8 @@ asm volatile ("MOV R0,%[loops]\n                       \
 I2C_HandleTypeDef hi2c1;
 
 SPI_HandleTypeDef hspi3;
+DMA_HandleTypeDef hdma_spi3_rx;
+DMA_HandleTypeDef hdma_spi3_tx;
 
 TIM_HandleTypeDef htim12;
 
@@ -65,6 +67,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
 uint8_t send = 0;
+uint8_t dmaEnd = 0;
 extern struct netif gnetif;
 extern char str[30];
 uint8_t toSend[MAX_PACKET_LEN];
@@ -202,11 +205,13 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 #endif
         ethernetif_input(&gnetif);
     if (send == 1)
+//            && (dmaEnd == 1))
     {
 //        HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN, 0x1000);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         packetSendUDP();
         send = 0;
+        dmaEnd = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
     }
 }//while (1)
@@ -346,9 +351,9 @@ static void MX_TIM12_Init(void)
 
   /* USER CODE END TIM12_Init 1 */
   htim12.Instance = TIM12;
-  htim12.Init.Prescaler = 71;
+  htim12.Init.Prescaler = 1;
   htim12.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim12.Init.Period = 30000;
+  htim12.Init.Period = 1;
   htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim12.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim12) != HAL_OK)
@@ -419,8 +424,15 @@ static void MX_DMA_Init(void)
 
   /* DMA controller clock enable */
   __HAL_RCC_DMA2_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
+  /* DMA1_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
   /* DMA2_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);

@@ -215,6 +215,12 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
         dmaEnd = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
     }
+
+//    GPIOD->ODR = 0b0100000000000000; // оно же в hex 0x4000, оно же в dec 16384, оно же сдвиг (1 << 14)
+//    HAL_Delay(200);
+//    GPIOD->ODR = 0b0010000000000000; //  оно же сдвиг (1 << 13)
+//    HAL_Delay(200);
+
 }//while (1)
   /* USER CODE END 3 */
 }

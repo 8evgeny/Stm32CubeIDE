@@ -244,7 +244,8 @@ void TIM8_BRK_TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 0 */
       HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
-      HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN, 0x1000);
+      HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN,0x1000);
+//      HAL_SPI_TransmitReceive_DMA(&hspi3, toRecive, toSend, MAX_PACKET_LEN);
 //      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
       send = 1;
   //    packetSendUDP();

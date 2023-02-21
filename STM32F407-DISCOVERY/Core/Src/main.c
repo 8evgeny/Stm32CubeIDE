@@ -205,6 +205,7 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
         ethernetif_input(&gnetif);
     if (send == 1)
     {
+//        delayUS_ASM(30);
 //        HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN, 0x1000);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         packetSendUDP();

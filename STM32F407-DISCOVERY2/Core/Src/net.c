@@ -34,8 +34,8 @@ void udp_client_send()
     p = pbuf_alloc(PBUF_TRANSPORT, MAX_PACKET_LEN, PBUF_POOL);
     if (p != NULL)
     {
-        pbuf_take(p, (void *) toSend, MAX_PACKET_LEN);
-//        pbuf_take(p, (void *) testSend, MAX_PACKET_LEN);
+//        pbuf_take(p, (void *) toSend, MAX_PACKET_LEN);
+        pbuf_take(p, (void *) testSend, MAX_PACKET_LEN);
         udp_send(upcb, p);
         pbuf_free(p);
     }

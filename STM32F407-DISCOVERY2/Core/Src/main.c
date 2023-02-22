@@ -93,8 +93,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
     if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
     {
-        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
-        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
     }
     if(htim->Instance == TIM6)
         HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
@@ -379,10 +379,6 @@ static void MX_TIM1_Init(void)
   }
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_OnePulse_Init(&htim1, TIM_OPMODE_SINGLE) != HAL_OK)
   {
     Error_Handler();
   }

@@ -91,6 +91,11 @@ void packetSendUDP();
 void UART_Printf(const char* fmt, ...);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
+    if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
+    {
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
+    }
     if(htim->Instance == TIM6)
         HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
     }
@@ -178,6 +183,7 @@ int main(void)
 //    HAL_TIM_Base_Start_IT(&htim6);
 //    HAL_TIM_Base_Start_IT(&htim12);
     HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
+    HAL_TIM_Base_Start_IT(&htim1);
 //    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
     UART_Printf("Start\r\n");
 while (1)

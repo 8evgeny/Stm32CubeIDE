@@ -101,8 +101,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
 //        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive,  sendBuf, MAX_PACKET_LEN);
-        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
-//        HAL_SPI_Receive_IT(&hspi3, sendBuf, MAX_PACKET_LEN);
+
+        HAL_SPI_Receive_DMA(&hspi3, sendBuf, MAX_PACKET_LEN);
+//        delayUS_ASM(20);
+//        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
+
 //        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
     }
     if(htim->Instance == TIM6)

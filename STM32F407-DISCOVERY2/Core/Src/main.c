@@ -72,6 +72,8 @@ extern struct netif gnetif;
 extern char str[30];
 uint8_t sendBuf[MAX_PACKET_LEN];
 uint8_t reciveBuf[MAX_PACKET_LEN];
+uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0xff, 0xff,
+                                       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -97,6 +99,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
+//        HAL_SPI_Transmit_DMA(&hspi3, testReceive, MAX_PACKET_LEN);
     }
     if(htim->Instance == TIM6)
         HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
@@ -335,7 +339,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 18000;
+  htim1.Init.Period = 14000;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -381,7 +385,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 0;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 1600;
+  htim3.Init.Period = 2500;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)

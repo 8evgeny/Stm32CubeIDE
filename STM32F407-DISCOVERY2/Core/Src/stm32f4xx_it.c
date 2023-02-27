@@ -246,11 +246,12 @@ void DMA1_Stream5_IRQHandler(void)
 void TIM1_UP_TIM10_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
-    HAL_TIM_Base_Start_IT(&htim3);
+
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
     HAL_TIM_Base_Stop_IT(&htim1);
+    HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
@@ -279,7 +280,7 @@ void TIM8_BRK_TIM12_IRQHandler(void)
 //    HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, MAX_PACKET_LEN,0x1000);
 //    HAL_SPI_TransmitReceive_DMA(&hspi3, reciveBuf, sendBuf, MAX_PACKET_LEN);
 //    HAL_SPI_Transmit(&hspi3, reciveBuf, MAX_PACKET_LEN,0x1000);
-    send = 1;
+//    send = 1;
 //    packetSendUDP();
   /* USER CODE END TIM8_BRK_TIM12_IRQn 0 */
   HAL_TIM_IRQHandler(&htim12);

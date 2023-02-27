@@ -246,7 +246,7 @@ void DMA1_Stream5_IRQHandler(void)
 void TIM1_UP_TIM10_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
-
+    HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
@@ -264,7 +264,7 @@ void TIM3_IRQHandler(void)
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
   /* USER CODE BEGIN TIM3_IRQn 1 */
-
+    HAL_TIM_Base_Stop_IT(&htim3);
   /* USER CODE END TIM3_IRQn 1 */
 }
 

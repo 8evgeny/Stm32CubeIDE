@@ -57,6 +57,7 @@ DMA_HandleTypeDef hdma_spi3_rx;
 DMA_HandleTypeDef hdma_spi3_tx;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim12;
 DMA_HandleTypeDef hdma_tim1_up;
 
@@ -69,8 +70,8 @@ uint8_t send = 0;
 uint8_t dmaEnd = 0;
 extern struct netif gnetif;
 extern char str[30];
-uint8_t toSend[MAX_PACKET_LEN];
-uint8_t toRecive[MAX_PACKET_LEN];
+uint8_t sendBuf[MAX_PACKET_LEN];
+uint8_t reciveBuf[MAX_PACKET_LEN];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -81,6 +82,7 @@ static void MX_USART6_UART_Init(void);
 static void MX_TIM12_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 void packetSendUDP();
 void UART_Printf(const char* fmt, ...);
@@ -101,7 +103,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 //    {
 //        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
 //        {
-//             HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, 10, 0x1000);
+//             HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
 //             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 //             send = 1;
 //             packetSendUDP();
@@ -157,6 +159,7 @@ int main(void)
   MX_TIM12_Init();
   MX_SPI3_Init();
   MX_TIM1_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
     udp_client_connect();
   /* USER CODE END 2 */
@@ -209,7 +212,7 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 //            && (dmaEnd == 1))
     {
 //        delayUS_ASM(30);
-//        HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN, 0x1000);
+//        HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, MAX_PACKET_LEN, 0x1000);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         packetSendUDP();
         send = 0;
@@ -349,6 +352,51 @@ static void MX_TIM1_Init(void)
   /* USER CODE BEGIN TIM1_Init 2 */
 
   /* USER CODE END TIM1_Init 2 */
+
+}
+
+/**
+  * @brief TIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 0;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 1000;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
 
 }
 

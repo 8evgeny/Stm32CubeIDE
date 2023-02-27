@@ -35,8 +35,8 @@ extern uint8_t send;
 extern uint8_t dmaEnd;
 void packetSendUDP();
 extern SPI_HandleTypeDef hspi3;
-extern uint8_t toSend[MAX_PACKET_LEN];
-extern uint8_t toRecive[MAX_PACKET_LEN];
+extern uint8_t sendBuf[MAX_PACKET_LEN];
+extern uint8_t reciveBuf[MAX_PACKET_LEN];
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -66,6 +66,7 @@ extern DMA_HandleTypeDef hdma_spi3_tx;
 extern SPI_HandleTypeDef hspi3;
 extern DMA_HandleTypeDef hdma_tim1_up;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim12;
 extern DMA_HandleTypeDef hdma_usart6_tx;
 extern UART_HandleTypeDef huart6;
@@ -254,6 +255,20 @@ void TIM1_UP_TIM10_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM3 global interrupt.
+  */
+void TIM3_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM3_IRQn 0 */
+
+  /* USER CODE END TIM3_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+
+  /* USER CODE END TIM3_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM8 break interrupt and TIM12 global interrupt.
   */
 void TIM8_BRK_TIM12_IRQHandler(void)
@@ -261,9 +276,9 @@ void TIM8_BRK_TIM12_IRQHandler(void)
   /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 0 */
     HAL_TIM_Base_Start_IT(&htim1);
 //    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
-    HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN,0x1000);
-//    HAL_SPI_TransmitReceive_DMA(&hspi3, toRecive, toSend, MAX_PACKET_LEN);
-//    HAL_SPI_Transmit(&hspi3, toRecive, MAX_PACKET_LEN,0x1000);
+//    HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, MAX_PACKET_LEN,0x1000);
+//    HAL_SPI_TransmitReceive_DMA(&hspi3, reciveBuf, sendBuf, MAX_PACKET_LEN);
+//    HAL_SPI_Transmit(&hspi3, reciveBuf, MAX_PACKET_LEN,0x1000);
     send = 1;
 //    packetSendUDP();
   /* USER CODE END TIM8_BRK_TIM12_IRQn 0 */

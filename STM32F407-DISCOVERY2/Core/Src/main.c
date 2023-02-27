@@ -100,11 +100,31 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
-        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive,  sendBuf, MAX_PACKET_LEN);
+//        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive,  sendBuf, MAX_PACKET_LEN);
+        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
+//        HAL_SPI_Receive_IT(&hspi3, sendBuf, MAX_PACKET_LEN);
+//        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
     }
     if(htim->Instance == TIM6)
         HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
     }
+
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    if(hspi->Instance == SPI3)
+    {
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+    }
+}
+void HAL_SPI_RXCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    if(hspi->Instance == SPI3)
+    {
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+    }
+}
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
@@ -216,7 +236,7 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
 
 #endif
-        ethernetif_input(&gnetif);
+//        ethernetif_input(&gnetif);
     if (send == 1)
 //            && (dmaEnd == 1))
     {

@@ -72,8 +72,8 @@ extern struct netif gnetif;
 extern char str[30];
 uint8_t sendBuf[MAX_PACKET_LEN];
 uint8_t reciveBuf[MAX_PACKET_LEN];
-uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0xff, 0xff,
-                                       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0xff, 0x55, 0xff,
+                                       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -339,7 +339,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 14000;
+  htim1.Init.Period = 15745;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

@@ -87,22 +87,24 @@ static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
 void packetSendUDP();
 void UART_Printf(const char* fmt, ...);
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
     if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
     {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+        HAL_TIM_Base_Stop_IT(&htim1);
+
+    //    HAL_SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//        HAL_SPI_Receive_DMA(&hspi3, sendBuf, MAX_PACKET_LEN);
+        HAL_SPI_Transmit_DMA(&hspi3, testReceive, MAX_PACKET_LEN);
+//        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
     }
-    if(htim->Instance == TIM3)
-    {
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-        tim3end = 1;
-    }
-    if(htim->Instance == TIM6)
-        HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
-    }
+
+}
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
@@ -123,23 +125,12 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-//    if(htim->Instance == TIM12)
-//    {
-//        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-//        {
-//             HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
-//             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//             send = 1;
-//             packetSendUDP();
-//             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//        }
-//        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-//        {
-
-//            delayUS_ASM(100000);
-//            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
-//        }
-//    }
+        HAL_TIM_Base_Start_IT(&htim1);
+//     HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
+//     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//     send = 1;
+//     packetSendUDP();
+//     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 }
 
 /* USER CODE END PFP */
@@ -201,8 +192,6 @@ int main(void)
 //    HAL_TIM_Base_Start_IT(&htim6);
 //    HAL_TIM_Base_Start_IT(&htim12);
     HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
-    HAL_TIM_Base_Start_IT(&htim1);
-//    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
     UART_Printf("Start\r\n");
 while (1)
 {
@@ -231,23 +220,23 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 
 #endif
 //        ethernetif_input(&gnetif);
-    if (send == 1)
-//            && (dmaEnd == 1))
-    {
-//        delayUS_ASM(30);
-//
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-        packetSendUDP();
-        send = 0;
-        dmaEnd = 0;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-    }
-    if (tim3end == 1)
-    {
-        tim3end = 0;
-//        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
-HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
-    }
+//    if (send == 1)
+////            && (dmaEnd == 1))
+//    {
+////        delayUS_ASM(30);
+////
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//        packetSendUDP();
+//        send = 0;
+//        dmaEnd = 0;
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//    }
+//    if (tim3end == 1)
+//    {
+//        tim3end = 0;
+////        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
+//HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
+//    }
 
 
 //    GPIOD->ODR = 0b0100000000000000; // оно же в hex 0x4000, оно же в dec 16384, оно же сдвиг (1 << 14)
@@ -360,7 +349,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 15745;
+  htim1.Init.Period = 20000;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -404,7 +393,7 @@ static void MX_TIM12_Init(void)
 
   /* USER CODE END TIM12_Init 1 */
   htim12.Instance = TIM12;
-  htim12.Init.Prescaler = 71;
+  htim12.Init.Prescaler = 0;
   htim12.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim12.Init.Period = 30000;
   htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

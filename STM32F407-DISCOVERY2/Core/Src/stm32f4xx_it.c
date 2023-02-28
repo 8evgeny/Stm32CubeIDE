@@ -253,16 +253,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
-    HAL_TIM_Base_Stop_IT(&htim1);
-//    HAL_TIM_Base_Start_IT(&htim3);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-    HAL_SPI_Receive_DMA(&hspi3, sendBuf, MAX_PACKET_LEN);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//    HAL_SPI_Transmit(&hspi3, sendBuf, MAX_PACKET_LEN, 0x1000);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
@@ -272,8 +263,6 @@ void TIM1_UP_TIM10_IRQHandler(void)
 void TIM8_BRK_TIM12_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_BRK_TIM12_IRQn 0 */
-
-    HAL_TIM_Base_Start_IT(&htim1);
 
 //    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_10);
 

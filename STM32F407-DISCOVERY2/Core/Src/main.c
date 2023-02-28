@@ -67,6 +67,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
 uint8_t send = 0;
+uint8_t tim3end = 0;
 uint8_t dmaEnd = 0;
 extern struct netif gnetif;
 extern char str[30];
@@ -99,14 +100,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-//        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
-//        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive,  sendBuf, MAX_PACKET_LEN);
-
-        HAL_SPI_Receive_DMA(&hspi3, sendBuf, MAX_PACKET_LEN);
-//        delayUS_ASM(20);
-//        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
-
-//        HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
+        tim3end = 1;
     }
     if(htim->Instance == TIM6)
         HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
@@ -122,11 +116,11 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 }
 void HAL_SPI_RXCpltCallback(SPI_HandleTypeDef *hspi)
 {
-//    if(hspi->Instance == SPI3)
-//    {
+    if(hspi->Instance == SPI3)
+    {
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//    }
+    }
 }
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
@@ -244,13 +238,20 @@ F0 подаем на вход таймера TIM12 (PB14) и по передне
 //            && (dmaEnd == 1))
     {
 //        delayUS_ASM(30);
-//        HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, MAX_PACKET_LEN, 0x1000);
+//
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         packetSendUDP();
         send = 0;
         dmaEnd = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
     }
+    if (tim3end == 1)
+    {
+        tim3end = 0;
+//        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
+HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
+    }
+
 
 //    GPIOD->ODR = 0b0100000000000000; // оно же в hex 0x4000, оно же в dec 16384, оно же сдвиг (1 << 14)
 //    HAL_Delay(200);
@@ -324,7 +325,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.Mode = SPI_MODE_SLAVE;
   hspi3.Init.Direction = SPI_DIRECTION_2LINES;
   hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi3.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;

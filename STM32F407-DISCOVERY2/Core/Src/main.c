@@ -122,11 +122,11 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 }
 void HAL_SPI_RXCpltCallback(SPI_HandleTypeDef *hspi)
 {
-    if(hspi->Instance == SPI3)
-    {
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-    }
+//    if(hspi->Instance == SPI3)
+//    {
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//    }
 }
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
@@ -323,7 +323,7 @@ static void MX_SPI3_Init(void)
   hspi3.Instance = SPI3;
   hspi3.Init.Mode = SPI_MODE_SLAVE;
   hspi3.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi3.Init.DataSize = SPI_DATASIZE_16BIT;
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;

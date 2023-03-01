@@ -57,7 +57,6 @@ DMA_HandleTypeDef hdma_spi3_rx;
 DMA_HandleTypeDef hdma_spi3_tx;
 
 TIM_HandleTypeDef htim1;
-TIM_HandleTypeDef htim12;
 DMA_HandleTypeDef hdma_tim1_up;
 
 UART_HandleTypeDef huart6;
@@ -81,7 +80,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART6_UART_Init(void);
-static void MX_TIM12_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
@@ -172,7 +170,6 @@ int main(void)
   MX_DMA_Init();
   MX_USART6_UART_Init();
   MX_LWIP_Init();
-  MX_TIM12_Init();
   MX_SPI3_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
@@ -343,6 +340,7 @@ static void MX_TIM1_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_IC_InitTypeDef sConfigIC = {0};
 
   /* USER CODE BEGIN TIM1_Init 1 */
 
@@ -363,7 +361,7 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_OnePulse_Init(&htim1, TIM_OPMODE_SINGLE) != HAL_OK)
+  if (HAL_TIM_IC_Init(&htim1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -373,60 +371,17 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM1_Init 2 */
-
-  /* USER CODE END TIM1_Init 2 */
-
-}
-
-/**
-  * @brief TIM12 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM12_Init(void)
-{
-
-  /* USER CODE BEGIN TIM12_Init 0 */
-
-  /* USER CODE END TIM12_Init 0 */
-
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_IC_InitTypeDef sConfigIC = {0};
-
-  /* USER CODE BEGIN TIM12_Init 1 */
-
-  /* USER CODE END TIM12_Init 1 */
-  htim12.Instance = TIM12;
-  htim12.Init.Prescaler = 0;
-  htim12.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim12.Init.Period = 30000;
-  htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim12.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim12) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim12, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_IC_Init(&htim12) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
   sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
   sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
   sConfigIC.ICFilter = 0;
-  if (HAL_TIM_IC_ConfigChannel(&htim12, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
+  if (HAL_TIM_IC_ConfigChannel(&htim1, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM12_Init 2 */
+  /* USER CODE BEGIN TIM1_Init 2 */
 
-  /* USER CODE END TIM12_Init 2 */
+  /* USER CODE END TIM1_Init 2 */
 
 }
 

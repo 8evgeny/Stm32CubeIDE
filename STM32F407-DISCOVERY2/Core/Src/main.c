@@ -57,7 +57,6 @@ DMA_HandleTypeDef hdma_spi3_rx;
 DMA_HandleTypeDef hdma_spi3_tx;
 
 TIM_HandleTypeDef htim1;
-DMA_HandleTypeDef hdma_tim1_up;
 
 UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
@@ -124,12 +123,13 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-        HAL_TIM_Base_Start_IT(&htim1);
+//        HAL_TIM_Base_Start_IT(&htim1);
 //     HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
-//     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 //     send = 1;
 //     packetSendUDP();
-//     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+
 }
 
 /* USER CODE END PFP */
@@ -187,9 +187,8 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-//    HAL_TIM_Base_Start_IT(&htim6);
-//    HAL_TIM_Base_Start_IT(&htim12);
-    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
+    HAL_TIM_Base_Start_IT(&htim1);
+    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
     UART_Printf("Start\r\n");
 while (1)
 {
@@ -211,6 +210,7 @@ while (1)
             MISO - PC11
 
 F0 подаем на вход таймера TIM12 (PB14) и по переднему входу захват и переход в обработчик
+F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
 
 Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
 Контроллер воспринимает как 64 байта (в два раза чаще)
@@ -371,7 +371,7 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
   sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
   sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
   sConfigIC.ICFilter = 0;
@@ -435,9 +435,6 @@ static void MX_DMA_Init(void)
   /* DMA1_Stream5_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
-  /* DMA2_Stream5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
   /* DMA2_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);

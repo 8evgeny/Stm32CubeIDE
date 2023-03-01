@@ -36,7 +36,7 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-#define MAX_PACKET_LEN 24
+#define MAX_PACKET_LEN 12
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

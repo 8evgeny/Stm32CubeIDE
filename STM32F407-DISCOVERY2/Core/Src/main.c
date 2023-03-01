@@ -89,16 +89,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
     if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
     {
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-        HAL_TIM_Base_Stop_IT(&htim1);
-
-        HAL_SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
-
-//        HAL__SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN, 0x1000);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-        HAL_SPI_Transmit_DMA(&hspi3, sendBuf + 12, MAX_PACKET_LEN/2);
+//        HAL_TIM_Base_Stop_IT(&htim1);
+
+//        HAL_SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
+
+//        HAL__SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN, 0x1000);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//        HAL_SPI_Transmit_DMA(&hspi3, sendBuf + 12, MAX_PACKET_LEN/2);
 //        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
     }
 
@@ -125,8 +125,8 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
 //        HAL_TIM_Base_Start_IT(&htim1);
 //     HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //     send = 1;
 //     packetSendUDP();
 
@@ -339,6 +339,7 @@ static void MX_TIM1_Init(void)
   /* USER CODE END TIM1_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_IC_InitTypeDef sConfigIC = {0};
 
@@ -365,7 +366,15 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
+  sSlaveConfig.InputTrigger = TIM_TS_TI1FP1;
+  sSlaveConfig.TriggerPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
+  sSlaveConfig.TriggerFilter = 0;
+  if (HAL_TIM_SlaveConfigSynchro(&htim1, &sSlaveConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
   {

@@ -63,6 +63,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
+uint8_t capture = 0;
 uint8_t send = 0;
 uint8_t tim3end = 0;
 uint8_t dmaEnd = 0;
@@ -70,8 +71,8 @@ extern struct netif gnetif;
 extern char str[30];
 uint8_t sendBuf[MAX_PACKET_LEN];
 uint8_t reciveBuf[MAX_PACKET_LEN];
-uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0xff, 0x55, 0xff, 0x55, 0xff,
-                                       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55,
+                                       0xff, 0x55, 0xff, 0xff, 0xff, 0xff, 0xff };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -98,7 +99,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //        HAL__SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN, 0x1000);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-        HAL_SPI_Transmit(&hspi3, testReceive, MAX_PACKET_LEN, 0x1000);
+//        if (capture == 1)
+//        {
+//            capture = 0;
+            HAL_SPI_TransmitReceive(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN, 0x1000);
+//        }
 //        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
     }
 
@@ -123,6 +128,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
+    capture = 1;
 //        HAL_TIM_Base_Start_IT(&htim1);
 //     HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);

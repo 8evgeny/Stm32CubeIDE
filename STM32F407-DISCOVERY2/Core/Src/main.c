@@ -94,15 +94,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //        HAL_TIM_Base_Stop_IT(&htim1);
 
-//        HAL_SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
-
+        HAL_SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
+        HAL_SPI_Transmit(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
 //        HAL__SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN, 0x1000);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 //        if (capture == 1)
 //        {
 //            capture = 0;
-            HAL_SPI_TransmitReceive(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN, 0x1000);
+//            HAL_SPI_TransmitReceive(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN, 0x1000);
 //        }
 //        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
     }

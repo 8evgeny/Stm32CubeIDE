@@ -90,19 +90,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
     if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
     {
-//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //        HAL_TIM_Base_Stop_IT(&htim1);
 
-        HAL_SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
-        HAL_SPI_Transmit(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
+//        HAL_SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
+//        HAL_SPI_Transmit(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
 //        HAL__SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN, 0x1000);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 //        if (capture == 1)
 //        {
 //            capture = 0;
-//            HAL_SPI_TransmitReceive(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN, 0x1000);
+            HAL_SPI_TransmitReceive(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN, 0x1000);
+            memcpy(reciveBuf, sendBuf, MAX_PACKET_LEN);
 //        }
 //        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
     }
@@ -128,7 +129,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-    capture = 1;
+//    capture = 1;
 //        HAL_TIM_Base_Start_IT(&htim1);
 //     HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);

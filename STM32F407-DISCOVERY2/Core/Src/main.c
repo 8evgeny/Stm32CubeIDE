@@ -102,8 +102,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         if (capture == 2)
         {
-            HAL_SPI_TransmitReceive(&hspi3, reciveBuf + 1, sendBuf, MAX_PACKET_LEN, 0x1000);
-            memcpy(reciveBuf, sendBuf, MAX_PACKET_LEN);
+            HAL_SPI_TransmitReceive(&hspi3, reciveBuf , sendBuf, MAX_PACKET_LEN, 0x1000);
+//            HAL_SPI_TransmitReceive(&hspi3, testReceive , sendBuf, MAX_PACKET_LEN, 0x1000);
+            memcpy(reciveBuf, sendBuf + 1, MAX_PACKET_LEN);
         }
     }
 

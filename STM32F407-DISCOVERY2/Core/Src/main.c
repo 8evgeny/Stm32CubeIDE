@@ -91,8 +91,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
     {
         ++capture;
-//        if(htim->ChannelState == HAL_TIM_CHANNEL_STATE_BUSY)
-//        {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //        HAL_TIM_Base_Stop_IT(&htim1);
@@ -104,16 +102,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         if (capture == 2)
         {
-//            capture = 0;
-//        if (capture == 1)
-//        {
             HAL_SPI_TransmitReceive(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN, 0x1000);
             memcpy(reciveBuf, sendBuf, MAX_PACKET_LEN);
-//            capture = 0;
         }
-//        }
-//        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
-//        }
     }
 
 }
@@ -138,8 +129,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
     capture = 0;
-//        HAL_TIM_Base_Start_IT(&htim1);
-//     HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
+
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 //     send = 1;

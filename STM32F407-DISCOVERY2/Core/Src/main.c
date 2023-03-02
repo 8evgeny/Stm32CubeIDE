@@ -69,8 +69,8 @@ uint8_t tim3end = 0;
 uint8_t dmaEnd = 0;
 extern struct netif gnetif;
 extern char str[30];
-uint8_t sendBuf[MAX_PACKET_LEN];
-uint8_t reciveBuf[MAX_PACKET_LEN + 1];
+uint8_t rxBuf[MAX_PACKET_LEN + 1];
+uint8_t txBuf[MAX_PACKET_LEN + 1];
 uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55,
                                        0xff, 0x55, 0xff, 0xff, 0xff, 0xff, 0xff };
 /* USER CODE END PV */
@@ -93,18 +93,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         ++capture;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-//        HAL_TIM_Base_Stop_IT(&htim1);
 
-//        HAL_SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
-//        HAL_SPI_Transmit(&hspi3, sendBuf, MAX_PACKET_LEN,0x1000);
-//        HAL__SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN, 0x1000);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         if (capture == 2)
         {
-            HAL_SPI_TransmitReceive(&hspi3, reciveBuf , sendBuf, MAX_PACKET_LEN, 0x1000);
-//            HAL_SPI_TransmitReceive(&hspi3, testReceive , sendBuf, MAX_PACKET_LEN, 0x1000);
-            memcpy(reciveBuf, sendBuf + 1, MAX_PACKET_LEN);
+            HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
+            memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
+            packetSendUDP();
         }
     }
 
@@ -238,7 +234,6 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 //    if (tim3end == 1)
 //    {
 //        tim3end = 0;
-////        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
 //HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
 //    }
 
@@ -315,7 +310,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.Mode = SPI_MODE_SLAVE;
   hspi3.Init.Direction = SPI_DIRECTION_2LINES;
   hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi3.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
@@ -355,7 +350,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 20729;
+  htim1.Init.Period = 20730;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

@@ -35,8 +35,7 @@ extern uint8_t send;
 extern uint8_t dmaEnd;
 void packetSendUDP();
 extern SPI_HandleTypeDef hspi3;
-extern uint8_t sendBuf[MAX_PACKET_LEN];
-extern uint8_t reciveBuf[MAX_PACKET_LEN];
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -219,10 +218,7 @@ void DMA1_Stream0_IRQHandler(void)
   /* USER CODE END DMA1_Stream0_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi3_rx);
   /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */
-//  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//  HAL_SPI_DMAStop(&hspi3);
-//  HAL_SPI_Transmit_DMA(&hspi3, sendBuf,  MAX_PACKET_LEN);
+
   /* USER CODE END DMA1_Stream0_IRQn 1 */
 }
 

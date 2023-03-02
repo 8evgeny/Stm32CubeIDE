@@ -90,6 +90,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
     if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
     {
+        ++capture;
+//        if(htim->ChannelState == HAL_TIM_CHANNEL_STATE_BUSY)
+//        {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //        HAL_TIM_Base_Stop_IT(&htim1);
@@ -99,13 +102,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //        HAL__SPI_Receive(&hspi3, sendBuf, MAX_PACKET_LEN, 0x1000);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+        if (capture == 2)
+        {
+//            capture = 0;
 //        if (capture == 1)
 //        {
-//            capture = 0;
             HAL_SPI_TransmitReceive(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN, 0x1000);
             memcpy(reciveBuf, sendBuf, MAX_PACKET_LEN);
+//            capture = 0;
+        }
 //        }
 //        HAL_SPI_TransmitReceive_DMA(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN);
+//        }
     }
 
 }
@@ -129,11 +137,11 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
     uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-//    capture = 1;
+    capture = 0;
 //        HAL_TIM_Base_Start_IT(&htim1);
 //     HAL_SPI_TransmitReceive(&hspi3, reciveBuf, sendBuf, 10, 0x1000);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 //     send = 1;
 //     packetSendUDP();
 
@@ -356,7 +364,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 20629;
+  htim1.Init.Period = 20400;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

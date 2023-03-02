@@ -70,7 +70,7 @@ uint8_t dmaEnd = 0;
 extern struct netif gnetif;
 extern char str[30];
 uint8_t sendBuf[MAX_PACKET_LEN];
-uint8_t reciveBuf[MAX_PACKET_LEN];
+uint8_t reciveBuf[MAX_PACKET_LEN + 1];
 uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55,
                                        0xff, 0x55, 0xff, 0xff, 0xff, 0xff, 0xff };
 /* USER CODE END PV */
@@ -102,7 +102,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         if (capture == 2)
         {
-            HAL_SPI_TransmitReceive(&hspi3, testReceive, sendBuf, MAX_PACKET_LEN, 0x1000);
+            HAL_SPI_TransmitReceive(&hspi3, reciveBuf + 1, sendBuf, MAX_PACKET_LEN, 0x1000);
             memcpy(reciveBuf, sendBuf, MAX_PACKET_LEN);
         }
     }

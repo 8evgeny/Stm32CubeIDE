@@ -169,7 +169,7 @@ int main(void)
 
 //    HAL_TIM_Base_Start_IT(&htim6);
 //    HAL_TIM_Base_Start_IT(&htim12);
-    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
+//    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
 //    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
     UART_Printf("Start\r\n");
 while (1)

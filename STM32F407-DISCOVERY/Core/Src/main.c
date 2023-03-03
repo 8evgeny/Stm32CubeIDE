@@ -63,11 +63,16 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
+uint8_t capture = 0;
 uint8_t send = 0;
+uint8_t tim3end = 0;
+uint8_t dmaEnd = 0;
 extern struct netif gnetif;
 extern char str[30];
-uint8_t toSend[MAX_PACKET_LEN];
-uint8_t toRecive[MAX_PACKET_LEN];
+uint8_t rxBuf[MAX_PACKET_LEN + 1];
+uint8_t txBuf[MAX_PACKET_LEN + 1];
+uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55,
+                                       0xff, 0x55, 0xff, 0xff, 0xff, 0xff, 0xff };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -80,36 +85,53 @@ static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
 void packetSendUDP();
 void UART_Printf(const char* fmt, ...);
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-    // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
-        if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+// Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
+    if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
+    {
+        ++capture;
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+        if (capture == 2)
         {
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+            HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
+            memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
+            packetSendUDP();
         }
-        if(htim->Instance == TIM6)
-            HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
-        }
-        uint8_t buf[16];
+    }
+
+}
+
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    if(hspi->Instance == SPI3)
+    {
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+    }
+}
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+//    if(hspi->Instance == SPI3)
+//    {
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//    }
+}
+    uint8_t buf[16];
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-//    if(htim->Instance == TIM12)
-//    {
-//        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-//        {
-//             HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, 10, 0x1000);
-//             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//             send = 1;
-//             packetSendUDP();
-//             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//        }
-//        if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-//        {
+    capture = 0;
 
-//            delayUS_ASM(100000);
-//            HAL_SPI_Transmit_DMA(&hspi1, buf, 15);
-//        }
-//    }
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//     send = 1;
+//     packetSendUDP();
+
 }
 
 /* USER CODE END PFP */
@@ -167,15 +189,13 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-//    HAL_TIM_Base_Start_IT(&htim6);
-//    HAL_TIM_Base_Start_IT(&htim12);
-//    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_1);
-//    HAL_TIM_IC_Start_IT(&htim12, TIM_CHANNEL_2);
+    HAL_TIM_Base_Start_IT(&htim1);
+    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
     UART_Printf("Start\r\n");
 while (1)
 {
 #if(0)
-    f4DISCOVERY
+    f4DISCOVERY2
     Весь код в функции void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     SPI1 - (режим Full duplex Slave) получаем данные
             SYN - PA5  (синхро с телефона)
@@ -192,22 +212,37 @@ while (1)
             MISO - PC11
 
 F0 подаем на вход таймера TIM12 (PB14) и по переднему входу захват и переход в обработчик
+F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
 
 Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
 Контроллер воспринимает как 64 байта (в два раза чаще)
 Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
 
 #endif
-        ethernetif_input(&gnetif);
-    if (send == 1)
-    {
-//        delayUS_ASM(30);
-//        HAL_SPI_TransmitReceive(&hspi3, toRecive, toSend, MAX_PACKET_LEN, 0x1000);
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-        packetSendUDP();
-        send = 0;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-    }
+//        ethernetif_input(&gnetif);
+//    if (send == 1)
+////            && (dmaEnd == 1))
+//    {
+////        delayUS_ASM(30);
+////
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//        packetSendUDP();
+//        send = 0;
+//        dmaEnd = 0;
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//    }
+//    if (tim3end == 1)
+//    {
+//        tim3end = 0;
+//HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
+//    }
+
+
+//    GPIOD->ODR = 0b0100000000000000; // оно же в hex 0x4000, оно же в dec 16384, оно же сдвиг (1 << 14)
+//    HAL_Delay(200);
+//    GPIOD->ODR = 0b0010000000000000; //  оно же сдвиг (1 << 13)
+//    HAL_Delay(200);
+
 }//while (1)
   /* USER CODE END 3 */
 }
@@ -315,7 +350,7 @@ static void MX_TIM1_Init(void)
   htim1.Instance = TIM1;
   htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 18000;
+  htim1.Init.Period = 20730;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -334,7 +369,7 @@ static void MX_TIM1_Init(void)
   }
   sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
   sSlaveConfig.InputTrigger = TIM_TS_TI1FP1;
-  sSlaveConfig.TriggerPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sSlaveConfig.TriggerPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
   sSlaveConfig.TriggerFilter = 0;
   if (HAL_TIM_SlaveConfigSynchro(&htim1, &sSlaveConfig) != HAL_OK)
   {
@@ -346,7 +381,7 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
   sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
   sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
   sConfigIC.ICFilter = 0;

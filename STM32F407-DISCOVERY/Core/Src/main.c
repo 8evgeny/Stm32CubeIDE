@@ -129,6 +129,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+
 //     send = 1;
 //     packetSendUDP();
 
@@ -192,6 +193,7 @@ int main(void)
     HAL_TIM_Base_Start_IT(&htim1);
     HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
     UART_Printf("Start\r\n");
+
 while (1)
 {
 #if(0)
@@ -219,7 +221,9 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
 
 #endif
-       ethernetif_input(&gnetif);
+
+    ethernetif_input(&gnetif);
+
 //    if (send == 1)
 ////            && (dmaEnd == 1))
 //    {
@@ -501,10 +505,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD9 PD10 PD11 Green_Led_Pin
-                           Orange_Led_Pin Red_Led_Pin Blue_Led_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|Green_Led_Pin
-                          |Orange_Led_Pin|Red_Led_Pin|Blue_Led_Pin;
+  /*Configure GPIO pin : PD9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PD10 PD11 Green_Led_Pin Orange_Led_Pin
+                           Red_Led_Pin Blue_Led_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|Green_Led_Pin|Orange_Led_Pin
+                          |Red_Led_Pin|Blue_Led_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;

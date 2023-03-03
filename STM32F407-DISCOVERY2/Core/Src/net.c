@@ -18,7 +18,7 @@ void udp_client_connect(void)
   upcb = udp_new();
   if (upcb!=NULL)
   {
-    IP4_ADDR(&DestIPaddr, 192, 168, 1, 100);
+    IP4_ADDR(&DestIPaddr, 192, 168, 1, 101);
     upcb->local_port = 1555;
     err= udp_connect(upcb, &DestIPaddr, 1555);
   	if (err == ERR_OK)

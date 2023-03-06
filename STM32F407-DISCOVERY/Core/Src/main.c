@@ -100,7 +100,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         {
             HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
             memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
-            packetSendUDP();
+//            packetSendUDP();
         }
     }
 
@@ -223,7 +223,8 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 #endif
 
     ethernetif_input(&gnetif);
-
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 //    if (send == 1)
 ////            && (dmaEnd == 1))
 //    {

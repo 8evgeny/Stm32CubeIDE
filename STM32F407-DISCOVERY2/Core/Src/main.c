@@ -69,8 +69,8 @@ uint8_t tim3end = 0;
 uint8_t dmaEnd = 0;
 extern struct netif gnetif;
 extern char str[30];
-uint8_t rxBuf[MAX_PACKET_LEN + 1];
-uint8_t txBuf[MAX_PACKET_LEN + 1];
+uint8_t rxBuf[MAX_PACKET_LEN ];
+uint8_t txBuf[MAX_PACKET_LEN ];
 uint8_t testReceive[MAX_PACKET_LEN] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55,
                                        0xff, 0x55, 0xff, 0xff, 0xff, 0xff, 0xff };
 /* USER CODE END PV */

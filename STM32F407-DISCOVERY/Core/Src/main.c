@@ -223,8 +223,8 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 #endif
 
     ethernetif_input(&gnetif);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 //    if (send == 1)
 ////            && (dmaEnd == 1))
 //    {

@@ -63,8 +63,12 @@
 #define MEMP_NUM_LOCALHOSTLIST 5
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
 #define LWIP_ETHERNET 1
+/*----- Default Value for LWIP_RAW: 0 ---*/
+#define LWIP_RAW 1
 /*----- Value in opt.h for LWIP_DNS_SECURE: (LWIP_DNS_SECURE_RAND_XID | LWIP_DNS_SECURE_NO_MULTIPLE_OUTSTANDING | LWIP_DNS_SECURE_RAND_SRC_PORT) -*/
 #define LWIP_DNS_SECURE 7
+/*----- Default Value for LWIP_UDPLITE: 0 ---*/
+#define LWIP_UDPLITE 1
 /*----- Default Value for TCP_WND: 1840 ---*/
 #define TCP_WND 2048
 /*----- Default Value for TCP_MSS: 536 ---*/

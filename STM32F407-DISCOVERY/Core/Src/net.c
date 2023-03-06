@@ -1,6 +1,7 @@
 #include "net.h"
 //-----------------------------------------------
-struct udp_pcb *upcb;
+struct udp_pcb *upcbSend;
+struct udp_pcb *upcbReceive;
 extern SPI_HandleTypeDef hspi1;
 extern uint8_t txBuf[MAX_PACKET_LEN +1];
 uint8_t testSend[MAX_PACKET_LEN] = {0x55, 0x55, 0xff, 0xff, 0xff,
@@ -15,15 +16,18 @@ void udp_client_connect(void)
 {
   ip_addr_t DestIPaddr;
   err_t err;
-  upcb = udp_new();
-  if (upcb!=NULL)
+  upcbReceive = udp_new();
+  upcbSend = udp_new();
+  if (upcbReceive!=NULL)
   {
     IP4_ADDR(&DestIPaddr, 192, 168, 1, 100);
-    upcb->local_port = 1555;
-    err= udp_connect(upcb, &DestIPaddr, 1555);
+    upcbReceive->local_port = 1555;
+    upcbSend->local_port = 1555;
+    udp_connect(upcbSend, &DestIPaddr, 1555);
+    err= udp_connect(upcbReceive, &DestIPaddr, 1555);
     if (err == ERR_OK)
     {
-      udp_recv(upcb, udp_receive_callback, NULL);
+      udp_recv(upcbReceive, udp_receive_callback, NULL);
     }
   }
 }
@@ -31,17 +35,15 @@ void udp_client_connect(void)
 void udp_client_send()
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
     struct pbuf *p;
     p = pbuf_alloc(PBUF_TRANSPORT, MAX_PACKET_LEN, PBUF_POOL);
     if (p != NULL)
     {
         pbuf_take(p, (void *) txBuf, MAX_PACKET_LEN);
-        udp_send(upcb, p);
+        udp_send(upcbSend, p);
         pbuf_free(p);
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 }
 //-----------------------------------------------
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)

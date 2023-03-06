@@ -2,6 +2,7 @@
 //-----------------------------------------------
 struct udp_pcb *upcbSend;
 struct udp_pcb *upcbReceive;
+extern uint8_t sendOk;
 extern SPI_HandleTypeDef hspi1;
 extern uint8_t txBuf[MAX_PACKET_LEN +1];
 uint8_t testSend[MAX_PACKET_LEN] = {0x55, 0x55, 0xff, 0xff, 0xff,
@@ -27,7 +28,8 @@ void udp_client_connect(void)
     err= udp_connect(upcbReceive, &DestIPaddr, 1555);
     if (err == ERR_OK)
     {
-      udp_recv(upcbReceive, udp_receive_callback, NULL);
+//      if (sendOk == 1)
+          udp_recv(upcbReceive, udp_receive_callback, NULL);
     }
   }
 }
@@ -62,5 +64,6 @@ void packetSendUDP()
 {
     HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);
     udp_client_send();
+    sendOk = 1;
 }
 //--------------------------------------------------

@@ -64,7 +64,8 @@ DMA_HandleTypeDef hdma_usart6_tx;
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
 uint8_t capture = 0;
-uint8_t send = 0;
+volatile uint8_t sendOk = 0;
+volatile uint8_t receive = 0;
 uint8_t tim3end = 0;
 uint8_t dmaEnd = 0;
 extern struct netif gnetif;
@@ -98,9 +99,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         if (capture == 2)
         {
+            sendOk = 0;
             HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
             memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
 //            packetSendUDP();
+        }
+        if (capture == 1)
+        {
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+            receive = 1;
+
         }
     }
 
@@ -126,6 +135,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
     capture = 0;
+    receive = 0;
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
@@ -222,7 +232,8 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 
 #endif
 
-    ethernetif_input(&gnetif);
+        if (receive == 1)
+                ethernetif_input(&gnetif);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 //    if (send == 1)

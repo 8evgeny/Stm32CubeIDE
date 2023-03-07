@@ -64,7 +64,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 /* USER CODE BEGIN PV */
 uint32_t countF0 = 0;
 uint8_t capture = 0;
-volatile uint8_t sendOk = 0;
+volatile uint8_t send = 0;
 volatile uint8_t receive = 0;
 uint8_t tim3end = 0;
 uint8_t dmaEnd = 0;
@@ -99,16 +99,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         if (capture == 2)
         {
-            sendOk = 0;
             HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
             memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 //            packetSendUDP();
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         }
         if (capture == 1)
         {
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
             receive = 1;
+            send = 0;
 
         }
     }
@@ -232,27 +234,11 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 
 #endif
 
-        if (receive == 1)
-                ethernetif_input(&gnetif);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
-//    if (send == 1)
-////            && (dmaEnd == 1))
-//    {
-////        delayUS_ASM(30);
-////
-//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//        packetSendUDP();
-//        send = 0;
-//        dmaEnd = 0;
-//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//    }
-//    if (tim3end == 1)
-//    {
-//        tim3end = 0;
-//HAL_SPI_Transmit_DMA(&hspi3, testReceive,  MAX_PACKET_LEN);
-//    }
+    if (receive == 1)
+            ethernetif_input(&gnetif);
 
+//    if (send == 1)
+//        packetSendUDP();
 
 //    GPIOD->ODR = 0b0100000000000000; // оно же в hex 0x4000, оно же в dec 16384, оно же сдвиг (1 << 14)
 //    HAL_Delay(200);

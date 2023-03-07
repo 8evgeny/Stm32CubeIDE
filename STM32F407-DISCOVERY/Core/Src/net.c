@@ -2,7 +2,7 @@
 //-----------------------------------------------
 struct udp_pcb *upcbSend;
 struct udp_pcb *upcbReceive;
-extern uint8_t sendOk;
+extern uint8_t send;
 extern SPI_HandleTypeDef hspi1;
 extern uint8_t txBuf[MAX_PACKET_LEN +1];
 uint8_t testSend[MAX_PACKET_LEN] = {0x55, 0x55, 0xff, 0xff, 0xff,
@@ -12,6 +12,7 @@ extern uint8_t rxBuf[MAX_PACKET_LEN + 1];
 extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16_t port);
+void packetSendUDP();
 //-----------------------------------------------
 void udp_client_connect(void)
 {
@@ -51,19 +52,21 @@ void udp_client_send()
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)
 {
      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+     HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
 //    HAL_SPI_Transmit(&hspi1, (uint8_t*)p->payload, p->len, 0x1000);
     strncpy(txBuf,p->payload,p->len);
 //    reciveBuf[p->len]=0;
     pbuf_free(p);
 //    HAL_GPIO_TogglePin(GPIOD, Green_Led_Pin);
-    HAL_GPIO_TogglePin(GPIOD, Orange_Led_Pin);
+    HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+    send = 1;
 }
 //-----------------------------------------------
 void packetSendUDP()
 {
     HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);
     udp_client_send();
-    sendOk = 1;
+    send = 0;
 }
 //--------------------------------------------------

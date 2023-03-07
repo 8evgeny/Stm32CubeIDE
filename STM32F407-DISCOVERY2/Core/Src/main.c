@@ -102,7 +102,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             sendOk = 0;
             HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
             memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
-            packetSendUDP();
+//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//            packetSendUDP();
+//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
         }
         if (capture == 1)
         {

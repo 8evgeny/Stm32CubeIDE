@@ -42,36 +42,36 @@ include_directories(
     Drivers/STM32F4xx_HAL_Driver/Inc
     Drivers/CMSIS/Core/Include
     Drivers/CMSIS/Include
-    USB_HOST/App
-    USB_HOST/Target
+#    USB_HOST/App
+#    USB_HOST/Target
     Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS
     Middlewares/Third_Party/FreeRTOS/Source/include
     Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
-    Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc
-    Middlewares/ST/STM32_USB_Host_Library/Core/Inc
-    LWIP/App
-    LWIP/Target
-    Middlewares/Third_Party/LwIP/src/include
-    Middlewares/Third_Party/LwIP/system
+#    Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc
+#    Middlewares/ST/STM32_USB_Host_Library/Core/Inc
+#    LWIP/App
+#    LWIP/Target
+#    Middlewares/Third_Party/LwIP/src/include
+#    Middlewares/Third_Party/LwIP/system
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
     Core/Startup/startup_stm32f407vgtx.s
     Drivers/STM32F4xx_HAL_Driver/Src/*.c
-    USB_HOST/App/usb_host.c
-    USB_HOST/Target/*.c
-    Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/*.c
-    Middlewares/ST/STM32_USB_Host_Library/Core/Src/*.c
+#    USB_HOST/App/usb_host.c
+#    USB_HOST/Target/*.c
+#    Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/*.c
+#    Middlewares/ST/STM32_USB_Host_Library/Core/Src/*.c
     Middlewares/Third_Party/FreeRTOS/Source/Src/*.c
     Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c
     Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
-    LWIP/App/lwip.c
-    LWIP/Target/ethernetif.c
-    Middlewares/Third_Party/LwIP/src/api/*.c
-    Middlewares/Third_Party/LwIP/src/core/*.c
-    Middlewares/Third_Party/LwIP/src/core/ipv4/*.c
-    Middlewares/Third_Party/LwIP/src/netif/*.c
-    Middlewares/Third_Party/LwIP/src/netif/ppp/*.c
+#    LWIP/App/lwip.c
+#    LWIP/Target/ethernetif.c
+#    Middlewares/Third_Party/LwIP/src/api/*.c
+#    Middlewares/Third_Party/LwIP/src/core/*.c
+#    Middlewares/Third_Party/LwIP/src/core/ipv4/*.c
+#    Middlewares/Third_Party/LwIP/src/netif/*.c
+#    Middlewares/Third_Party/LwIP/src/netif/ppp/*.c
     )
 
 

@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "lwip.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -40,6 +39,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ETH_HandleTypeDef heth;
+
 SPI_HandleTypeDef hspi3;
 DMA_HandleTypeDef hdma_spi3_rx;
 DMA_HandleTypeDef hdma_spi3_tx;
@@ -60,6 +61,7 @@ static void MX_DMA_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_ETH_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -99,9 +101,9 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART6_UART_Init();
-  MX_LWIP_Init();
   MX_SPI3_Init();
   MX_TIM1_Init();
+  MX_ETH_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -158,6 +160,53 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief ETH Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ETH_Init(void)
+{
+
+  /* USER CODE BEGIN ETH_Init 0 */
+
+  /* USER CODE END ETH_Init 0 */
+
+   static uint8_t MACAddr[6];
+
+  /* USER CODE BEGIN ETH_Init 1 */
+
+  /* USER CODE END ETH_Init 1 */
+  heth.Instance = ETH;
+  heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
+  heth.Init.Speed = ETH_SPEED_100M;
+  heth.Init.DuplexMode = ETH_MODE_FULLDUPLEX;
+  heth.Init.PhyAddress = LAN8742A_PHY_ADDRESS;
+  MACAddr[0] = 0x00;
+  MACAddr[1] = 0x13;
+  MACAddr[2] = 0x37;
+  MACAddr[3] = 0x01;
+  MACAddr[4] = 0x23;
+  MACAddr[5] = 0x45;
+  heth.Init.MACAddr = &MACAddr[0];
+  heth.Init.RxMode = ETH_RXPOLLING_MODE;
+  heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
+  heth.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;
+
+  /* USER CODE BEGIN MACADDRESS */
+
+  /* USER CODE END MACADDRESS */
+
+  if (HAL_ETH_Init(&heth) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ETH_Init 2 */
+
+  /* USER CODE END ETH_Init 2 */
+
 }
 
 /**

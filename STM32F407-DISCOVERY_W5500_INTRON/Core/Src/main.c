@@ -37,6 +37,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 #define delayUS_ASM(us) do {                           \
 asm volatile ("MOV R0,%[loops]\n                       \
               1: \n                                    \
@@ -175,12 +176,13 @@ int main(void)
   HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
   UART_Printf("Start\r\n");
 
-//  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);   //Выбор W5500
-
-//  /* Chip selection call back */
-//   Chip_selection_call_back();
+    reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
 //  /* SPI Read & Write callback function */
-//  reg_wizchip_spi_cbfunc(wizchip_read, wizchip_write);
+    reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
+    reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
+
+
+
 //  /* wizchip initialize*/
 //  wizchip_initialize();
 //  /* Network initialization */
@@ -583,6 +585,65 @@ void UART_Printf(const char* fmt, ...) {
                       HAL_MAX_DELAY);
     va_end(args);
 }
+/**
+ * @brief Default function to select chip.
+ * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+ * null function is called.
+ */
+void 	wizchip_cs_select(void)            {
+     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+}
+
+/**
+ * @brief Default function to deselect chip.
+ * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+ * null function is called.
+ */
+void 	wizchip_cs_deselect(void)          {
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+}
+
+
+/**
+ * @brief Default function to read in SPI interface.
+ * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+ * null function is called.
+ */
+uint8_t wizchip_spi_readbyte(void)        {
+    uint8_t wb=0xFF;
+    HAL_SPI_Receive(&hspi1, &wb, 1,1000);
+    return	wb;
+}
+/**
+ * @brief Default function to write in SPI interface.
+ * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+ * null function is called.
+ */
+void 	wizchip_spi_writebyte(uint8_t wb) {
+        HAL_SPI_Transmit(&hspi1, &wb, 1,1000);
+}
+
+/**
+ * @brief Default function to burst read in SPI interface.
+ * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+ * null function is called.
+ */
+void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len) 	{
+
+
+}
+
+/**
+ * @brief Default function to burst write in SPI interface.
+ * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+ * null function is called.
+ */
+
+void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len) {
+
+
+}
+
 
 
 /* USER CODE END 4 */

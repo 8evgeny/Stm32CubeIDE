@@ -16,6 +16,9 @@
   *
   ******************************************************************************
   */
+
+
+
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -32,6 +35,13 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #define MAX_PACKET_LEN 11
+void 	wizchip_cs_select(void);
+void  wizchip_cs_deselect(void);
+uint8_t wizchip_spi_readbyte(void);
+void 	wizchip_spi_writebyte(uint8_t wb);
+void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len);
+void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len);
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

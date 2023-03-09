@@ -17,9 +17,6 @@
   */
 #include "socket.h"
 #include "w5500.h"
-#include "net.h"
-#include "loopback.h"
-#include "my_function.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -180,14 +177,14 @@ int main(void)
 
 //  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);   //Выбор W5500
 
-  /* Chip selection call back */
-   Chip_selection_call_back();
-  /* SPI Read & Write callback function */
-  reg_wizchip_spi_cbfunc(wizchip_read, wizchip_write);
-  /* wizchip initialize*/
-  wizchip_initialize();
-  /* Network initialization */
-  network_init();
+//  /* Chip selection call back */
+//   Chip_selection_call_back();
+//  /* SPI Read & Write callback function */
+//  reg_wizchip_spi_cbfunc(wizchip_read, wizchip_write);
+//  /* wizchip initialize*/
+//  wizchip_initialize();
+//  /* Network initialization */
+//  network_init();
 
   /* USER CODE END 2 */
 
@@ -577,29 +574,16 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void  wizchip_select(void)
-{
-     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+void UART_Printf(const char* fmt, ...) {
+    char buff[256];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buff, sizeof(buff), fmt, args);
+    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff),
+                      HAL_MAX_DELAY);
+    va_end(args);
 }
 
-void  wizchip_deselect(void)
-{
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-}
-
-void  wizchip_write(uint8_t wb)
-{
-//HAL_SPI_TransmitReceive(&hspi2, &wb, &wb, 1,1000);
-HAL_SPI_Transmit(&hspi1, &wb, 1, 1000);
-}
-
-uint8_t wizchip_read()
-{
-uint8_t wb=0xFF;
-//HAL_SPI_TransmitReceive(&hspi1, &wb, &wb, 1,1000);
-HAL_SPI_Receive(&hspi1, &wb, 1,1000);
-return	wb;
-}
 
 /* USER CODE END 4 */
 

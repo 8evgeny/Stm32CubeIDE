@@ -50,7 +50,7 @@
  * @details There are functions of configuring WIZCHIP, network, interrupt, phy, network information and timer. \n
  * 
  */
-
+#define _WIZCHIP_    W5500
 #ifndef  _WIZCHIP_CONF_H_
 #define  _WIZCHIP_CONF_H_
 

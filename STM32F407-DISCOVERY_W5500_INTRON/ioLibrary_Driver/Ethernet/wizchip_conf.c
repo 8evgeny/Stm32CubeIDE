@@ -58,19 +58,6 @@
 //M20150401 : Remove ; in the default callback function such as wizchip_cris_enter(), wizchip_cs_select() and etc.
 /////////////
 
-/**
- * @brief Default function to enable interrupt.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	  wizchip_cris_enter(void)           {}
-
-/**
- * @brief Default function to disable interrupt.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	  wizchip_cris_exit(void)          {}
 
 /**
  * @brief Default function to read in direct or indirect interface.

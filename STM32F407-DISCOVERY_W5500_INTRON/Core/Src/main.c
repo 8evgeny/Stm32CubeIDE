@@ -611,7 +611,7 @@ void 	wizchip_cs_deselect(void)          {
  */
 uint8_t wizchip_spi_readbyte(void)        {
     uint8_t wb=0xFF;
-    HAL_SPI_Receive(&hspi1, &wb, 1,1000);
+    HAL_SPI_Receive(&hspi1, &wb, 1, 1000);
     return	wb;
 }
 /**
@@ -620,7 +620,7 @@ uint8_t wizchip_spi_readbyte(void)        {
  * null function is called.
  */
 void 	wizchip_spi_writebyte(uint8_t wb) {
-        HAL_SPI_Transmit(&hspi1, &wb, 1,1000);
+        HAL_SPI_Transmit(&hspi1, &wb, 1, 1000);
 }
 
 /**
@@ -629,8 +629,7 @@ void 	wizchip_spi_writebyte(uint8_t wb) {
  * null function is called.
  */
 void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len) 	{
-
-
+    HAL_SPI_Receive(&hspi1, pBuf, len , 1000);
 }
 
 /**
@@ -638,10 +637,8 @@ void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len) 	{
  * @note This function help not to access wrong address. If you do not describe this function or register any functions,
  * null function is called.
  */
-
 void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len) {
-
-
+    HAL_SPI_Transmit(&hspi1, pBuf, len , 1000);
 }
 
 

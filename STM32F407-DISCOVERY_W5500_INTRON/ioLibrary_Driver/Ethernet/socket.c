@@ -101,6 +101,7 @@ uint8_t  sock_pack_info[_WIZCHIP_SOCK_NUM_] = {0,};
    }while(0);              \
 
 
+
 int8_t socket(uint8_t sn, uint8_t protocol, uint16_t port, uint8_t flag)
 {
 	CHECK_SOCKNUM();
@@ -252,6 +253,7 @@ int8_t listen(uint8_t sn)
    return SOCK_OK;
 }
 
+
 int8_t connect(uint8_t sn, uint8_t * addr, uint16_t port)
 {
    CHECK_SOCKNUM();
@@ -378,6 +380,7 @@ int32_t send(uint8_t sn, uint8_t * buf, uint16_t len)
    //return len;
    return (int32_t)len;
 }
+
 
 int32_t recv(uint8_t sn, uint8_t * buf, uint16_t len)
 {
@@ -586,6 +589,8 @@ int32_t sendto(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t
    return (int32_t)len;
 }
 
+
+
 int32_t recvfrom(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t *port)
 {
 //M20150601 : For W5300   
@@ -766,6 +771,7 @@ int32_t recvfrom(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16
    //return pack_len;
    return (int32_t)pack_len;
 }
+
 
 int8_t  ctlsocket(uint8_t sn, ctlsock_type cstype, void* arg)
 {

@@ -189,8 +189,8 @@ int main(void)
             MOSI - PA7
 
     W5500   SCLK - PA5
-            SCS  - PD11 - выбор
-            INT  -
+            SCS  - PD11 выбор
+            INT  - PD8 вход INT
             MOSI - PA7
             RST  -
             MISO - PA6

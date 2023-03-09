@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#define MAX_PACKET_LEN 11
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

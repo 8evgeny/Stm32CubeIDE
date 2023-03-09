@@ -31,6 +31,15 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define delayUS_ASM(us) do {                           \
+asm volatile ("MOV R0,%[loops]\n                       \
+              1: \n                                    \
+              SUB R0, #1\n                             \
+              CMP R0, #0\n                             \
+              BNE 1b \t"                               \
+              : : [loops] "r" (34*us) : "memory"       \
+              );                                       \
+} while(0)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -106,6 +115,31 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+#if(0)
+    SPI1 - обмен в режиме мастер с W5500
+            SYN -  PA5
+            MISO - PA6
+            MOSI - PA7
+
+    W5500   SCLK - PA5
+            SCS  -
+            INT  -
+            MOSI - PA7
+            RST  -
+            MISO - PA6
+
+    SPI3 - обмен в режиме слейв с INTRON
+            SYN -  PC10
+            MISO - PC11
+            MOSI - PC12
+
+F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
+
+Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
+Контроллер воспринимает как 64 байта (в два раза чаще)
+Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
+
+#endif
   while (1)
   {
     /* USER CODE END WHILE */

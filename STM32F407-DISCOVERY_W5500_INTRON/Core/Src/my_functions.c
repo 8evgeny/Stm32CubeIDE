@@ -23,13 +23,14 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "my_function.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include "socket.h"
 #include "loopback.h"
-#include "my_function.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

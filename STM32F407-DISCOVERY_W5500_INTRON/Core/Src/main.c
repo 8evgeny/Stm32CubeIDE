@@ -177,8 +177,17 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
   UART_Printf("Start\r\n");
-  //Выбор W5500
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+
+//  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);   //Выбор W5500
+
+  /* Chip selection call back */
+   Chip_selection_call_back();
+  /* SPI Read & Write callback function */
+  reg_wizchip_spi_cbfunc(wizchip_read, wizchip_write);
+  /* wizchip initialize*/
+  wizchip_initialize();
+  /* Network initialization */
+  network_init();
 
   /* USER CODE END 2 */
 
@@ -568,6 +577,30 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void  wizchip_select(void)
+{
+     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+}
+
+void  wizchip_deselect(void)
+{
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+}
+
+void  wizchip_write(uint8_t wb)
+{
+//HAL_SPI_TransmitReceive(&hspi2, &wb, &wb, 1,1000);
+HAL_SPI_Transmit(&hspi1, &wb, 1, 1000);
+}
+
+uint8_t wizchip_read()
+{
+uint8_t wb=0xFF;
+//HAL_SPI_TransmitReceive(&hspi1, &wb, &wb, 1,1000);
+HAL_SPI_Receive(&hspi1, &wb, 1,1000);
+return	wb;
+}
+
 /* USER CODE END 4 */
 
 /**

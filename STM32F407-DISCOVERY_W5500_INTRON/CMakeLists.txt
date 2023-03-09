@@ -40,11 +40,15 @@ include_directories(
     Drivers/STM32F4xx_HAL_Driver/Inc
     Drivers/CMSIS/Core/Include
     Drivers/CMSIS/Include
+    ioLibrary_Driver/Ethernet
+    ioLibrary_Driver/Ethernet/W5500
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
     Core/Startup/startup_stm32f407vgtx.s
     Drivers/STM32F4xx_HAL_Driver/Src/*.c
+    ioLibrary_Driver/Ethernet/*.c
+    ioLibrary_Driver/Ethernet/W5500/w5500.c
     )
 
 

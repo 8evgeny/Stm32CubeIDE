@@ -66,7 +66,6 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
 uint8_t capture = 0;
-void UART_Printf(const char* fmt, ...);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -78,6 +77,7 @@ static void MX_SPI3_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
+void UART_Printf(const char* fmt, ...);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
@@ -563,15 +563,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void UART_Printf(const char* fmt, ...) {
-    char buff[256];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(buff, sizeof(buff), fmt, args);
-    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff),
-                      HAL_MAX_DELAY);
-    va_end(args);
-}
 /* USER CODE END 4 */
 
 /**

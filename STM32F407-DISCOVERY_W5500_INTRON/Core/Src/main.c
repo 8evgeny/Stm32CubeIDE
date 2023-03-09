@@ -176,8 +176,9 @@ int main(void)
   HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
   UART_Printf("Start\r\n");
 
+  //Callbacks
+    reg_wizchip_cris_cbfunc(wizchip_cris_enter, wizchip_cris_exit);
     reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
-//  /* SPI Read & Write callback function */
     reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
     reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
 
@@ -585,6 +586,25 @@ void UART_Printf(const char* fmt, ...) {
                       HAL_MAX_DELAY);
     va_end(args);
 }
+
+/**
+ * @brief Default function to enable interrupt.
+ * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+ * null function is called.
+ */
+void 	  wizchip_cris_enter(void)           {
+
+}
+
+/**
+ * @brief Default function to disable interrupt.
+ * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+ * null function is called.
+ */
+void 	  wizchip_cris_exit(void)          {
+
+}
+
 /**
  * @brief Default function to select chip.
  * @note This function help not to access wrong address. If you do not describe this function or register any functions,

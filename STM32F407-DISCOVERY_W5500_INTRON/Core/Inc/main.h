@@ -41,7 +41,8 @@ uint8_t wizchip_spi_readbyte(void);
 void 	wizchip_spi_writebyte(uint8_t wb);
 void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len);
-
+void 	wizchip_cris_enter(void);
+void 	wizchip_cris_exit(void);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

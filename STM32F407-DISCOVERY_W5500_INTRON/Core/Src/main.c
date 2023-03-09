@@ -15,6 +15,11 @@
   *
   ******************************************************************************
   */
+#include "socket.h"
+#include "w5500.h"
+#include "net.h"
+#include "loopback.h"
+#include "my_function.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"

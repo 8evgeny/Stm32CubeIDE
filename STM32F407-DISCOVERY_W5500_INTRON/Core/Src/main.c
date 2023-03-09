@@ -50,6 +50,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 /* USER CODE BEGIN PM */
 uint8_t rxBuf[MAX_PACKET_LEN ];
 uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
+uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -171,6 +172,9 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
   UART_Printf("Start\r\n");
+  //Выбор W5500
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -185,7 +189,7 @@ int main(void)
             MOSI - PA7
 
     W5500   SCLK - PA5
-            SCS  -
+            SCS  - PD11 - выбор
             INT  -
             MOSI - PA7
             RST  -
@@ -208,7 +212,7 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_SPI_TransmitReceive(&hspi1, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
+    HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
     delayUS_ASM(20);
   }
   /* USER CODE END 3 */
@@ -506,6 +510,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : INT_Pin OTG_FS_OverCurrent_Pin */
+  GPIO_InitStruct.Pin = INT_Pin|OTG_FS_OverCurrent_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
   /*Configure GPIO pins : PD9 PD10 PD11 Green_Led_Pin
                            Orange_Led_Pin Red_Led_Pin Blue_Led_Pin */
   GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|Green_Led_Pin
@@ -535,12 +545,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(Audio_RST_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : OTG_FS_OverCurrent_Pin */
-  GPIO_InitStruct.Pin = OTG_FS_OverCurrent_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(OTG_FS_OverCurrent_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Audio_SCL_Pin Audio_SDA_Pin */
   GPIO_InitStruct.Pin = Audio_SCL_Pin|Audio_SDA_Pin;

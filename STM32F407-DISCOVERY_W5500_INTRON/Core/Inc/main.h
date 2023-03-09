@@ -71,6 +71,8 @@ void Error_Handler(void);
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
+#define INT_Pin GPIO_PIN_8
+#define INT_GPIO_Port GPIOD
 #define Green_Led_Pin GPIO_PIN_12
 #define Green_Led_GPIO_Port GPIOD
 #define Orange_Led_Pin GPIO_PIN_13

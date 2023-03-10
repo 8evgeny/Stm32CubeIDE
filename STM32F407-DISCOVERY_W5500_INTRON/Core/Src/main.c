@@ -18,6 +18,8 @@
 #include "socket.h"
 #include "w5500.h"
 #include "net.h"
+#include "loopback.h"
+#include "my_function.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -242,14 +244,19 @@ uint8_t sn = 0;
 socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
 uint8_t ip_adr[4] = {192,168,1,17};
 char buf[] = "12345678\r\n";
-
+#define SOCK_UDPS        1
+#define DATA_BUF_SIZE   2048
+  int32_t ret = 0;
+  extern uint8_t gDATABUF[DATA_BUF_SIZE];
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
     HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
-
+    if( (ret = loopback_udps(SOCK_UDPS, gDATABUF, 3000)) < 0) {
+        UART_Printf("SOCKET ERROR : %ld\r\n", ret);
+    }
     if(count == 24000)
     {
 //        HAL_UART_Transmit(&huart6, (uint8_t*)rxBuf, 8, HAL_MAX_DELAY);
@@ -615,15 +622,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void UART_Printf(const char* fmt, ...) {
-    char buff[256];
-    va_list args;
-    va_start(args, fmt);
-    vsnprintf(buff, sizeof(buff), fmt, args);
-    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff),
-                      HAL_MAX_DELAY);
-    va_end(args);
-}
 
 /**
  * @brief Default function to enable interrupt.

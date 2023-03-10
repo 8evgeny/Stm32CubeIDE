@@ -243,20 +243,37 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 uint8_t sn = 0;
 socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
 uint8_t ip_adr[4] = {192,168,1,17};
-char buf[] = "12345678\r\n";
+char buf[] = "1234567890\r\n";
 #define SOCK_UDPS        1
 #define DATA_BUF_SIZE   2048
   int32_t ret = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
+  char tmp[10];
+  uint16_t size, sentsize;
+  uint8_t  destip[4] = {192,168,1,17};
+  uint16_t port = 3000;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
-    if( (ret = loopback_udps(SOCK_UDPS, gDATABUF, 3000)) < 0) {
-        UART_Printf("SOCKET ERROR : %ld\r\n", ret);
-    }
+//    HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
+
+//    if( (ret = loopback_udps(SOCK_UDPS, gDATABUF, 3000)) < 0) {
+//        UART_Printf("SOCKET ERROR : %ld\r\n", ret);
+//    }
+
+
+        sendto(sn, (uint8_t *)buf, 12, destip, 3000);
+        close(sn);
+        socket(sn, Sn_MR_UDP, port, 0x00);
+
+
+
+
+
+
+
     if(count == 24000)
     {
 //        HAL_UART_Transmit(&huart6, (uint8_t*)rxBuf, 8, HAL_MAX_DELAY);

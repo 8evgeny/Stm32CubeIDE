@@ -209,7 +209,7 @@ int main(void)
             SCS  - PD11 выбор
             INT  - PD8 вход INT
             MOSI - PA7
-            RST  -
+            RST  - PC9
             MISO - PA6
 
     SPI3 - обмен в режиме слейв с INTRON

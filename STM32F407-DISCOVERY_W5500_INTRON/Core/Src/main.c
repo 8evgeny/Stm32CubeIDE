@@ -174,8 +174,8 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-//  HAL_TIM_Base_Start_IT(&htim1);
-//  HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_Base_Start_IT(&htim1);
+  HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
     net_ini();
   UART_Printf("Start\r\n");
 

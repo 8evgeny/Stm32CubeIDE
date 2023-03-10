@@ -34,7 +34,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define MAX_PACKET_LEN 11
+#define MAX_PACKET_LEN 8
 void 	wizchip_cs_select(void);
 void  wizchip_cs_deselect(void);
 uint8_t wizchip_spi_readbyte(void);

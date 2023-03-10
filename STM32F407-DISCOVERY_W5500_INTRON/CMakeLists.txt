@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
+#Будет один код для 2-х плат F407 адрес будет меняться в CMake
+
 # Set ARM compiler
 set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 #set(CMAKE_C_COMPILER ${TOOLS_PATH}/bin/arm-none-eabi-gcc)

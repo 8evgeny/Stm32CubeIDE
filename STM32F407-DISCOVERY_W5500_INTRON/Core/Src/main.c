@@ -242,16 +242,23 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 
 uint8_t sn = 0;
 socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-uint8_t ip_adr[4] = {192,168,1,17};
 char buf[] = "1234567890\r\n";
 #define SOCK_UDPS        1
 #define DATA_BUF_SIZE   2048
-  int32_t ret = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
-  char tmp[10];
-  uint16_t size, sentsize;
-  uint8_t  destip[4] = {192,168,1,17};
-  uint16_t port = 3000;
+
+#ifdef INTRON
+uint8_t  destip[4] = {192,168,1,17};
+uint16_t  destport = 3000;
+uint16_t localport = 3000;
+#endif
+
+#ifndef INTRON
+uint8_t  destip[4] = {192,168,1,17};
+uint16_t  destport = 3000;
+uint16_t localport = 3000;
+#endif
+
   while (1)
   {
     /* USER CODE END WHILE */
@@ -264,25 +271,17 @@ char buf[] = "1234567890\r\n";
 //    }
 
 
-        sendto(sn, (uint8_t *)buf, 12, destip, 3000);
+        sendto(sn, (uint8_t *)buf, 12, destip, destport);
         close(sn);
-        socket(sn, Sn_MR_UDP, port, 0x00);
+        socket(sn, Sn_MR_UDP, localport, 0x00);
 
 
+//    if(count == 24000)
+//    {
+//        count = 0;
+//        HAL_UART_Transmit(&huart6, (uint8_t*)"Send to socket\r\n", 16, HAL_MAX_DELAY);
+//    }
 
-
-
-
-
-    if(count == 24000)
-    {
-//        HAL_UART_Transmit(&huart6, (uint8_t*)rxBuf, 8, HAL_MAX_DELAY);
-        count = 0;
-//        sendto(sn, (uint8_t *) buf, sizeof (buf), ip_adr, 9899);
-        sendto(sn, (uint8_t *) "1234567890\r\n", 12, ip_adr, 9899);
-        HAL_UART_Transmit(&huart6, (uint8_t*)"Send to socket\r\n", 16, HAL_MAX_DELAY);
-    }
-//    delayUS_ASM(20);
   }
   /* USER CODE END 3 */
 }

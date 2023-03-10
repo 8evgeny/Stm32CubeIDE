@@ -52,6 +52,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+uint32_t count = 0;
 uint8_t rxBuf[MAX_PACKET_LEN ];
 uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -93,6 +94,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
         if (capture == 2)
         {
+            ++count;
             HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
             memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
         }
@@ -235,7 +237,12 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
 
 #endif
-uint32_t count = 0;
+
+uint8_t sn = 0;
+socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
+uint8_t ip_adr[4] = {192,168,1,17};
+char buf[] = "12345678\r\n";
+
   while (1)
   {
     /* USER CODE END WHILE */
@@ -243,11 +250,13 @@ uint32_t count = 0;
     /* USER CODE BEGIN 3 */
     HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
 
-    ++count;
-    if(count == 48000)
+    if(count == 24000)
     {
-        HAL_UART_Transmit(&huart6, (uint8_t*)rxBuf, 8, HAL_MAX_DELAY);
+//        HAL_UART_Transmit(&huart6, (uint8_t*)rxBuf, 8, HAL_MAX_DELAY);
         count = 0;
+//        sendto(sn, (uint8_t *) buf, sizeof (buf), ip_adr, 9899);
+        sendto(sn, (uint8_t *) "1234567890\r\n", 12, ip_adr, 9899);
+        HAL_UART_Transmit(&huart6, (uint8_t*)"Send to socket\r\n", 16, HAL_MAX_DELAY);
     }
 //    delayUS_ASM(20);
   }

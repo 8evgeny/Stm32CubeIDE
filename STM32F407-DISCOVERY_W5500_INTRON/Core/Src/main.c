@@ -176,7 +176,11 @@ int main(void)
 
   HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
-    net_ini();
+
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+  delayUS_ASM(1000);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+  net_ini();
   UART_Printf("Start\r\n");
 
   //Callbacks

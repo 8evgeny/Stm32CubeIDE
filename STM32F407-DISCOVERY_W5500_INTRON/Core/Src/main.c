@@ -174,14 +174,18 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_TIM_Base_Start_IT(&htim1);
-  HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
-
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
-  delayUS_ASM(1000);
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-  net_ini();
-  UART_Printf("Start\r\n");
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+    delayUS_ASM(1000);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    net_ini();
+    #ifdef INTRON
+    UART_Printf("ip - 192.168.1.197\r\n");
+    #endif
+    #ifndef INTRON
+    UART_Printf("ip - 192.168.1.198\r\n");
+    #endif
+     UART_Printf("Start\r\n");
+    delayUS_ASM(1000);
 
   //Callbacks
     reg_wizchip_cris_cbfunc(wizchip_cris_enter, wizchip_cris_exit);
@@ -189,6 +193,9 @@ int main(void)
     reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
     reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
 
+    HAL_TIM_Base_Start_IT(&htim1);
+    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+    UART_Printf("TIM1\r\n");
 
 
 //  /* wizchip initialize*/

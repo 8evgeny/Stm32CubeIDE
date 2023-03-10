@@ -244,9 +244,9 @@ uint32_t count = 0;
     HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
 
     ++count;
-    if(count == 8000)
+    if(count == 48000)
     {
-        UART_Printf((char*)rxBuf);
+        HAL_UART_Transmit(&huart6, (uint8_t*)rxBuf, 8, HAL_MAX_DELAY);
         count = 0;
     }
 //    delayUS_ASM(20);

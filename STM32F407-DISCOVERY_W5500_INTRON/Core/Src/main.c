@@ -235,13 +235,20 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
 
 #endif
+uint32_t count = 0;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
     HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
-    UART_Printf((char*)rxBuf);
+
+    ++count;
+    if(count == 8000)
+    {
+        UART_Printf((char*)rxBuf);
+        count = 0;
+    }
 //    delayUS_ASM(20);
   }
   /* USER CODE END 3 */

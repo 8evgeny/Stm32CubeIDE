@@ -7,7 +7,13 @@
 #include <stdint.h>
 #include "w5500.h"
 //--------------------------------------------------
+
+#ifdef INTRON
 #define IP_ADDR {192,168,1,197}
+#endif
+#ifndef INTRON
+#define IP_ADDR {192,168,1,198}
+#endif
 #define IP_GATE {192,168,1,1}
 #define IP_MASK {255,255,255,0}
 #define LOCAL_PORT 80

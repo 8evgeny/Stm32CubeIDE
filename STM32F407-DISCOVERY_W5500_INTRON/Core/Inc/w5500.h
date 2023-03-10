@@ -11,7 +11,13 @@
 #define SS_SELECT() HAL_GPIO_WritePin(CS_GPIO_PORT, CS_PIN, GPIO_PIN_RESET)
 #define SS_DESELECT() HAL_GPIO_WritePin(CS_GPIO_PORT, CS_PIN, GPIO_PIN_SET)
 //--------------------------------------------------
+
+#ifdef INTRON
 #define MAC_ADDR {0x00,0x15,0x42,0xBF,0xF0,0x51}
+#endif
+#ifndef INTRON
+#define MAC_ADDR {0x00,0x15,0x42,0xBF,0xF0,0x52}
+#endif
 //--------------------------------------------------
 #define BSB_COMMON 0x00
 #define BSB_S0 0x01

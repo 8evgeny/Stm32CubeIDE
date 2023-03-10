@@ -241,7 +241,8 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 
     /* USER CODE BEGIN 3 */
     HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
-    delayUS_ASM(20);
+    UART_Printf((char*)rxBuf);
+//    delayUS_ASM(20);
   }
   /* USER CODE END 3 */
 }

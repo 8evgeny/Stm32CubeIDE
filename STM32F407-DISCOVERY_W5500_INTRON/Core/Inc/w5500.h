@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 //--------------------------------------------------
-#define CS_GPIO_PORT GPIOB
-#define CS_PIN GPIO_PIN_6
+#define CS_GPIO_PORT GPIOD
+#define CS_PIN GPIO_PIN_11
 #define SS_SELECT() HAL_GPIO_WritePin(CS_GPIO_PORT, CS_PIN, GPIO_PIN_RESET)
 #define SS_DESELECT() HAL_GPIO_WritePin(CS_GPIO_PORT, CS_PIN, GPIO_PIN_SET)
 //--------------------------------------------------

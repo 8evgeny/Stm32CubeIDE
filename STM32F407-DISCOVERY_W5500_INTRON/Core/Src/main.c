@@ -17,6 +17,7 @@
   */
 #include "socket.h"
 #include "w5500.h"
+#include "net.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -172,8 +173,10 @@ int main(void)
   MX_TIM1_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT(&htim1);
-  HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+
+//  HAL_TIM_Base_Start_IT(&htim1);
+//  HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+    net_ini();
   UART_Printf("Start\r\n");
 
   //Callbacks

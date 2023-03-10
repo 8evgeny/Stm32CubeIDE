@@ -1,7 +1,7 @@
 #include "w5500.h"
 //-----------------------------------------------
 extern SPI_HandleTypeDef hspi1;
-extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
 extern char str1[60];
 char tmpbuf[30];
@@ -251,7 +251,7 @@ for(i=3;i<8;i++)
   {
     dtt = GetSocketStatus(i);
     sprintf(str1,"First Status Sn%d: 0x%02X\r\n",i,dtt);
-    HAL_UART_Transmit(&huart1,(uint8_t*)str1,strlen(str1),0x1000);
+    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
   }	
 }
 //-----------------------------------------------

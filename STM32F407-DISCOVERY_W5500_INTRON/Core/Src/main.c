@@ -244,7 +244,7 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 
 uint8_t sn = 0;
 //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
+char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
 char buf2[] = "1234567890\r\n";
 char buf3[] = "2345678901\r\n";
 char buf4[] = "3456789012\r\n";
@@ -252,7 +252,7 @@ char buf5[] = "4567890123\r\n";
 char buf6[] = "5678901234\r\n";
 char buf7[] = "6789012345\r\n";
 char buf8[] = "7890123456\r\n";
-char buf[12] ;
+char buf[82] ;
 #define SOCK_UDPS        1
 #define DATA_BUF_SIZE   2048
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
@@ -305,12 +305,12 @@ int32_t num_received;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 
-        sendto(0, (uint8_t *)buf1, 42, destip, destport);
+        sendto(0, (uint8_t *)buf1, 82, destip, destport);
 
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 
-//        num_received =  recvfrom(0, (uint8_t *)buf, 12, destip, &destport);
+        num_received =  recvfrom(0, (uint8_t *)buf, 82, destip, &destport);
 
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);

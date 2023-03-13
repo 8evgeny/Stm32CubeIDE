@@ -258,15 +258,15 @@ char buf[12] ;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 #ifdef INTRON
-uint8_t  destip[4] = {192,168,1,17};
-//uint8_t  destip[4] = {192,168,1,197};
+//uint8_t  destip[4] = {192,168,1,17};
+uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
 
 #ifndef INTRON
-uint8_t  destip[4] = {192,168,1,17};
-//uint8_t  destip[4] = {192,168,1,198};
+//uint8_t  destip[4] = {192,168,1,17};
+uint8_t  destip[4] = {192,168,1,197};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif

@@ -181,7 +181,9 @@ int main(void)
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
 //    delayUS_ASM(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+
     net_ini();
+
     #ifdef INTRON
     UART_Printf("ip - 192.168.1.197\r\n");
     #endif
@@ -266,14 +268,24 @@ uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
 //socket(sn, Sn_MR_UDP, localport, 0x00);
-socket(0, Sn_MR_UDP, localport, 0x00);
-socket(1, Sn_MR_UDP, localport, 0x00);
-socket(2, Sn_MR_UDP, localport, 0x00);
-socket(3, Sn_MR_UDP, localport, 0x00);
-socket(4, Sn_MR_UDP, localport, 0x00);
-socket(5, Sn_MR_UDP, localport, 0x00);
-socket(6, Sn_MR_UDP, localport, 0x00);
-socket(7, Sn_MR_UDP, localport, 0x00);
+//socket(0, Sn_MR_UDP, localport, 0x00);
+//socket(1, Sn_MR_UDP, localport, 0x00);
+//socket(2, Sn_MR_UDP, localport, 0x00);
+//socket(3, Sn_MR_UDP, localport, 0x00);
+//socket(4, Sn_MR_UDP, localport, 0x00);
+//socket(5, Sn_MR_UDP, localport, 0x00);
+//socket(6, Sn_MR_UDP, localport, 0x00);
+//socket(7, Sn_MR_UDP, localport, 0x00);
+
+OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
+OpenSocket(1, Sn_MR_UDP);
+OpenSocket(2, Sn_MR_UDP);
+OpenSocket(3, Sn_MR_UDP);
+OpenSocket(4, Sn_MR_UDP);
+OpenSocket(5, Sn_MR_UDP);
+OpenSocket(6, Sn_MR_UDP);
+OpenSocket(7, Sn_MR_UDP);
+
   while (1)
   {
     /* USER CODE END WHILE */

@@ -10,7 +10,7 @@
 
 #ifdef INTRON
 #define IP_ADDR {192,168,1,197}
-#define LOCAL_PORT 80
+#define LOCAL_PORT 3000
 #endif
 #ifndef INTRON
 #define IP_ADDR {192,168,1,198}

@@ -238,12 +238,12 @@ void w5500_ini(void)
 for(i=0; i < 8; i++)
   {
     SetSockPort(i, local_port);
-    //Открываем сокет
-    OpenSocket(i,Mode_TCP);
-    SocketInitWait(i);
-    //Начинаем слушать сокет
-    ListenSocket(i);
-    SocketListenWait(i);
+//    //Открываем сокет
+//    OpenSocket(i,Mode_TCP);
+//    SocketInitWait(i);
+//    //Начинаем слушать сокет
+//    ListenSocket(i);
+//    SocketListenWait(i);
   }
   HAL_Delay(500);
   //Посмотрим статусы

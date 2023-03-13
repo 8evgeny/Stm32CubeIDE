@@ -199,9 +199,9 @@ int main(void)
     reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
     reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
 
-    HAL_TIM_Base_Start_IT(&htim1);
-    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
-    UART_Printf("TIM1\r\n");
+//    HAL_TIM_Base_Start_IT(&htim1);
+//    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+//    UART_Printf("TIM1\r\n");
 
 
 //  /* wizchip initialize*/
@@ -252,18 +252,21 @@ char buf5[] = "4567890123\r\n";
 char buf6[] = "5678901234\r\n";
 char buf7[] = "6789012345\r\n";
 char buf8[] = "7890123456\r\n";
+char buf[12] ;
 #define SOCK_UDPS        1
 #define DATA_BUF_SIZE   2048
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 #ifdef INTRON
 uint8_t  destip[4] = {192,168,1,17};
+//uint8_t  destip[4] = {192,168,1,197};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
 
 #ifndef INTRON
 uint8_t  destip[4] = {192,168,1,17};
+//uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
@@ -285,7 +288,7 @@ OpenSocket(4, Sn_MR_UDP);
 OpenSocket(5, Sn_MR_UDP);
 OpenSocket(6, Sn_MR_UDP);
 OpenSocket(7, Sn_MR_UDP);
-
+int32_t num_received;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -306,7 +309,7 @@ OpenSocket(7, Sn_MR_UDP);
 //        sendto(sn, (uint8_t *)buf6, 12, destip, destport);
 //        sendto(sn, (uint8_t *)buf7, 12, destip, destport);
 //        sendto(sn, (uint8_t *)buf8, 12, destip, destport);
-
+UART_Printf("send\r\n");
         sendto(0, (uint8_t *)buf1, 12, destip, destport);
         sendto(1, (uint8_t *)buf2, 12, destip, destport);
         sendto(2, (uint8_t *)buf3, 12, destip, destport);
@@ -315,6 +318,10 @@ OpenSocket(7, Sn_MR_UDP);
         sendto(5, (uint8_t *)buf6, 12, destip, destport);
         sendto(6, (uint8_t *)buf7, 12, destip, destport);
         sendto(7, (uint8_t *)buf8, 12, destip, destport);
+
+        num_received =  recvfrom(0, (uint8_t *)buf, 12, destip, &destport);
+        UART_Printf("received : %ld\r\n", num_received);
+
 //        close(sn);
 //        socket(sn, Sn_MR_UDP, localport, 0x00);
 

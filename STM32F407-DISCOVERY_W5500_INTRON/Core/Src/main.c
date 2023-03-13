@@ -317,11 +317,13 @@ UART_Printf("send\r\n");
         sendto(4, (uint8_t *)buf5, 12, destip, destport);
         sendto(5, (uint8_t *)buf6, 12, destip, destport);
         sendto(6, (uint8_t *)buf7, 12, destip, destport);
-        sendto(7, (uint8_t *)buf8, 12, destip, destport);
+//        sendto(7, (uint8_t *)buf8, 12, destip, destport);
 
         num_received =  recvfrom(0, (uint8_t *)buf, 12, destip, &destport);
+//        num_received =  recv(7, (uint8_t *)buf, 12);
         UART_Printf("received : %ld\r\n", num_received);
-
+        UART_Printf("%s", buf);
+        memset(buf,0,sizeof(buf));
 //        close(sn);
 //        socket(sn, Sn_MR_UDP, localport, 0x00);
 

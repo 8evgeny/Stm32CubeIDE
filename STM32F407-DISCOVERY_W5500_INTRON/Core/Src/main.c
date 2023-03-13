@@ -244,7 +244,7 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 
 uint8_t sn = 0;
 //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-char buf1[] = "0123456789\r\n";
+char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
 char buf2[] = "1234567890\r\n";
 char buf3[] = "2345678901\r\n";
 char buf4[] = "3456789012\r\n";
@@ -301,38 +301,23 @@ int32_t num_received;
 //    }
 
 
-//        sendto(sn, (uint8_t *)buf1, 12, destip, destport);
-//        sendto(sn, (uint8_t *)buf2, 12, destip, destport);
-//        sendto(sn, (uint8_t *)buf3, 12, destip, destport);
-//        sendto(sn, (uint8_t *)buf4, 12, destip, destport);
-//        sendto(sn, (uint8_t *)buf5, 12, destip, destport);
-//        sendto(sn, (uint8_t *)buf6, 12, destip, destport);
-//        sendto(sn, (uint8_t *)buf7, 12, destip, destport);
-//        sendto(sn, (uint8_t *)buf8, 12, destip, destport);
-UART_Printf("send\r\n");
-        sendto(0, (uint8_t *)buf1, 12, destip, destport);
-        sendto(1, (uint8_t *)buf2, 12, destip, destport);
-        sendto(2, (uint8_t *)buf3, 12, destip, destport);
-        sendto(3, (uint8_t *)buf4, 12, destip, destport);
-        sendto(4, (uint8_t *)buf5, 12, destip, destport);
-        sendto(5, (uint8_t *)buf6, 12, destip, destport);
-        sendto(6, (uint8_t *)buf7, 12, destip, destport);
-//        sendto(7, (uint8_t *)buf8, 12, destip, destport);
+//        UART_Printf("send\r\n");
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 
-        num_received =  recvfrom(0, (uint8_t *)buf, 12, destip, &destport);
-//        num_received =  recv(7, (uint8_t *)buf, 12);
-        UART_Printf("received : %ld\r\n", num_received);
-        UART_Printf("%s", buf);
-        memset(buf,0,sizeof(buf));
-//        close(sn);
-//        socket(sn, Sn_MR_UDP, localport, 0x00);
+        sendto(0, (uint8_t *)buf1, 42, destip, destport);
 
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 
-//    if(count == 24000)
-//    {
-//        count = 0;
-//        HAL_UART_Transmit(&huart6, (uint8_t*)"Send to socket\r\n", 16, HAL_MAX_DELAY);
-//    }
+//        num_received =  recvfrom(0, (uint8_t *)buf, 12, destip, &destport);
+
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+//        UART_Printf("received : %ld\r\n", num_received);
+//        UART_Printf("%s", buf);
+//        memset(buf,0,sizeof(buf));
+
 
   }
   /* USER CODE END 3 */

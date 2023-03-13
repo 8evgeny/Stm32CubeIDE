@@ -207,9 +207,9 @@ void w5500_ini(void)
   uint8_t dtt=0;
   uint8_t opcode=0;
   //Hard Reset
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
   HAL_Delay(70);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
   HAL_Delay(70);
 	//Soft Reset
 	opcode = (BSB_COMMON<<3)|OM_FDM1;
@@ -235,7 +235,7 @@ void w5500_ini(void)
 	w5500_writeReg(opcode, SIPR2,ipaddr[2]);
 	w5500_writeReg(opcode, SIPR3,ipaddr[3]);
 	//Настраиваем сокеты
-for(i=3;i<8;i++)
+for(i=0; i < 8; i++)
   {
     SetSockPort(i, local_port);
     //Открываем сокет
@@ -247,7 +247,7 @@ for(i=3;i<8;i++)
   }
   HAL_Delay(500);
   //Посмотрим статусы
-  for(i=3;i<8;i++)
+  for(i=0;i<8;i++)
   {
     dtt = GetSocketStatus(i);
     sprintf(str1,"First Status Sn%d: 0x%02X\r\n",i,dtt);

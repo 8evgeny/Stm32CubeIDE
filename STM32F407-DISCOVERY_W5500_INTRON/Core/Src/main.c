@@ -177,10 +177,10 @@ int main(void)
   MX_TIM1_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
-    delayUS_ASM(1000);
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    //Сброс W5500 - уже в net_ini
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+//    delayUS_ASM(1000);
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
     net_ini();
     #ifdef INTRON
     UART_Printf("ip - 192.168.1.197\r\n");
@@ -241,8 +241,15 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 #endif
 
 uint8_t sn = 0;
-socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-char buf[] = "1234567890\r\n";
+//socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
+char buf1[] = "0123456789\r\n";
+char buf2[] = "1234567890\r\n";
+char buf3[] = "2345678901\r\n";
+char buf4[] = "3456789012\r\n";
+char buf5[] = "4567890123\r\n";
+char buf6[] = "5678901234\r\n";
+char buf7[] = "6789012345\r\n";
+char buf8[] = "7890123456\r\n";
 #define SOCK_UDPS        1
 #define DATA_BUF_SIZE   2048
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
@@ -258,7 +265,7 @@ uint8_t  destip[4] = {192,168,1,17};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
-
+socket(sn, Sn_MR_UDP, localport, 0x00);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -271,9 +278,16 @@ uint16_t localport = 3000;
 //    }
 
 
-        sendto(sn, (uint8_t *)buf, 12, destip, destport);
-        close(sn);
-        socket(sn, Sn_MR_UDP, localport, 0x00);
+        sendto(sn, (uint8_t *)buf1, 12, destip, destport);
+        sendto(sn, (uint8_t *)buf2, 12, destip, destport);
+        sendto(sn, (uint8_t *)buf3, 12, destip, destport);
+        sendto(sn, (uint8_t *)buf4, 12, destip, destport);
+        sendto(sn, (uint8_t *)buf5, 12, destip, destport);
+        sendto(sn, (uint8_t *)buf6, 12, destip, destport);
+        sendto(sn, (uint8_t *)buf7, 12, destip, destport);
+        sendto(sn, (uint8_t *)buf8, 12, destip, destport);
+//        close(sn);
+//        socket(sn, Sn_MR_UDP, localport, 0x00);
 
 
 //    if(count == 24000)

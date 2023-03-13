@@ -265,7 +265,15 @@ uint8_t  destip[4] = {192,168,1,17};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
-socket(sn, Sn_MR_UDP, localport, 0x00);
+//socket(sn, Sn_MR_UDP, localport, 0x00);
+socket(0, Sn_MR_UDP, localport, 0x00);
+socket(1, Sn_MR_UDP, localport, 0x00);
+socket(2, Sn_MR_UDP, localport, 0x00);
+socket(3, Sn_MR_UDP, localport, 0x00);
+socket(4, Sn_MR_UDP, localport, 0x00);
+socket(5, Sn_MR_UDP, localport, 0x00);
+socket(6, Sn_MR_UDP, localport, 0x00);
+socket(7, Sn_MR_UDP, localport, 0x00);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -278,14 +286,23 @@ socket(sn, Sn_MR_UDP, localport, 0x00);
 //    }
 
 
-        sendto(sn, (uint8_t *)buf1, 12, destip, destport);
-        sendto(sn, (uint8_t *)buf2, 12, destip, destport);
-        sendto(sn, (uint8_t *)buf3, 12, destip, destport);
-        sendto(sn, (uint8_t *)buf4, 12, destip, destport);
-        sendto(sn, (uint8_t *)buf5, 12, destip, destport);
-        sendto(sn, (uint8_t *)buf6, 12, destip, destport);
-        sendto(sn, (uint8_t *)buf7, 12, destip, destport);
-        sendto(sn, (uint8_t *)buf8, 12, destip, destport);
+//        sendto(sn, (uint8_t *)buf1, 12, destip, destport);
+//        sendto(sn, (uint8_t *)buf2, 12, destip, destport);
+//        sendto(sn, (uint8_t *)buf3, 12, destip, destport);
+//        sendto(sn, (uint8_t *)buf4, 12, destip, destport);
+//        sendto(sn, (uint8_t *)buf5, 12, destip, destport);
+//        sendto(sn, (uint8_t *)buf6, 12, destip, destport);
+//        sendto(sn, (uint8_t *)buf7, 12, destip, destport);
+//        sendto(sn, (uint8_t *)buf8, 12, destip, destport);
+
+        sendto(0, (uint8_t *)buf1, 12, destip, destport);
+        sendto(1, (uint8_t *)buf2, 12, destip, destport);
+        sendto(2, (uint8_t *)buf3, 12, destip, destport);
+        sendto(3, (uint8_t *)buf4, 12, destip, destport);
+        sendto(4, (uint8_t *)buf5, 12, destip, destport);
+        sendto(5, (uint8_t *)buf6, 12, destip, destport);
+        sendto(6, (uint8_t *)buf7, 12, destip, destport);
+        sendto(7, (uint8_t *)buf8, 12, destip, destport);
 //        close(sn);
 //        socket(sn, Sn_MR_UDP, localport, 0x00);
 

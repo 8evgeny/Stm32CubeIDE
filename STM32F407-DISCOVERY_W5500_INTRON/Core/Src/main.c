@@ -258,8 +258,8 @@ char buf[82] ;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 #ifdef INTRON
-//uint8_t  destip[4] = {192,168,1,17};
-uint8_t  destip[4] = {192,168,1,198};
+uint8_t  destip[4] = {192,168,1,17};
+//uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
@@ -303,14 +303,10 @@ int32_t num_received;
 
 //        UART_Printf("send\r\n");
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+        sendto(0, (uint8_t *)buf1, 82, destip, destport);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 
-        sendto(0, (uint8_t *)buf1, 82, destip, destport);
-
-//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
-
-        num_received =  recvfrom(0, (uint8_t *)buf, 82, destip, &destport);
+//        num_received =  recvfrom(0, (uint8_t *)buf, 82, destip, &destport);
 
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);

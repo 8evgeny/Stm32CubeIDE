@@ -58,6 +58,9 @@ uint32_t count = 0;
 uint8_t rxBuf[MAX_PACKET_LEN ];
 uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
+uint8_t txCiclon[32]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff,
+                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,};
+uint8_t rxCiclon[32];
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -126,8 +129,6 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //    }
 }
-
-
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
     capture = 0;
@@ -244,15 +245,15 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 
 uint8_t sn = 0;
 //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
-char buf2[] = "1234567890\r\n";
-char buf3[] = "2345678901\r\n";
-char buf4[] = "3456789012\r\n";
-char buf5[] = "4567890123\r\n";
-char buf6[] = "5678901234\r\n";
-char buf7[] = "6789012345\r\n";
-char buf8[] = "7890123456\r\n";
-char buf[82] ;
+//char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
+//char buf2[] = "1234567890\r\n";
+//char buf3[] = "2345678901\r\n";
+//char buf4[] = "3456789012\r\n";
+//char buf5[] = "4567890123\r\n";
+//char buf6[] = "5678901234\r\n";
+//char buf7[] = "6789012345\r\n";
+//char buf8[] = "7890123456\r\n";
+//char buf[82] ;
 #define SOCK_UDPS        1
 #define DATA_BUF_SIZE   2048
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
@@ -294,7 +295,11 @@ int32_t num_received;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//    HAL_SPI_TransmitReceive(&hspi1, txBufW5500 , rxBuf, MAX_PACKET_LEN, 0x1000);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+    HAL_SPI_TransmitReceive(&hspi1, txCiclon , rxCiclon, 32, 0x1000);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+    delayUS_ASM(100);
+
 
 //    if( (ret = loopback_udps(SOCK_UDPS, gDATABUF, 3000)) < 0) {
 //        UART_Printf("SOCKET ERROR : %ld\r\n", ret);
@@ -302,9 +307,9 @@ int32_t num_received;
 
 
 //        UART_Printf("send\r\n");
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-        sendto(0, (uint8_t *)buf1, 82, destip, destport);
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+//        sendto(0, (uint8_t *)buf1, 82, destip, destport);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 
 //        num_received =  recvfrom(0, (uint8_t *)buf, 82, destip, &destport);
 

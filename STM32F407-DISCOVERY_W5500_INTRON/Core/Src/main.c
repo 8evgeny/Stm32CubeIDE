@@ -60,15 +60,15 @@ uint8_t txBuf[MAX_PACKET_LEN ];
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
-//uint8_t txCyclon[32]= {0x88, 0x01, 0x02, 0x03, 0x04, 0x05, 0x56, 0x07, 0x28, 0x39, 0x4a, 0x5b, 0x6c, 0x7d, 0x8e, 0x9f,
-//                       0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0x88};
+uint8_t txCyclon[32]= {0x88, 0x01, 0x02, 0x03, 0x04, 0x05, 0x56, 0x07, 0x28, 0x39, 0x4a, 0x5b, 0x6c, 0x7d, 0x8e, 0x9f,
+                       0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0x88};
 
 //uint8_t txCyclon[32]= {0x00, 0x80, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 //                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,};
 
 //uint8_t txCyclon[32]= {0x55, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 //                       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-uint8_t txCyclon[32];
+//uint8_t txCyclon[32];
 uint8_t rxCyclon[32];
 /* USER CODE END PM */
 
@@ -283,8 +283,8 @@ uint8_t sn = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 #ifdef INTRON
-uint8_t  destip[4] = {192,168,1,17};
-//uint8_t  destip[4] = {192,168,1,198};
+//uint8_t  destip[4] = {192,168,1,17};
+uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
@@ -296,23 +296,23 @@ uint16_t  destport = 3000;
 uint16_t localport = 3000;
 #endif
 //socket(sn, Sn_MR_UDP, localport, 0x00);
-//socket(0, Sn_MR_UDP, localport, 0x00);
-//socket(1, Sn_MR_UDP, localport, 0x00);
-//socket(2, Sn_MR_UDP, localport, 0x00);
-//socket(3, Sn_MR_UDP, localport, 0x00);
-//socket(4, Sn_MR_UDP, localport, 0x00);
-//socket(5, Sn_MR_UDP, localport, 0x00);
-//socket(6, Sn_MR_UDP, localport, 0x00);
-//socket(7, Sn_MR_UDP, localport, 0x00);
+socket(0, Sn_MR_UDP, localport, 0x00);
+socket(1, Sn_MR_UDP, localport, 0x00);
+socket(2, Sn_MR_UDP, localport, 0x00);
+socket(3, Sn_MR_UDP, localport, 0x00);
+socket(4, Sn_MR_UDP, localport, 0x00);
+socket(5, Sn_MR_UDP, localport, 0x00);
+socket(6, Sn_MR_UDP, localport, 0x00);
+socket(7, Sn_MR_UDP, localport, 0x00);
 
-OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
-OpenSocket(1, Sn_MR_UDP);
-OpenSocket(2, Sn_MR_UDP);
-OpenSocket(3, Sn_MR_UDP);
-OpenSocket(4, Sn_MR_UDP);
-OpenSocket(5, Sn_MR_UDP);
-OpenSocket(6, Sn_MR_UDP);
-OpenSocket(7, Sn_MR_UDP);
+//OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
+//OpenSocket(1, Sn_MR_UDP);
+//OpenSocket(2, Sn_MR_UDP);
+//OpenSocket(3, Sn_MR_UDP);
+//OpenSocket(4, Sn_MR_UDP);
+//OpenSocket(5, Sn_MR_UDP);
+//OpenSocket(6, Sn_MR_UDP);
+//OpenSocket(7, Sn_MR_UDP);
 int32_t num_received;
 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
@@ -325,10 +325,9 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
-HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
-delayUS_ASM(30);
+//delayUS_ASM(30);
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
@@ -338,8 +337,8 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+#ifdef INTRON
     while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
@@ -356,12 +355,17 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-    sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
+    sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+#endif
 
-//    num_received =  recvfrom(0, (uint8_t *)rxCyclon, 32, destip, &destport);
+#ifndef INTRON
+num_received =  recvfrom(0, (uint8_t *)rxCyclon, 32, destip, &destport);
+sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
+#endif
+
 
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);

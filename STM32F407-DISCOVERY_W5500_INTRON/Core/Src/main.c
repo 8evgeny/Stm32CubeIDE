@@ -252,6 +252,8 @@ int main(void)
             MOSI -  PC3 - 103
             CLK_EN - PC4 - 100
             RESET  - PC5 - 104
+            TE_SEL - PC8 - 94 выбор тактирования (1 - внешнее)
+            FPGA_EN- PA8 - 96 (1 - разрешение работы общее)
 
 F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
 
@@ -308,6 +310,8 @@ OpenSocket(5, Sn_MR_UDP);
 OpenSocket(6, Sn_MR_UDP);
 OpenSocket(7, Sn_MR_UDP);
 int32_t num_received;
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
 
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
@@ -323,6 +327,7 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 delayUS_ASM(30);
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+
 
   while (1)
   {
@@ -707,11 +712,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : BOOT1_Pin */
-  GPIO_InitStruct.Pin = BOOT1_Pin;
+  /*Configure GPIO pins : BOOT1_Pin PB15 */
+  GPIO_InitStruct.Pin = BOOT1_Pin|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : INT_Pin OTG_FS_OverCurrent_Pin */
   GPIO_InitStruct.Pin = INT_Pin|OTG_FS_OverCurrent_Pin;

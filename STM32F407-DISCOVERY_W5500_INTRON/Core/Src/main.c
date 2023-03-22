@@ -385,13 +385,20 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 #endif
 
 #ifndef INTRON
-HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
 //num_received =  recvfrom(0, (uint8_t *)rxCyclon, 32, destip, &destport);
 
-//sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
 sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
-HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
-delayUS_ASM(30);
+++num_send;
+if (num_send == 1000)
+{
+    HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
+}
+if (num_send == 2000)
+{
+    num_send = 0;
+    HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+}
+
 #endif
 
 

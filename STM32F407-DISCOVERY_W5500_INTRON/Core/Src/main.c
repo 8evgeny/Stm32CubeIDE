@@ -74,6 +74,7 @@ uint8_t txCyclon[32]= {0x01, 0x12, 0x23, 0x34, 0x45, 0x56, 0x67, 0x78, 0x89, 0x9
 
 //uint8_t txCyclon[32];
 uint8_t rxCyclon[32];
+uint32_t num_send = 0;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -356,14 +357,27 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
     while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
+    ++num_send;
+    if (num_send == 1000)
+    {
+        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
+    }
+    if (num_send == 2000)
+    {
+        num_send = 0;
+        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+    }
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+
 //    num_received =  recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
@@ -371,8 +385,13 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 #endif
 
 #ifndef INTRON
-num_received =  recvfrom(0, (uint8_t *)rxCyclon, 32, destip, &destport);
-sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
+HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
+//num_received =  recvfrom(0, (uint8_t *)rxCyclon, 32, destip, &destport);
+
+//sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
+sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
+HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+delayUS_ASM(30);
 #endif
 
 

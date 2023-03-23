@@ -302,13 +302,13 @@ uint16_t localport = 3000;
 #endif
 //socket(sn, Sn_MR_UDP, localport, 0x00);
 socket(0, Sn_MR_UDP, localport, 0x00);
-socket(1, Sn_MR_UDP, localport, 0x00);
-socket(2, Sn_MR_UDP, localport, 0x00);
-socket(3, Sn_MR_UDP, localport, 0x00);
-socket(4, Sn_MR_UDP, localport, 0x00);
-socket(5, Sn_MR_UDP, localport, 0x00);
-socket(6, Sn_MR_UDP, localport, 0x00);
-socket(7, Sn_MR_UDP, localport, 0x00);
+//socket(1, Sn_MR_UDP, localport, 0x00);
+//socket(2, Sn_MR_UDP, localport, 0x00);
+//socket(3, Sn_MR_UDP, localport, 0x00);
+//socket(4, Sn_MR_UDP, localport, 0x00);
+//socket(5, Sn_MR_UDP, localport, 0x00);
+//socket(6, Sn_MR_UDP, localport, 0x00);
+//socket(7, Sn_MR_UDP, localport, 0x00);
 
 //OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
 //OpenSocket(1, Sn_MR_UDP);
@@ -328,16 +328,6 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
-HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
-//delayUS_ASM(30);
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-
-
   while (1)
   {
     /* USER CODE END WHILE */
@@ -346,13 +336,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 #ifdef INTRON
     while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
 
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
-//    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
-//    delayUS_ASM(30);
 
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС - ломает все
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
@@ -372,6 +356,8 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
     }
     if (num_send == 3000)
     {
+        close(0);
+        socket(0, Sn_MR_UDP, localport, 0x00);
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
     }
@@ -408,6 +394,8 @@ if (num_send == 500)
 }
 if (num_send == 3000)
 {
+    close(0);
+    socket(0, Sn_MR_UDP, localport, 0x00);
     num_send = 0;
     HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
 }

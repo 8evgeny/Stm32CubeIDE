@@ -374,7 +374,7 @@ char tmp[20];
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-//    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
+    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
 
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
@@ -396,7 +396,7 @@ char tmp[20];
 
 #ifndef INTRON
 
-//sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
+sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
 ++num_send;
 if (num_send == 500)
 {

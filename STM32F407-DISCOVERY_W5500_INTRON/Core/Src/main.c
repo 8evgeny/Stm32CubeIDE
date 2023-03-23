@@ -75,6 +75,7 @@ uint8_t rxCyclon[32];
 uint8_t txCyclon[32];
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
+uint32_t num;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -327,7 +328,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-
+char tmp[20];
   while (1)
   {
     /* USER CODE END WHILE */
@@ -350,6 +351,13 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
     sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
     ++num_send;
+    ++num;
+
+    if (num % 10000 == 0)
+    {
+        sprintf(tmp, "%u\r\n",num);
+        UART_Printf(tmp);
+    }
     if (num_send == 500)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);

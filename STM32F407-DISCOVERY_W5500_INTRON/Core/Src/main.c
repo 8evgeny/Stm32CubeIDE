@@ -320,15 +320,17 @@ socket(0, Sn_MR_UDP, localport, 0x00);
 //OpenSocket(5, Sn_MR_UDP);
 //OpenSocket(6, Sn_MR_UDP);
 //OpenSocket(7, Sn_MR_UDP);
-int32_t num_received;
-HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
+
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
 //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
 
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
+
 char tmp[20];
   while (1)
   {
@@ -336,25 +338,18 @@ char tmp[20];
 
     /* USER CODE BEGIN 3 */
 #ifdef INTRON
-    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
 
-    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
+    //Обмен с ПЛИС
+//    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+//    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
+//    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС - ломает все
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-
-    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
     sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
-
     ++num_send;
     ++num;
-
     if (num % 10000 == 0)
     {
         sprintf(tmp, "%u\r\n",num);
@@ -371,27 +366,23 @@ char tmp[20];
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
     }
-
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
-
-
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-    ++num_rcvd;
-    if (num_rcvd == 500)
-    {
-        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-    }
-    if (num_rcvd == 3000)
-    {
-        num_rcvd = 0;
-        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
-    }
+//    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+//    ++num_rcvd;
+//    if (num_rcvd == 500)
+//    {
+//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
+//    }
+//    if (num_rcvd == 3000)
+//    {
+//        num_rcvd = 0;
+//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
+//    }
+
 
 #endif
 

@@ -209,6 +209,7 @@ int main(void)
     #ifndef INTRON
     UART_Printf("ip - 192.168.1.198\r\n");
     #endif
+    delayUS_ASM(10000);
      UART_Printf("Start\r\n");
     delayUS_ASM(1000);
 

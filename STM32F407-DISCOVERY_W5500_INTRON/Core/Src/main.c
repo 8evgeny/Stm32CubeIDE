@@ -302,7 +302,7 @@ socket(0, Sn_MR_UDP, localport, 0x00);
 uint8_t  destip[4] = {192,168,1,197};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
-socket(1, Sn_MR_UDP, localport, 0x00);
+socket(0, Sn_MR_UDP, localport, 0x00);
 #endif
 //socket(sn, Sn_MR_UDP, localport, 0x00);
 //socket(0, Sn_MR_UDP, localport, 0x00);
@@ -399,7 +399,7 @@ char tmp[20];
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-    sendto(1, (uint8_t *)rxCyclon, 32, destip, destport);
+    sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
     delayUS_ASM(500);
     ++num_send;
     ++num;
@@ -422,10 +422,18 @@ char tmp[20];
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-//    recvfrom(1, (uint8_t *)txCyclon, 32, destip, &destport);
+//    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //    ++num_rcvd;
+//        ++num;
+//        if (num % 10000 == 0)
+//        {
+//            sprintf(tmp, "%u\r\n",num);
+//            UART_Printf(tmp);
+//        }
+
+
 //    if (num_rcvd == 500)
 //    {
 //        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
@@ -530,7 +538,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

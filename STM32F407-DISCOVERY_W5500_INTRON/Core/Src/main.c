@@ -294,6 +294,7 @@ uint8_t sn = 0;
 uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
+socket(0, Sn_MR_UDP, localport, 0x00);
 #endif
 
 #ifndef INTRON
@@ -301,9 +302,10 @@ uint16_t localport = 3000;
 uint8_t  destip[4] = {192,168,1,197};
 uint16_t  destport = 3000;
 uint16_t localport = 3000;
+socket(1, Sn_MR_UDP, localport, 0x00);
 #endif
 //socket(sn, Sn_MR_UDP, localport, 0x00);
-socket(0, Sn_MR_UDP, localport, 0x00);
+//socket(0, Sn_MR_UDP, localport, 0x00);
 //socket(1, Sn_MR_UDP, localport, 0x00);
 //socket(2, Sn_MR_UDP, localport, 0x00);
 //socket(3, Sn_MR_UDP, localport, 0x00);
@@ -348,6 +350,7 @@ char tmp[20];
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
     sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
+    delayUS_ASM(500);
     ++num_send;
     ++num;
     if (num % 10000 == 0)
@@ -388,30 +391,51 @@ char tmp[20];
 
 #ifndef INTRON
 
-sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
-++num_send;
-if (num_send == 500)
-{
-    HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
-}
-if (num_send == 3000)
-{
-    close(0);
-    socket(0, Sn_MR_UDP, localport, 0x00);
-    num_send = 0;
-    HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
-}
-recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
-++num_rcvd;
-if (num_rcvd == 500)
-{
-    HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-}
-if (num_rcvd == 3000)
-{
-    num_rcvd = 0;
-    HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
-}
+    //Обмен с ПЛИС
+//    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+//    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
+//    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+
+
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+    sendto(1, (uint8_t *)rxCyclon, 32, destip, destport);
+    delayUS_ASM(500);
+    ++num_send;
+    ++num;
+    if (num % 10000 == 0)
+    {
+        sprintf(tmp, "%u\r\n",num);
+        UART_Printf(tmp);
+    }
+    if (num_send == 500)
+    {
+        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+    }
+    if (num_send == 3000)
+    {
+        close(0);
+        socket(0, Sn_MR_UDP, localport, 0x00);
+        num_send = 0;
+        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
+    }
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+
+//    recvfrom(1, (uint8_t *)txCyclon, 32, destip, &destport);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+//    ++num_rcvd;
+//    if (num_rcvd == 500)
+//    {
+//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
+//    }
+//    if (num_rcvd == 3000)
+//    {
+//        num_rcvd = 0;
+//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
+//    }
+
 #endif
 
 
@@ -506,7 +530,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

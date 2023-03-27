@@ -290,18 +290,18 @@ uint8_t sn = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 #ifdef INTRON
-//uint8_t  destip[4] = {192,168,1,17};
+//uint8_t  destip[4] = {192,168,1,108};
 uint8_t  destip[4] = {192,168,1,198};
-uint16_t  destport = 3000;
-uint16_t localport = 3000;
+uint16_t  destport = 8888;
+uint16_t localport = 8888;
 socket(0, Sn_MR_UDP, localport, 0x00);
 #endif
 
 #ifndef INTRON
-//uint8_t  destip[4] = {192,168,1,17};
+//uint8_t  destip[4] = {192,168,1,108};
 uint8_t  destip[4] = {192,168,1,197};
-uint16_t  destport = 3000;
-uint16_t localport = 3000;
+uint16_t  destport = 8888;
+uint16_t localport = 8888;
 socket(0, Sn_MR_UDP, localport, 0x00);
 #endif
 //socket(sn, Sn_MR_UDP, localport, 0x00);
@@ -349,15 +349,16 @@ char tmp[20];
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-    sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
+
+    sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
     delayUS_ASM(500);
     ++num_send;
     ++num;
-    if (num % 10000 == 0)
-    {
-        sprintf(tmp, "%u\r\n",num);
-        UART_Printf(tmp);
-    }
+//    if (num % 10000 == 0)
+//    {
+//        sprintf(tmp, "%u\r\n",num);
+//        UART_Printf(tmp);
+//    }
     if (num_send == 500)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
@@ -397,52 +398,52 @@ char tmp[20];
 //    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
 
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-    sendto(0, (uint8_t *)rxCyclon, 32, destip, destport);
-    delayUS_ASM(500);
-    ++num_send;
-    ++num;
-    if (num % 10000 == 0)
-    {
-        sprintf(tmp, "%u\r\n",num);
-        UART_Printf(tmp);
-    }
-    if (num_send == 500)
-    {
-        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
-    }
-    if (num_send == 3000)
-    {
-        close(0);
-        socket(0, Sn_MR_UDP, localport, 0x00);
-        num_send = 0;
-        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
-    }
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-//    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-//    ++num_rcvd;
-//        ++num;
-//        if (num % 10000 == 0)
-//        {
-//            sprintf(tmp, "%u\r\n",num);
-//            UART_Printf(tmp);
-//        }
+//    sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
+//    delayUS_ASM(500);
+//    ++num_send;
+//    ++num;
+//    if (num % 10000 == 0)
+//    {
+//        sprintf(tmp, "%u\r\n",num);
+//        UART_Printf(tmp);
+//    }
+//    if (num_send == 500)
+//    {
+//        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+//    }
+//    if (num_send == 3000)
+//    {
+//        close(0);
+//        socket(0, Sn_MR_UDP, localport, 0x00);
+//        num_send = 0;
+//        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
+//    }
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+
+    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+    ++num_rcvd;
+        ++num;
+        if (num % 10000 == 0)
+        {
+            sprintf(tmp, "%u\r\n",num);
+            UART_Printf(tmp);
+        }
 
 
-//    if (num_rcvd == 500)
-//    {
-//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-//    }
-//    if (num_rcvd == 3000)
-//    {
-//        num_rcvd = 0;
-//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
-//    }
+    if (num_rcvd == 500)
+    {
+        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
+    }
+    if (num_rcvd == 3000)
+    {
+        num_rcvd = 0;
+        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
+    }
 
 #endif
 

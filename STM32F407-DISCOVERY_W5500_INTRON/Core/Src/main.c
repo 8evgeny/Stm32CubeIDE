@@ -202,6 +202,7 @@ int main(void)
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
     net_ini();
+    delayUS_ASM(10000);
 
     #ifdef INTRON
     UART_Printf("ip - 192.168.1.197\r\n");
@@ -211,14 +212,14 @@ int main(void)
     #endif
     delayUS_ASM(10000);
      UART_Printf("Start\r\n");
-    delayUS_ASM(1000);
+    delayUS_ASM(10000);
 
   //Callbacks
     reg_wizchip_cris_cbfunc(wizchip_cris_enter, wizchip_cris_exit);
     reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
     reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
     reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
-
+    delayUS_ASM(10000);
 //    HAL_TIM_Base_Start_IT(&htim1);
 //    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
 //    UART_Printf("TIM1\r\n");
@@ -334,6 +335,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
 
 char tmp[20];
+delayUS_ASM(10000);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -351,7 +353,7 @@ char tmp[20];
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
-    delayUS_ASM(1000);
+    delayUS_ASM(200);
 
     ++num_send;
     ++num;
@@ -360,12 +362,12 @@ char tmp[20];
 //        sprintf(tmp, "%u\r\n",num);
 //        UART_Printf(tmp);
 //    }
-    if (num_send == 300)
+    if (num_send == 500)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
 //          delayUS_ASM(50000);
     }
-    if (num_send == 600)
+    if (num_send == 3000)
     {
 //        close(0);
 //        socket(0, Sn_MR_UDP, localport, 0x00);
@@ -542,7 +544,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

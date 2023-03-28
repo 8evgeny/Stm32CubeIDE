@@ -805,7 +805,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     ++num_send;
     ++num;
-    if (num % 50000 == 0)
+    if (num % 20000 == 0)
     {
         sprintf(tmp, "%u\r\n",num);
         UART_Printf(tmp);

@@ -352,6 +352,7 @@ char tmp[20];
 
     sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
     delayUS_ASM(500);
+
     ++num_send;
     ++num;
 //    if (num % 10000 == 0)
@@ -359,16 +360,18 @@ char tmp[20];
 //        sprintf(tmp, "%u\r\n",num);
 //        UART_Printf(tmp);
 //    }
-    if (num_send == 500)
+    if (num_send == 2)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+          delayUS_ASM(500000);
     }
-    if (num_send == 3000)
+    if (num_send == 4)
     {
-        close(0);
-        socket(0, Sn_MR_UDP, localport, 0x00);
+//        close(0);
+//        socket(0, Sn_MR_UDP, localport, 0x00);
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
+          delayUS_ASM(500000);
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
@@ -423,27 +426,27 @@ char tmp[20];
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-    ++num_rcvd;
-        ++num;
-        if (num % 10000 == 0)
-        {
-            sprintf(tmp, "%u\r\n",num);
-            UART_Printf(tmp);
-        }
+//    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+//    ++num_rcvd;
+//        ++num;
+//        if (num % 10000 == 0)
+//        {
+//            sprintf(tmp, "%u\r\n",num);
+//            UART_Printf(tmp);
+//        }
 
 
-    if (num_rcvd == 500)
-    {
-        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-    }
-    if (num_rcvd == 3000)
-    {
-        num_rcvd = 0;
-        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
-    }
+//    if (num_rcvd == 500)
+//    {
+//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
+//    }
+//    if (num_rcvd == 3000)
+//    {
+//        num_rcvd = 0;
+//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
+//    }
 
 #endif
 

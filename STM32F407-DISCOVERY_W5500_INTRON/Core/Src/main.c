@@ -351,7 +351,7 @@ char tmp[20];
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
-    delayUS_ASM(500);
+    delayUS_ASM(8000);
 
     ++num_send;
     ++num;
@@ -360,18 +360,18 @@ char tmp[20];
 //        sprintf(tmp, "%u\r\n",num);
 //        UART_Printf(tmp);
 //    }
-    if (num_send == 2)
+    if (num_send == 30)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
-          delayUS_ASM(500000);
+//          delayUS_ASM(50000);
     }
-    if (num_send == 4)
+    if (num_send == 60)
     {
 //        close(0);
 //        socket(0, Sn_MR_UDP, localport, 0x00);
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
-          delayUS_ASM(500000);
+//          delayUS_ASM(50000);
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
@@ -542,7 +542,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

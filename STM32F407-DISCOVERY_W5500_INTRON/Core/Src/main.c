@@ -351,7 +351,7 @@ char tmp[20];
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
-    delayUS_ASM(8000);
+    delayUS_ASM(1000);
 
     ++num_send;
     ++num;
@@ -360,12 +360,12 @@ char tmp[20];
 //        sprintf(tmp, "%u\r\n",num);
 //        UART_Printf(tmp);
 //    }
-    if (num_send == 30)
+    if (num_send == 300)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
 //          delayUS_ASM(50000);
     }
-    if (num_send == 60)
+    if (num_send == 600)
     {
 //        close(0);
 //        socket(0, Sn_MR_UDP, localport, 0x00);

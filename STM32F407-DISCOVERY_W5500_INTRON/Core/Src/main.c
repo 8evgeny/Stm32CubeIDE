@@ -50,6 +50,10 @@ asm volatile ("MOV R0,%[loops]\n                       \
               : : [loops] "r" (34*us) : "memory"       \
               );                                       \
 } while(0)
+
+void sendPackets(uint8_t, uint8_t* , uint16_t );
+void receivePackets(uint8_t, uint8_t* , uint16_t );
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -295,7 +299,6 @@ uint8_t sn = 0;
 uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
-socket(0, Sn_MR_UDP, localport, 0x00);
 #endif
 
 #ifndef INTRON
@@ -303,17 +306,12 @@ socket(0, Sn_MR_UDP, localport, 0x00);
 uint8_t  destip[4] = {192,168,1,197};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
-socket(0, Sn_MR_UDP, localport, 0x00);
 #endif
-//socket(sn, Sn_MR_UDP, localport, 0x00);
-//socket(0, Sn_MR_UDP, localport, 0x00);
-//socket(1, Sn_MR_UDP, localport, 0x00);
-//socket(2, Sn_MR_UDP, localport, 0x00);
-//socket(3, Sn_MR_UDP, localport, 0x00);
-//socket(4, Sn_MR_UDP, localport, 0x00);
-//socket(5, Sn_MR_UDP, localport, 0x00);
-//socket(6, Sn_MR_UDP, localport, 0x00);
-//socket(7, Sn_MR_UDP, localport, 0x00);
+
+for (uint8_t i = 0; i<8 ;++i)
+{
+    socket(i, Sn_MR_UDP, localport, 0x00);
+}
 
 //OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
 //OpenSocket(1, Sn_MR_UDP);
@@ -343,110 +341,27 @@ char tmp[20];
     /* USER CODE BEGIN 3 */
 #ifdef INTRON
 
-    //Обмен с ПЛИС
-//    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-//    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
-//    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
-
-
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-    sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
-    delayUS_ASM(150);
-
-    ++num_send;
-    ++num;
-//    if (num % 10000 == 0)
-//    {
-//        sprintf(tmp, "%u\r\n",num);
-//        UART_Printf(tmp);
-//    }
-    if (num_send == 500)
+    for (uint8_t i =0; i<4; ++i)
     {
-        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+        //Обмен с ПЛИС
+        delayUS_ASM(150);
+    //    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+    //    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
+    //    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+
+        sendPackets(i, destip, destport);
+//        receivePackets(i, destip, destport);
     }
-    if (num_send == 3000)
-    {
-//        close(0);
-//        socket(0, Sn_MR_UDP, localport, 0x00);
-        num_send = 0;
-        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
-    }
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-//    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-//    ++num_rcvd;
-//    if (num_rcvd == 500)
-//    {
-//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-//    }
-//    if (num_rcvd == 3000)
-//    {
-//        num_rcvd = 0;
-//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
-//    }
-
-
 #endif
 
 #ifndef INTRON
-
     //Обмен с ПЛИС
 //    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
 //    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
 //    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-//    sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
-//    delayUS_ASM(500);
-//    ++num_send;
-//    ++num;
-//    if (num % 10000 == 0)
-//    {
-//        sprintf(tmp, "%u\r\n",num);
-//        UART_Printf(tmp);
-//    }
-//    if (num_send == 500)
-//    {
-//        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
-//    }
-//    if (num_send == 3000)
-//    {
-//        close(0);
-//        socket(0, Sn_MR_UDP, localport, 0x00);
-//        num_send = 0;
-//        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
-//    }
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-//    recvfrom(0, (uint8_t *)txCyclon, 32, destip, &destport);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-//    ++num_rcvd;
-//        ++num;
-//        if (num % 10000 == 0)
-//        {
-//            sprintf(tmp, "%u\r\n",num);
-//            UART_Printf(tmp);
-//        }
-
-
-//    if (num_rcvd == 500)
-//    {
-//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-//    }
-//    if (num_rcvd == 3000)
-//    {
-//        num_rcvd = 0;
-//        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
-//    }
+    sendPackets(destip, destport);
+    receivePackets(destip, destport);
 
 #endif
 
@@ -879,6 +794,52 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
+{
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+
+    sendto(sn, (uint8_t *)rxCyclon, 32, destip, destport);
+
+    ++num_send;
+    ++num;
+//    if (num % 10000 == 0)
+//    {
+//        sprintf(tmp, "%u\r\n",num);
+//        UART_Printf(tmp);
+//    }
+    if (num_send == 2000)
+    {
+        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+    }
+    if (num_send == 4000)
+    {
+//        close(0);
+//        socket(0, Sn_MR_UDP, localport, 0x00);
+        num_send = 0;
+        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
+    }
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+}
+
+void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
+{
+    recvfrom(sn, (uint8_t *)txCyclon, 32, destip, &destport);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+    ++num_rcvd;
+    if (num_rcvd == 2000)
+    {
+        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
+    }
+    if (num_rcvd == 4000)
+    {
+        num_rcvd = 0;
+        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
+    }
+}
 
 /**
  * @brief Default function to enable interrupt.

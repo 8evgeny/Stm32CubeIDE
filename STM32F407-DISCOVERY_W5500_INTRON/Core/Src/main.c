@@ -353,7 +353,7 @@ char tmp[20];
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(0, (uint8_t *)txCyclon, 32, destip, destport);
-    delayUS_ASM(200);
+    delayUS_ASM(150);
 
     ++num_send;
     ++num;

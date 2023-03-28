@@ -335,7 +335,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
 
 char tmp[20];
-delayUS_ASM(10000);
+
   while (1)
   {
     /* USER CODE END WHILE */
@@ -365,7 +365,6 @@ delayUS_ASM(10000);
     if (num_send == 500)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
-//          delayUS_ASM(50000);
     }
     if (num_send == 3000)
     {
@@ -373,7 +372,6 @@ delayUS_ASM(10000);
 //        socket(0, Sn_MR_UDP, localport, 0x00);
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
-//          delayUS_ASM(50000);
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);

@@ -295,8 +295,8 @@ uint8_t sn = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 #ifdef INTRON
-uint8_t  destip[4] = {192,168,1,17};
-//uint8_t  destip[4] = {192,168,1,198};
+//uint8_t  destip[4] = {192,168,1,17};
+uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
 #endif
@@ -346,8 +346,10 @@ HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение ра�
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-        sendPackets(i, destip, destport + i);
-//        receivePackets(i, destip, destport + i);
+        //        sendPackets(i, destip, destport + i);
+        //        receivePackets(i, destip, destport + i);
+                sendPackets(0, destip, destport);
+                receivePackets(0, destip, destport);
     }
 #endif
 
@@ -355,13 +357,14 @@ HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение ра�
     for (uint8_t i =0; i<4; ++i)
     {
         //Обмен с ПЛИС
-        delayUS_ASM(150);
-    //    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-    //    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
-    //    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
+        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-        sendPackets(i, destip, destport + i);
+//        sendPackets(i, destip, destport + i);
 //        receivePackets(i, destip, destport + i);
+        sendPackets(0, destip, destport);
+        receivePackets(0, destip, destport);
     }
 #endif
 
@@ -831,11 +834,11 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
     ++num_rcvd;
-    if (num_rcvd == 2000)
+    if (num_rcvd == 500)
     {
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_rcvd == 4000)
+    if (num_rcvd == 1000)
     {
         num_rcvd = 0;
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);

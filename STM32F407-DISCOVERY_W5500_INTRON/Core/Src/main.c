@@ -295,8 +295,8 @@ uint8_t sn = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 #ifdef INTRON
-//uint8_t  destip[4] = {192,168,1,108};
-uint8_t  destip[4] = {192,168,1,198};
+uint8_t  destip[4] = {192,168,1,17};
+//uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
 #endif
@@ -332,15 +332,26 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
 
-char tmp[20];
-
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 #ifdef INTRON
+    for (uint8_t i =0; i<4; ++i)
+    {
+        //Обмен с ПЛИС
+//        delayUS_ASM(150);
+        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
+        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
+        sendPackets(i, destip, destport + i);
+//        receivePackets(i, destip, destport + i);
+    }
+#endif
+
+#ifndef INTRON
     for (uint8_t i =0; i<4; ++i)
     {
         //Обмен с ПЛИС
@@ -349,20 +360,9 @@ char tmp[20];
     //    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
     //    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-        sendPackets(i, destip, destport);
-//        receivePackets(i, destip, destport);
+        sendPackets(i, destip, destport + i);
+//        receivePackets(i, destip, destport + i);
     }
-#endif
-
-#ifndef INTRON
-    //Обмен с ПЛИС
-//    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-//    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
-//    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
-
-    sendPackets(destip, destport);
-    receivePackets(destip, destport);
-
 #endif
 
 
@@ -797,6 +797,7 @@ static void MX_GPIO_Init(void)
 
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
+    char tmp[20];
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
@@ -804,16 +805,16 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     ++num_send;
     ++num;
-//    if (num % 10000 == 0)
-//    {
-//        sprintf(tmp, "%u\r\n",num);
-//        UART_Printf(tmp);
-//    }
-    if (num_send == 2000)
+    if (num % 50000 == 0)
+    {
+        sprintf(tmp, "%u\r\n",num);
+        UART_Printf(tmp);
+    }
+    if (num_send == 500)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_send == 4000)
+    if (num_send == 1000)
     {
 //        close(0);
 //        socket(0, Sn_MR_UDP, localport, 0x00);

@@ -318,9 +318,9 @@ uint16_t  destport = 8888;
 uint16_t localport = 8888;
 #endif
 
-for (uint8_t i = 0; i<8 ;++i)
+for (uint8_t i = 0; i < 8 ;++i)
 {
-    socket(i, Sn_MR_UDP, localport, 0x00);
+    socket(i, Sn_MR_UDP, localport + i, 0x00);
 }
 
 //OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
@@ -352,27 +352,28 @@ HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение ра�
     /* USER CODE BEGIN 3 */
 #ifdef INTRON
         //Обмен с ПЛИС
-//        delayUS_ASM(150);
+      for (uint8_t i =0; i < 8 ;++i)
+      {
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 48, 0x1000);
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-        sendPackets(0, destip, destport);
-        receivePackets(0, destip, destport);
-
-
+        sendPackets(i, destip, destport + i);
+        receivePackets(i, destip, destport + i);
+      }
 #endif
 
 #ifndef INTRON
-        //Обмен с ПЛИС
-        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 48, 0x1000);
-        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+      //Обмен с ПЛИС
+    for (uint8_t i =0; i < 8 ;++i)
+    {
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 48, 0x1000);
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-
-        sendPackets(0, destip, destport);
-        receivePackets(0, destip, destport);
-
+      sendPackets(i, destip, destport + i);
+      receivePackets(i, destip, destport + i);
+    }
 #endif
 
 

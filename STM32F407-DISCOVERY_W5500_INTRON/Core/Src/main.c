@@ -76,6 +76,8 @@ uint8_t txBuf[MAX_PACKET_LEN ];
 uint8_t txCyclon[32]= {0x01, 0x12, 0x23, 0x34, 0x45, 0x56, 0x67, 0x78, 0x89, 0x9A, 0xAb, 0xbc, 0xcd, 0xde, 0xef, 0xff,
                        0x01, 0x12, 0x23, 0x34, 0x45, 0x56, 0x67, 0x78, 0x89, 0x9A, 0xAb, 0xbc, 0xcd, 0xde, 0xef, 0xff};
 uint8_t rxCyclon[32];
+uint8_t test[32] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff};
+
 //uint8_t txCyclon[32];
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
@@ -302,7 +304,7 @@ uint16_t localport = 8888;
 #endif
 
 #ifndef INTRON
-//uint8_t  destip[4] = {192,168,1,108};
+//uint8_t  destip[4] = {192,168,1,17};
 uint8_t  destip[4] = {192,168,1,197};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
@@ -324,10 +326,12 @@ for (uint8_t i = 0; i<8 ;++i)
 
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Сброс ПЛИС
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-
+#ifdef INTRON
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
-//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
-
+#endif
+#ifndef INTRON
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
+#endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
@@ -338,34 +342,25 @@ HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение ра�
 
     /* USER CODE BEGIN 3 */
 #ifdef INTRON
-    for (uint8_t i =0; i<4; ++i)
-    {
         //Обмен с ПЛИС
 //        delayUS_ASM(150);
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-        //        sendPackets(i, destip, destport + i);
-        //        receivePackets(i, destip, destport + i);
                 sendPackets(0, destip, destport);
                 receivePackets(0, destip, destport);
-    }
 #endif
 
 #ifndef INTRON
-    for (uint8_t i =0; i<4; ++i)
-    {
         //Обмен с ПЛИС
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 32, 0x1000);
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-//        sendPackets(i, destip, destport + i);
-//        receivePackets(i, destip, destport + i);
         sendPackets(0, destip, destport);
         receivePackets(0, destip, destport);
-    }
+
 #endif
 
 
@@ -804,7 +799,8 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-    sendto(sn, (uint8_t *)rxCyclon, 32, destip, destport);
+//    sendto(sn, (uint8_t *)rxCyclon, 32, destip, destport);
+    sendto(sn, (uint8_t *)test, 32, destip, destport);
 
     ++num_send;
     ++num;

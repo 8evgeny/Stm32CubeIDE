@@ -813,7 +813,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
 //    sendto(sn, (uint8_t *)rxCyclon, 48, destip, destport);
-    sendto(sn, (uint8_t *)test4, 48, destip, destport);
+    sendto_mod(sn, (uint8_t *)test4, 48, destip, destport);
 
     ++num_send;
     ++num;
@@ -839,7 +839,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    recvfrom(sn, (uint8_t *)txCyclon, 48, destip, &destport);
+    recvfrom_mod(sn, (uint8_t *)txCyclon, 48, destip, &destport);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
     ++num_rcvd;

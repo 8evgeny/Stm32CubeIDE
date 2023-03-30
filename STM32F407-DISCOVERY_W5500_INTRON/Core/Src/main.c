@@ -345,23 +345,25 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение работы общее
-
+uint8_t firstSend = 1;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 #ifdef INTRON
-        //Обмен с ПЛИС
-      for (uint8_t i =0; i < 8 ;++i)
-      {
-        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 48, 0x1000);
-        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+      //Обмен с ПЛИС
+    for (uint8_t i =0; i < 8 ;++i)
+    {
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, 48, 0x1000);
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-        sendPackets(i, destip, destport + i);
-        receivePackets(i, destip, destport + i);
-      }
+      sendPackets(i, destip, destport + i);
+      if (firstSend != 1)
+          receivePackets(i, destip, destport + i);
+    }
+    firstSend = 0; //После сброса сперва отправляем 8 пакетов а потом уже прием
 #endif
 
 #ifndef INTRON
@@ -373,8 +375,10 @@ HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Разрешение ра�
       while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
       sendPackets(i, destip, destport + i);
-      receivePackets(i, destip, destport + i);
+      if (firstSend != 1)
+          receivePackets(i, destip, destport + i);
     }
+    firstSend = 0; //После сброса сперва отправляем 8 пакетов а потом уже прием
 #endif
 
 

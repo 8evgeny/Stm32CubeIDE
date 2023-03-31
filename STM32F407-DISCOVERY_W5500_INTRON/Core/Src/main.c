@@ -360,9 +360,12 @@ uint8_t firstSend = 1;
       HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
       while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-      sendPackets(i, destip, destport + i);
+//      sendPackets(i, destip, destport + i);
+//      if (firstSend != 1)
+//          receivePackets(i, destip, destport + i);
+      sendPackets(0, destip, destport );
       if (firstSend != 1)
-          receivePackets(i, destip, destport + i);
+          receivePackets(0, destip, destport);
     }
     firstSend = 0; //После сброса сперва отправляем 8 пакетов а потом уже прием
 #endif
@@ -371,13 +374,16 @@ uint8_t firstSend = 1;
       //Обмен с ПЛИС
     for (uint8_t i =0; i < 8 ;++i)
     {
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-      sendPackets(i, destip, destport + i);
-      if (firstSend != 1)
-          receivePackets(i, destip, destport + i);
+  //      sendPackets(i, destip, destport + i);
+  //      if (firstSend != 1)
+  //          receivePackets(i, destip, destport + i);
+        sendPackets(0, destip, destport );
+        if (firstSend != 1)
+            receivePackets(0, destip, destport);
     }
     firstSend = 0; //После сброса сперва отправляем 8 пакетов а потом уже прием
 #endif

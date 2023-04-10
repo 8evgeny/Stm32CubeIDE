@@ -847,12 +847,12 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 //    sendto_mod(sn, (uint8_t *)test6, MAX_PACKET_LEN, destip, destport);
 
     ++num_send;
-    ++num;
-    if (num % 20000 == 0)
-    {
-        sprintf(tmp, "%u\r\n",num);
-        UART_Printf(tmp);
-    }
+//    ++num;
+//    if (num % 20000 == 0)
+//    {
+//        sprintf(tmp, "%u\r\n",num);
+//        UART_Printf(tmp);
+//    }
     if (num_send == 500)
     {
         HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);

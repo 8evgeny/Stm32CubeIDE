@@ -72,12 +72,13 @@ uint8_t memsize[2][8] = { {2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void UART_Printf(const char* fmt, ...) {
-    char buff[256];
+    char buff[512];
     va_list args;
     va_start(args, fmt);
     vsnprintf(buff, sizeof(buff), fmt, args);
-    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff),
-                      HAL_MAX_DELAY);
+    HAL_UART_Transmit_DMA(&huart6, (uint8_t*)buff, strlen(buff)
+//                          ,HAL_MAX_DELAY
+                          );
     va_end(args);
 }
 

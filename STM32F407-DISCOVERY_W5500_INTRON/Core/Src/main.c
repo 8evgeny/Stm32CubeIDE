@@ -347,14 +347,20 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 FRESULT result = f_mount(&fs, "", 0);
 UART_Printf("mount=%d\r\n",result);
-
 delayUS_ASM(10000);
 
-result = f_open(&fil, "test", FA_OPEN_ALWAYS | FA_READ );
+result = f_open(&fil, "test", FA_OPEN_ALWAYS | FA_WRITE | FA_READ );
 UART_Printf("f_open=%d\r\n",result);
+delayUS_ASM(10000);
 
-//f_lseek(&fil, fil.fsize);
-f_puts("This is an example text to check SD Card Module with STM32 Blue Pill\n", &fil);
+result = f_lseek(&fil, 0);
+UART_Printf("f_lseek=%d\r\n",result);
+delayUS_ASM(10000);
+
+result = f_puts("This is an example text to check SD Card Module with STM32 \n", &fil);
+UART_Printf("f_puts=%d\r\n",result);
+delayUS_ASM(10000);
+
 f_close(&fil);
 
 

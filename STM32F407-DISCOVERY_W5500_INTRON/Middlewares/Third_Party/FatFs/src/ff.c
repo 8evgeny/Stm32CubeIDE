@@ -3035,6 +3035,8 @@ FRESULT find_volume (	/* FR_OK(0): successful, !=0: any error occurred */
 	fs->drv = LD2PD(vol);				/* Bind the logical drive and a physical drive */
 	stat = disk_initialize(fs->drv);	/* Initialize the physical drive */
     if (stat & STA_NOINIT) {
+UART_Printf("stat=%d\r\n",stat);
+delayUS_ASM(10000);
 
         /* Check if the initialization succeeded */
 UART_Printf("2\r\n");

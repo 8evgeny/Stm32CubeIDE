@@ -2988,7 +2988,7 @@ BYTE check_fs (	/* 0:FAT, 1:exFAT, 2:Valid BS but not FAT, 3:Not a BS, 4:Disk er
 /*-----------------------------------------------------------------------*/
 /* Find logical drive and check if the volume is mounted                 */
 /*-----------------------------------------------------------------------*/
-void UART_Printf(const char* fmt, ...);
+
 static
 FRESULT find_volume (	/* FR_OK(0): successful, !=0: any error occurred */
 	const TCHAR** path,	/* Pointer to pointer to the path name (drive number) */
@@ -3034,14 +3034,8 @@ FRESULT find_volume (	/* FR_OK(0): successful, !=0: any error occurred */
 	fs->fs_type = 0;					/* Clear the file system object */
 	fs->drv = LD2PD(vol);				/* Bind the logical drive and a physical drive */
 	stat = disk_initialize(fs->drv);	/* Initialize the physical drive */
-    if (stat & STA_NOINIT) {
-UART_Printf("stat=%d\r\n",stat);
-delayUS_ASM(10000);
-
-        /* Check if the initialization succeeded */
-UART_Printf("2\r\n");
-delayUS_ASM(10000);
-        return FR_NOT_READY;			/* Failed to initialize due to no medium or hard error */
+	if (stat & STA_NOINIT) { 			/* Check if the initialization succeeded */
+		return FR_NOT_READY;			/* Failed to initialize due to no medium or hard error */
 	}
 	if (!_FS_READONLY && mode && (stat & STA_PROTECT)) { /* Check disk write protection if needed */
 		return FR_WRITE_PROTECTED;
@@ -3326,7 +3320,6 @@ FRESULT f_open (
 #endif
 	DEF_NAMBUF
 
-UART_Printf("1\r\n");
 
 	if (!fp) return FR_INVALID_OBJECT;
 
@@ -3395,7 +3388,6 @@ UART_Printf("1\r\n");
 				} else
 #endif
 				{
-
 					/* Clean directory info */
 					st_dword(dj.dir + DIR_CrtTime, dw);	/* Set created time */
 					st_dword(dj.dir + DIR_ModTime, dw);	/* Set modified time */
@@ -3417,7 +3409,6 @@ UART_Printf("1\r\n");
 			}
 		}
 		else {	/* Open an existing file */
-
 			if (res == FR_OK) {					/* Following succeeded */
 				if (dj.obj.attr & AM_DIR) {		/* It is a directory */
 					res = FR_NO_FILE;
@@ -5341,7 +5332,6 @@ FRESULT f_mkfs (
 
 	/* Check physical drive status */
 	stat = disk_initialize(pdrv);
-
 	if (stat & STA_NOINIT) return FR_NOT_READY;
 	if (stat & STA_PROTECT) return FR_WRITE_PROTECTED;
 	if (disk_ioctl(pdrv, GET_BLOCK_SIZE, &sz_blk) != RES_OK || !sz_blk || sz_blk > 32768 || (sz_blk & (sz_blk - 1))) sz_blk = 1;	/* Erase block to align data area */

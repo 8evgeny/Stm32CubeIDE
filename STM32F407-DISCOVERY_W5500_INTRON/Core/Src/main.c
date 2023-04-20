@@ -350,7 +350,7 @@ UART_Printf("mount=%d\r\n",result);
 
 delayUS_ASM(10000);
 
-result = f_open(&fil, "test", FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+result = f_open(&fil, "test", FA_OPEN_ALWAYS | FA_READ );
 UART_Printf("f_open=%d\r\n",result);
 
 //f_lseek(&fil, fil.fsize);
@@ -751,7 +751,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|GPIO_PIN_10|Green_Led_Pin|Orange_Led_Pin
-                          |Red_Led_Pin|Blue_Led_Pin|Audio_RST_Pin, GPIO_PIN_RESET);
+                          |Red_Led_Pin|Blue_Led_Pin|GPIO_PIN_2|Audio_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
@@ -822,12 +822,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : Audio_RST_Pin */
-  GPIO_InitStruct.Pin = Audio_RST_Pin;
+  /*Configure GPIO pins : PD2 Audio_RST_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_2|Audio_RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(Audio_RST_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Audio_SCL_Pin Audio_SDA_Pin */
   GPIO_InitStruct.Pin = Audio_SCL_Pin|Audio_SDA_Pin;

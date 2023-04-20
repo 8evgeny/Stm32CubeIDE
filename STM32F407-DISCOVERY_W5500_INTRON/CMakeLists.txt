@@ -13,6 +13,8 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #Закомментировать при прошивке DT
 #add_definitions(-DINTRON)
 
+add_definitions(-DSD_CARD)
+
 project(11_Converter_F407_INTRON_DT C CXX ASM)
 
 #set(CMAKE_BUILD_TYPE debug)

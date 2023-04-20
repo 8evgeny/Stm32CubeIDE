@@ -344,23 +344,40 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 #endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
-
-FRESULT result = f_mount(&fs, "", 0);
-UART_Printf("mount=%d\r\n",result);
+f_mount(&fs, "", 0);
+FRESULT result = f_open(&fil, "test", FA_OPEN_ALWAYS | FA_WRITE | FA_READ );
+UART_Printf("f_open=%d\r\n", result);
 delayUS_ASM(10000);
 
-result = f_open(&fil, "test", FA_OPEN_ALWAYS | FA_WRITE | FA_READ );
-UART_Printf("f_open=%d\r\n",result);
-delayUS_ASM(10000);
+f_lseek(&fil, 0);
+char tmp[100];
+f_puts("Destination IP:", &fil); f_puts("\n", &fil);
+sprintf(tmp,"%d",destip[0]); f_puts(tmp, &fil); f_puts("\n", &fil);
+sprintf(tmp,"%d",destip[1]); f_puts(tmp, &fil); f_puts("\n", &fil);
+sprintf(tmp,"%d",destip[2]); f_puts(tmp, &fil); f_puts("\n", &fil);
+sprintf(tmp,"%d",destip[3]); f_puts(tmp, &fil); f_puts("\n", &fil);
 
-result = f_lseek(&fil, 0);
-UART_Printf("f_lseek=%d\r\n",result);
-delayUS_ASM(10000);
+//sprintf(tmp,"%d.%d.%d.%d",destip[0],destip[1],destip[2],destip[3]);
+//f_puts(tmp, &fil);
+//f_puts("\n", &fil);
+//f_printf(&fil,tmp);
 
-result = f_puts("This is an example text to check SD Card Module with STM32 \n", &fil);
-UART_Printf("f_puts=%d\r\n",result);
+f_lseek(&fil, 0);
+f_gets(tmp, 100, &fil);
+UART_Printf(tmp);
 delayUS_ASM(10000);
-
+f_gets(tmp, 100, &fil);
+UART_Printf(tmp);
+delayUS_ASM(10000);
+f_gets(tmp, 100, &fil);
+UART_Printf(tmp);
+delayUS_ASM(10000);
+f_gets(tmp, 100, &fil);
+UART_Printf(tmp);
+delayUS_ASM(10000);
+f_gets(tmp, 100, &fil);
+UART_Printf(tmp);
+delayUS_ASM(10000);
 f_close(&fil);
 
 

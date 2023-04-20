@@ -47,6 +47,9 @@ include_directories(
     Drivers/CMSIS/Include
     ioLibrary_Driver/Ethernet
     ioLibrary_Driver/Ethernet/W5500
+    FATFS/App
+    FATFS/Target
+    Middlewares/Third_Party/FatFs/src
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
@@ -54,6 +57,10 @@ file (GLOB SOURCES_C
     Drivers/STM32F4xx_HAL_Driver/Src/*.c
     ioLibrary_Driver/Ethernet/*.c
     ioLibrary_Driver/Ethernet/W5500/w5500.c
+    FATFS/App/*.c
+    FATFS/Target/*.c
+    Middlewares/Third_Party/FatFs/src/*.c
+    Middlewares/Third_Party/FatFs/src/option/*.c
     )
 
 

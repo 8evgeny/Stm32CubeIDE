@@ -5,6 +5,7 @@ extern UART_HandleTypeDef huart6;
 extern http_sock_prop_ptr httpsockprop[2];
 //-----------------------------------------------
 extern char str1[60];
+extern tcp_prop_ptr tcpprop;
 char tmpbuf[30];
 uint8_t sect[515];
 //extern http_sock_prop_ptr httpsockprop[8];
@@ -235,25 +236,24 @@ void w5500_ini(void)
 	w5500_writeReg(opcode, SIPR1,ipaddr[1]);
 	w5500_writeReg(opcode, SIPR2,ipaddr[2]);
 	w5500_writeReg(opcode, SIPR3,ipaddr[3]);
-	//Настраиваем сокеты
-for(i = 0; i < 1; i++)
-  {
-    SetSockPort(i, local_port);
-    //Открываем сокет
-    OpenSocket(i, Mode_TCP);
-    SocketInitWait(i);
+    //Настраиваем сокет 0
+    opcode = (BSB_S0<<3)|OM_FDM1;
+    w5500_writeReg(opcode, Sn_PORT0,local_port>>8);
+    w5500_writeReg(opcode, Sn_PORT1,local_port);
+    //инициализируем активный сокет
+    tcpprop.cur_sock = 0;
+    //Открываем сокет 0
+    OpenSocket(0,Mode_TCP);
+    SocketInitWait(0);
     //Начинаем слушать сокет
-    ListenSocket(i);
-    SocketListenWait(i);
-  }
+    ListenSocket(0);
+    SocketListenWait(0);
   HAL_Delay(500);
-  //Посмотрим статусы
-  for(i = 0; i < 1; i++)
-  {
-    dtt = GetSocketStatus(i);
-    sprintf(str1,"TCP socket %d status: 0x%02X\r\n",i,dtt);
+  //Посмотрим статус
+    opcode = (BSB_S0<<3)|OM_FDM1;
+    dtt = w5500_readReg(opcode, Sn_SR);
+    sprintf(str1,"TCP socket %d status: 0x%02X\r\n", 0, dtt);
     HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-  }	
 }
 //-----------------------------------------------
 extern void tcp_send_http_middle(void);
@@ -264,6 +264,7 @@ void w5500_packetReceive(uint8_t sn)
   uint16_t len;
     if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
     {
+        HAL_UART_Transmit(&huart6,(uint8_t*)"cool", strlen("cool"),0x1000);
         if(httpsockprop[sn].data_stat == DATA_COMPLETED)
         {
             len = GetSizeRX(sn);

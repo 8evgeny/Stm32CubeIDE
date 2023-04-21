@@ -87,6 +87,11 @@
 //--------------------------------------------------
 #define be16toword(a) ((((a)>>8)&0xff)|(((a)<<8)&0xff00))
 //--------------------------------------------------
+
+typedef struct tcp_prop {
+volatile uint8_t cur_sock;//активный сокет
+} tcp_prop_ptr;
+
 typedef struct data_sect {
   volatile uint16_t addr;
   volatile uint8_t opcode;
@@ -120,5 +125,7 @@ void SetWritePointer(uint8_t sock_num, uint16_t point);
 void w5500_writeSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t len);
 void RecvSocket(uint8_t sock_num);
 void SendSocket(uint8_t sock_num);
+
+#include "httpd.h"
 
 #endif /* W5500_H_ */

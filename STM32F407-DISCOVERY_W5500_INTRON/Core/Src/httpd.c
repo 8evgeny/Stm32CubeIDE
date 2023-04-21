@@ -65,7 +65,8 @@ void tcp_send_http_one(void)
 				break;
 		}
 		header_len = strlen(header);
-//data_len = (uint16_t)MyFile.fsize;
+//        data_len = (uint16_t)MyFile.fsize;
+        data_len = (uint16_t)f_size(&MyFile);
 		end_point = GetWritePointer(tcpprop.cur_sock);
 		end_point+=header_len+data_len;
 		//Заполним данными буфер для отправки пакета
@@ -316,7 +317,7 @@ void http_request(void)
 	result=f_open(&MyFile,httpsockprop[tcpprop.cur_sock].fname,FA_READ); //Попытка открыть файл
 	sprintf(str1,"f_open: %d\r\n",result);
 	HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
-//sprintf(str1,"f_size: %lu\r\n",MyFile.fsize);
+    sprintf(str1,"f_size: %lu\r\n",f_size(&MyFile));
 	HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
 	if (result==FR_OK)
 	{
@@ -342,7 +343,7 @@ void http_request(void)
 			httpsockprop[tcpprop.cur_sock].data_size = strlen(http_header);
 		}
 		//затем размер самого документа
-//httpsockprop[tcpprop.cur_sock].data_size += MyFile.fsize;
+        httpsockprop[tcpprop.cur_sock].data_size += f_size(&MyFile);
 	}
 	else
 	{

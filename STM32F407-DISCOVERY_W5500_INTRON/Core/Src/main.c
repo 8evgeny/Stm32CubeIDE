@@ -248,7 +248,7 @@ uint16_t localport = 8888;
         delayUS_ASM(10000);
 if (sdCartOn == 1)
 {
-    f_lseek(&fil, 0);
+    f_lseek(&fil, 0);//размер - f_size(&fil)
     f_gets(tmp, 100, &fil);
     UART_Printf(tmp);
     delayUS_ASM(10000);

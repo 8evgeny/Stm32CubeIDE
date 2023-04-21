@@ -235,22 +235,22 @@ void w5500_ini(void)
 	w5500_writeReg(opcode, SIPR2,ipaddr[2]);
 	w5500_writeReg(opcode, SIPR3,ipaddr[3]);
 	//Настраиваем сокеты
-for(i=0; i < 8; i++)
+for(i = 4; i < 8; i++)
   {
     SetSockPort(i, local_port);
-//    //Открываем сокет
-//    OpenSocket(i,Mode_TCP);
-//    SocketInitWait(i);
-//    //Начинаем слушать сокет
-//    ListenSocket(i);
-//    SocketListenWait(i);
+    //Открываем сокет
+    OpenSocket(i,Mode_TCP);
+    SocketInitWait(i);
+    //Начинаем слушать сокет
+    ListenSocket(i);
+    SocketListenWait(i);
   }
   HAL_Delay(500);
   //Посмотрим статусы
-  for(i=0;i<8;i++)
+  for(i = 4; i < 8; i++)
   {
     dtt = GetSocketStatus(i);
-    sprintf(str1,"First Status Sn%d: 0x%02X\r\n",i,dtt);
+    sprintf(str1,"TCP socket %d status: 0x%02X\r\n",i,dtt);
     HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
   }	
 }

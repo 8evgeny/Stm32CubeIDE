@@ -99,7 +99,7 @@ SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 DMA_HandleTypeDef hdma_spi3_rx;
 DMA_HandleTypeDef hdma_spi3_tx;
-
+extern uint8_t ipaddr[4];
 TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart6;
@@ -218,8 +218,19 @@ int main(void)
 //    delayUS_ASM(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
-    net_ini();
-    delayUS_ASM(10000);
+#ifdef INTRON
+uint8_t  hostip[4] = {192,168,1,197};
+uint8_t  destip[4] = {192,168,1,198};
+uint16_t  destport = 8888;
+uint16_t localport = 8888;
+#endif
+
+#ifndef INTRON
+uint8_t  hostip[4] = {192,168,1,198};
+uint8_t  destip[4] = {192,168,1,197};
+uint16_t  destport = 8888;
+uint16_t localport = 8888;
+#endif
 
 #ifndef SD_CARD
     #ifdef INTRON
@@ -229,6 +240,64 @@ int main(void)
     UART_Printf("ip - 192.168.1.198\r\n");
     #endif
 #endif
+
+#ifdef SD_CARD
+    char tmp[100];
+
+    f_mount(&fs, "", 0);
+    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    if (result == 0)
+        UART_Printf("sd_cart_open\r\n");
+        delayUS_ASM(10000);
+    if (result != 0)
+        UART_Printf("sd_cart_not_open\r\n");
+        delayUS_ASM(10000);
+    f_lseek(&fil, 0);
+    f_gets(tmp, 100, &fil);
+    UART_Printf(tmp);
+    delayUS_ASM(10000);
+    f_gets(tmp, 100, &fil);
+    hostip[0] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    hostip[1] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    hostip[2] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    hostip[3] = atoi(tmp);
+    sprintf(tmp,"%d.%d.%d.%d",hostip[0],hostip[1],hostip[2],hostip[3]);
+    ipaddr[0] = hostip[0];
+    ipaddr[1] = hostip[1];
+    ipaddr[2] = hostip[2];
+    ipaddr[3] = hostip[3];
+    UART_Printf(tmp);
+    delayUS_ASM(10000);
+    UART_Printf("\n");
+    delayUS_ASM(10000);
+    f_close(&fil);
+
+    result = f_open(&fil, "destination_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp, 100, &fil);
+    UART_Printf(tmp);
+    delayUS_ASM(10000);
+    f_gets(tmp, 100, &fil);
+    destip[0] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    destip[1] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    destip[2] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    destip[3] = atoi(tmp);
+    sprintf(tmp,"%d.%d.%d.%d",destip[0],destip[1],destip[2],destip[3]);
+    UART_Printf(tmp);
+    delayUS_ASM(10000);
+    UART_Printf("\n");
+    delayUS_ASM(10000);
+    f_close(&fil);
+#endif
+
+    net_ini();
+    delayUS_ASM(10000);
 
   //Callbacks
     reg_wizchip_cris_cbfunc(wizchip_cris_enter, wizchip_cris_exit);
@@ -306,19 +375,6 @@ uint8_t sn = 0;
 #define DATA_BUF_SIZE   2048
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
-#ifdef INTRON
-uint8_t  hostip[4] = {192,168,1,197};
-uint8_t  destip[4] = {192,168,1,198};
-uint16_t  destport = 8888;
-uint16_t localport = 8888;
-#endif
-
-#ifndef INTRON
-uint8_t  hostip[4] = {192,168,1,198};
-uint8_t  destip[4] = {192,168,1,197};
-uint16_t  destport = 8888;
-uint16_t localport = 8888;
-#endif
 
 for (uint8_t i = 0; i < 8 ;++i)
 {
@@ -343,62 +399,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 #endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
-#ifdef SD_CARD
-char tmp[100];
 
-f_mount(&fs, "", 0);
-FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
-if (result == 0)
-    UART_Printf("sd_cart_open\r\n");
-    delayUS_ASM(10000);
-if (result != 0)
-    UART_Printf("sd_cart_not_open\r\n");
-    delayUS_ASM(10000);
-f_lseek(&fil, 0);
-//f_puts("Destination IP:", &fil); f_puts("\n", &fil);
-//sprintf(tmp,"%d",destip[0]); f_puts(tmp, &fil); f_puts("\n", &fil);
-//sprintf(tmp,"%d",destip[1]); f_puts(tmp, &fil); f_puts("\n", &fil);
-//sprintf(tmp,"%d",destip[2]); f_puts(tmp, &fil); f_puts("\n", &fil);
-//sprintf(tmp,"%d",destip[3]); f_puts(tmp, &fil); f_puts("\n", &fil);
-f_lseek(&fil, 0);
-f_gets(tmp, 100, &fil);
-UART_Printf(tmp);
-delayUS_ASM(10000);
-f_gets(tmp, 100, &fil);
-hostip[0] = atoi(tmp);
-f_gets(tmp, 100, &fil);
-hostip[1] = atoi(tmp);
-f_gets(tmp, 100, &fil);
-hostip[2] = atoi(tmp);
-f_gets(tmp, 100, &fil);
-hostip[3] = atoi(tmp);
-sprintf(tmp,"%d.%d.%d.%d",hostip[0],hostip[1],hostip[2],hostip[3]);
-UART_Printf(tmp);
-delayUS_ASM(10000);
-UART_Printf("\n");
-delayUS_ASM(10000);
-f_close(&fil);
-
-result = f_open(&fil, "destination_IP", FA_OPEN_ALWAYS | FA_READ );
-f_lseek(&fil, 0);
-f_gets(tmp, 100, &fil);
-UART_Printf(tmp);
-delayUS_ASM(10000);
-f_gets(tmp, 100, &fil);
-destip[0] = atoi(tmp);
-f_gets(tmp, 100, &fil);
-destip[1] = atoi(tmp);
-f_gets(tmp, 100, &fil);
-destip[2] = atoi(tmp);
-f_gets(tmp, 100, &fil);
-destip[3] = atoi(tmp);
-sprintf(tmp,"%d.%d.%d.%d",destip[0],destip[1],destip[2],destip[3]);
-UART_Printf(tmp);
-delayUS_ASM(10000);
-UART_Printf("\n");
-delayUS_ASM(10000);
-f_close(&fil);
-#endif
 
 uint8_t firstSend = 1;
   while (1)

@@ -421,9 +421,9 @@ uint8_t firstSend = 1;
 
       while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-      sendPackets(i, destip, destport + i);
+      sendPackets(0, destip, destport );
       if (firstSend != 1)
-          receivePackets(i, destip, destport + i);
+          receivePackets(0, destip, destport );
     }
     firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 #endif
@@ -443,9 +443,9 @@ uint8_t firstSend = 1;
 
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-        sendPackets(i, destip, destport + i);
+        sendPackets(0, destip, destport );
         if (firstSend != 1)
-            receivePackets(i, destip, destport + i);
+            receivePackets(0, destip, destport );
     }
     firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 #endif

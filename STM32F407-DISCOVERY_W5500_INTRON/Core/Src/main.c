@@ -378,7 +378,7 @@ uint8_t sn = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 
-for (uint8_t i = 0; i < 3 ;++i)
+for (uint8_t i = 4; i < 8 ;++i)
 {
     socket(i, Sn_MR_UDP, localport + i, 0x00);
 }
@@ -408,7 +408,7 @@ uint8_t firstSend = 1;
 
     /* USER CODE BEGIN 3 */
 #ifdef INTRON
-    for (uint8_t i = 0; i < 3 ;++i)
+    for (uint8_t i = 4; i < 8 ;++i)
     {
       while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
       HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
@@ -421,31 +421,30 @@ uint8_t firstSend = 1;
 
       while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-      sendPackets(0, destip, destport );
+      sendPackets(4, destip, destport + 4 );
       if (firstSend != 1)
-          receivePackets(0, destip, destport );
+          receivePackets(4, destip, destport + 4 );
     }
     firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 #endif
 
 #ifndef INTRON
-      //Обмен с ПЛИС
-    for (uint8_t i = 0; i < 3 ;++i)
+    for (uint8_t i = 4; i < 8 ;++i)
     {
-        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
-        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
 
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-        sendPackets(0, destip, destport );
-        if (firstSend != 1)
-            receivePackets(0, destip, destport );
+      sendPackets(4, destip, destport + 4 );
+      if (firstSend != 1)
+          receivePackets(4, destip, destport + 4 );
     }
     firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 #endif

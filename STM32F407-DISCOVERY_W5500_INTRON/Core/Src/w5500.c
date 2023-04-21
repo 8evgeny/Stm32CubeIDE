@@ -2,6 +2,7 @@
 //-----------------------------------------------
 extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart6;
+extern http_sock_prop_ptr httpsockprop[2];
 //-----------------------------------------------
 extern char str1[60];
 char tmpbuf[30];
@@ -235,11 +236,11 @@ void w5500_ini(void)
 	w5500_writeReg(opcode, SIPR2,ipaddr[2]);
 	w5500_writeReg(opcode, SIPR3,ipaddr[3]);
 	//Настраиваем сокеты
-for(i = 4; i < 8; i++)
+for(i = 0; i < 1; i++)
   {
     SetSockPort(i, local_port);
     //Открываем сокет
-    OpenSocket(i,Mode_TCP);
+    OpenSocket(i, Mode_TCP);
     SocketInitWait(i);
     //Начинаем слушать сокет
     ListenSocket(i);
@@ -255,55 +256,57 @@ for(i = 4; i < 8; i++)
   }	
 }
 //-----------------------------------------------
+extern void tcp_send_http_middle(void);
+extern void tcp_send_http_last(void);
 void w5500_packetReceive(uint8_t sn)
 {
-//  uint16_t point;
-//  uint16_t len;
-//	if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
-//	{
-//		if(httpsockprop[sn].data_stat == DATA_COMPLETED)
-//		{
-//			len = GetSizeRX(sn);
-//			//Если пришел пустой пакет, то уходим из функции
-//			if(!len) return;
-//			//Отобразим размер принятых данных
-//			sprintf(str1,"S%d len buf:0x%04X\r\n",sn,len);
-//			HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
-//			//здесь обмениваемся информацией: на запрос документа от клиента отправляем ему запрошенный документ
-//			//указатель на начало чтения приёмного буфера
-//			point = GetReadPointer(sn);
-//			w5500_readSockBuf(sn, point, (uint8_t*)tmpbuf, 5);
-//			if (strncmp(tmpbuf,"GET /", 5) == 0)
-//			{
-//				httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
-//				http_request(sn);
-//			}
-//		}
-//		else if(httpsockprop[sn].data_stat==DATA_MIDDLE)
-//    {
-//      if(httpsockprop[sn].prt_tp == PRT_TCP_HTTP)
-//      {
-//				tcp_send_http_middle(sn);
-//      }
-//    }
-//    else if(httpsockprop[sn].data_stat==DATA_LAST)
-//    {
-//      if(httpsockprop[sn].prt_tp == PRT_TCP_HTTP)
-//      {
-//				tcp_send_http_last(sn);
-//        DisconnectSocket(sn); //Разъединяемся
-//        SocketClosedWait(sn);
-//				sprintf(str1,"S%d (one) closed\r\n",sn);
-//				HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
-//        OpenSocket(sn,Mode_TCP);
-//        //Ждём инициализации сокета (статус SOCK_INIT)
-//        SocketInitWait(sn);
-//        //Продолжаем слушать сокет
-//        ListenSocket(sn);
-//        SocketListenWait(sn);
-//      }
-//    }
-//	}
+  uint16_t point;
+  uint16_t len;
+    if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
+    {
+        if(httpsockprop[sn].data_stat == DATA_COMPLETED)
+        {
+            len = GetSizeRX(sn);
+            //Если пришел пустой пакет, то уходим из функции
+            if(!len) return;
+            //Отобразим размер принятых данных
+            sprintf(str1,"S%d len buf:0x%04X\r\n",sn,len);
+            HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+            //здесь обмениваемся информацией: на запрос документа от клиента отправляем ему запрошенный документ
+            //указатель на начало чтения приёмного буфера
+            point = GetReadPointer(sn);
+            w5500_readSockBuf(sn, point, (uint8_t*)tmpbuf, 5);
+            if (strncmp(tmpbuf,"GET /", 5) == 0)
+            {
+                httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
+                http_request();
+            }
+        }
+        else if(httpsockprop[sn].data_stat==DATA_MIDDLE)
+    {
+      if(httpsockprop[sn].prt_tp == PRT_TCP_HTTP)
+      {
+          tcp_send_http_middle();
+      }
+    }
+    else if(httpsockprop[sn].data_stat==DATA_LAST)
+    {
+      if(httpsockprop[sn].prt_tp == PRT_TCP_HTTP)
+      {
+        tcp_send_http_last();
+        DisconnectSocket(sn); //Разъединяемся
+        SocketClosedWait(sn);
+        sprintf(str1,"S%d (one) closed\r\n",sn);
+        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+        OpenSocket(sn,Mode_TCP);
+        //Ждём инициализации сокета (статус SOCK_INIT)
+        SocketInitWait(sn);
+        //Продолжаем слушать сокет
+        ListenSocket(sn);
+        SocketListenWait(sn);
+      }
+    }
+    }
 	
 	
 }

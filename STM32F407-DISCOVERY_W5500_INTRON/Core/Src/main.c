@@ -407,6 +407,9 @@ uint8_t firstSend = 1;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+     net_poll();
+
 #ifdef INTRON
     for (uint8_t i = 4; i < 8 ;++i)
     {

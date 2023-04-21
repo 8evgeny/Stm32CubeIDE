@@ -11,7 +11,7 @@ char str1[60]={0};
 void packet_receive(void)
 {
 	uint8_t i;
-	for(i=3;i<8;i++)
+    for(i = 0; i < 1; i++)
   {
     w5500_packetReceive(i);
   }

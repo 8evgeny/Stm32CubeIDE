@@ -1,13 +1,13 @@
 #include "httpd.h"
 //-----------------------------------------------
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
 extern char str1[60];
 extern char tmpbuf[30];
 extern uint8_t sect[515];
 //-----------------------------------------------
 http_sock_prop_ptr httpsockprop[2];
-extern tcp_prop_ptr tcpprop;
+tcp_prop_ptr tcpprop;
 FIL MyFile;
 FRESULT result; //результат выполнения
 uint32_t bytesread;
@@ -83,7 +83,7 @@ void tcp_send_http_one(void)
 			else len_sect=data_len;
 			result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
 			sprintf(str1,"f_lseek: %d\r\n",result);
-			HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
+            HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 			result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
 			w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 			end_point+=len_sect;
@@ -157,7 +157,7 @@ void tcp_send_http_first(void)
 		else len_sect=data_len;
 		result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
 		sprintf(str1,"f_lseek: %d\r\n",result);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
+        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -263,7 +263,7 @@ void tcp_send_http_last(void)
 		else len_sect=data_len;
 		result=f_lseek(&MyFile, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes); //Установим курсор чтения в файле
 		sprintf(str1,"f_lseek: %d\r\n",result);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
+        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -311,14 +311,14 @@ void http_request(void)
 		tmpbuf[i] = 0; //закончим строку
 		strcpy(httpsockprop[tcpprop.cur_sock].fname,tmpbuf);
 	}
-	HAL_UART_Transmit(&huart2,(uint8_t*)httpsockprop[tcpprop.cur_sock].fname,strlen(httpsockprop[tcpprop.cur_sock].fname),0x1000);
-	HAL_UART_Transmit(&huart2,(uint8_t*)"\r\n",2,0x1000);
+    HAL_UART_Transmit(&huart6,(uint8_t*)httpsockprop[tcpprop.cur_sock].fname,strlen(httpsockprop[tcpprop.cur_sock].fname),0x1000);
+    HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
 	f_close(&MyFile);
 	result=f_open(&MyFile,httpsockprop[tcpprop.cur_sock].fname,FA_READ); //Попытка открыть файл
 	sprintf(str1,"f_open: %d\r\n",result);
-	HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
+    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
     sprintf(str1,"f_size: %lu\r\n",f_size(&MyFile));
-	HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
+    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 	if (result==FR_OK)
 	{
         //изучим расширение файла
@@ -364,7 +364,7 @@ void http_request(void)
 	httpsockprop[tcpprop.cur_sock].cnt_data_part = httpsockprop[tcpprop.cur_sock].cnt_rem_data_part;
 	sprintf(str1,"data size:%lu; cnt data part:%u; last_data_part_size:%u\r\n",
 	(unsigned long)httpsockprop[tcpprop.cur_sock].data_size, httpsockprop[tcpprop.cur_sock].cnt_rem_data_part, httpsockprop[tcpprop.cur_sock].last_data_part_size);
-	HAL_UART_Transmit(&huart2,(uint8_t*)str1,strlen(str1),0x1000);
+    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 	if (httpsockprop[tcpprop.cur_sock].cnt_rem_data_part==1)
 	{
 		httpsockprop[tcpprop.cur_sock].data_stat = DATA_ONE;

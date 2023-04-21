@@ -248,7 +248,7 @@ for(i = 0; i < 1; i++)
   }
   HAL_Delay(500);
   //Посмотрим статусы
-  for(i = 4; i < 8; i++)
+  for(i = 0; i < 1; i++)
   {
     dtt = GetSocketStatus(i);
     sprintf(str1,"TCP socket %d status: 0x%02X\r\n",i,dtt);

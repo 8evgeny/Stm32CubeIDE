@@ -324,8 +324,6 @@ if (sdCartOn == 1)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-
-
 #if(0)
     SPI1 - обмен в режиме мастер с W5500
             SYN -  PA5
@@ -380,7 +378,7 @@ uint8_t sn = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 
-for (uint8_t i = 0; i < 8 ;++i)
+for (uint8_t i = 0; i < 3 ;++i)
 {
     socket(i, Sn_MR_UDP, localport + i, 0x00);
 }
@@ -403,8 +401,6 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 #endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
-
-
 uint8_t firstSend = 1;
   while (1)
   {
@@ -412,11 +408,10 @@ uint8_t firstSend = 1;
 
     /* USER CODE BEGIN 3 */
 #ifdef INTRON
-      //Обмен с ПЛИС
-    for (uint8_t i =0; i < 8 ;++i)
+    for (uint8_t i = 0; i < 3 ;++i)
     {
       while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
       HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
       HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
@@ -426,19 +421,16 @@ uint8_t firstSend = 1;
 
       while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-//      sendPackets(i, destip, destport + i);
-//      if (firstSend != 1)
-//          receivePackets(i, destip, destport + i);
-      sendPackets(0, destip, destport );
+      sendPackets(i, destip, destport + i);
       if (firstSend != 1)
-          receivePackets(0, destip, destport);
+          receivePackets(i, destip, destport + i);
     }
-    firstSend = 0; //После сброса сперва отправляем 8 пакетов а потом уже прием
+    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 #endif
 
 #ifndef INTRON
       //Обмен с ПЛИС
-    for (uint8_t i =0; i < 8 ;++i)
+    for (uint8_t i = 0; i < 3 ;++i)
     {
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
@@ -451,23 +443,15 @@ uint8_t firstSend = 1;
 
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-
-
-  //      sendPackets(i, destip, destport + i);
-  //      if (firstSend != 1)
-  //          receivePackets(i, destip, destport + i);
-        sendPackets(0, destip, destport );
+        sendPackets(i, destip, destport + i);
         if (firstSend != 1)
-            receivePackets(0, destip, destport);
+            receivePackets(i, destip, destport + i);
     }
-    firstSend = 0; //После сброса сперва отправляем 8 пакетов а потом уже прием
+    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 #endif
-
 
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-
 
 //    HAL_Delay(1000);
 //UART_Printf("txCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
@@ -482,8 +466,6 @@ uint8_t firstSend = 1;
 //        rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
 //        rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31]
 //        );
-
-
 
   }
   /* USER CODE END 3 */

@@ -6,6 +6,7 @@ extern http_sock_prop_ptr httpsockprop[2];
 //-----------------------------------------------
 extern char str1[60];
 extern tcp_prop_ptr tcpprop;
+extern void UART_Printf(const char* fmt, ...);
 char tmpbuf[30];
 uint8_t sect[515];
 //extern http_sock_prop_ptr httpsockprop[8];
@@ -264,14 +265,13 @@ void w5500_packetReceive(uint8_t sn)
   uint16_t len;
     if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
     {
-        HAL_UART_Transmit(&huart6,(uint8_t*)"cool", strlen("cool"),0x1000);
         if(httpsockprop[sn].data_stat == DATA_COMPLETED)
         {
             len = GetSizeRX(sn);
             //Если пришел пустой пакет, то уходим из функции
             if(!len) return;
             //Отобразим размер принятых данных
-            sprintf(str1,"S%d len buf:0x%04X\r\n",sn,len);
+            sprintf(str1,"socket %d len_buf:0x%04X\r\n",sn,len);
             HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
             //здесь обмениваемся информацией: на запрос документа от клиента отправляем ему запрошенный документ
             //указатель на начало чтения приёмного буфера
@@ -279,6 +279,7 @@ void w5500_packetReceive(uint8_t sn)
             w5500_readSockBuf(sn, point, (uint8_t*)tmpbuf, 5);
             if (strncmp(tmpbuf,"GET /", 5) == 0)
             {
+//        UART_Printf("GET /\r\n");
                 httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
                 http_request();
             }

@@ -53,7 +53,7 @@ void receivePackets(uint8_t, uint8_t* , uint16_t );
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 uint32_t count = 0;
-
+uint8_t sdCartOn = 0;
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -232,26 +232,21 @@ uint16_t  destport = 8888;
 uint16_t localport = 8888;
 #endif
 
-#ifndef SD_CARD
-    #ifdef INTRON
-    UART_Printf("ip - 192.168.1.197\r\n");
-    #endif
-    #ifndef INTRON
-    UART_Printf("ip - 192.168.1.198\r\n");
-    #endif
-#endif
-
-#ifdef SD_CARD
     char tmp[100];
 
     f_mount(&fs, "", 0);
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
+    {
+        sdCartOn = 1;
         UART_Printf("sd_cart_open\r\n");
+    }
         delayUS_ASM(10000);
     if (result != 0)
         UART_Printf("sd_cart_not_open\r\n");
         delayUS_ASM(10000);
+if (sdCartOn == 1)
+{
     f_lseek(&fil, 0);
     f_gets(tmp, 100, &fil);
     UART_Printf(tmp);
@@ -294,7 +289,15 @@ uint16_t localport = 8888;
     UART_Printf("\n");
     delayUS_ASM(10000);
     f_close(&fil);
-#endif
+} else //SD карты нет
+{
+    #ifdef INTRON
+    UART_Printf("ip - 192.168.1.197\r\n");
+    #endif
+    #ifndef INTRON
+    UART_Printf("ip - 192.168.1.198\r\n");
+    #endif
+}
 
     net_ini();
     delayUS_ASM(10000);

@@ -99,7 +99,7 @@ SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 DMA_HandleTypeDef hdma_spi3_rx;
 DMA_HandleTypeDef hdma_spi3_tx;
-extern uint8_t ipaddr[4];
+
 TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart6;
@@ -107,6 +107,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
 uint8_t capture = 0;
+extern uint8_t ipaddr[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

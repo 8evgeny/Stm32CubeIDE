@@ -279,16 +279,8 @@ void w5500_packetReceive(uint8_t sn)
             w5500_readSockBuf(sn, point, (uint8_t*)tmpbuf, 5);
             if (strncmp(tmpbuf,"GET /", 5) == 0)
             {
-                if (strncmp(tmpbuf,"GET /ajax_info", 14) != 0)
-                {
                 httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
                 http_request();
-                }
-            }
-            if (strncmp(tmpbuf,"GET /ajax_info", 14) == 0)
-            {
-                UART_Printf(tmpbuf);
-
             }
         }
         else if(httpsockprop[sn].data_stat==DATA_MIDDLE)

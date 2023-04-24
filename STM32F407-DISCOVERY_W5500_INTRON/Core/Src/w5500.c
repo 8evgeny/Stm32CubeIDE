@@ -283,6 +283,11 @@ void w5500_packetReceive(uint8_t sn)
                 httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
                 http_request();
             }
+            if (strncmp(tmpbuf,"?host_ip=", 9) == 0)
+            {
+        UART_Printf("?host_ip=");
+
+            }
         }
         else if(httpsockprop[sn].data_stat==DATA_MIDDLE)
     {

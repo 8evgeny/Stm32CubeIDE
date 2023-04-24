@@ -295,7 +295,7 @@ void http_request(void)
 	RXbyte = w5500_readSockBufByte(tcpprop.cur_sock,point);
 	if(RXbyte==(uint8_t)' ')
 	{
-		strcpy(httpsockprop[tcpprop.cur_sock].fname,"index.htm");
+        strcpy(httpsockprop[tcpprop.cur_sock].fname,"index.html");
 		httpsockprop[tcpprop.cur_sock].http_doc = EXISTING_HTML;
 	}
 	else

@@ -108,6 +108,8 @@ DMA_HandleTypeDef hdma_usart6_tx;
 /* USER CODE BEGIN PV */
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
+extern uint8_t ipgate[4];
+extern uint8_t ipmask[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -220,14 +222,12 @@ int main(void)
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
 #ifdef INTRON
-uint8_t  hostip[4] = {192,168,1,197};
 uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
 #endif
 
 #ifndef INTRON
-uint8_t  hostip[4] = {192,168,1,198};
 uint8_t  destip[4] = {192,168,1,197};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
@@ -250,33 +250,24 @@ uint16_t localport = 8888;
 if (sdCartOn == 1)
 {
     f_lseek(&fil, 0);//размер - f_size(&fil)
-//    f_gets(tmp, 100, &fil);
     UART_Printf("host_IP:\r\n");
     delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
-    hostip[0] = atoi(tmp);
+    ipaddr[0] = atoi(tmp);
     f_gets(tmp, 100, &fil);
-    hostip[1] = atoi(tmp);
+    ipaddr[1] = atoi(tmp);
     f_gets(tmp, 100, &fil);
-    hostip[2] = atoi(tmp);
+    ipaddr[2] = atoi(tmp);
     f_gets(tmp, 100, &fil);
-    hostip[3] = atoi(tmp);
-    sprintf(tmp,"%d.%d.%d.%d",hostip[0],hostip[1],hostip[2],hostip[3]);
-    ipaddr[0] = hostip[0];
-    ipaddr[1] = hostip[1];
-    ipaddr[2] = hostip[2];
-    ipaddr[3] = hostip[3];
-    UART_Printf(tmp);
-    delayUS_ASM(10000);
-    UART_Printf("\n");
-    delayUS_ASM(10000);
+    ipaddr[3] = atoi(tmp);
+    sprintf(tmp,"%d.%d.%d.%d",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    UART_Printf("\n"); delayUS_ASM(10000);
     f_close(&fil);
 
     result = f_open(&fil, "destination_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-//    f_gets(tmp, 100, &fil);
-    UART_Printf("destination_IP:\r\n");
-    delayUS_ASM(10000);
+    UART_Printf("destination_IP:\r\n"); delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
     destip[0] = atoi(tmp);
     f_gets(tmp, 100, &fil);
@@ -286,11 +277,42 @@ if (sdCartOn == 1)
     f_gets(tmp, 100, &fil);
     destip[3] = atoi(tmp);
     sprintf(tmp,"%d.%d.%d.%d",destip[0],destip[1],destip[2],destip[3]);
-    UART_Printf(tmp);
-    delayUS_ASM(10000);
-    UART_Printf("\n");
-    delayUS_ASM(10000);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    UART_Printf("\n"); delayUS_ASM(10000);
     f_close(&fil);
+
+    result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    UART_Printf("gate_IP:\r\n"); delayUS_ASM(10000);
+    f_gets(tmp, 100, &fil);
+    ipgate[0] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    ipgate[1] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    ipgate[2] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    ipgate[3] = atoi(tmp);
+    sprintf(tmp,"%d.%d.%d.%d",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    UART_Printf("\n"); delayUS_ASM(10000);
+    f_close(&fil);
+
+    result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    UART_Printf("mask_IP:\r\n"); delayUS_ASM(10000);
+    f_gets(tmp, 100, &fil);
+    ipmask[0] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    ipmask[1] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    ipmask[2] = atoi(tmp);
+    f_gets(tmp, 100, &fil);
+    ipmask[3] = atoi(tmp);
+    sprintf(tmp,"%d.%d.%d.%d",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    UART_Printf("\n"); delayUS_ASM(10000);
+    f_close(&fil);
+
 } else //SD карты нет
 {
     #ifdef INTRON

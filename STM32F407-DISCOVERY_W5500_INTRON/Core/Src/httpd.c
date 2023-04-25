@@ -6,6 +6,9 @@ extern char str1[60];
 extern char tmpbuf[30];
 extern uint8_t sect[515];
 extern uint8_t ipaddr[4];
+extern uint8_t ipgate[4];
+extern uint8_t ipmask[4];
+extern uint8_t destip[4];
 extern void UART_Printf(const char* fmt, ...);
 extern FATFS fs;
 extern FIL fil;
@@ -354,18 +357,91 @@ void http_request(void)
         }
     }
 
-if (tmpbuf[0] == '2')
-{
-    HAL_UART_Transmit(&huart6,(uint8_t*)"IP_MASK CHANGE\r\n",strlen("IP_MASK CHANGE\r\n"),0x1000);
-}
-if (tmpbuf[0] == '3')
-{
-    HAL_UART_Transmit(&huart6,(uint8_t*)"IP_GATEWAY CHANGE\r\n",strlen("IP_GATEWAY CHANGE\r\n"),0x1000);
-}
-if (tmpbuf[0] == '4')
-{
-    HAL_UART_Transmit(&huart6,(uint8_t*)"IP_DEST CHANGE\r\n",strlen("IP_DEST CHANGE\r\n"),0x1000);
-}
+    if (tmpbuf[0] == '2')
+    {
+        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_MASK CHANGE\r\n",strlen("IP_MASK CHANGE\r\n"),0x1000);
+        tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n'; tmp1[4] = 0x00;
+        ipmask[0] = atoi(tmp1);
+        tmp2[0] = tmpbuf[5]; tmp2[1] = tmpbuf[6]; tmp2[2] = tmpbuf[7]; tmp2[3] = '\n'; tmp2[4] = 0x00;
+        ipmask[1] = atoi(tmp2);
+        tmp3[0] = tmpbuf[9]; tmp3[1] = tmpbuf[10]; tmp3[2] = tmpbuf[11]; tmp3[3] = '\n'; tmp3[4] = 0x00;
+        ipmask[2] = atoi(tmp3);
+        tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n'; tmp4[4] = 0x00;
+        ipmask[3] = atoi(tmp4);
+        sprintf(tmp5,"new mask IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+        UART_Printf(tmp5);    delayUS_ASM(10000);
+        FRESULT result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_WRITE );
+        if (result == 0)
+        {
+            UART_Printf("sd_cart_open_for_write\r\n");
+            delayUS_ASM(10000);
+            f_lseek(&fil, 0);
+            f_puts(tmp1, &fil);
+            f_puts(tmp2, &fil);
+            f_puts(tmp3, &fil);
+            f_puts(tmp4, &fil);
+            f_close(&fil);
+            delayUS_ASM(10000);
+        }
+    }
+
+    if (tmpbuf[0] == '3')
+    {
+        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_GATEWAY CHANGE\r\n",strlen("IP_GATEWAY CHANGE\r\n"),0x1000);
+        tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n'; tmp1[4] = 0x00;
+        ipgate[0] = atoi(tmp1);
+        tmp2[0] = tmpbuf[5]; tmp2[1] = tmpbuf[6]; tmp2[2] = tmpbuf[7]; tmp2[3] = '\n'; tmp2[4] = 0x00;
+        ipgate[1] = atoi(tmp2);
+        tmp3[0] = tmpbuf[9]; tmp3[1] = tmpbuf[10]; tmp3[2] = tmpbuf[11]; tmp3[3] = '\n'; tmp3[4] = 0x00;
+        ipgate[2] = atoi(tmp3);
+        tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n'; tmp4[4] = 0x00;
+        ipgate[3] = atoi(tmp4);
+        sprintf(tmp5,"new gateway IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+        UART_Printf(tmp5);    delayUS_ASM(10000);
+        FRESULT result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_WRITE );
+        if (result == 0)
+        {
+            UART_Printf("sd_cart_open_for_write\r\n");
+            delayUS_ASM(10000);
+            f_lseek(&fil, 0);
+            f_puts(tmp1, &fil);
+            f_puts(tmp2, &fil);
+            f_puts(tmp3, &fil);
+            f_puts(tmp4, &fil);
+            f_close(&fil);
+            delayUS_ASM(10000);
+        }
+    }
+
+    if (tmpbuf[0] == '4')
+    {
+        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_DEST CHANGE\r\n",strlen("IP_DEST CHANGE\r\n"),0x1000);
+        tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n'; tmp1[4] = 0x00;
+        destip[0] = atoi(tmp1);
+        tmp2[0] = tmpbuf[5]; tmp2[1] = tmpbuf[6]; tmp2[2] = tmpbuf[7]; tmp2[3] = '\n'; tmp2[4] = 0x00;
+        destip[1] = atoi(tmp2);
+        tmp3[0] = tmpbuf[9]; tmp3[1] = tmpbuf[10]; tmp3[2] = tmpbuf[11]; tmp3[3] = '\n'; tmp3[4] = 0x00;
+        destip[2] = atoi(tmp3);
+        tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n'; tmp4[4] = 0x00;
+        destip[3] = atoi(tmp4);
+        sprintf(tmp5,"new destination IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
+        UART_Printf(tmp5);    delayUS_ASM(10000);
+        FRESULT result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_WRITE );
+        if (result == 0)
+        {
+            UART_Printf("sd_cart_open_for_write\r\n");
+            delayUS_ASM(10000);
+            f_lseek(&fil, 0);
+            f_puts(tmp1, &fil);
+            f_puts(tmp2, &fil);
+            f_puts(tmp3, &fil);
+            f_puts(tmp4, &fil);
+            f_close(&fil);
+            delayUS_ASM(10000);
+        }
+
+    }
+
 	}
     HAL_UART_Transmit(&huart6,(uint8_t*)httpsockprop[tcpprop.cur_sock].fname,strlen(httpsockprop[tcpprop.cur_sock].fname),0x1000);
     HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);

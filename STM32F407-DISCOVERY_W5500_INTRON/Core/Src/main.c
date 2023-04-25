@@ -110,6 +110,8 @@ uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
+uint8_t destip[4];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -222,13 +224,13 @@ int main(void)
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
 #ifdef INTRON
-uint8_t  destip[4] = {192,168,1,198};
+//uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
 #endif
 
 #ifndef INTRON
-uint8_t  destip[4] = {192,168,1,197};
+//uint8_t  destip[4] = {192,168,1,197};
 uint16_t  destport = 8888;
 uint16_t localport = 8888;
 #endif
@@ -265,7 +267,7 @@ if (sdCartOn == 1)
     UART_Printf("\n"); delayUS_ASM(10000);
     f_close(&fil);
 
-    result = f_open(&fil, "destination_IP", FA_OPEN_ALWAYS | FA_READ );
+    result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     UART_Printf("destination_IP:\r\n"); delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
@@ -315,12 +317,12 @@ if (sdCartOn == 1)
 
 } else //SD карты нет
 {
-    #ifdef INTRON
-    UART_Printf("ip - 192.168.1.197\r\n");
-    #endif
-    #ifndef INTRON
-    UART_Printf("ip - 192.168.1.198\r\n");
-    #endif
+//    #ifdef INTRON
+//    UART_Printf("ip - 192.168.1.197\r\n");
+//    #endif
+//    #ifndef INTRON
+//    UART_Printf("ip - 192.168.1.198\r\n");
+//    #endif
 }
 
     net_ini();

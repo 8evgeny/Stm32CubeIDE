@@ -318,11 +318,14 @@ void http_request(void)
         //В ЭТОМ МЕСТЕ ПАРСИМ ИЗМЕНЕНИЕ ПАРАМЕТРОВ
         HAL_UART_Transmit(&huart6,(uint8_t*)tmpbuf,strlen(tmpbuf),0x1000);
         HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
+
+        char tmp6[100];
         char tmp1[4];
         char tmp2[4];
         char tmp3[4];
         char tmp4[4];
-        char tmp5[100];
+        char tmp5[2];
+
 //JS на клиенте дополняет неполный ввод до 3 знаков
 if (tmpbuf[0] == '1')
 {
@@ -334,9 +337,10 @@ if (tmpbuf[0] == '1')
     tmp3[0] = tmpbuf[9]; tmp3[1] = tmpbuf[10]; tmp3[2] = tmpbuf[11]; tmp3[3] = '\n';
     ipaddr[2] = atoi(tmp3);
     tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n';
+    tmp5[0] = '\n'; tmp5[1] = '\0';
     ipaddr[3] = atoi(tmp4);
-    sprintf(tmp5,"new host IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    UART_Printf(tmp5);    delayUS_ASM(10000);
+    sprintf(tmp6,"new host IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    UART_Printf(tmp6);    delayUS_ASM(10000);
 //    HAL_UART_Transmit(&huart6,(uint8_t*)tmp1,3,0x1000);
 //    HAL_UART_Transmit(&huart6,(uint8_t*)tmp2,3,0x1000);
 //    HAL_UART_Transmit(&huart6,(uint8_t*)tmp3,3,0x1000);
@@ -356,6 +360,7 @@ if (tmpbuf[0] == '1')
         f_puts(tmp2, &fil);
         f_puts(tmp3, &fil);
         f_puts(tmp4, &fil);
+        f_puts(tmp5, &fil);
         f_close(&fil);
         delayUS_ASM(10000);
     }

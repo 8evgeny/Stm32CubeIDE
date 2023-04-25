@@ -318,7 +318,6 @@ void http_request(void)
         //В ЭТОМ МЕСТЕ ПАРСИМ ИЗМЕНЕНИЕ ПАРАМЕТРОВ
         HAL_UART_Transmit(&huart6,(uint8_t*)tmpbuf,strlen(tmpbuf),0x1000);
         HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
-        char tmp0[1];
         char tmp1[4];
         char tmp2[4];
         char tmp3[4];
@@ -328,7 +327,6 @@ void http_request(void)
 if (tmpbuf[0] == '1')
 {
     HAL_UART_Transmit(&huart6,(uint8_t*)"IP_HOST CHANGE\r\n",strlen("IP_HOST CHANGE\r\n"),0x1000);
-    tmp0[0] = '\0';
     tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n';
     ipaddr[0] = atoi(tmp1);
     tmp2[0] = tmpbuf[5]; tmp2[1] = tmpbuf[6]; tmp2[2] = tmpbuf[7]; tmp2[3] = '\n';
@@ -345,22 +343,21 @@ if (tmpbuf[0] == '1')
 //    HAL_UART_Transmit(&huart6,(uint8_t*)tmp4,3,0x1000);
 //    HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
 //    f_mount(&fs, "", 0);
-    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_EXISTING | FA_WRITE );
+    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_WRITE );
     if (result == 0)
     {
         UART_Printf("sd_cart_open_for_write\r\n");
         delayUS_ASM(10000);
         f_lseek(&fil, 0);
-        sprintf(tmp5,"Host IP:\n%s\n%s\n%s\n%s\n",tmp1,tmp2,tmp3,tmp4);
-        UART_Printf(tmp5);    delayUS_ASM(10000);
+//        sprintf(tmp5,"%s%s%s%s",tmp1,tmp2,tmp3,tmp4);
+//        UART_Printf(tmp5);    delayUS_ASM(10000);
 
-        f_puts(tmp5, &fil);
-//        f_puts(tmp0, &fil);
-//        f_puts(tmp1, &fil);
-//        f_puts(tmp2, &fil);
-//        f_puts(tmp3, &fil);
-//        f_puts(tmp4, &fil);
+        f_puts(tmp1, &fil);
+        f_puts(tmp2, &fil);
+        f_puts(tmp3, &fil);
+        f_puts(tmp4, &fil);
         f_close(&fil);
+        delayUS_ASM(10000);
     }
 
 }

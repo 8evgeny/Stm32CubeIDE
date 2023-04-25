@@ -250,8 +250,8 @@ uint16_t localport = 8888;
 if (sdCartOn == 1)
 {
     f_lseek(&fil, 0);//размер - f_size(&fil)
-    f_gets(tmp, 100, &fil);
-    UART_Printf(tmp);
+//    f_gets(tmp, 100, &fil);
+    UART_Printf("host_IP:\r\n");
     delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
     hostip[0] = atoi(tmp);
@@ -274,8 +274,8 @@ if (sdCartOn == 1)
 
     result = f_open(&fil, "destination_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    f_gets(tmp, 100, &fil);
-    UART_Printf(tmp);
+//    f_gets(tmp, 100, &fil);
+    UART_Printf("destination_IP:\r\n");
     delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
     destip[0] = atoi(tmp);

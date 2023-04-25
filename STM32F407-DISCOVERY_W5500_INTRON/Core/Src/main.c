@@ -240,9 +240,10 @@ uint16_t localport = 8888;
     if (result == 0)
     {
         sdCartOn = 1;
-        UART_Printf("sd_cart_open\r\n");
-    }
+        UART_Printf("sd_cart_open_for_read\r\n");
         delayUS_ASM(10000);
+    }
+
     if (result != 0)
         UART_Printf("sd_cart_not_open\r\n");
         delayUS_ASM(10000);

@@ -5,6 +5,10 @@ extern UART_HandleTypeDef huart6;
 extern char str1[60];
 extern char tmpbuf[30];
 extern uint8_t sect[515];
+extern uint8_t ipaddr[4];
+extern void UART_Printf(const char* fmt, ...);
+extern FATFS fs;
+extern FIL fil;
 //-----------------------------------------------
 http_sock_prop_ptr httpsockprop[2];
 tcp_prop_ptr tcpprop;
@@ -314,8 +318,64 @@ void http_request(void)
         //В ЭТОМ МЕСТЕ ПАРСИМ ИЗМЕНЕНИЕ ПАРАМЕТРОВ
         HAL_UART_Transmit(&huart6,(uint8_t*)tmpbuf,strlen(tmpbuf),0x1000);
         HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
+        char tmp0[1];
+        char tmp1[4];
+        char tmp2[4];
+        char tmp3[4];
+        char tmp4[4];
+        char tmp5[100];
+//JS на клиенте дополняет неполный ввод до 3 знаков
+if (tmpbuf[0] == '1')
+{
+    HAL_UART_Transmit(&huart6,(uint8_t*)"IP_HOST CHANGE\r\n",strlen("IP_HOST CHANGE\r\n"),0x1000);
+    tmp0[0] = '\0';
+    tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n';
+    ipaddr[0] = atoi(tmp1);
+    tmp2[0] = tmpbuf[5]; tmp2[1] = tmpbuf[6]; tmp2[2] = tmpbuf[7]; tmp2[3] = '\n';
+    ipaddr[1] = atoi(tmp2);
+    tmp3[0] = tmpbuf[9]; tmp3[1] = tmpbuf[10]; tmp3[2] = tmpbuf[11]; tmp3[3] = '\n';
+    ipaddr[2] = atoi(tmp3);
+    tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n';
+    ipaddr[3] = atoi(tmp4);
+    sprintf(tmp5,"new host IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    UART_Printf(tmp5);    delayUS_ASM(10000);
+//    HAL_UART_Transmit(&huart6,(uint8_t*)tmp1,3,0x1000);
+//    HAL_UART_Transmit(&huart6,(uint8_t*)tmp2,3,0x1000);
+//    HAL_UART_Transmit(&huart6,(uint8_t*)tmp3,3,0x1000);
+//    HAL_UART_Transmit(&huart6,(uint8_t*)tmp4,3,0x1000);
+//    HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
+//    f_mount(&fs, "", 0);
+    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_EXISTING | FA_WRITE );
+    if (result == 0)
+    {
+        UART_Printf("sd_cart_open_for_write\r\n");
+        delayUS_ASM(10000);
+        f_lseek(&fil, 0);
+        sprintf(tmp5,"Host IP:\n%s\n%s\n%s\n%s\n",tmp1,tmp2,tmp3,tmp4);
+        UART_Printf(tmp5);    delayUS_ASM(10000);
 
+        f_puts(tmp5, &fil);
+//        f_puts(tmp0, &fil);
+//        f_puts(tmp1, &fil);
+//        f_puts(tmp2, &fil);
+//        f_puts(tmp3, &fil);
+//        f_puts(tmp4, &fil);
+        f_close(&fil);
+    }
 
+}
+if (tmpbuf[0] == '2')
+{
+    HAL_UART_Transmit(&huart6,(uint8_t*)"IP_MASK CHANGE\r\n",strlen("IP_MASK CHANGE\r\n"),0x1000);
+}
+if (tmpbuf[0] == '3')
+{
+    HAL_UART_Transmit(&huart6,(uint8_t*)"IP_GATEWAY CHANGE\r\n",strlen("IP_GATEWAY CHANGE\r\n"),0x1000);
+}
+if (tmpbuf[0] == '4')
+{
+    HAL_UART_Transmit(&huart6,(uint8_t*)"IP_DEST CHANGE\r\n",strlen("IP_DEST CHANGE\r\n"),0x1000);
+}
 	}
     HAL_UART_Transmit(&huart6,(uint8_t*)httpsockprop[tcpprop.cur_sock].fname,strlen(httpsockprop[tcpprop.cur_sock].fname),0x1000);
     HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);

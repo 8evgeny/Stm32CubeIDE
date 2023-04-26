@@ -360,8 +360,7 @@ void http_request(void)
         FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
-            UART_Printf("sd_cart_open_for_write\r\n");
-            delayUS_ASM(10000);
+            UART_Printf("write new host IP to SD\r\n"); delayUS_ASM(10000);
             f_lseek(&fil, 0);
             f_puts(host_IP_1, &fil);
             f_puts(host_IP_2, &fil);
@@ -369,7 +368,29 @@ void http_request(void)
             f_puts(host_IP_4, &fil);
             f_close(&fil);
             delayUS_ASM(10000);
+ //Корректируем  index.html
+//            sprintf(tmp,"%d.%d.%d.%d",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+//            while(1)
+//            {
+//                result = f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_WRITE );
+//                delayUS_ASM(100000);
+//                if (result == 0)
+//                {
+//                    f_lseek(&fil, 268); //выбрать все символы до перврго октета в Sublime
+//                    f_puts(tmp, &fil);
+//                    f_close(&fil);
+//                    delayUS_ASM(10000);
+//                    break;
+//                }
+//            }
+//                UART_Printf("write to index.html\r\n"); delayUS_ASM(10000);
+
+
+
         }
+
+
+
     }
 
     if (tmpbuf[0] == '2')
@@ -410,7 +431,7 @@ void http_request(void)
         FRESULT result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
-            UART_Printf("sd_cart_open_for_write\r\n");
+            UART_Printf("write new mask IP to SD\r\n\r\n");
             delayUS_ASM(10000);
             f_lseek(&fil, 0);
             f_puts(mask_IP_1, &fil);
@@ -460,7 +481,7 @@ void http_request(void)
         FRESULT result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
-            UART_Printf("sd_cart_open_for_write\r\n");
+            UART_Printf("write new gate IP to SD\r\n");
             delayUS_ASM(10000);
             f_lseek(&fil, 0);
             f_puts(gate_IP_1, &fil);
@@ -510,7 +531,7 @@ void http_request(void)
         FRESULT result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
-            UART_Printf("sd_cart_open_for_write\r\n");
+            UART_Printf("write new dest IP to SD\r\n");
             delayUS_ASM(10000);
             f_lseek(&fil, 0);
             f_puts(dest_IP_1, &fil);

@@ -322,36 +322,57 @@ void http_request(void)
         HAL_UART_Transmit(&huart6,(uint8_t*)tmpbuf,strlen(tmpbuf),0x1000);
         HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
 
-        char tmp1[5];
-        char tmp2[5];
-        char tmp3[5];
-        char tmp4[5];
-        char tmp5[100];
 
-    //JS на клиенте дополняет неполный ввод до 3 знаков
+
     if (tmpbuf[0] == '1')
     {
+        char host_IP_1[5];char host_IP_2[5];char host_IP_3[5];char host_IP_4[5];
+        char tmp[100];
         HAL_UART_Transmit(&huart6,(uint8_t*)"IP_HOST CHANGE\r\n",strlen("IP_HOST CHANGE\r\n"),0x1000);
-        tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n'; tmp1[4] = 0x00;
-        ipaddr[0] = atoi(tmp1);
-        tmp2[0] = tmpbuf[5]; tmp2[1] = tmpbuf[6]; tmp2[2] = tmpbuf[7]; tmp2[3] = '\n'; tmp2[4] = 0x00;
-        ipaddr[1] = atoi(tmp2);
-        tmp3[0] = tmpbuf[9]; tmp3[1] = tmpbuf[10]; tmp3[2] = tmpbuf[11]; tmp3[3] = '\n'; tmp3[4] = 0x00;
-        ipaddr[2] = atoi(tmp3);
-        tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n'; tmp4[4] = 0x00;
-        ipaddr[3] = atoi(tmp4);
-        sprintf(tmp5,"new host IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-        UART_Printf(tmp5);    delayUS_ASM(10000);
+        i=1;
+        uint8_t j = 0;
+        char oktet[3];
+        while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+        //i указывает на '.'  j - колл скопированных символов
+        if (j == 3) {host_IP_1[0] = oktet[0]; host_IP_1[1] = oktet[1]; host_IP_1[2] = oktet[2]; host_IP_1[3] = '\n'; host_IP_1[4] = 0x00;}
+        if (j == 2) {host_IP_1[0] = '0'; host_IP_1[1] = oktet[0]; host_IP_1[2] = oktet[1]; host_IP_1[3] = '\n'; host_IP_1[4] = 0x00;}
+        if (j == 1) {host_IP_1[0] = '0'; host_IP_1[1] = '0'; host_IP_1[2] = oktet[0]; host_IP_1[3] = '\n'; host_IP_1[4] = 0x00;}
+        ipaddr[0] = atoi(host_IP_1);
+
+        i++; j=0;
+        while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+        if (j == 3) {host_IP_2[0] = oktet[0]; host_IP_2[1] = oktet[1]; host_IP_2[2] = oktet[2]; host_IP_2[3] = '\n'; host_IP_2[4] = 0x00;}
+        if (j == 2) {host_IP_2[0] = '0'; host_IP_2[1] = oktet[0]; host_IP_2[2] = oktet[1]; host_IP_2[3] = '\n'; host_IP_2[4] = 0x00;}
+        if (j == 1) {host_IP_2[0] = '0'; host_IP_2[1] = '0'; host_IP_2[2] = oktet[0]; host_IP_2[3] = '\n'; host_IP_2[4] = 0x00;}
+        ipaddr[1] = atoi(tmp);
+
+        i++; j=0;
+        while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+        if (j == 3) {host_IP_3[0] = oktet[0]; host_IP_3[1] = oktet[1]; host_IP_3[2] = oktet[2]; host_IP_3[3] = '\n'; host_IP_3[4] = 0x00;}
+        if (j == 2) {host_IP_3[0] = '0'; host_IP_3[1] = oktet[0]; host_IP_3[2] = oktet[1]; host_IP_3[3] = '\n'; host_IP_3[4] = 0x00;}
+        if (j == 1) {host_IP_3[0] = '0'; host_IP_3[1] = '0'; host_IP_3[2] = oktet[0]; host_IP_3[3] = '\n'; host_IP_3[4] = 0x00;}
+        ipaddr[2] = atoi(tmp);
+
+        i++; j=0;
+        while (1) {if(tmpbuf[i] == (uint8_t)'\0') break; oktet[j] = tmpbuf[i]; i++; j++; }
+        if (j == 3) {host_IP_4[0] = oktet[0]; host_IP_4[1] = oktet[1]; host_IP_4[2] = oktet[2]; host_IP_4[3] = '\n'; host_IP_4[4] = 0x00;}
+        if (j == 2) {host_IP_4[0] = '0'; host_IP_4[1] = oktet[0]; host_IP_4[2] = oktet[1]; host_IP_4[3] = '\n'; host_IP_4[4] = 0x00;}
+        if (j == 1) {host_IP_4[0] = '0'; host_IP_4[1] = '0'; host_IP_4[2] = oktet[0]; host_IP_4[3] = '\n'; host_IP_4[4] = 0x00;}
+        if (j > 3)  HAL_UART_Transmit(&huart6,(uint8_t*)"error_index!!!\r\n",strlen("error_index!!!\r\n"),0x1000);
+        ipaddr[3] = atoi(tmp);
+
+        sprintf(tmp,"new host IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+        UART_Printf(tmp);    delayUS_ASM(10000);
         FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
             UART_Printf("sd_cart_open_for_write\r\n");
             delayUS_ASM(10000);
             f_lseek(&fil, 0);
-            f_puts(tmp1, &fil);
-            f_puts(tmp2, &fil);
-            f_puts(tmp3, &fil);
-            f_puts(tmp4, &fil);
+            f_puts(host_IP_1, &fil);
+            f_puts(host_IP_2, &fil);
+            f_puts(host_IP_3, &fil);
+            f_puts(host_IP_4, &fil);
             f_close(&fil);
             delayUS_ASM(10000);
         }
@@ -359,27 +380,53 @@ void http_request(void)
 
     if (tmpbuf[0] == '2')
     {
-        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_MASK CHANGE\r\n",strlen("IP_MASK CHANGE\r\n"),0x1000);
-        tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n'; tmp1[4] = 0x00;
-        ipmask[0] = atoi(tmp1);
-        tmp2[0] = tmpbuf[5]; tmp2[1] = tmpbuf[6]; tmp2[2] = tmpbuf[7]; tmp2[3] = '\n'; tmp2[4] = 0x00;
-        ipmask[1] = atoi(tmp2);
-        tmp3[0] = tmpbuf[9]; tmp3[1] = tmpbuf[10]; tmp3[2] = tmpbuf[11]; tmp3[3] = '\n'; tmp3[4] = 0x00;
-        ipmask[2] = atoi(tmp3);
-        tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n'; tmp4[4] = 0x00;
-        ipmask[3] = atoi(tmp4);
-        sprintf(tmp5,"new mask IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-        UART_Printf(tmp5);    delayUS_ASM(10000);
+        char mask_IP_1[5];char mask_IP_2[5];char mask_IP_3[5];char mask_IP_4[5];
+        char tmp[100];
+        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_HOST CHANGE\r\n",strlen("IP_HOST CHANGE\r\n"),0x1000);
+        i=1;
+        uint8_t j = 0;
+        char oktet[3];
+        while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+        //i указывает на '.'  j - колл скопированных символов
+        if (j == 3) {mask_IP_1[0] = oktet[0]; mask_IP_1[1] = oktet[1]; mask_IP_1[2] = oktet[2]; mask_IP_1[3] = '\n'; mask_IP_1[4] = 0x00;}
+        if (j == 2) {mask_IP_1[0] = '0'; mask_IP_1[1] = oktet[0]; mask_IP_1[2] = oktet[1]; mask_IP_1[3] = '\n'; mask_IP_1[4] = 0x00;}
+        if (j == 1) {mask_IP_1[0] = '0'; mask_IP_1[1] = '0'; mask_IP_1[2] = oktet[0]; mask_IP_1[3] = '\n'; mask_IP_1[4] = 0x00;}
+        ipmask[0] = atoi(mask_IP_1);
+
+        i++; j=0;
+        while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+        if (j == 3) {mask_IP_2[0] = oktet[0]; mask_IP_2[1] = oktet[1]; mask_IP_2[2] = oktet[2]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
+        if (j == 2) {mask_IP_2[0] = '0'; mask_IP_2[1] = oktet[0]; mask_IP_2[2] = oktet[1]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
+        if (j == 1) {mask_IP_2[0] = '0'; mask_IP_2[1] = '0'; mask_IP_2[2] = oktet[0]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
+        ipmask[1] = atoi(tmp);
+
+        i++; j=0;
+        while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+        if (j == 3) {mask_IP_3[0] = oktet[0]; mask_IP_3[1] = oktet[1]; mask_IP_3[2] = oktet[2]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
+        if (j == 2) {mask_IP_3[0] = '0'; mask_IP_3[1] = oktet[0]; mask_IP_3[2] = oktet[1]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
+        if (j == 1) {mask_IP_3[0] = '0'; mask_IP_3[1] = '0'; mask_IP_3[2] = oktet[0]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
+        ipmask[2] = atoi(tmp);
+
+        i++; j=0;
+        while (1) {if(tmpbuf[i] == (uint8_t)'\0') break; oktet[j] = tmpbuf[i]; i++; j++; }
+        if (j == 3) {mask_IP_4[0] = oktet[0]; mask_IP_4[1] = oktet[1]; mask_IP_4[2] = oktet[2]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
+        if (j == 2) {mask_IP_4[0] = '0'; mask_IP_4[1] = oktet[0]; mask_IP_4[2] = oktet[1]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
+        if (j == 1) {mask_IP_4[0] = '0'; mask_IP_4[1] = '0'; mask_IP_4[2] = oktet[0]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
+        if (j > 3)  HAL_UART_Transmit(&huart6,(uint8_t*)"error_index!!!\r\n",strlen("error_index!!!\r\n"),0x1000);
+        ipmask[3] = atoi(tmp);
+
+        sprintf(tmp,"new mask IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+        UART_Printf(tmp);    delayUS_ASM(10000);
         FRESULT result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
             UART_Printf("sd_cart_open_for_write\r\n");
             delayUS_ASM(10000);
             f_lseek(&fil, 0);
-            f_puts(tmp1, &fil);
-            f_puts(tmp2, &fil);
-            f_puts(tmp3, &fil);
-            f_puts(tmp4, &fil);
+            f_puts(mask_IP_1, &fil);
+            f_puts(mask_IP_2, &fil);
+            f_puts(mask_IP_3, &fil);
+            f_puts(mask_IP_4, &fil);
             f_close(&fil);
             delayUS_ASM(10000);
         }
@@ -387,6 +434,8 @@ void http_request(void)
 
     if (tmpbuf[0] == '3')
     {
+        char tmp1[5],tmp2[5],tmp3[5],tmp4[5];
+        char tmp[100];
         HAL_UART_Transmit(&huart6,(uint8_t*)"IP_GATEWAY CHANGE\r\n",strlen("IP_GATEWAY CHANGE\r\n"),0x1000);
         tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n'; tmp1[4] = 0x00;
         ipgate[0] = atoi(tmp1);
@@ -396,8 +445,8 @@ void http_request(void)
         ipgate[2] = atoi(tmp3);
         tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n'; tmp4[4] = 0x00;
         ipgate[3] = atoi(tmp4);
-        sprintf(tmp5,"new gateway IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-        UART_Printf(tmp5);    delayUS_ASM(10000);
+        sprintf(tmp,"new gateway IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+        UART_Printf(tmp);    delayUS_ASM(10000);
         FRESULT result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
@@ -415,6 +464,8 @@ void http_request(void)
 
     if (tmpbuf[0] == '4')
     {
+        char tmp1[5],tmp2[5],tmp3[5],tmp4[5];
+        char tmp[100];
         HAL_UART_Transmit(&huart6,(uint8_t*)"IP_DEST CHANGE\r\n",strlen("IP_DEST CHANGE\r\n"),0x1000);
         tmp1[0] = tmpbuf[1]; tmp1[1] = tmpbuf[2]; tmp1[2] = tmpbuf[3]; tmp1[3] = '\n'; tmp1[4] = 0x00;
         destip[0] = atoi(tmp1);
@@ -424,8 +475,8 @@ void http_request(void)
         destip[2] = atoi(tmp3);
         tmp4[0] = tmpbuf[13]; tmp4[1] = tmpbuf[14]; tmp4[2] = tmpbuf[15]; tmp4[3] = '\n'; tmp4[4] = 0x00;
         destip[3] = atoi(tmp4);
-        sprintf(tmp5,"new destination IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
-        UART_Printf(tmp5);    delayUS_ASM(10000);
+        sprintf(tmp,"new destination IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
+        UART_Printf(tmp);    delayUS_ASM(10000);
         FRESULT result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {

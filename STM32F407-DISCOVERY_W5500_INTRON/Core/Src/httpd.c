@@ -368,29 +368,7 @@ void http_request(void)
             f_puts(host_IP_4, &fil);
             f_close(&fil);
             delayUS_ASM(10000);
- //Корректируем  index.html
-//            sprintf(tmp,"%d.%d.%d.%d",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-//            while(1)
-//            {
-//                result = f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_WRITE );
-//                delayUS_ASM(100000);
-//                if (result == 0)
-//                {
-//                    f_lseek(&fil, 268); //выбрать все символы до перврго октета в Sublime
-//                    f_puts(tmp, &fil);
-//                    f_close(&fil);
-//                    delayUS_ASM(10000);
-//                    break;
-//                }
-//            }
-//                UART_Printf("write to index.html\r\n"); delayUS_ASM(10000);
-
-
-
         }
-
-
-
     }
 
     if (tmpbuf[0] == '2')

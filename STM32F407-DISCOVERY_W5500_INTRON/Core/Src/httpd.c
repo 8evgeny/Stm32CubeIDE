@@ -368,6 +368,7 @@ void http_request(void)
             f_puts(host_IP_4, &fil);
             f_close(&fil);
             delayUS_ASM(10000);
+            HAL_NVIC_SystemReset();
         }
     }
 
@@ -418,6 +419,7 @@ void http_request(void)
             f_puts(mask_IP_4, &fil);
             f_close(&fil);
             delayUS_ASM(10000);
+            HAL_NVIC_SystemReset();
         }
     }
 
@@ -468,6 +470,7 @@ void http_request(void)
             f_puts(gate_IP_4, &fil);
             f_close(&fil);
             delayUS_ASM(10000);
+            HAL_NVIC_SystemReset();
         }
     }
 
@@ -518,6 +521,7 @@ void http_request(void)
             f_puts(dest_IP_4, &fil);
             f_close(&fil);
             delayUS_ASM(10000);
+            HAL_NVIC_SystemReset();
         }
     }
 

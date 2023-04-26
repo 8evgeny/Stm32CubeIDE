@@ -317,12 +317,33 @@ if (sdCartOn == 1)
 
 } else //SD карты нет
 {
-//    #ifdef INTRON
-//    UART_Printf("ip - 192.168.1.197\r\n");
-//    #endif
-//    #ifndef INTRON
-//    UART_Printf("ip - 192.168.1.198\r\n");
-//    #endif
+    #ifdef INTRON
+    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 197;
+    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 198;
+    #endif
+    #ifndef INTRON
+    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 198;
+    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 197;
+    #endif
+    ipgate[0] = 192;ipgate[1] = 168;ipgate[2] = 1;ipgate[3] = 1;
+    ipmask[0] = 255;ipmask[1] = 255;ipmask[2] = 255;ipmask[3] = 0;
+    UART_Printf("host_IP:\r\n");delayUS_ASM(10000);
+    sprintf(tmp,"%d.%d.%d.%d",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    UART_Printf("\n"); delayUS_ASM(10000);
+    UART_Printf("dest_IP:\r\n");delayUS_ASM(10000);
+    sprintf(tmp,"%d.%d.%d.%d",destip[0],destip[1],destip[2],destip[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    UART_Printf("\n"); delayUS_ASM(10000);
+    UART_Printf("gate_IP:\r\n");delayUS_ASM(10000);
+    sprintf(tmp,"%d.%d.%d.%d",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    UART_Printf("\n"); delayUS_ASM(10000);
+    UART_Printf("mask_IP:\r\n");delayUS_ASM(10000);
+    sprintf(tmp,"%d.%d.%d.%d",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    UART_Printf("\n"); delayUS_ASM(10000);
+
 }
 
     net_ini();

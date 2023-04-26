@@ -344,14 +344,14 @@ void http_request(void)
         if (j == 3) {host_IP_2[0] = oktet[0]; host_IP_2[1] = oktet[1]; host_IP_2[2] = oktet[2]; host_IP_2[3] = '\n'; host_IP_2[4] = 0x00;}
         if (j == 2) {host_IP_2[0] = '0'; host_IP_2[1] = oktet[0]; host_IP_2[2] = oktet[1]; host_IP_2[3] = '\n'; host_IP_2[4] = 0x00;}
         if (j == 1) {host_IP_2[0] = '0'; host_IP_2[1] = '0'; host_IP_2[2] = oktet[0]; host_IP_2[3] = '\n'; host_IP_2[4] = 0x00;}
-        ipaddr[1] = atoi(tmp);
+        ipaddr[1] = atoi(host_IP_2);
 
         i++; j=0;
         while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
         if (j == 3) {host_IP_3[0] = oktet[0]; host_IP_3[1] = oktet[1]; host_IP_3[2] = oktet[2]; host_IP_3[3] = '\n'; host_IP_3[4] = 0x00;}
         if (j == 2) {host_IP_3[0] = '0'; host_IP_3[1] = oktet[0]; host_IP_3[2] = oktet[1]; host_IP_3[3] = '\n'; host_IP_3[4] = 0x00;}
         if (j == 1) {host_IP_3[0] = '0'; host_IP_3[1] = '0'; host_IP_3[2] = oktet[0]; host_IP_3[3] = '\n'; host_IP_3[4] = 0x00;}
-        ipaddr[2] = atoi(tmp);
+        ipaddr[2] = atoi(host_IP_3);
 
         i++; j=0;
         while (1) {if(tmpbuf[i] == (uint8_t)'\0') break; oktet[j] = tmpbuf[i]; i++; j++; }
@@ -359,7 +359,7 @@ void http_request(void)
         if (j == 2) {host_IP_4[0] = '0'; host_IP_4[1] = oktet[0]; host_IP_4[2] = oktet[1]; host_IP_4[3] = '\n'; host_IP_4[4] = 0x00;}
         if (j == 1) {host_IP_4[0] = '0'; host_IP_4[1] = '0'; host_IP_4[2] = oktet[0]; host_IP_4[3] = '\n'; host_IP_4[4] = 0x00;}
         if (j > 3)  HAL_UART_Transmit(&huart6,(uint8_t*)"error_index!!!\r\n",strlen("error_index!!!\r\n"),0x1000);
-        ipaddr[3] = atoi(tmp);
+        ipaddr[3] = atoi(host_IP_4);
 
         sprintf(tmp,"new host IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
         UART_Printf(tmp);    delayUS_ASM(10000);
@@ -398,14 +398,14 @@ void http_request(void)
         if (j == 3) {mask_IP_2[0] = oktet[0]; mask_IP_2[1] = oktet[1]; mask_IP_2[2] = oktet[2]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
         if (j == 2) {mask_IP_2[0] = '0'; mask_IP_2[1] = oktet[0]; mask_IP_2[2] = oktet[1]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
         if (j == 1) {mask_IP_2[0] = '0'; mask_IP_2[1] = '0'; mask_IP_2[2] = oktet[0]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
-        ipmask[1] = atoi(tmp);
+        ipmask[1] = atoi(mask_IP_2);
 
         i++; j=0;
         while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
         if (j == 3) {mask_IP_3[0] = oktet[0]; mask_IP_3[1] = oktet[1]; mask_IP_3[2] = oktet[2]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
         if (j == 2) {mask_IP_3[0] = '0'; mask_IP_3[1] = oktet[0]; mask_IP_3[2] = oktet[1]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
         if (j == 1) {mask_IP_3[0] = '0'; mask_IP_3[1] = '0'; mask_IP_3[2] = oktet[0]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
-        ipmask[2] = atoi(tmp);
+        ipmask[2] = atoi(mask_IP_3);
 
         i++; j=0;
         while (1) {if(tmpbuf[i] == (uint8_t)'\0') break; oktet[j] = tmpbuf[i]; i++; j++; }
@@ -413,7 +413,7 @@ void http_request(void)
         if (j == 2) {mask_IP_4[0] = '0'; mask_IP_4[1] = oktet[0]; mask_IP_4[2] = oktet[1]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
         if (j == 1) {mask_IP_4[0] = '0'; mask_IP_4[1] = '0'; mask_IP_4[2] = oktet[0]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
         if (j > 3)  HAL_UART_Transmit(&huart6,(uint8_t*)"error_index!!!\r\n",strlen("error_index!!!\r\n"),0x1000);
-        ipmask[3] = atoi(tmp);
+        ipmask[3] = atoi(mask_IP_4);
 
         sprintf(tmp,"new mask IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
         UART_Printf(tmp);    delayUS_ASM(10000);

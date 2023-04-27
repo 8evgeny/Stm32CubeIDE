@@ -254,7 +254,7 @@ void w5500_ini(void)
     opcode = (BSB_S0<<3)|OM_FDM1;
     dtt = w5500_readReg(opcode, Sn_SR);
     sprintf(str1,"TCP socket %d status: 0x%02X\r\n", 0, dtt);
-    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+//    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 }
 //-----------------------------------------------
 extern void tcp_send_http_middle(void);

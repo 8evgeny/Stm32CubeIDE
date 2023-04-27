@@ -242,7 +242,7 @@ uint16_t localport = 8888;
     if (result == 0)
     {
         sdCartOn = 1;
-        UART_Printf("sd_cart_open_for_read\r\n");
+        UART_Printf("SD_READ\r\n");
         delayUS_ASM(10000);
     }
 
@@ -252,8 +252,6 @@ uint16_t localport = 8888;
 if (sdCartOn == 1)
 {
     f_lseek(&fil, 0);//размер - f_size(&fil)
-    UART_Printf("host_IP:\r\n");
-    delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
     ipaddr[0] = atoi(tmp);
     f_gets(tmp, 100, &fil);
@@ -262,14 +260,12 @@ if (sdCartOn == 1)
     ipaddr[2] = atoi(tmp);
     f_gets(tmp, 100, &fil);
     ipaddr[3] = atoi(tmp);
-    sprintf(tmp,"%d.%d.%d.%d",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    UART_Printf("\n"); delayUS_ASM(10000);
     f_close(&fil);
 
     result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    UART_Printf("destination_IP:\r\n"); delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
     destip[0] = atoi(tmp);
     f_gets(tmp, 100, &fil);
@@ -278,14 +274,12 @@ if (sdCartOn == 1)
     destip[2] = atoi(tmp);
     f_gets(tmp, 100, &fil);
     destip[3] = atoi(tmp);
-    sprintf(tmp,"%d.%d.%d.%d",destip[0],destip[1],destip[2],destip[3]);
+    sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    UART_Printf("\n"); delayUS_ASM(10000);
     f_close(&fil);
 
     result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    UART_Printf("gate_IP:\r\n"); delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
     ipgate[0] = atoi(tmp);
     f_gets(tmp, 100, &fil);
@@ -294,14 +288,12 @@ if (sdCartOn == 1)
     ipgate[2] = atoi(tmp);
     f_gets(tmp, 100, &fil);
     ipgate[3] = atoi(tmp);
-    sprintf(tmp,"%d.%d.%d.%d",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    UART_Printf("\n"); delayUS_ASM(10000);
     f_close(&fil);
 
     result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    UART_Printf("mask_IP:\r\n"); delayUS_ASM(10000);
     f_gets(tmp, 100, &fil);
     ipmask[0] = atoi(tmp);
     f_gets(tmp, 100, &fil);
@@ -310,9 +302,8 @@ if (sdCartOn == 1)
     ipmask[2] = atoi(tmp);
     f_gets(tmp, 100, &fil);
     ipmask[3] = atoi(tmp);
-    sprintf(tmp,"%d.%d.%d.%d",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    UART_Printf("\n"); delayUS_ASM(10000);
     f_close(&fil);
 
 } else //SD карты нет
@@ -327,23 +318,14 @@ if (sdCartOn == 1)
     #endif
     ipgate[0] = 192;ipgate[1] = 168;ipgate[2] = 1;ipgate[3] = 1;
     ipmask[0] = 255;ipmask[1] = 255;ipmask[2] = 255;ipmask[3] = 0;
-    UART_Printf("host_IP:\r\n");delayUS_ASM(10000);
-    sprintf(tmp,"%d.%d.%d.%d",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    UART_Printf("\n"); delayUS_ASM(10000);
-    UART_Printf("dest_IP:\r\n");delayUS_ASM(10000);
-    sprintf(tmp,"%d.%d.%d.%d",destip[0],destip[1],destip[2],destip[3]);
+    sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    UART_Printf("\n"); delayUS_ASM(10000);
-    UART_Printf("gate_IP:\r\n");delayUS_ASM(10000);
-    sprintf(tmp,"%d.%d.%d.%d",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    UART_Printf("\n"); delayUS_ASM(10000);
-    UART_Printf("mask_IP:\r\n");delayUS_ASM(10000);
-    sprintf(tmp,"%d.%d.%d.%d",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    UART_Printf("\n"); delayUS_ASM(10000);
-
 }
 
     net_ini();

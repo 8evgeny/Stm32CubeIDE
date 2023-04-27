@@ -330,6 +330,7 @@ void http_request(void)
 
         if (tmpbuf[0] == '1')
         {
+            ipaddrNew = 1;
             char host_IP_1[5];char host_IP_2[5];char host_IP_3[5];char host_IP_4[5];
             char tmp[100];
     //        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_HOST CHANGE\r\n",strlen("IP_HOST CHANGE\r\n"),0x1000);
@@ -368,7 +369,6 @@ void http_request(void)
             }
             else
             {
-                ipaddrNew = 1;
                 ipaddr[0] = temp[0];
                 ipaddr[1] = temp[1];
                 ipaddr[2] = temp[2];
@@ -392,6 +392,7 @@ void http_request(void)
 
         if (tmpbuf[0] == '2')
         {
+            ipmaskNew = 1;
             char mask_IP_1[5];char mask_IP_2[5];char mask_IP_3[5];char mask_IP_4[5];
             char tmp[100];
     //        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_HOST CHANGE\r\n",strlen("IP_HOST CHANGE\r\n"),0x1000);
@@ -430,7 +431,6 @@ void http_request(void)
             }
             else
             {
-                ipmaskNew = 1;
                 ipmask[0] = temp[0];
                 ipmask[1] = temp[1];
                 ipmask[2] = temp[2];
@@ -455,6 +455,7 @@ void http_request(void)
 
         if (tmpbuf[0] == '3')
         {
+            ipgateNew = 1;
             char gate_IP_1[5];char gate_IP_2[5];char gate_IP_3[5];char gate_IP_4[5];
             char tmp[100];
     //        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_GATE CHANGE\r\n",strlen("IP_GATE CHANGE\r\n"),0x1000);
@@ -493,7 +494,6 @@ void http_request(void)
             }
             else
             {
-                ipgateNew = 1;
                 ipgate[0] = temp[0];
                 ipgate[1] = temp[1];
                 ipgate[2] = temp[2];
@@ -519,6 +519,7 @@ void http_request(void)
 
         if (tmpbuf[0] == '4')
         {
+            destipNew = 1;
             char dest_IP_1[5];char dest_IP_2[5];char dest_IP_3[5];char dest_IP_4[5];
             char tmp[100];
             HAL_UART_Transmit(&huart6,(uint8_t*)"IP_DEST CHANGE\r\n",strlen("IP_DEST CHANGE\r\n"),0x1000);
@@ -557,7 +558,6 @@ void http_request(void)
             }
             else
             {
-                destipNew = 1;
                 destip[0] = temp[0];
                 destip[1] = temp[1];
                 destip[2] = temp[2];
@@ -580,7 +580,7 @@ void http_request(void)
                 }
             }
         }
-        if ((ipaddrNew == 1)||(ipgateNew == 1)||(ipmaskNew == 1)||(destipNew == 1))
+        if ((ipaddrNew == 1)&&(ipgateNew == 1)&&(ipmaskNew == 1)&&(destipNew == 1))
         {
             HAL_NVIC_SystemReset();
         }

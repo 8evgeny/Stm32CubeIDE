@@ -90,7 +90,7 @@ void tcp_send_http_one(void)
 			else len_sect=data_len;
 			result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
 			sprintf(str1,"f_lseek: %d\r\n",result);
-            HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+//            HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 			result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
 			w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 			end_point+=len_sect;
@@ -164,7 +164,7 @@ void tcp_send_http_first(void)
 		else len_sect=data_len;
 		result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
 		sprintf(str1,"f_lseek: %d\r\n",result);
-        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+//        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -270,7 +270,7 @@ void tcp_send_http_last(void)
 		else len_sect=data_len;
 		result=f_lseek(&MyFile, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes); //Установим курсор чтения в файле
 		sprintf(str1,"f_lseek: %d\r\n",result);
-        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+//        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -360,7 +360,7 @@ void http_request(void)
         FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
-            UART_Printf("write new host IP to SD\r\n"); delayUS_ASM(10000);
+            UART_Printf("*****  write new host IP to SD  *****\r\n"); delayUS_ASM(10000);
             f_lseek(&fil, 0);
             f_puts(host_IP_1, &fil);
             f_puts(host_IP_2, &fil);
@@ -459,7 +459,7 @@ void http_request(void)
         FRESULT result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
-            UART_Printf("write new gate IP to SD\r\n");
+            UART_Printf("*****  write new gate IP to SD  *****\r\n");
             delayUS_ASM(10000);
             f_lseek(&fil, 0);
             f_puts(gate_IP_1, &fil);
@@ -509,7 +509,7 @@ void http_request(void)
         FRESULT result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
-            UART_Printf("write new dest IP to SD\r\n");
+            UART_Printf("*****  write new dest IP to SD  *****\r\n");
             delayUS_ASM(10000);
             f_lseek(&fil, 0);
             f_puts(dest_IP_1, &fil);

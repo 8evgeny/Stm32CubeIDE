@@ -242,7 +242,7 @@ uint16_t localport = 8888;
     if (result == 0)
     {
         sdCartOn = 1;
-        UART_Printf("SD_READ\r\n");
+        UART_Printf("\r\nSD_READ\r\n");
         delayUS_ASM(10000);
     }
 

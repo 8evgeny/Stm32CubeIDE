@@ -272,7 +272,7 @@ void w5500_packetReceive(uint8_t sn)
             if(!len) return;
             //Отобразим размер принятых данных
             sprintf(str1,"socket %d len_buf:0x%04X\r\n",sn,len);
-            HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+//            HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
             //здесь обмениваемся информацией: на запрос документа от клиента отправляем ему запрошенный документ
             //указатель на начало чтения приёмного буфера
             point = GetReadPointer(sn);

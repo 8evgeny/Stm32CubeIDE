@@ -410,15 +410,14 @@ void http_request(void)
         FRESULT result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_WRITE );
         if (result == 0)
         {
-            UART_Printf("write new mask IP to SD\r\n\r\n");
-            delayUS_ASM(10000);
-            f_lseek(&fil, 0);
-            f_puts(mask_IP_1, &fil);
-            f_puts(mask_IP_2, &fil);
-            f_puts(mask_IP_3, &fil);
-            f_puts(mask_IP_4, &fil);
-            f_sync(&fil);
-            f_close(&fil);
+            UART_Printf("*****  write new mask IP to SD  *****\r\n"); delayUS_ASM(10000);
+            f_lseek(&fil, 0); delayUS_ASM(10000);
+            f_puts(mask_IP_1, &fil); delayUS_ASM(10000);
+            f_puts(mask_IP_2, &fil); delayUS_ASM(10000);
+            f_puts(mask_IP_3, &fil); delayUS_ASM(10000);
+            f_puts(mask_IP_4, &fil); delayUS_ASM(10000);
+            f_sync(&fil); delayUS_ASM(10000);
+            f_close(&fil); delayUS_ASM(10000);
         }
     }
 

@@ -324,6 +324,7 @@ void http_request(void)
 		strcpy(httpsockprop[tcpprop.cur_sock].fname,tmpbuf);
 
         //В ЭТОМ МЕСТЕ ПАРСИМ ИЗМЕНЕНИЕ ПАРАМЕТРОВ
+        HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
         HAL_UART_Transmit(&huart6,(uint8_t*)tmpbuf,strlen(tmpbuf),0x1000);
         HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
 

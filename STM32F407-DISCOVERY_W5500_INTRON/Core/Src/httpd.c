@@ -360,7 +360,6 @@ void http_request(void)
             if (j == 3) {host_IP_4[0] = oktet[0]; host_IP_4[1] = oktet[1]; host_IP_4[2] = oktet[2]; host_IP_4[3] = '\n'; host_IP_4[4] = 0x00;}
             if (j == 2) {host_IP_4[0] = '0'; host_IP_4[1] = oktet[0]; host_IP_4[2] = oktet[1]; host_IP_4[3] = '\n'; host_IP_4[4] = 0x00;}
             if (j == 1) {host_IP_4[0] = '0'; host_IP_4[1] = '0'; host_IP_4[2] = oktet[0]; host_IP_4[3] = '\n'; host_IP_4[4] = 0x00;}
-            if (j > 3)  HAL_UART_Transmit(&huart6,(uint8_t*)"error_index!!!\r\n",strlen("error_index!!!\r\n"),0x1000);
             temp[3] = atoi(host_IP_4);
 
             if ((temp[0] == ipaddr[0])&&(temp[1] == ipaddr[1])&&(temp[2] == ipaddr[2])&&(temp[3] == ipaddr[3]))
@@ -422,7 +421,6 @@ void http_request(void)
             if (j == 3) {mask_IP_4[0] = oktet[0]; mask_IP_4[1] = oktet[1]; mask_IP_4[2] = oktet[2]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
             if (j == 2) {mask_IP_4[0] = '0'; mask_IP_4[1] = oktet[0]; mask_IP_4[2] = oktet[1]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
             if (j == 1) {mask_IP_4[0] = '0'; mask_IP_4[1] = '0'; mask_IP_4[2] = oktet[0]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
-            if (j > 3)  HAL_UART_Transmit(&huart6,(uint8_t*)"error_index!!!\r\n",strlen("error_index!!!\r\n"),0x1000);
             temp[3] = atoi(mask_IP_4);
 
             if ((temp[0] == ipmask[0])&&(temp[1] == ipmask[1])&&(temp[2] == ipmask[2])&&(temp[3] == ipmask[3]))
@@ -485,7 +483,6 @@ void http_request(void)
             if (j == 3) {gate_IP_4[0] = oktet[0]; gate_IP_4[1] = oktet[1]; gate_IP_4[2] = oktet[2]; gate_IP_4[3] = '\n'; gate_IP_4[4] = 0x00;}
             if (j == 2) {gate_IP_4[0] = '0'; gate_IP_4[1] = oktet[0]; gate_IP_4[2] = oktet[1]; gate_IP_4[3] = '\n'; gate_IP_4[4] = 0x00;}
             if (j == 1) {gate_IP_4[0] = '0'; gate_IP_4[1] = '0'; gate_IP_4[2] = oktet[0]; gate_IP_4[3] = '\n'; gate_IP_4[4] = 0x00;}
-            if (j > 3)  HAL_UART_Transmit(&huart6,(uint8_t*)"error_index!!!\r\n",strlen("error_index!!!\r\n"),0x1000);
             temp[3] = atoi(gate_IP_4);
 
             if ((temp[0] == ipgate[0])&&(temp[1] == ipgate[1])&&(temp[2] == ipgate[2])&&(temp[3] == ipgate[3]))
@@ -522,7 +519,7 @@ void http_request(void)
             destipNew = 1;
             char dest_IP_1[5];char dest_IP_2[5];char dest_IP_3[5];char dest_IP_4[5];
             char tmp[100];
-            HAL_UART_Transmit(&huart6,(uint8_t*)"IP_DEST CHANGE\r\n",strlen("IP_DEST CHANGE\r\n"),0x1000);
+//            HAL_UART_Transmit(&huart6,(uint8_t*)"IP_DEST CHANGE\r\n",strlen("IP_DEST CHANGE\r\n"),0x1000);
             i=1;
             uint8_t j = 0;
             char oktet[3];
@@ -549,7 +546,6 @@ void http_request(void)
             if (j == 3) {dest_IP_4[0] = oktet[0]; dest_IP_4[1] = oktet[1]; dest_IP_4[2] = oktet[2]; dest_IP_4[3] = '\n'; dest_IP_4[4] = 0x00;}
             if (j == 2) {dest_IP_4[0] = '0'; dest_IP_4[1] = oktet[0]; dest_IP_4[2] = oktet[1]; dest_IP_4[3] = '\n'; dest_IP_4[4] = 0x00;}
             if (j == 1) {dest_IP_4[0] = '0'; dest_IP_4[1] = '0'; dest_IP_4[2] = oktet[0]; dest_IP_4[3] = '\n'; dest_IP_4[4] = 0x00;}
-            if (j > 3)  HAL_UART_Transmit(&huart6,(uint8_t*)"error_index!!!\r\n",strlen("error_index!!!\r\n"),0x1000);
             temp[3] = atoi(dest_IP_4);
 
             if ((temp[0] == destip[0])&&(temp[1] == destip[1])&&(temp[2] == destip[2])&&(temp[3] == destip[3]))

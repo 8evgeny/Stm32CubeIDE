@@ -609,7 +609,12 @@ void http_request(void)
         if (tmpbuf[0] == 'p')
         {
             UART_Printf("*****  PASSWORD  *****\r\n");delayUS_ASM(10000);
-            passwordOK = 1;
+            char password[15] = {'p','q','w','e','1','2','3','4','5','@','\0'}; //первый символ всегда p
+            if (strcmp(tmpbuf,password) == 0)
+            {
+                passwordOK = 1;
+            }
+
         }
 	}
 

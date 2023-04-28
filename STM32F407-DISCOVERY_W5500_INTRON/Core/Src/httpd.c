@@ -595,7 +595,15 @@ void http_request(void)
         if (tmpbuf[0] == 'l')
         {
             UART_Printf("*****  LOGIN  *****\r\n");delayUS_ASM(10000);
-            loginOK = 1;
+            char login1[10] = {'l','a','d','m','i','n','\0'}; //первый символ всегда l
+            char login2[10] = {'l','u','s','e','r','\0'};
+            char login3[10] = {'l','1','2','3','\0'};
+            if ((strcmp(tmpbuf,login1) == 0) ||
+                (strcmp(tmpbuf,login2) == 0) ||
+                (strcmp(tmpbuf,login3) == 0))
+            {
+                loginOK = 1;
+            }
         }
 
         if (tmpbuf[0] == 'p')

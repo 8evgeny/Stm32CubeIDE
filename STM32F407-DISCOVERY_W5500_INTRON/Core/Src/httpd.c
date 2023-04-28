@@ -15,6 +15,7 @@ uint8_t ipgateNew = 0;
 uint8_t ipmaskNew = 0;
 uint8_t destipNew = 0;
 uint8_t passwordOK = 0;
+uint8_t loginOK = 0;
 extern void UART_Printf(const char* fmt, ...);
 extern FATFS fs;
 extern FIL fil;
@@ -308,10 +309,14 @@ void http_request(void)
 	RXbyte = w5500_readSockBufByte(tcpprop.cur_sock,point);
 	if(RXbyte==(uint8_t)' ')
     {
-        if (passwordOK == 0)
-            strcpy(httpsockprop[tcpprop.cur_sock].fname,"index.html");
-        if (passwordOK == 1)
+        if ((passwordOK == 1)&&(loginOK == 1))
+        {
             strcpy(httpsockprop[tcpprop.cur_sock].fname,"main.html");
+        }
+        else
+        {
+            strcpy(httpsockprop[tcpprop.cur_sock].fname,"index.html");
+        }
 		httpsockprop[tcpprop.cur_sock].http_doc = EXISTING_HTML;
 	}
 	else
@@ -590,6 +595,7 @@ void http_request(void)
         if (tmpbuf[0] == 'l')
         {
             UART_Printf("*****  LOGIN  *****\r\n");delayUS_ASM(10000);
+            loginOK = 1;
         }
 
         if (tmpbuf[0] == 'p')

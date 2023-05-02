@@ -587,6 +587,7 @@ void http_request(void)
         }
         if ((ipaddrNew == 1)&&(ipgateNew == 1)&&(ipmaskNew == 1)&&(destipNew == 1))
         {
+            HAL_Delay(2000);
             UART_Printf("*****  REBOOT  *****\r\n");delayUS_ASM(10000);
 
             HAL_NVIC_SystemReset();

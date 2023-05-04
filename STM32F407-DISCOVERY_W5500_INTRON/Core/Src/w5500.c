@@ -7,8 +7,8 @@ extern http_sock_prop_ptr httpsockprop[2];
 extern char str1[60];
 extern tcp_prop_ptr tcpprop;
 extern void UART_Printf(const char* fmt, ...);
-char tmpbuf[30] __attribute__ ((aligned (32)));
-uint8_t sect[515] __attribute__ ((aligned (32)));
+char tmpbuf[30] __attribute__ ((aligned (4)));
+uint8_t sect[515] __attribute__ ((aligned (4)));
 //extern http_sock_prop_ptr httpsockprop[8];
 //-----------------------------------------------
 uint8_t macaddr[6]=MAC_ADDR;

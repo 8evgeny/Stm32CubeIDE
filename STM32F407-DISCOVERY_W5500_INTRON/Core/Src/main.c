@@ -247,7 +247,7 @@ uint16_t localport = 8888;
     }
 
     if (result != 0)
-        UART_Printf("sd_cart_not_open\r\n");
+        UART_Printf("\r\nSD_NOT_OPEN\r\n");
         delayUS_ASM(10000);
 if (sdCartOn == 1)
 {
@@ -643,7 +643,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

@@ -8,17 +8,17 @@
 #include "w5500.h"
 //--------------------------------------------------
 
-#ifdef INTRON
-#define IP_ADDR {192,168,1,197}
-#define LOCAL_PORT 80
-#endif
-#ifndef INTRON
-#define IP_ADDR {192,168,1,198}
-#define LOCAL_PORT 80
-#endif
+//#ifdef INTRON
+//#define IP_ADDR {192,168,1,197}
+//#define LOCAL_PORT 80
+//#endif
+//#ifndef INTRON
+//#define IP_ADDR {192,168,1,198}
+//#define LOCAL_PORT 80
+//#endif
 //#define IP_GATE {192,168,1,1}
 //#define IP_MASK {255,255,255,0}
-
+#define LOCAL_PORT 80
 //--------------------------------------------------
 #define be16toword(a) ((((a)>>8)&0xff)|(((a)<<8)&0xff00))
 //--------------------------------------------------

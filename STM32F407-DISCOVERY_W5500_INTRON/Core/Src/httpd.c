@@ -225,9 +225,8 @@ void tcp_send_http_middle(void)
 		else len_sect=data_len;
 		result=f_lseek(&MyFile,(DWORD)(i*512) + count_bytes); //Установим курсор чтения в файле
 		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
-
-HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
-
+//HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
+//HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n** block **\r\n", 15, 0x1000);
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
 		data_len -= len_sect;

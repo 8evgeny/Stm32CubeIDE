@@ -110,6 +110,7 @@ uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
+char md5[32];
 uint8_t destip[4];
 extern uint8_t macaddr[6];
 /* USER CODE END PV */
@@ -304,6 +305,14 @@ if (sdCartOn == 1)
     ipmask[3] = atoi(tmp);
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
+    f_close(&fil);
+
+    result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp, 100, &fil);
+    strncpy(md5, tmp, 32);
+    UART_Printf(md5); delayUS_ASM(10000);
+    UART_Printf("\r\n"); delayUS_ASM(10000);
     f_close(&fil);
 
 } else //SD карты нет

@@ -9,6 +9,7 @@ extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 extern uint8_t destip[4];
+extern char md5[32];
 uint8_t temp[4];
 uint8_t passwordOK = 0;
 uint8_t loginOK = 0;
@@ -604,15 +605,20 @@ void http_request(void)
         if (tmpbuf[0] == 'p')
         {
             UART_Printf("*****  PASSWORD  *****\r\n");delayUS_ASM(10000);
-//            char password[15] = {'p','q','w','e','1','2','3','4','5','@','\0'}; //первый символ всегда p
-            char md5[34] = {'p','5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b',
-                            '3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
-            if (strcmp(tmpbuf,md5) == 0)
+            //первый символ всегда p  (qwe12345@)
+//            char md5[34] = {'p','5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b',
+//                            '3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
+
+            if (strncmp(tmpbuf + 1, md5 , 32) == 0)
             {
+                UART_Printf("password OK\r\n"); delayUS_ASM(10000);
                 passwordOK = 1;
                 // MD5 hash:  5f3fb0124f2bfceb31cf5305194de14d
                 // SHA1 Hash: d5a5a5ea0c15c37a7fd6d1b1452bdad545051546
-
+            }
+            else
+            {
+                UART_Printf("password not OK\r\n"); delayUS_ASM(10000);
             }
 
         }

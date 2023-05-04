@@ -581,11 +581,29 @@ void http_request(void)
             }
         }
 
-        if (tmpbuf[0] == '5')
+        if (tmpbuf[0] == '5') //Перезагрузка
         {
             UART_Printf("*****  REBOOT  *****\r\n");delayUS_ASM(10000);
 
             HAL_NVIC_SystemReset();
+        }
+
+        if (tmpbuf[0] == '6') //Смена пароля
+        {
+            UART_Printf("*****  SET NEW PASSWORD  *****\r\n");delayUS_ASM(10000);
+            UART_Printf("new pasword hash: ");delayUS_ASM(10000);
+            UART_Printf(tmpbuf+1);delayUS_ASM(10000);
+            UART_Printf("\r\n");delayUS_ASM(10000);
+            FRESULT result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_WRITE );
+            if (result == 0)
+            {
+                UART_Printf("*****  write new md5 IP to SD  *****\r\n");
+                delayUS_ASM(10000);
+                f_lseek(&fil, 0);
+                f_puts(tmpbuf+1, &fil);
+                f_sync(&fil);
+                f_close(&fil);
+            }
         }
 
         if (tmpbuf[0] == 'l')

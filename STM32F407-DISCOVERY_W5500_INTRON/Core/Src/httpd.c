@@ -22,7 +22,7 @@ tcp_prop_ptr tcpprop;
 FIL MyFile;
 FRESULT result; //результат выполнения
 uint32_t bytesread;
-volatile uint16_t tcp_size_wnd = 2048;
+volatile uint16_t tcp_size_wnd = 512; //было 2048  - были ошибки передачи случайный байт
 //-----------------------------------------------
 const char http_header[] = { "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"};
 const char jpg_header[] = {"HTTP/1.0 200 OK\r\nServer: nginx\r\nContent-Type: image/jpeg\r\nConnection: close\r\n\r\n"};

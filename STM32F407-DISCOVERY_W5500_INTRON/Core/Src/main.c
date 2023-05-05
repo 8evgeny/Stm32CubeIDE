@@ -315,6 +315,18 @@ if (sdCartOn == 1)
     UART_Printf("\r\n"); delayUS_ASM(10000);
     f_close(&fil);
 
+//    //test
+//    char temp2[300];
+//    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
+//    FIL fil2;
+//    f_open(&fil2, "test", FA_OPEN_ALWAYS | FA_WRITE );
+//    while (f_gets(temp2, 300, &fil))
+//    {
+//        f_puts(temp2, &fil2);
+//    }
+//f_close(&fil);
+//f_close(&fil2);
+
 } else //SD карты нет
 {
     #ifdef INTRON

@@ -17,6 +17,9 @@ project(F407_test_SSL C CXX ASM)
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
 
+SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"')
+add_definitions(${MYCOMPILE_FLAGS})
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
     -mcpu=cortex-m4 \
     -std=gnu11 \
@@ -72,6 +75,8 @@ file (GLOB SOURCES_C
 add_executable(${PROJECT_NAME}.elf
     ${SOURCES_C}
     )
+
+#target_compile_options(${PROJECT_NAME}.elf ${MYCOMPILE_FLAGS})
 
 set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINKER_LANGUAGE CXX)
 set(LINKER_SCRIPT_FLASH "${CMAKE_SOURCE_DIR}/STM32F407VGTX_FLASH.ld")

@@ -68,6 +68,7 @@ file (GLOB SOURCES_C
     Middlewares/Third_Party/FatFs/src/option/*.c
     MBEDTLS/App/*.c
     Middlewares/Third_Party/mbedTLS/library/*.c
+    MBEDTLS/Target/*.c
     )
 
 

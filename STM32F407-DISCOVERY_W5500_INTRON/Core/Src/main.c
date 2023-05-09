@@ -95,6 +95,8 @@ uint32_t num;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+RNG_HandleTypeDef hrng;
+
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
@@ -125,6 +127,7 @@ static void MX_SPI3_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
+static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 void UART_Printf(const char* fmt, ...);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -220,6 +223,7 @@ int main(void)
   MX_SPI2_Init();
   MX_FATFS_Init();
   MX_MBEDTLS_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
     //Сброс W5500 - уже в net_ini
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
@@ -566,6 +570,32 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief RNG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RNG_Init(void)
+{
+
+  /* USER CODE BEGIN RNG_Init 0 */
+
+  /* USER CODE END RNG_Init 0 */
+
+  /* USER CODE BEGIN RNG_Init 1 */
+
+  /* USER CODE END RNG_Init 1 */
+  hrng.Instance = RNG;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RNG_Init 2 */
+
+  /* USER CODE END RNG_Init 2 */
+
 }
 
 /**

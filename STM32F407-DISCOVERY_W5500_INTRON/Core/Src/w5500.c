@@ -254,7 +254,7 @@ void w5500_ini(void)
     opcode = (BSB_S0<<3)|OM_FDM1;
     dtt = w5500_readReg(opcode, Sn_SR);
     sprintf(str1,"TCP socket %d status: 0x%02X\r\n", 0, dtt);
-//    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
 }
 //-----------------------------------------------
 extern void tcp_send_http_middle(void);
@@ -282,6 +282,21 @@ void w5500_packetReceive(uint8_t sn)
                 httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
                 http_request();
             }
+            char HandShake[30] = {0x16,             //Content Type: Handshake (22)
+                                  0x03, 0x01,       //Version: TLS 1.0 (0x0301)
+                                  0x02, 0x00,       //Length: 512
+                                  0x01,             //Handshake Type: Client Hello (1)
+                                  0x00, 0x01, 0xfc, //Length: 508
+                                  0x03, 0x03        //Version: TLS 1.2 (0x0303)
+                                 };
+            if (strncmp(tmpbuf, HandShake, 1) == 0) // Остальное может измениться
+            {
+                HAL_UART_Transmit(&huart6,(uint8_t*)"Client Hello",strlen("Client Hello"),0x1000);
+            }
+
+
+
+
         }
         else if(httpsockprop[sn].data_stat==DATA_MIDDLE)
     {

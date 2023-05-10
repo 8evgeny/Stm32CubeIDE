@@ -23,6 +23,8 @@
 #include "mbedtls.h"
 
 /* USER CODE BEGIN 0 */
+static const uint8_t *pers = (uint8_t *)("ssl_server");
+#define mbedtls_printf UART_Printf
 #include "main.h"
 #include "mbedtls/certs.h"
 void UART_Printf(const char* fmt, ...);
@@ -69,9 +71,52 @@ void MX_MBEDTLS_Init(void)
                                 mbedtls_test_srv_crt_ec_pem, mbedtls_test_srv_crt_ec_pem_len );
   if( ret != 0 )
   {
-    UART_Printf( " failed !!!  mbedtls_x509_crt_parse returned %d\r\n", ret );
+    UART_Printf( " failed !!!  mbedtls_x509_crt_parse returned_1 %d\r\n", ret );
 //    goto exit;
   }
+
+  ret = mbedtls_x509_crt_parse( &cert, (const unsigned char *)
+                                mbedtls_test_cas_pem, mbedtls_test_cas_pem_len );
+  if( ret != 0 )
+  {
+    UART_Printf( " failed !!!  mbedtls_x509_crt_parse returned_2 %d\r\n", ret );
+//    goto exit;
+  }
+
+  ret =  mbedtls_pk_parse_key( &pkey, (const unsigned char *) mbedtls_test_srv_key, mbedtls_test_srv_key_len, NULL, 0 );
+  if( ret != 0 )
+  {
+    UART_Printf( " failed\n  !  mbedtls_pk_parse_key returned_3 %d\r\n", ret );
+//    goto exit;
+  }
+
+  UART_Printf( " OK\n" );
+
+//  /*
+//   * 2. Setup the listening TCP socket
+//   */
+//  mbedtls_printf( "  . Bind on https://localhost:4433/ ..." );
+
+//  if((ret = mbedtls_net_bind(&listen_fd, NULL, "4433", MBEDTLS_NET_PROTO_TCP )) != 0)
+//  {
+//    mbedtls_printf( " failed\n  ! mbedtls_net_bind returned %d\n\n", ret );
+//    goto exit;
+//  }
+
+//  mbedtls_printf( " ok\n" );
+
+//  /*
+//   * 3. Seed the RNG
+//   */
+//  mbedtls_printf( "  . Seeding the random number generator..." );
+//  ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func, &entropy,
+//                                     (const unsigned char *) pers, strlen( (char *)pers));
+//  if( ret != 0 )
+//  {
+//    mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret );
+////    goto exit;
+//  }
+//  mbedtls_printf( " ok\n" );
 
 
   /* USER CODE END 3 */

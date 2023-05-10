@@ -56,12 +56,12 @@ void MX_MBEDTLS_Init(void)
   mbedtls_ctr_drbg_init(&ctr_drbg);
   mbedtls_entropy_init( &entropy );
   /* USER CODE BEGIN 3 */
-  int ret, len;
+  int ret;
   mbedtls_pk_init( &pkey );
   /*
    * 1. Load the certificates and private RSA key
    */
-  UART_Printf( "\n  . Loading the server cert. and key..." );
+  mbedtls_printf( "\n  . Loading the server cert. and key..." );
   /*
    * This demonstration program uses embedded test certificates.
    * Instead, you may want to use mbedtls_x509_crt_parse_file() to read the
@@ -71,7 +71,7 @@ void MX_MBEDTLS_Init(void)
                                 mbedtls_test_srv_crt_ec_pem, mbedtls_test_srv_crt_ec_pem_len );
   if( ret != 0 )
   {
-    UART_Printf( " failed !!!  mbedtls_x509_crt_parse returned_1 %d\r\n", ret );
+    mbedtls_printf( " failed !!!  mbedtls_x509_crt_parse returned_1 %d\r\n", ret );
 //    goto exit;
   }
 
@@ -79,18 +79,18 @@ void MX_MBEDTLS_Init(void)
                                 mbedtls_test_cas_pem, mbedtls_test_cas_pem_len );
   if( ret != 0 )
   {
-    UART_Printf( " failed !!!  mbedtls_x509_crt_parse returned_2 %d\r\n", ret );
+    mbedtls_printf( " failed !!!  mbedtls_x509_crt_parse returned_2 %d\r\n", ret );
 //    goto exit;
   }
 
   ret =  mbedtls_pk_parse_key( &pkey, (const unsigned char *) mbedtls_test_srv_key, mbedtls_test_srv_key_len, NULL, 0 );
   if( ret != 0 )
   {
-    UART_Printf( " failed\n  !  mbedtls_pk_parse_key returned_3 %d\r\n", ret );
+    mbedtls_printf( " failed\n  !  mbedtls_pk_parse_key returned_3 %d\r\n", ret );
 //    goto exit;
   }
 
-  UART_Printf( " ok\n" );
+  mbedtls_printf( " ok\n" );
 
 //  /*
 //   * 2. Setup the listening TCP socket
@@ -148,13 +148,31 @@ void MX_MBEDTLS_Init(void)
 //     goto exit;
    }
    mbedtls_printf( " ok\n" );
-
+   mbedtls_ssl_session_reset( &ssl );
   /* USER CODE END 3 */
 
 }
 
 /* USER CODE BEGIN 4 */
+void MX_MBEDTLS_HandShake(void) //Я добавил
+{
+    int ret;
+    /*
+     * 6. Handshake
+     */
+    mbedtls_printf( "  . Performing the SSL/TLS handshake..." );
 
+    while( ( ret = mbedtls_ssl_handshake( &ssl ) ) != 0 )
+    {
+      if( ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE )
+      {
+        mbedtls_printf( " failed !!! mbedtls_ssl_handshake returned -%.4X\n", ret * (-1));
+//        goto reset;
+      }
+    }
+
+    mbedtls_printf( " ok\n" );
+}
 /* USER CODE END 4 */
 
 /**

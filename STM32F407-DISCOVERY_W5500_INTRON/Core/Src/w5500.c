@@ -16,6 +16,7 @@ extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 extern uint16_t local_port;
+#include "mbedtls.h"
 //-----------------------------------------------
 void w5500_writeReg(uint8_t op, uint16_t addres, uint8_t data)
 {
@@ -291,7 +292,8 @@ void w5500_packetReceive(uint8_t sn)
                                  };
             if (strncmp(tmpbuf, HandShake, 1) == 0) // Остальное может измениться
             {
-                HAL_UART_Transmit(&huart6,(uint8_t*)"Client Hello",strlen("Client Hello"),0x1000);
+                MX_MBEDTLS_HandShake();
+//                HAL_UART_Transmit(&huart6,(uint8_t*)"Client Hello",strlen("Client Hello"),0x1000);
             }
 
 

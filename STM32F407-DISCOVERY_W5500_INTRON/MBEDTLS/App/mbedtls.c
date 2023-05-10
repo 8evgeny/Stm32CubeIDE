@@ -61,7 +61,7 @@ void MX_MBEDTLS_Init(void)
   /*
    * 1. Load the certificates and private RSA key
    */
-  UART_Printf( "\n  . Loading the server cert. and key...\r\n" );
+  UART_Printf( "\n  . Loading the server cert. and key..." );
   /*
    * This demonstration program uses embedded test certificates.
    * Instead, you may want to use mbedtls_x509_crt_parse_file() to read the
@@ -90,7 +90,7 @@ void MX_MBEDTLS_Init(void)
 //    goto exit;
   }
 
-  UART_Printf( " OK\n" );
+  UART_Printf( " ok\n" );
 
 //  /*
 //   * 2. Setup the listening TCP socket
@@ -118,6 +118,36 @@ void MX_MBEDTLS_Init(void)
 //  }
 //  mbedtls_printf( " ok\n" );
 
+  /*
+    * 4. Setup stuff
+    */
+   mbedtls_printf( "  . Setting up the SSL data...." );
+
+   if( ( ret = mbedtls_ssl_config_defaults(&conf, MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT)) != 0)
+   {
+     mbedtls_printf( " failed\n  ! mbedtls_ssl_config_defaults returned %d\n\n", ret );
+//     goto exit;
+   }
+
+   mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &ctr_drbg);
+
+ #if defined(MBEDTLS_SSL_CACHE_C)
+   mbedtls_ssl_conf_session_cache(&conf, &cache, mbedtls_ssl_cache_get, mbedtls_ssl_cache_set);
+ #endif
+
+   mbedtls_ssl_conf_ca_chain(&conf, cert.next, NULL);
+   if( ( ret = mbedtls_ssl_conf_own_cert(&conf, &cert, &pkey ) ) != 0)
+   {
+     mbedtls_printf( " failed\n  ! mbedtls_ssl_conf_own_cert returned %d\n\n", ret );
+//     goto exit;
+   }
+
+   if( ( ret = mbedtls_ssl_setup( &ssl, &conf ) ) != 0 )
+   {
+     mbedtls_printf( " failed\n  ! mbedtls_ssl_setup returned %d\n\n", ret );
+//     goto exit;
+   }
+   mbedtls_printf( " ok\n" );
 
   /* USER CODE END 3 */
 

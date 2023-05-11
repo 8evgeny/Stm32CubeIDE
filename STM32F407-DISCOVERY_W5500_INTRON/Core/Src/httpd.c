@@ -193,6 +193,8 @@ void tcp_send_http_first(void)
 	}
 	//Количество переданных байтов
   httpsockprop[tcpprop.cur_sock].total_count_bytes = tcp_size_wnd - header_len;
+
+  UART_Printf("tcp_send_http_first"); delayUS_ASM(10000);
 }
 //-----------------------------------------------
 void tcp_send_http_middle(void)
@@ -251,6 +253,8 @@ void tcp_send_http_middle(void)
 	}
 	//Количество переданных байтов
 	httpsockprop[tcpprop.cur_sock].total_count_bytes += (uint32_t) tcp_size_wnd;
+
+    UART_Printf("tcp_send_http_middle"); delayUS_ASM(10000);
 }
 //-----------------------------------------------
 void tcp_send_http_last(void)
@@ -286,6 +290,8 @@ void tcp_send_http_last(void)
 	RecvSocket(tcpprop.cur_sock);
 	SendSocket(tcpprop.cur_sock);
 	httpsockprop[tcpprop.cur_sock].data_stat = DATA_COMPLETED;
+
+    UART_Printf("tcp_send_http_last"); delayUS_ASM(10000);
 }
 //-----------------------------------------------
 void http_request(void)
@@ -713,10 +719,13 @@ void http_request(void)
 		SocketClosedWait(tcpprop.cur_sock);
 		OpenSocket(tcpprop.cur_sock,Mode_TCP);
 		//Ждём инициализации сокета (статус SOCK_INIT)
+UART_Printf("SocketInitWait\r\n"); delayUS_ASM(10000);
 		SocketInitWait(tcpprop.cur_sock);
+UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
 		//Продолжаем слушать сокет
 		ListenSocket(tcpprop.cur_sock);
 		SocketListenWait(tcpprop.cur_sock);
+
 	}
 	else if(httpsockprop[tcpprop.cur_sock].data_stat==DATA_FIRST)
 	{

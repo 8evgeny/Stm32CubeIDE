@@ -246,7 +246,9 @@ void w5500_ini(void)
     tcpprop.cur_sock = 0;
     //Открываем сокет 0
     OpenSocket(0,Mode_TCP);
+UART_Printf("SocketInitWait\r\n"); delayUS_ASM(10000);
     SocketInitWait(0);
+UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
     //Начинаем слушать сокет
     ListenSocket(0);
     SocketListenWait(0);

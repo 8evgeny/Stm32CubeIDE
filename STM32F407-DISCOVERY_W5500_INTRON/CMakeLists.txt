@@ -23,6 +23,7 @@ project(11_Converter_F407_INTRON_DT C CXX ASM)
 
 SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"')
 add_definitions(${MYCOMPILE_FLAGS})
+add_definitions("-DUSE_FULL_LL_DRIVER")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
     -mcpu=cortex-m4 \

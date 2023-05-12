@@ -194,7 +194,7 @@ void tcp_send_http_first(void)
 	//Количество переданных байтов
   httpsockprop[tcpprop.cur_sock].total_count_bytes = tcp_size_wnd - header_len;
 
-  UART_Printf("tcp_send_http_first"); delayUS_ASM(10000);
+//  UART_Printf("tcp_send_http_first"); delayUS_ASM(10000);
 }
 //-----------------------------------------------
 void tcp_send_http_middle(void)
@@ -254,7 +254,7 @@ void tcp_send_http_middle(void)
 	//Количество переданных байтов
 	httpsockprop[tcpprop.cur_sock].total_count_bytes += (uint32_t) tcp_size_wnd;
 
-    UART_Printf("tcp_send_http_middle"); delayUS_ASM(10000);
+//    UART_Printf("tcp_send_http_middle"); delayUS_ASM(10000);
 }
 //-----------------------------------------------
 void tcp_send_http_last(void)
@@ -291,7 +291,7 @@ void tcp_send_http_last(void)
 	SendSocket(tcpprop.cur_sock);
 	httpsockprop[tcpprop.cur_sock].data_stat = DATA_COMPLETED;
 
-    UART_Printf("tcp_send_http_last"); delayUS_ASM(10000);
+//    UART_Printf("tcp_send_http_last"); delayUS_ASM(10000);
 }
 //-----------------------------------------------
 void http_request(void)

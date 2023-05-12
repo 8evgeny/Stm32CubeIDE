@@ -225,9 +225,9 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_FATFS_Init();
-//  MX_MBEDTLS_Init();
-//  MX_RNG_Init();
-//  MX_RTC_Init();
+  MX_MBEDTLS_Init();
+  MX_RNG_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
     //Сброс W5500 - уже в net_ini
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);

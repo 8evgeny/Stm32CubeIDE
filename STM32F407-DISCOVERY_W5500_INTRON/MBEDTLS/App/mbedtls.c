@@ -61,7 +61,7 @@ void MX_MBEDTLS_Init(void)
   /*
    * 1. Load the certificates and private RSA key
    */
-  mbedtls_printf( "\n  . Loading the server cert. and key..." );
+  mbedtls_printf( "\n  . Loading the server cert. and key..." ); delayUS_ASM(10000);
   /*
    * This demonstration program uses embedded test certificates.
    * Instead, you may want to use mbedtls_x509_crt_parse_file() to read the
@@ -71,7 +71,7 @@ void MX_MBEDTLS_Init(void)
                                 mbedtls_test_srv_crt_ec_pem, mbedtls_test_srv_crt_ec_pem_len );
   if( ret != 0 )
   {
-    mbedtls_printf( " failed !!!  mbedtls_x509_crt_parse returned_1 %d\r\n", ret );
+    mbedtls_printf( " failed !!!  mbedtls_x509_crt_parse returned_1 %d\r\n", ret );delayUS_ASM(10000);
 //    goto exit;
   }
 
@@ -79,53 +79,53 @@ void MX_MBEDTLS_Init(void)
                                 mbedtls_test_cas_pem, mbedtls_test_cas_pem_len );
   if( ret != 0 )
   {
-    mbedtls_printf( " failed !!!  mbedtls_x509_crt_parse returned_2 %d\r\n", ret );
+    mbedtls_printf( " failed !!!  mbedtls_x509_crt_parse returned_2 %d\r\n", ret );delayUS_ASM(10000);
 //    goto exit;
   }
 
   ret =  mbedtls_pk_parse_key( &pkey, (const unsigned char *) mbedtls_test_srv_key, mbedtls_test_srv_key_len, NULL, 0 );
   if( ret != 0 )
   {
-    mbedtls_printf( " failed\n  !  mbedtls_pk_parse_key returned_3 %d\r\n", ret );
+    mbedtls_printf( " failed\n  !  mbedtls_pk_parse_key returned_3 %d\r\n", ret );delayUS_ASM(10000);
 //    goto exit;
   }
 
-  mbedtls_printf( " ok\n" );
+  mbedtls_printf( " ok\n" );delayUS_ASM(10000);
 
 //  /*
 //   * 2. Setup the listening TCP socket
 //   */
-//  mbedtls_printf( "  . Bind on https://localhost:4433/ ..." );
+//  mbedtls_printf( "  . Bind on https://localhost:4433/ ..." );delayUS_ASM(10000);
 
 //  if((ret = mbedtls_net_bind(&listen_fd, NULL, "4433", MBEDTLS_NET_PROTO_TCP )) != 0)
 //  {
-//    mbedtls_printf( " failed\n  ! mbedtls_net_bind returned %d\n\n", ret );
+//    mbedtls_printf( " failed\n  ! mbedtls_net_bind returned %d\n\n", ret );delayUS_ASM(10000);
 //    goto exit;
 //  }
 
-//  mbedtls_printf( " ok\n" );
+//  mbedtls_printf( " ok\n" );delayUS_ASM(10000);
 
 //  /*
 //   * 3. Seed the RNG
 //   */
-//  mbedtls_printf( "  . Seeding the random number generator..." );
+//  mbedtls_printf( "  . Seeding the random number generator..." );delayUS_ASM(10000);
 //  ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func, &entropy,
 //                                     (const unsigned char *) pers, strlen( (char *)pers));
 //  if( ret != 0 )
 //  {
-//    mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret );
+//    mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned %d\n", ret );delayUS_ASM(10000);
 ////    goto exit;
 //  }
-//  mbedtls_printf( " ok\n" );
+//  mbedtls_printf( " ok\n" );delayUS_ASM(10000);
 
   /*
     * 4. Setup stuff
     */
-   mbedtls_printf( "  . Setting up the SSL data...." );
+   mbedtls_printf( "  . Setting up the SSL data...." );delayUS_ASM(10000);
 
    if( ( ret = mbedtls_ssl_config_defaults(&conf, MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT)) != 0)
    {
-     mbedtls_printf( " failed\n  ! mbedtls_ssl_config_defaults returned %d\n\n", ret );
+     mbedtls_printf( " failed\n  ! mbedtls_ssl_config_defaults returned %d\n\n", ret );delayUS_ASM(10000);
 //     goto exit;
    }
 
@@ -138,16 +138,16 @@ void MX_MBEDTLS_Init(void)
    mbedtls_ssl_conf_ca_chain(&conf, cert.next, NULL);
    if( ( ret = mbedtls_ssl_conf_own_cert(&conf, &cert, &pkey ) ) != 0)
    {
-     mbedtls_printf( " failed\n  ! mbedtls_ssl_conf_own_cert returned %d\n\n", ret );
+     mbedtls_printf( " failed\n  ! mbedtls_ssl_conf_own_cert returned %d\n\n", ret );delayUS_ASM(10000);
 //     goto exit;
    }
 
    if( ( ret = mbedtls_ssl_setup( &ssl, &conf ) ) != 0 )
    {
-     mbedtls_printf( " failed\n  ! mbedtls_ssl_setup returned %d\n\n", ret );
+     mbedtls_printf( " failed\n  ! mbedtls_ssl_setup returned %d\n\n", ret );delayUS_ASM(10000);
 //     goto exit;
    }
-   mbedtls_printf( " ok\n" );
+   mbedtls_printf( " ok\n" ); delayUS_ASM(10000);delayUS_ASM(10000);
    mbedtls_ssl_session_reset( &ssl );
   /* USER CODE END 3 */
 
@@ -160,18 +160,18 @@ void MX_MBEDTLS_HandShake(void) //Я добавил
     /*
      * 6. Handshake
      */
-    mbedtls_printf( "  . Performing the SSL/TLS handshake..." );
+    mbedtls_printf( "  . Performing the SSL/TLS handshake..." );delayUS_ASM(10000);
 
     while( ( ret = mbedtls_ssl_handshake( &ssl ) ) != 0 )
     {
       if( ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE )
       {
-        mbedtls_printf( " failed !!! mbedtls_ssl_handshake returned -%.4X\n", ret * (-1));
+        mbedtls_printf( " failed !!! mbedtls_ssl_handshake returned -%.4X\n", ret * (-1));delayUS_ASM(10000);
 //        goto reset;
       }
     }
 
-    mbedtls_printf( " ok\n" );
+    mbedtls_printf( " ok\n" );delayUS_ASM(10000);
 }
 /* USER CODE END 4 */
 

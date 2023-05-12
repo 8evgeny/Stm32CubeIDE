@@ -717,7 +717,7 @@ void http_request(void)
 		 tcp_send_http_one();
 		DisconnectSocket(tcpprop.cur_sock); //Разъединяемся
 		SocketClosedWait(tcpprop.cur_sock);
-delayUS_ASM(100000);
+delayUS_ASM(100000); //Иначе сокет иногда виснет
 		OpenSocket(tcpprop.cur_sock,Mode_TCP);
 delayUS_ASM(100000);
 		//Ждём инициализации сокета (статус SOCK_INIT)

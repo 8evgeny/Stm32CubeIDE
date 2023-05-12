@@ -245,7 +245,9 @@ void w5500_ini(void)
     //инициализируем активный сокет
     tcpprop.cur_sock = 0;
     //Открываем сокет 0
+delayUS_ASM(100000);
     OpenSocket(0,Mode_TCP);
+delayUS_ASM(100000);
 UART_Printf("SocketInitWait\r\n"); delayUS_ASM(10000);
     SocketInitWait(0);
 UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
@@ -318,7 +320,9 @@ void w5500_packetReceive(uint8_t sn)
         SocketClosedWait(sn);
         sprintf(str1,"S%d (one) closed\r\n",sn);
         HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+delayUS_ASM(100000);
         OpenSocket(sn,Mode_TCP);
+delayUS_ASM(100000);
         //Ждём инициализации сокета (статус SOCK_INIT)
         SocketInitWait(sn);
         //Продолжаем слушать сокет

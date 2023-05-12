@@ -53,6 +53,18 @@ void receivePackets(uint8_t, uint8_t* , uint16_t );
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+#define I2C_REQUEST_WRITE                       0x00
+#define I2C_REQUEST_READ                        0x01
+#define SLAVE_OWN_ADDRESS                       0xA0
+//Для I2C
+uint8_t rd_value[20] = {0};
+uint8_t wr_value[20] = {0x11,0x22,0x33,0x44,0x55,
+                        0x66,0x77,0x88,0x99,0xAA,
+                        0xBB,0xCC,0xDD,0xEE,0x06,
+                        0x05,0x04,0x03,0x02,0x01};
+
+
+
 uint32_t count = 0;
 uint8_t sdCartOn = 0;
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -190,6 +202,78 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 /* USER CODE BEGIN 0 */
 FATFS fs;
 FIL fil;
+
+//-------------------------------------------------------
+void AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
+{
+  uint16_t i;
+  //Disable Pos
+  LL_I2C_DisableBitPOS(I2C1);
+  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+  LL_I2C_GenerateStartCondition(I2C1);
+  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+  //read state
+  (void) I2C1->SR1;
+  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
+  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+  LL_I2C_ClearFlag_ADDR(I2C1);
+  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  for(i=0;i<bytes_count;i++)
+  {
+    LL_I2C_TransmitData8(I2C1, buf[i]);
+    while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  }
+  LL_I2C_GenerateStopCondition(I2C1);
+}
+//-------------------------------------------------------
+void AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
+{
+  uint16_t i;
+  //Disable Pos
+  LL_I2C_DisableBitPOS(I2C1);
+  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+  LL_I2C_GenerateStartCondition(I2C1);
+  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+  //read state
+  (void) I2C1->SR1;
+  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
+  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+  LL_I2C_ClearFlag_ADDR(I2C1);
+  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
+  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+  LL_I2C_GenerateStartCondition(I2C1);
+  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+  (void) I2C1->SR1;
+  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_READ);
+  while (!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+  LL_I2C_ClearFlag_ADDR(I2C1);
+  for(i=0;i<bytes_count;i++)
+  {
+    if(i<(bytes_count-1))
+    {
+      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
+      buf[i] = LL_I2C_ReceiveData8(I2C1);
+    }
+    else
+    {
+      LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
+      LL_I2C_GenerateStopCondition(I2C1);
+      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
+      buf[i] = LL_I2C_ReceiveData8(I2C1);
+    }
+  }
+
+}
+//-------------------------------------------------------
+
+
+
+
 /* USER CODE END 0 */
 
 /**
@@ -463,6 +547,15 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
 #endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
+
+AT24C_ReadBytes (0x004A, rd_value, 20);
+UART_Printf("EEPROM read %s",rd_value); delayUS_ASM(10000);
+UART_Printf("\r\n"); delayUS_ASM(10000);
+AT24C_WriteBytes (0x004A, wr_value, 20);
+UART_Printf("EEPROM write\r\n"); delayUS_ASM(10000);
+AT24C_ReadBytes (0x004A, rd_value, 20);
+UART_Printf("EEPROM read %s",rd_value); delayUS_ASM(10000);
+UART_Printf("\r\n"); delayUS_ASM(10000);
 
 uint8_t firstSend = 1;
   while (1)

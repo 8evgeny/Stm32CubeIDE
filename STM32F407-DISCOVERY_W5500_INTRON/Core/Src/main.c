@@ -56,11 +56,6 @@ void receivePackets(uint8_t, uint8_t* , uint16_t );
 #define I2C_REQUEST_WRITE                       0x00
 #define I2C_REQUEST_READ                        0x01
 #define SLAVE_OWN_ADDRESS                       0xA0
-//Для I2C
-uint8_t rd_value[36] = {0};
-uint8_t wr_value[36] = {'a','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
-                        'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
-uint8_t erase_value[36] = {'H','e','l','l','o'};
 uint32_t count = 0;
 uint8_t sdCartOn = 0;
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -266,7 +261,35 @@ void AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
 
 }
 //-------------------------------------------------------
+void testEEPROM()
+{
+    UART_Printf("**** Test EEPROM ****\r\n"); delayUS_ASM(20000);
+    uint8_t rd_value[36] = {0};
+    uint8_t wr_value[36] = {'a','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
+                            'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
+    uint8_t erase_value[36] = {'H','e','l','l','o'};
 
+    AT24C_ReadBytes (0x004A, rd_value, 36);
+    UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(20000);
+
+    UART_Printf("EEPROM write:"); delayUS_ASM(20000);
+    UART_Printf("%s\r\n",erase_value); delayUS_ASM(20000);
+    AT24C_WriteBytes (0x004A, erase_value, 36);
+
+    delayUS_ASM(100000);
+
+    AT24C_ReadBytes (0x004A, rd_value, 36);
+    UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
+
+    UART_Printf("EEPROM write:"); delayUS_ASM(10000);
+    UART_Printf("%s\r\n",wr_value); delayUS_ASM(10000);
+    AT24C_WriteBytes (0x004A, wr_value, 36);
+
+    delayUS_ASM(100000);
+
+    AT24C_ReadBytes (0x004A, rd_value, 36);
+    UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
+}
 
 
 
@@ -544,26 +567,10 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 #endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
-AT24C_ReadBytes (0x004A, rd_value, 36);
-UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(20000);
 
-UART_Printf("EEPROM write:"); delayUS_ASM(20000);
-UART_Printf("%s\r\n",erase_value); delayUS_ASM(20000);
-AT24C_WriteBytes (0x004A, erase_value, 36);
+testEEPROM();
 
-delayUS_ASM(100000);
 
-AT24C_ReadBytes (0x004A, rd_value, 36);
-UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
-
-UART_Printf("EEPROM write:"); delayUS_ASM(10000);
-UART_Printf("%s\r\n",wr_value); delayUS_ASM(10000);
-AT24C_WriteBytes (0x004A, wr_value, 36);
-
-delayUS_ASM(100000);
-
-AT24C_ReadBytes (0x004A, rd_value, 36);
-UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
 
 uint8_t firstSend = 1;
   while (1)

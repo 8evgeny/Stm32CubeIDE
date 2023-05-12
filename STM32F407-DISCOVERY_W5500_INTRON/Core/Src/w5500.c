@@ -245,7 +245,7 @@ void w5500_ini(void)
     //инициализируем активный сокет
     tcpprop.cur_sock = 0;
     //Открываем сокет 0
-delayUS_ASM(100000);
+delayUS_ASM(100000);//Иначе сокет иногда виснет
     OpenSocket(0,Mode_TCP);
 delayUS_ASM(100000);
 UART_Printf("SocketInitWait\r\n"); delayUS_ASM(10000);

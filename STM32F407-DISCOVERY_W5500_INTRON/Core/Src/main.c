@@ -24,7 +24,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "fatfs.h"
-#include "mbedtls.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -330,7 +329,6 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_FATFS_Init();
-  MX_MBEDTLS_Init();
   MX_RNG_Init();
   MX_RTC_Init();
   MX_I2C1_Init();

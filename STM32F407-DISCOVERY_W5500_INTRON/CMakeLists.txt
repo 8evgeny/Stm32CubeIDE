@@ -57,8 +57,8 @@ include_directories(
     FATFS/App
     FATFS/Target
     Middlewares/Third_Party/FatFs/src
-    MBEDTLS/App
-    Middlewares/Third_Party/mbedTLS/include
+#    MBEDTLS/App
+#    Middlewares/Third_Party/mbedTLS/include
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
@@ -70,9 +70,9 @@ file (GLOB SOURCES_C
     FATFS/Target/*.c
     Middlewares/Third_Party/FatFs/src/*.c
     Middlewares/Third_Party/FatFs/src/option/*.c
-    MBEDTLS/App/*.c
-    Middlewares/Third_Party/mbedTLS/library/*.c
-    MBEDTLS/Target/*.c
+#    MBEDTLS/App/*.c
+#    Middlewares/Third_Party/mbedTLS/library/*.c
+#    MBEDTLS/Target/*.c
     )
 
 

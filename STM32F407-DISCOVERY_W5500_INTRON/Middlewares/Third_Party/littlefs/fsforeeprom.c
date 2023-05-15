@@ -65,13 +65,11 @@ void littleFsInit()
 
 // release any resources we were using
     lfs_unmount(&lfs);
-UART_Printf("** 1 **\r\n"); delayUS_ASM(10000);
 // example littlefs
     cfg.read = user_provided_block_device_read;
     cfg.prog = user_provided_block_device_prog;
     cfg.erase = user_provided_block_device_erase;
     cfg.sync = user_provided_block_device_sync;
-UART_Printf("** 2 **\r\n"); delayUS_ASM(10000);
 //Параметры lfs похожи на правильные
 //    cfg.read_size = 256;
 //    cfg.prog_size = 256;
@@ -89,20 +87,14 @@ UART_Printf("** 2 **\r\n"); delayUS_ASM(10000);
     cfg.prog_buffer = lfs_prog_buf;
     cfg.lookahead_buffer = lfs_lookahead_buf;
     cfg.file_buffer = lfs_file_buf;
-UART_Printf("** 3 **\r\n"); delayUS_ASM(10000);
 // mount the filesystem
     int err = lfs_mount(&lfs, &cfg);
-UART_Printf("** 4 **\r\n"); delayUS_ASM(10000);
 // reformat if we can't mount the filesystem
 // this should only happen on the first boot
     if (err) {
-UART_Printf("** 5 **\r\n"); delayUS_ASM(10000);
         lfs_format(&lfs, &cfg);
-UART_Printf("** 6 **\r\n"); delayUS_ASM(10000);
         lfs_mount(&lfs, &cfg);
-UART_Printf("** 7 **\r\n"); delayUS_ASM(10000);
     }
-UART_Printf("** 8 **\r\n"); delayUS_ASM(10000);
 }
 
 void FsForEeprom_test()
@@ -120,11 +112,11 @@ void FsForEeprom_test()
     lfs_file_read(&lfs, &file, &fileFromEEPROM, sizeof(fileFromEEPROM));
     lfs_file_close(&lfs, &file);
 
-    lfs_file_open(&lfs, &file, "testEEPROM_2", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM_5", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &fileToEEPROM_2, sizeof(fileToEEPROM));
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "testEEPROM_2", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM_5", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &fileFromEEPROM_2, sizeof(fileFromEEPROM));
     lfs_file_close(&lfs, &file);
 

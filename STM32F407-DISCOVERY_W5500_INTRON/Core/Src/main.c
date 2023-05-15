@@ -42,9 +42,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-
-
-
+extern void FsForEeprom_test();
+extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
 
@@ -194,7 +193,7 @@ FATFS fs;
 FIL fil;
 
 //-------------------------------------------------------
-void AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
+int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
 {
   uint16_t i;
   //Disable Pos
@@ -217,9 +216,10 @@ void AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
     while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
   }
   LL_I2C_GenerateStopCondition(I2C1);
+  return i;
 }
 //-------------------------------------------------------
-void AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
+int AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
 {
   uint16_t i;
   //Disable Pos
@@ -257,7 +257,7 @@ void AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
       buf[i] = LL_I2C_ReceiveData8(I2C1);
     }
   }
-
+  return i;
 }
 //-------------------------------------------------------
 void testEEPROM()
@@ -565,10 +565,11 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 #endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
-
-//testEEPROM();
-
-
+testEEPROM();
+UART_Printf("** littleFsInit **\r\n"); delayUS_ASM(10000);
+littleFsInit();
+UART_Printf("** FsForEeprom_test **\r\n"); delayUS_ASM(10000);
+FsForEeprom_test();
 
 uint8_t firstSend = 1;
   while (1)

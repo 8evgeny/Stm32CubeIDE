@@ -6,7 +6,8 @@
  */
 #include "lfs.h"
 #include "lfs_util.h"
-
+extern void UART_Printf(const char* fmt, ...);
+#include "main.h"
 #include <inttypes.h>
 
 /// Caching block device operations ///
@@ -65,12 +66,12 @@ lfs_cache_read(lfs_t *lfs, lfs_cache_t *rcache, const lfs_cache_t *pcache, lfs_b
         // load to cache, first condition can no longer fail
         rcache->block = block;
         rcache->off = off - (off % lfs->cfg->read_size);
-
-//RS232Puts("____lfs_cache_read__begin_read\n") ;
+//UART_Printf("____lfs_cache_read__begin_read\r\n");
+        delayUS_ASM(10000);
 
         int err = lfs->cfg->read(lfs->cfg, rcache->block, rcache->off, rcache->buffer, lfs->cfg->read_size);
-
-//RS232Puts("____lfs_cache_read__end_read\n") ;
+//UART_Printf("____lfs_cache_read__end_read\r\n");
+        delayUS_ASM(10000);
 
         if (err) {
             return err;
@@ -525,26 +526,27 @@ static int lfs_dir_commit(lfs_t *lfs, lfs_dir_t *dir,
         const struct lfs_region *regions, int count) {
     // increment revision count
     dir->d.rev += 1;
-
+UART_Printf("** 5.5 **\r\n"); delayUS_ASM(10000);
     // keep pairs in order such that pair[0] is most recent
     lfs_pairswap(dir->pair);
     for (int i = 0; i < count; i++) {
         dir->d.size += regions[i].newlen - regions[i].oldlen;
     }
-
+UART_Printf("** 5.6 **\r\n"); delayUS_ASM(10000);
     const lfs_block_t oldpair[2] = {dir->pair[0], dir->pair[1]};
     bool relocated = false;
 
     while (true) {
         if (true) {
             int err = lfs_bd_erase(lfs, dir->pair[0]);
+ UART_Printf("** 5.7 **\r\n"); delayUS_ASM(10000);
             if (err) {
                 if (err == LFS_ERR_CORRUPT) {
                     goto relocate;
                 }
                 return err;
             }
-
+UART_Printf("** 5.8 **\r\n"); delayUS_ASM(10000);
             uint32_t crc = 0xffffffff;
             lfs_dir_tole32(&dir->d);
             lfs_crc(&crc, &dir->d, sizeof(dir->d));
@@ -556,7 +558,7 @@ static int lfs_dir_commit(lfs_t *lfs, lfs_dir_t *dir,
                 }
                 return err;
             }
-
+UART_Printf("** 5.9 **\r\n"); delayUS_ASM(10000);
             int i = 0;
             lfs_off_t oldoff = sizeof(dir->d);
             lfs_off_t newoff = sizeof(dir->d);
@@ -595,7 +597,7 @@ static int lfs_dir_commit(lfs_t *lfs, lfs_dir_t *dir,
                     newoff += 1;
                 }
             }
-
+UART_Printf("** 5.10 **\r\n"); delayUS_ASM(10000);
             crc = lfs_tole32(crc);
             err = lfs_bd_prog(lfs, dir->pair[0], newoff, &crc, 4);
             crc = lfs_fromle32(crc);
@@ -605,7 +607,7 @@ static int lfs_dir_commit(lfs_t *lfs, lfs_dir_t *dir,
                 }
                 return err;
             }
-
+UART_Printf("** 5.11 **\r\n"); delayUS_ASM(10000);
             err = lfs_bd_sync(lfs);
             if (err) {
                 if (err == LFS_ERR_CORRUPT) {
@@ -613,7 +615,7 @@ static int lfs_dir_commit(lfs_t *lfs, lfs_dir_t *dir,
                 }
                 return err;
             }
-
+UART_Printf("** 5.12 **\r\n"); delayUS_ASM(10000);
             // successful commit, check checksum to make sure
             uint32_t ncrc = 0xffffffff;
             err = lfs_bd_crc(lfs, dir->pair[0], 0,
@@ -1408,7 +1410,6 @@ int lfs_file_open(lfs_t *lfs, lfs_file_t *file,
 
 int lfs_file_close(lfs_t *lfs, lfs_file_t *file) {
     int err = lfs_file_sync(lfs, file);
-
     // remove from list of files
     for (lfs_file_t **p = &lfs->files; *p; p = &(*p)->next) {
         if (*p == file) {
@@ -1416,7 +1417,6 @@ int lfs_file_close(lfs_t *lfs, lfs_file_t *file) {
             break;
         }
     }
-
     // clean up memory
     if (!(file->cfg && file->cfg->buffer) && !lfs->cfg->file_buffer) {
         lfs_free(file->cache.buffer);
@@ -1479,7 +1479,6 @@ static int lfs_file_flush(lfs_t *lfs, lfs_file_t *file) {
         lfs_cache_drop(lfs, &file->cache);
         file->flags &= ~LFS_F_READING;
     }
-
     if (file->flags & LFS_F_WRITING) {
         lfs_off_t pos = file->pos;
 
@@ -1492,8 +1491,9 @@ static int lfs_file_flush(lfs_t *lfs, lfs_file_t *file) {
             .cache = lfs->rcache,
         };
         lfs_cache_drop(lfs, &lfs->rcache);
-
+UART_Printf("** e **\r\n"); delayUS_ASM(10000);
         while (file->pos < file->size) {
+            UART_Printf("** f **\r\n"); delayUS_ASM(10000);
             // copy over a byte at a time, leave it up to caching
             // to make this efficient
             uint8_t data;
@@ -1503,6 +1503,7 @@ static int lfs_file_flush(lfs_t *lfs, lfs_file_t *file) {
             }
 
             res = lfs_file_write(lfs, file, &data, 1);
+
             if (res < 0) {
                 return res;
             }
@@ -1549,7 +1550,6 @@ int lfs_file_sync(lfs_t *lfs, lfs_file_t *file) {
     if (err) {
         return err;
     }
-
     if ((file->flags & LFS_F_DIRTY) &&
             !(file->flags & LFS_F_ERRED) &&
             !lfs_pairisnull(file->pair)) {
@@ -1587,7 +1587,6 @@ lfs_ssize_t lfs_file_read(lfs_t *lfs, lfs_file_t *file,
         void *buffer, lfs_size_t size) {
     uint8_t *data = buffer;
     lfs_size_t nsize = size;
-
     if ((file->flags & 3) == LFS_O_WRONLY) {
         return LFS_ERR_BADF;
     }
@@ -2113,21 +2112,21 @@ cleanup:
     return LFS_ERR_NOMEM;
 }
 
-int lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
+int  lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
     int err = 0;
     if (true) {
         err = lfs_init(lfs, cfg);
         if (err) {
             return err;
         }
-
+UART_Printf("** 5.1 **\r\n"); delayUS_ASM(10000);
         // create free lookahead
         memset(lfs->free.buffer, 0, lfs->cfg->lookahead/8);
         lfs->free.off = 0;
         lfs->free.size = lfs_min(lfs->cfg->lookahead, lfs->cfg->block_count);
         lfs->free.i = 0;
         lfs_alloc_ack(lfs);
-
+UART_Printf("** 5.2 **\r\n"); delayUS_ASM(10000);
         // create superblock dir
         lfs_dir_t superdir;
         err = lfs_dir_alloc(lfs, &superdir);
@@ -2141,12 +2140,12 @@ int lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
         if (err) {
             goto cleanup;
         }
-
+UART_Printf("** 5.3 **\r\n"); delayUS_ASM(10000);
         err = lfs_dir_commit(lfs, &root, NULL, 0);
         if (err) {
             goto cleanup;
         }
-
+UART_Printf("** 5.4 **\r\n"); delayUS_ASM(10000);
         lfs->root[0] = root.pair[0];
         lfs->root[1] = root.pair[1];
 

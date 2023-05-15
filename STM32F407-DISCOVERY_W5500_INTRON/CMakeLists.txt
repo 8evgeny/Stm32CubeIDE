@@ -13,10 +13,17 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #Закомментировать при прошивке DT
 #add_definitions(-DINTRON)
 
+#Режим http / https
+#add_definitions(-DTLS_ON)
+
 project(11_Converter_F407_INTRON_DT C CXX ASM)
 
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
+
+SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"')
+add_definitions(${MYCOMPILE_FLAGS})
+add_definitions("-DUSE_FULL_LL_DRIVER")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
     -mcpu=cortex-m4 \
@@ -47,6 +54,11 @@ include_directories(
     Drivers/CMSIS/Include
     ioLibrary_Driver/Ethernet
     ioLibrary_Driver/Ethernet/W5500
+    FATFS/App
+    FATFS/Target
+    Middlewares/Third_Party/FatFs/src
+#    MBEDTLS/App
+#    Middlewares/Third_Party/mbedTLS/include
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
@@ -54,6 +66,13 @@ file (GLOB SOURCES_C
     Drivers/STM32F4xx_HAL_Driver/Src/*.c
     ioLibrary_Driver/Ethernet/*.c
     ioLibrary_Driver/Ethernet/W5500/w5500.c
+    FATFS/App/*.c
+    FATFS/Target/*.c
+    Middlewares/Third_Party/FatFs/src/*.c
+    Middlewares/Third_Party/FatFs/src/option/*.c
+#    MBEDTLS/App/*.c
+#    Middlewares/Third_Party/mbedTLS/library/*.c
+#    MBEDTLS/Target/*.c
     )
 
 

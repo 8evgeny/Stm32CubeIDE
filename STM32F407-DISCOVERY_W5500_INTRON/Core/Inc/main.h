@@ -17,7 +17,15 @@
   ******************************************************************************
   */
 
-
+#define delayUS_ASM(us) do {                           \
+asm volatile ("MOV R0,%[loops]\n                       \
+              1: \n                                    \
+              SUB R0, #1\n                             \
+              CMP R0, #0\n                             \
+              BNE 1b \t"                               \
+              : : [loops] "r" (34*us) : "memory"       \
+              );                                       \
+} while(0)
 
 /* USER CODE END Header */
 
@@ -31,6 +39,18 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+
+#include "stm32f4xx_ll_i2c.h"
+#include "stm32f4xx_ll_bus.h"
+#include "stm32f4xx_ll_cortex.h"
+#include "stm32f4xx_ll_rcc.h"
+#include "stm32f4xx_ll_system.h"
+#include "stm32f4xx_ll_utils.h"
+#include "stm32f4xx_ll_pwr.h"
+#include "stm32f4xx_ll_gpio.h"
+#include "stm32f4xx_ll_dma.h"
+
+#include "stm32f4xx_ll_exti.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -68,8 +88,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define CS_I2C_SPI_Pin GPIO_PIN_3
-#define CS_I2C_SPI_GPIO_Port GPIOE
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15
@@ -92,30 +110,10 @@ void Error_Handler(void);
 #define Red_Led_GPIO_Port GPIOD
 #define Blue_Led_Pin GPIO_PIN_15
 #define Blue_Led_GPIO_Port GPIOD
-#define VBUS_FS_Pin GPIO_PIN_9
-#define VBUS_FS_GPIO_Port GPIOA
-#define OTG_FS_ID_Pin GPIO_PIN_10
-#define OTG_FS_ID_GPIO_Port GPIOA
-#define OTG_FS_DM_Pin GPIO_PIN_11
-#define OTG_FS_DM_GPIO_Port GPIOA
-#define OTG_FS_DP_Pin GPIO_PIN_12
-#define OTG_FS_DP_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define Audio_RST_Pin GPIO_PIN_4
-#define Audio_RST_GPIO_Port GPIOD
-#define OTG_FS_OverCurrent_Pin GPIO_PIN_5
-#define OTG_FS_OverCurrent_GPIO_Port GPIOD
-#define SWO_Pin GPIO_PIN_3
-#define SWO_GPIO_Port GPIOB
-#define Audio_SCL_Pin GPIO_PIN_6
-#define Audio_SCL_GPIO_Port GPIOB
-#define Audio_SDA_Pin GPIO_PIN_9
-#define Audio_SDA_GPIO_Port GPIOB
-#define MEMS_INT2_Pin GPIO_PIN_1
-#define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

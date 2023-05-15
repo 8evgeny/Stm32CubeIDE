@@ -403,7 +403,7 @@ if (sdCartOn == 1)
     lfs_file_close(&lfs, &file);
 //    UART_Printf(tmp); delayUS_ASM(10000);
 
-    result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_gets(tmp1, 100, &fil);
     destip[0] = atoi(tmp1);
@@ -424,7 +424,7 @@ if (sdCartOn == 1)
     lfs_file_close(&lfs, &file);
 //    UART_Printf(tmp); delayUS_ASM(10000);
 
-    result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_gets(tmp1, 100, &fil);
     ipgate[0] = atoi(tmp1);
@@ -445,7 +445,7 @@ if (sdCartOn == 1)
     lfs_file_close(&lfs, &file);
 //    UART_Printf(tmp); delayUS_ASM(10000);
 
-    result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_gets(tmp1, 100, &fil);
     ipmask[0] = atoi(tmp1);
@@ -466,7 +466,7 @@ if (sdCartOn == 1)
     lfs_file_close(&lfs, &file);
 //    UART_Printf(tmp); delayUS_ASM(10000);
 
-    result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_gets(tmp, 100, &fil);
     strncpy(md5, tmp, 32);
@@ -478,19 +478,17 @@ if (sdCartOn == 1)
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
+    UINT tt;
+
+//    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
+//    f_lseek(&fil, 0);
+//    f_read(&fil, tmp, fil.obj.objsize, &tt);
+
+    UART_Printf(md5); delayUS_ASM(10000);
+    UART_Printf("\r\n"); delayUS_ASM(10000);
+    f_close(&fil);
 
 
-//    //test
-//    char temp2[300];
-//    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
-//    FIL fil2;
-//    f_open(&fil2, "test", FA_OPEN_ALWAYS | FA_WRITE );
-//    while (f_gets(temp2, 300, &fil))
-//    {
-//        f_puts(temp2, &fil2);
-//    }
-//f_close(&fil);
-//f_close(&fil2);
 
 } else //SD карты нет
 {

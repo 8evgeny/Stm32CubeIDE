@@ -573,8 +573,8 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 //testEEPROM();
 UART_Printf("LittleFsInit\r\n"); delayUS_ASM(10000);
 littleFsInit();
-UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-FsForEeprom_test();
+//UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+//FsForEeprom_test();
 
 uint8_t firstSend = 1;
   while (1)

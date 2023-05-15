@@ -112,11 +112,11 @@ void FsForEeprom_test()
     lfs_file_read(&lfs, &file, &fileFromEEPROM, sizeof(fileFromEEPROM));
     lfs_file_close(&lfs, &file);
 
-    lfs_file_open(&lfs, &file, "testEEPROM_", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "test2", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &fileToEEPROM_2, sizeof(fileToEEPROM));
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "testEEPROM_", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "test2", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &fileFromEEPROM_2, sizeof(fileFromEEPROM));
     lfs_file_close(&lfs, &file);
 
@@ -130,9 +130,9 @@ void FsForEeprom_test()
         if (fileToEEPROM_2[i] != fileFromEEPROM_2[i]) error = true;
     }
     if(error)
-        UART_Printf("test EEPROM FAILED"); delayUS_ASM(10000);
+        UART_Printf("FAILED\r\n"); delayUS_ASM(10000);
     if(!error)
-        UART_Printf("** FsForEeprom_test OK **"); delayUS_ASM(10000);
+        UART_Printf("OK\r\n"); delayUS_ASM(10000);
 
 }
 

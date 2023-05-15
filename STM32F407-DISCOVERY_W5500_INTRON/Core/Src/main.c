@@ -566,9 +566,9 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 //testEEPROM();
-UART_Printf("** littleFsInit **\r\n"); delayUS_ASM(10000);
+UART_Printf("LittleFsInit\r\n"); delayUS_ASM(10000);
 littleFsInit();
-UART_Printf("** FsForEeprom_test **\r\n"); delayUS_ASM(10000);
+UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
 FsForEeprom_test();
 
 uint8_t firstSend = 1;

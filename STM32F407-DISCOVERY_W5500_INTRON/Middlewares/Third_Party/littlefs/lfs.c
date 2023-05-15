@@ -1491,9 +1491,7 @@ static int lfs_file_flush(lfs_t *lfs, lfs_file_t *file) {
             .cache = lfs->rcache,
         };
         lfs_cache_drop(lfs, &lfs->rcache);
-UART_Printf("** e **\r\n"); delayUS_ASM(10000);
         while (file->pos < file->size) {
-            UART_Printf("** f **\r\n"); delayUS_ASM(10000);
             // copy over a byte at a time, leave it up to caching
             // to make this efficient
             uint8_t data;

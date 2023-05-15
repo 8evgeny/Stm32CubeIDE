@@ -101,8 +101,8 @@ void FsForEeprom_test()
 {
     char fileToEEPROM[] = "Red_on_top_Green_below._Red_says_Stop_Green_says_Go";
     char fileFromEEPROM[sizeof (fileToEEPROM)];
-    char fileToEEPROM_2[] = "1234567890-=qwertyuiop[]asdfghjk";
-    char fileFromEEPROM_2[sizeof (fileToEEPROM)];
+    char fileToEEPROM_2[] = "1234567890asdfghjklzxcv";
+    char fileFromEEPROM_2[sizeof (fileToEEPROM_2)];
 
     lfs_file_open(&lfs, &file, "testEEPROM", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
@@ -112,12 +112,12 @@ void FsForEeprom_test()
     lfs_file_read(&lfs, &file, &fileFromEEPROM, sizeof(fileFromEEPROM));
     lfs_file_close(&lfs, &file);
 
-    lfs_file_open(&lfs, &file, "test2", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM2", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, &fileToEEPROM_2, sizeof(fileToEEPROM));
+    lfs_file_write(&lfs, &file, &fileToEEPROM_2, sizeof(fileToEEPROM_2));
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "test2", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_read(&lfs, &file, &fileFromEEPROM_2, sizeof(fileFromEEPROM));
+    lfs_file_open(&lfs, &file, "testEEPROM2", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &fileFromEEPROM_2, sizeof(fileFromEEPROM_2));
     lfs_file_close(&lfs, &file);
 
     bool error = false;

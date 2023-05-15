@@ -22,8 +22,8 @@
 #include "my_function.h"
 #include "fsforeeprom.h"
 
-lfs_t lfsEEPROM;
-lfs_file_t fileEEPROM;
+extern lfs_t lfs;
+extern lfs_file_t file;
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -343,11 +343,11 @@ int main(void)
 //    delayUS_ASM(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
-  testEEPROM();
+//  testEEPROM();
   UART_Printf("LittleFsInit\r\n"); delayUS_ASM(10000);
   littleFsInit();
-  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-  FsForEeprom_test();
+//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+//  FsForEeprom_test();
 
 
 #ifdef INTRON
@@ -367,6 +367,7 @@ uint16_t localport = 8888;
     char tmp2[5];
     char tmp3[5];
     char tmp4[5];
+    char tmp5[12];
     f_mount(&fs, "", 0);
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
@@ -395,10 +396,10 @@ if (sdCartOn == 1)
     f_close(&fil);
 //Пишем на EEPROM
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfsEEPROM, &fileEEPROM, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfsEEPROM, &fileEEPROM);
-    lfs_file_write(&lfsEEPROM, &fileEEPROM, &tmp, sizeof(tmp));
-    lfs_file_close(&lfsEEPROM, &fileEEPROM);
+    lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
 //    UART_Printf(tmp); delayUS_ASM(10000);
 
     result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
@@ -416,10 +417,10 @@ if (sdCartOn == 1)
     f_close(&fil);
     //Пишем на EEPROM
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfsEEPROM, &fileEEPROM, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfsEEPROM, &fileEEPROM);
-    lfs_file_write(&lfsEEPROM, &fileEEPROM, &tmp, sizeof(tmp));
-    lfs_file_close(&lfsEEPROM, &fileEEPROM);
+    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
 //    UART_Printf(tmp); delayUS_ASM(10000);
 
     result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
@@ -437,10 +438,10 @@ if (sdCartOn == 1)
     f_close(&fil);
     //Пишем на EEPROM
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfsEEPROM, &fileEEPROM, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfsEEPROM, &fileEEPROM);
-    lfs_file_write(&lfsEEPROM, &fileEEPROM, &tmp, sizeof(tmp));
-    lfs_file_close(&lfsEEPROM, &fileEEPROM);
+    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
 //    UART_Printf(tmp); delayUS_ASM(10000);
 
     result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
@@ -458,10 +459,10 @@ if (sdCartOn == 1)
     f_close(&fil);
     //Пишем на EEPROM
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfsEEPROM, &fileEEPROM, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfsEEPROM, &fileEEPROM);
-    lfs_file_write(&lfsEEPROM, &fileEEPROM, &tmp, sizeof(tmp));
-    lfs_file_close(&lfsEEPROM, &fileEEPROM);
+    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
 //    UART_Printf(tmp); delayUS_ASM(10000);
 
     result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
@@ -472,10 +473,10 @@ if (sdCartOn == 1)
     UART_Printf("\r\n"); delayUS_ASM(10000);
     f_close(&fil);
     //Пишем на EEPROM
-    lfs_file_open(&lfsEEPROM, &fileEEPROM, "md5", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfsEEPROM, &fileEEPROM);
-    lfs_file_write(&lfsEEPROM, &fileEEPROM, &md5, sizeof(md5));
-    lfs_file_close(&lfsEEPROM, &fileEEPROM);
+    lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &md5, sizeof(md5));
+    lfs_file_close(&lfs, &file);
 
 
 //    //test
@@ -492,16 +493,42 @@ if (sdCartOn == 1)
 
 } else //SD карты нет
 {
-    #ifdef INTRON
-    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 197;
-    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 198;
-    #endif
-    #ifndef INTRON
-    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 198;
-    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 197;
-    #endif
-    ipgate[0] = 192;ipgate[1] = 168;ipgate[2] = 1;ipgate[3] = 1;
-    ipmask[0] = 255;ipmask[1] = 255;ipmask[2] = 255;ipmask[3] = 0;
+//    #ifdef INTRON
+//    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 197;
+//    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 198;
+//    #endif
+//    #ifndef INTRON
+//    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 198;
+//    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 197;
+//    #endif
+//    ipgate[0] = 192;ipgate[1] = 168;ipgate[2] = 1;ipgate[3] = 1;
+//    ipmask[0] = 255;ipmask[1] = 255;ipmask[2] = 255;ipmask[3] = 0;
+
+    lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+    UART_Printf(tmp5); delayUS_ASM(10000);
+    UART_Printf("\r\n"); delayUS_ASM(10000);
+
+    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+    UART_Printf(tmp5); delayUS_ASM(10000);
+    UART_Printf("\r\n"); delayUS_ASM(10000);
+
+    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+    UART_Printf(tmp5); delayUS_ASM(10000);
+    UART_Printf("\r\n"); delayUS_ASM(10000);
+
+    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+    UART_Printf(tmp5); delayUS_ASM(10000);
+    UART_Printf("\r\n"); delayUS_ASM(10000);
+
+
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);

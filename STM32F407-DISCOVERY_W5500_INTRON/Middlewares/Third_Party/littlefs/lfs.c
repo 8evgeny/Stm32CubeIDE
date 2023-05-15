@@ -526,27 +526,27 @@ static int lfs_dir_commit(lfs_t *lfs, lfs_dir_t *dir,
         const struct lfs_region *regions, int count) {
     // increment revision count
     dir->d.rev += 1;
-UART_Printf("** 5.5 **\r\n"); delayUS_ASM(10000);
+delayUS_ASM(10000);
     // keep pairs in order such that pair[0] is most recent
     lfs_pairswap(dir->pair);
     for (int i = 0; i < count; i++) {
         dir->d.size += regions[i].newlen - regions[i].oldlen;
     }
-UART_Printf("** 5.6 **\r\n"); delayUS_ASM(10000);
+delayUS_ASM(10000);
     const lfs_block_t oldpair[2] = {dir->pair[0], dir->pair[1]};
     bool relocated = false;
 
     while (true) {
         if (true) {
             int err = lfs_bd_erase(lfs, dir->pair[0]);
- UART_Printf("** 5.7 **\r\n"); delayUS_ASM(10000);
+delayUS_ASM(10000);
             if (err) {
                 if (err == LFS_ERR_CORRUPT) {
                     goto relocate;
                 }
                 return err;
             }
-UART_Printf("** 5.8 **\r\n"); delayUS_ASM(10000);
+delayUS_ASM(10000);
             uint32_t crc = 0xffffffff;
             lfs_dir_tole32(&dir->d);
             lfs_crc(&crc, &dir->d, sizeof(dir->d));
@@ -558,7 +558,7 @@ UART_Printf("** 5.8 **\r\n"); delayUS_ASM(10000);
                 }
                 return err;
             }
-UART_Printf("** 5.9 **\r\n"); delayUS_ASM(10000);
+delayUS_ASM(10000);
             int i = 0;
             lfs_off_t oldoff = sizeof(dir->d);
             lfs_off_t newoff = sizeof(dir->d);
@@ -597,7 +597,7 @@ UART_Printf("** 5.9 **\r\n"); delayUS_ASM(10000);
                     newoff += 1;
                 }
             }
-UART_Printf("** 5.10 **\r\n"); delayUS_ASM(10000);
+delayUS_ASM(10000);
             crc = lfs_tole32(crc);
             err = lfs_bd_prog(lfs, dir->pair[0], newoff, &crc, 4);
             crc = lfs_fromle32(crc);
@@ -607,7 +607,7 @@ UART_Printf("** 5.10 **\r\n"); delayUS_ASM(10000);
                 }
                 return err;
             }
-UART_Printf("** 5.11 **\r\n"); delayUS_ASM(10000);
+delayUS_ASM(10000);
             err = lfs_bd_sync(lfs);
             if (err) {
                 if (err == LFS_ERR_CORRUPT) {
@@ -615,7 +615,7 @@ UART_Printf("** 5.11 **\r\n"); delayUS_ASM(10000);
                 }
                 return err;
             }
-UART_Printf("** 5.12 **\r\n"); delayUS_ASM(10000);
+delayUS_ASM(10000);
             // successful commit, check checksum to make sure
             uint32_t ncrc = 0xffffffff;
             err = lfs_bd_crc(lfs, dir->pair[0], 0,

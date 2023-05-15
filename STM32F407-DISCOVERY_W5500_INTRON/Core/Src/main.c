@@ -20,6 +20,11 @@
 #include "net.h"
 #include "loopback.h"
 #include "my_function.h"
+#include "fsforeeprom.h"
+
+lfs_t lfsEEPROM;
+lfs_file_t fileEEPROM;
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"

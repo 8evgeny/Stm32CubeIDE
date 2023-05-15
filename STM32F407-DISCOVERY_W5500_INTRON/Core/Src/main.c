@@ -344,7 +344,7 @@ int main(void)
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
 //  testEEPROM();
-  UART_Printf("LittleFsInit\r\n"); delayUS_ASM(10000);
+  UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
   littleFsInit();
 //  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
 //  FsForEeprom_test();
@@ -368,17 +368,18 @@ uint16_t localport = 8888;
     char tmp3[5];
     char tmp4[5];
     char tmp5[12];
+    char tmp6[3];
     f_mount(&fs, "", 0);
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
     {
         sdCartOn = 1;
-        UART_Printf("\r\nSD_READ\r\n");
+        UART_Printf("SD_READ\n");
         delayUS_ASM(10000);
     }
 
     if (result != 0)
-        UART_Printf("\r\nSD_NOT_OPEN\r\n");
+        UART_Printf("SD_NOT_OPEN\n");
         delayUS_ASM(10000);
 if (sdCartOn == 1)
 {
@@ -475,7 +476,7 @@ if (sdCartOn == 1)
     //Пишем на EEPROM
     lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, &md5, sizeof(md5));
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
 
 
@@ -504,30 +505,70 @@ if (sdCartOn == 1)
 //    ipgate[0] = 192;ipgate[1] = 168;ipgate[2] = 1;ipgate[3] = 1;
 //    ipmask[0] = 255;ipmask[1] = 255;ipmask[2] = 255;ipmask[3] = 0;
 
+    UART_Printf("Load data from EEPROM\r\n"); delayUS_ASM(10000);
+
     lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
-    UART_Printf(tmp5); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
+//    UART_Printf(tmp5); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+    strncpy(tmp6,tmp5,3);
+    ipaddr[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+3,3);
+    ipaddr[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+6,3);
+    ipaddr[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+9,3);
+    ipaddr[3] = atoi(tmp6);
 
     lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
-    UART_Printf(tmp5); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
+//    UART_Printf(tmp5); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+    strncpy(tmp6,tmp5,3);
+    destip[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+3,3);
+    destip[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+6,3);
+    destip[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+9,3);
+    destip[3] = atoi(tmp6);
 
     lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
-    UART_Printf(tmp5); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
+//    UART_Printf(tmp5); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+    strncpy(tmp6,tmp5,3);
+    ipgate[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+3,3);
+    ipgate[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+6,3);
+    ipgate[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+9,3);
+    ipgate[3] = atoi(tmp6);
 
     lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
-    UART_Printf(tmp5); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
+//    UART_Printf(tmp5); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+    strncpy(tmp6,tmp5,3);
+    ipmask[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+3,3);
+    ipmask[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+6,3);
+    ipmask[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+9,3);
+    ipmask[3] = atoi(tmp6);
 
+    lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
+    lfs_file_close(&lfs, &file);
+    strcpy(md5, tmp);
+//    UART_Printf(tmp); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
 
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
@@ -536,6 +577,8 @@ if (sdCartOn == 1)
     sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    sprintf(tmp,"md5: %s", md5);
     UART_Printf(tmp); delayUS_ASM(10000);
 }
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);

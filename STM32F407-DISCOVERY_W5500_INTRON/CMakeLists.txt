@@ -21,6 +21,7 @@ project(11_Converter_F407_INTRON_DT C CXX ASM)
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
 
+set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"')
 add_definitions(${MYCOMPILE_FLAGS})
 add_definitions("-DUSE_FULL_LL_DRIVER")
@@ -57,8 +58,7 @@ include_directories(
     FATFS/App
     FATFS/Target
     Middlewares/Third_Party/FatFs/src
-#    MBEDTLS/App
-#    Middlewares/Third_Party/mbedTLS/include
+    ${littlefs}
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
@@ -70,11 +70,10 @@ file (GLOB SOURCES_C
     FATFS/Target/*.c
     Middlewares/Third_Party/FatFs/src/*.c
     Middlewares/Third_Party/FatFs/src/option/*.c
-#    MBEDTLS/App/*.c
-#    Middlewares/Third_Party/mbedTLS/library/*.c
-#    MBEDTLS/Target/*.c
     )
 
+file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h  )
+add_library(littlefs_LIB ${littlefs_src} )
 
 add_executable(${PROJECT_NAME}.elf
     ${SOURCES_C}
@@ -100,9 +99,9 @@ set(LINKER_FLAGS "SHELL: \
 
 target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
-
-#target_link_libraries(${PROJECT_NAME}.elf PUBLIC
-#    )
+target_link_libraries(${PROJECT_NAME}.elf PUBLIC
+    littlefs_LIB
+    )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bin)

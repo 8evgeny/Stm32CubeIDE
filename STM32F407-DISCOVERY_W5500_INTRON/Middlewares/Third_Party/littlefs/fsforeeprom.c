@@ -109,30 +109,38 @@ void FsForEeprom_test()
 {
     char fileToEEPROM[] = "Red_on_top_Green_below._Red_says_Stop_Green_says_Go";
     char fileFromEEPROM[sizeof (fileToEEPROM)];
-    UART_Printf(fileToEEPROM); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
+    char fileToEEPROM_2[] = "1234567890-=qwertyuiop[]asdfghjk";
+    char fileFromEEPROM_2[sizeof (fileToEEPROM)];
+
     lfs_file_open(&lfs, &file, "testEEPROM", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
-UART_Printf("** a **\r\n"); delayUS_ASM(10000);
     lfs_file_write(&lfs, &file, &fileToEEPROM, sizeof(fileToEEPROM));
-UART_Printf("** b **\r\n"); delayUS_ASM(10000);
     lfs_file_close(&lfs, &file);
-UART_Printf("** c **\r\n"); delayUS_ASM(10000);
     lfs_file_open(&lfs, &file, "testEEPROM", LFS_O_RDWR | LFS_O_CREAT);
-UART_Printf("** d **\r\n"); delayUS_ASM(10000);
     lfs_file_read(&lfs, &file, &fileFromEEPROM, sizeof(fileFromEEPROM));
-    UART_Printf(fileFromEEPROM); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
-    lfs_file_close(&lfs, &file); // remember the storage is not updated until the file is closed successfully
+    lfs_file_close(&lfs, &file);
+
+    lfs_file_open(&lfs, &file, "testEEPROM_2", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &fileToEEPROM_2, sizeof(fileToEEPROM));
+    lfs_file_close(&lfs, &file);
+    lfs_file_open(&lfs, &file, "testEEPROM_2", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &fileFromEEPROM_2, sizeof(fileFromEEPROM));
+    lfs_file_close(&lfs, &file);
+
     bool error = false;
     for (unsigned int i = 0; i < sizeof(fileToEEPROM); ++i)
     {
         if (fileToEEPROM[i] != fileFromEEPROM[i]) error = true;
     }
+    for (unsigned int i = 0; i < sizeof(fileToEEPROM_2); ++i)
+    {
+        if (fileToEEPROM_2[i] != fileFromEEPROM_2[i]) error = true;
+    }
     if(error)
         UART_Printf("test EEPROM FAILED"); delayUS_ASM(10000);
     if(!error)
-        UART_Printf("test EEPROM passed"); delayUS_ASM(10000);
+        UART_Printf("--- FsForEeprom_test OK ---"); delayUS_ASM(10000);
 
 }
 

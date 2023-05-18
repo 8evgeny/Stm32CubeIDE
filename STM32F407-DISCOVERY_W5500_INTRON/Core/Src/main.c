@@ -596,7 +596,8 @@ if (sdCartOn == 1)
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"md5: %s", md5);
     UART_Printf(tmp); delayUS_ASM(10000);
-}
+} //end SD нет
+
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
     UART_Printf(tmp); delayUS_ASM(10000);
     net_ini();

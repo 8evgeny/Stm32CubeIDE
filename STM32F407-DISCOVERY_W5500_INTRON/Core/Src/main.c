@@ -478,15 +478,18 @@ if (sdCartOn == 1)
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
-    UINT tt;
-
-//    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
-//    f_lseek(&fil, 0);
-//    f_read(&fil, tmp, fil.obj.objsize, &tt);
-
+    f_close(&fil);
     UART_Printf(md5); delayUS_ASM(10000);
     UART_Printf("\r\n"); delayUS_ASM(10000);
-    f_close(&fil);
+
+//Переносим на EEPROM index.html и main.html
+    UINT br;
+    char *pindex;  // указатель на массив для index.html
+    pindex = (char*)malloc(1024 * 10 * sizeof(char));
+    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_read(&fil, pindex, f_size(&fil), &br);
+
 
 
 

@@ -118,6 +118,6 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
 #    COMMAND st-flash erase
 #    COMMENT "Erasing . . .")
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
-    COMMENT "Write Flash ")
+#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
+#    COMMENT "Write Flash ")

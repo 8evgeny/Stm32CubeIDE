@@ -20,6 +20,11 @@
 #include "net.h"
 #include "loopback.h"
 #include "my_function.h"
+#include "fsforeeprom.h"
+
+extern lfs_t lfs;
+extern lfs_file_t file;
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -42,9 +47,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-
-
-
+extern void FsForEeprom_test();
+extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
 
@@ -57,6 +61,9 @@ void receivePackets(uint8_t, uint8_t* , uint16_t );
 #define SLAVE_OWN_ADDRESS                       0xA0
 uint32_t count = 0;
 uint8_t sdCartOn = 0;
+char *pindex;  // указатели на массивы
+char *pmain;
+
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -194,7 +201,7 @@ FATFS fs;
 FIL fil;
 
 //-------------------------------------------------------
-void AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
+int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
 {
   uint16_t i;
   //Disable Pos
@@ -217,9 +224,10 @@ void AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
     while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
   }
   LL_I2C_GenerateStopCondition(I2C1);
+  return i;
 }
 //-------------------------------------------------------
-void AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
+int AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
 {
   uint16_t i;
   //Disable Pos
@@ -257,7 +265,7 @@ void AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
       buf[i] = LL_I2C_ReceiveData8(I2C1);
     }
   }
-
+  return i;
 }
 //-------------------------------------------------------
 void testEEPROM()
@@ -338,6 +346,13 @@ int main(void)
 //    delayUS_ASM(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
+//  testEEPROM();
+  UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
+  littleFsInit();
+//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+//  FsForEeprom_test();
+
+
 #ifdef INTRON
 //uint8_t  destip[4] = {192,168,1,198};
 uint16_t  destport = 8888;
@@ -351,108 +366,227 @@ uint16_t localport = 8888;
 #endif
 
     char tmp[100];
-
+    char tmp1[5];
+    char tmp2[5];
+    char tmp3[5];
+    char tmp4[5];
+    char tmp5[12];
+    char tmp6[3];
     f_mount(&fs, "", 0);
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
     {
         sdCartOn = 1;
-        UART_Printf("\r\nSD_READ\r\n");
+        UART_Printf("SD_READ\n");
         delayUS_ASM(10000);
     }
 
     if (result != 0)
-        UART_Printf("\r\nSD_NOT_OPEN\r\n");
+        UART_Printf("SD_NOT_OPEN\n");
         delayUS_ASM(10000);
 if (sdCartOn == 1)
 {
     f_lseek(&fil, 0);//размер - f_size(&fil)
-    f_gets(tmp, 100, &fil);
-    ipaddr[0] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipaddr[1] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipaddr[2] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipaddr[3] = atoi(tmp);
+    f_gets(tmp1, 5, &fil);
+    ipaddr[0] = atoi(tmp1);
+    f_gets(tmp2, 5, &fil);
+    ipaddr[1] = atoi(tmp2);
+    f_gets(tmp3, 5, &fil);
+    ipaddr[2] = atoi(tmp3);
+    f_gets(tmp4, 5, &fil);
+    ipaddr[3] = atoi(tmp4);
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
+//Пишем на EEPROM
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+//    UART_Printf(tmp); delayUS_ASM(10000);
 
-    result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    f_gets(tmp, 100, &fil);
-    destip[0] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    destip[1] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    destip[2] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    destip[3] = atoi(tmp);
+    f_gets(tmp1, 100, &fil);
+    destip[0] = atoi(tmp1);
+    f_gets(tmp2, 100, &fil);
+    destip[1] = atoi(tmp2);
+    f_gets(tmp3, 100, &fil);
+    destip[2] = atoi(tmp3);
+    f_gets(tmp4, 100, &fil);
+    destip[3] = atoi(tmp4);
     sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
+    //Пишем на EEPROM
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+//    UART_Printf(tmp); delayUS_ASM(10000);
 
-    result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    f_gets(tmp, 100, &fil);
-    ipgate[0] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipgate[1] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipgate[2] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipgate[3] = atoi(tmp);
+    f_gets(tmp1, 100, &fil);
+    ipgate[0] = atoi(tmp1);
+    f_gets(tmp2, 100, &fil);
+    ipgate[1] = atoi(tmp2);
+    f_gets(tmp3, 100, &fil);
+    ipgate[2] = atoi(tmp3);
+    f_gets(tmp4, 100, &fil);
+    ipgate[3] = atoi(tmp4);
     sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
+    //Пишем на EEPROM
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+//    UART_Printf(tmp); delayUS_ASM(10000);
 
-    result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    f_gets(tmp, 100, &fil);
-    ipmask[0] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipmask[1] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipmask[2] = atoi(tmp);
-    f_gets(tmp, 100, &fil);
-    ipmask[3] = atoi(tmp);
+    f_gets(tmp1, 100, &fil);
+    ipmask[0] = atoi(tmp1);
+    f_gets(tmp2, 100, &fil);
+    ipmask[1] = atoi(tmp2);
+    f_gets(tmp3, 100, &fil);
+    ipmask[2] = atoi(tmp3);
+    f_gets(tmp4, 100, &fil);
+    ipmask[3] = atoi(tmp4);
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
+    //Пишем на EEPROM
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+//    UART_Printf(tmp); delayUS_ASM(10000);
 
-    result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_gets(tmp, 100, &fil);
     strncpy(md5, tmp, 32);
     UART_Printf(md5); delayUS_ASM(10000);
     UART_Printf("\r\n"); delayUS_ASM(10000);
     f_close(&fil);
+    //Пишем на EEPROM
+    lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+    f_close(&fil);
+    UART_Printf(md5); delayUS_ASM(10000);
+    UART_Printf("\r\n"); delayUS_ASM(10000);
 
-//    //test
-//    char temp2[300];
-//    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
-//    FIL fil2;
-//    f_open(&fil2, "test", FA_OPEN_ALWAYS | FA_WRITE );
-//    while (f_gets(temp2, 300, &fil))
-//    {
-//        f_puts(temp2, &fil2);
-//    }
-//f_close(&fil);
-//f_close(&fil2);
+//Переносим на EEPROM index.html и main.html
+    UINT br = 0;
+    pindex = (char*)malloc(1024 * 10 * sizeof(char));
+    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_read(&fil, pindex, f_size(&fil), &br);
+    f_close(&fil);
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, pindex, br);
+    lfs_file_close(&lfs, &file);
+    free(pindex);
+    br = 0;
+    pmain = (char*)malloc(1024 * 16 * sizeof(char));
+    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_read(&fil, pmain, f_size(&fil), &br);
+    f_close(&fil);
+    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, pmain, br);
+    lfs_file_close(&lfs, &file);
+    free(pmain);
 
 } else //SD карты нет
 {
-    #ifdef INTRON
-    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 197;
-    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 198;
-    #endif
-    #ifndef INTRON
-    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 198;
-    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 197;
-    #endif
-    ipgate[0] = 192;ipgate[1] = 168;ipgate[2] = 1;ipgate[3] = 1;
-    ipmask[0] = 255;ipmask[1] = 255;ipmask[2] = 255;ipmask[3] = 0;
+//    #ifdef INTRON
+//    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 197;
+//    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 198;
+//    #endif
+//    #ifndef INTRON
+//    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 198;
+//    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 197;
+//    #endif
+//    ipgate[0] = 192;ipgate[1] = 168;ipgate[2] = 1;ipgate[3] = 1;
+//    ipmask[0] = 255;ipmask[1] = 255;ipmask[2] = 255;ipmask[3] = 0;
+
+    UART_Printf("Load data from EEPROM\r\n"); delayUS_ASM(10000);
+
+    lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+//    UART_Printf(tmp5); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+    strncpy(tmp6,tmp5,3);
+    ipaddr[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+3,3);
+    ipaddr[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+6,3);
+    ipaddr[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+9,3);
+    ipaddr[3] = atoi(tmp6);
+
+    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+//    UART_Printf(tmp5); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+    strncpy(tmp6,tmp5,3);
+    destip[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+3,3);
+    destip[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+6,3);
+    destip[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+9,3);
+    destip[3] = atoi(tmp6);
+
+    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+//    UART_Printf(tmp5); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+    strncpy(tmp6,tmp5,3);
+    ipgate[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+3,3);
+    ipgate[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+6,3);
+    ipgate[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+9,3);
+    ipgate[3] = atoi(tmp6);
+
+    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+//    UART_Printf(tmp5); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+    strncpy(tmp6,tmp5,3);
+    ipmask[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+3,3);
+    ipmask[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+6,3);
+    ipmask[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+9,3);
+    ipmask[3] = atoi(tmp6);
+
+    lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
+    lfs_file_close(&lfs, &file);
+    strcpy(md5, tmp);
+//    UART_Printf(tmp); delayUS_ASM(10000);
+//    UART_Printf("\r\n"); delayUS_ASM(10000);
+
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
@@ -461,7 +595,22 @@ if (sdCartOn == 1)
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-}
+    sprintf(tmp,"md5: %s", md5);
+    UART_Printf(tmp); delayUS_ASM(10000);
+//Далее два пути - читать непосредственно с EEPROM или из буфера
+//    // 2 буфера в куче
+//    pindex = (char*)malloc(1024 * 10 * sizeof(char));
+//    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
+//    lfs_file_read(&lfs, &file, pindex, sizeof (pindex));
+//    lfs_file_close(&lfs, &file);
+//    pmain = (char*)malloc(1024 * 16 * sizeof(char));
+//    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
+//    lfs_file_read(&lfs, &file, pmain, sizeof (pmain));
+//    lfs_file_close(&lfs, &file);
+
+
+} //end SD нет
+
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
     UART_Printf(tmp); delayUS_ASM(10000);
     net_ini();
@@ -564,11 +713,6 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
 #endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
-
-
-testEEPROM();
-
-
 
 uint8_t firstSend = 1;
   while (1)

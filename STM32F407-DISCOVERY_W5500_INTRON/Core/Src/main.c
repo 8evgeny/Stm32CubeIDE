@@ -61,6 +61,9 @@ void receivePackets(uint8_t, uint8_t* , uint16_t );
 #define SLAVE_OWN_ADDRESS                       0xA0
 uint32_t count = 0;
 uint8_t sdCartOn = 0;
+char *pindex;  // указатели на массивы
+char *pmain;
+
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -484,8 +487,6 @@ if (sdCartOn == 1)
 
 //Переносим на EEPROM index.html и main.html
     UINT br = 0;
-    char *pindex;  // указатели на массивы
-    char *pmain;
     pindex = (char*)malloc(1024 * 10 * sizeof(char));
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
@@ -596,6 +597,18 @@ if (sdCartOn == 1)
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"md5: %s", md5);
     UART_Printf(tmp); delayUS_ASM(10000);
+//Далее два пути - читать непосредственно с EEPROM или из буфера
+//    // 2 буфера в куче
+//    pindex = (char*)malloc(1024 * 10 * sizeof(char));
+//    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
+//    lfs_file_read(&lfs, &file, pindex, sizeof (pindex));
+//    lfs_file_close(&lfs, &file);
+//    pmain = (char*)malloc(1024 * 16 * sizeof(char));
+//    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
+//    lfs_file_read(&lfs, &file, pmain, sizeof (pmain));
+//    lfs_file_close(&lfs, &file);
+
+
 } //end SD нет
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);

@@ -9,7 +9,7 @@
 extern void UART_Printf(const char* fmt, ...);
 #include "main.h"
 #include <inttypes.h>
-
+#define  delayLfs delayUS_ASM(10000);
 /// Caching block device operations ///
 static int
 lfs_cache_read(lfs_t *lfs, lfs_cache_t *rcache, const lfs_cache_t *pcache, lfs_block_t block, lfs_off_t off, void *buffer, lfs_size_t size)
@@ -67,11 +67,11 @@ lfs_cache_read(lfs_t *lfs, lfs_cache_t *rcache, const lfs_cache_t *pcache, lfs_b
         rcache->block = block;
         rcache->off = off - (off % lfs->cfg->read_size);
 //UART_Printf("____lfs_cache_read__begin_read\r\n");
-        delayUS_ASM(10000);
+        delayLfs
 
         int err = lfs->cfg->read(lfs->cfg, rcache->block, rcache->off, rcache->buffer, lfs->cfg->read_size);
 //UART_Printf("____lfs_cache_read__end_read\r\n");
-        delayUS_ASM(10000);
+        delayLfs
 
         if (err) {
             return err;
@@ -526,27 +526,27 @@ static int lfs_dir_commit(lfs_t *lfs, lfs_dir_t *dir,
         const struct lfs_region *regions, int count) {
     // increment revision count
     dir->d.rev += 1;
-delayUS_ASM(10000);
+delayLfs
     // keep pairs in order such that pair[0] is most recent
     lfs_pairswap(dir->pair);
     for (int i = 0; i < count; i++) {
         dir->d.size += regions[i].newlen - regions[i].oldlen;
     }
-delayUS_ASM(10000);
+delayLfs
     const lfs_block_t oldpair[2] = {dir->pair[0], dir->pair[1]};
     bool relocated = false;
 
     while (true) {
         if (true) {
             int err = lfs_bd_erase(lfs, dir->pair[0]);
-delayUS_ASM(10000);
+delayLfs
             if (err) {
                 if (err == LFS_ERR_CORRUPT) {
                     goto relocate;
                 }
                 return err;
             }
-delayUS_ASM(10000);
+delayLfs
             uint32_t crc = 0xffffffff;
             lfs_dir_tole32(&dir->d);
             lfs_crc(&crc, &dir->d, sizeof(dir->d));
@@ -558,7 +558,7 @@ delayUS_ASM(10000);
                 }
                 return err;
             }
-delayUS_ASM(10000);
+delayLfs
             int i = 0;
             lfs_off_t oldoff = sizeof(dir->d);
             lfs_off_t newoff = sizeof(dir->d);
@@ -597,7 +597,7 @@ delayUS_ASM(10000);
                     newoff += 1;
                 }
             }
-delayUS_ASM(10000);
+delayLfs
             crc = lfs_tole32(crc);
             err = lfs_bd_prog(lfs, dir->pair[0], newoff, &crc, 4);
             crc = lfs_fromle32(crc);
@@ -607,7 +607,7 @@ delayUS_ASM(10000);
                 }
                 return err;
             }
-delayUS_ASM(10000);
+delayLfs
             err = lfs_bd_sync(lfs);
             if (err) {
                 if (err == LFS_ERR_CORRUPT) {
@@ -615,7 +615,7 @@ delayUS_ASM(10000);
                 }
                 return err;
             }
-delayUS_ASM(10000);
+delayLfs
             // successful commit, check checksum to make sure
             uint32_t ncrc = 0xffffffff;
             err = lfs_bd_crc(lfs, dir->pair[0], 0,

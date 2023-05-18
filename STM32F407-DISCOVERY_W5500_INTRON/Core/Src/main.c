@@ -483,15 +483,30 @@ if (sdCartOn == 1)
     UART_Printf("\r\n"); delayUS_ASM(10000);
 
 //Переносим на EEPROM index.html и main.html
-    UINT br;
-    char *pindex;  // указатель на массив для index.html
+    UINT br = 0;
+    char *pindex;  // указатели на массивы
+    char *pmain;
     pindex = (char*)malloc(1024 * 10 * sizeof(char));
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_read(&fil, pindex, f_size(&fil), &br);
-
-
-
+    f_close(&fil);
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, pindex, br);
+    lfs_file_close(&lfs, &file);
+    free(pindex);
+    br = 0;
+    pmain = (char*)malloc(1024 * 16 * sizeof(char));
+    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_read(&fil, pmain, f_size(&fil), &br);
+    f_close(&fil);
+    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, pmain, br);
+    lfs_file_close(&lfs, &file);
+    free(pmain);
 
 } else //SD карты нет
 {

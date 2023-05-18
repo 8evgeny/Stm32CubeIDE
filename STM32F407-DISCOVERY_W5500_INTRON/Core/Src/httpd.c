@@ -14,12 +14,15 @@ uint8_t temp[4];
 uint8_t passwordOK = 0;
 uint8_t loginOK = 0;
 extern void UART_Printf(const char* fmt, ...);
-extern FATFS fs;
-extern FIL fil;
+
 //-----------------------------------------------
 http_sock_prop_ptr httpsockprop[2];
 tcp_prop_ptr tcpprop;
+
+//extern FATFS fs;
+extern FIL fil;
 FIL MyFile;
+
 FRESULT result; //результат выполнения
 uint32_t bytesread;
 volatile uint16_t tcp_size_wnd = 512; //было 2048  - были ошибки передачи случайный байт

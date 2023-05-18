@@ -70,7 +70,7 @@ void littleFsInit()
     cfg.prog = user_provided_block_device_prog;
     cfg.erase = user_provided_block_device_erase;
     cfg.sync = user_provided_block_device_sync;
-//Параметры lfs похожи на правильные
+//Параметры lfs для IPS
 //    cfg.read_size = 256;
 //    cfg.prog_size = 256;
 //    cfg.block_size = 1024;
@@ -78,8 +78,8 @@ void littleFsInit()
 //    cfg.lookahead = 256;
     cfg.read_size = 64;
     cfg.prog_size = 64;
-    cfg.block_size = 512;
-    cfg.block_count = 64;
+    cfg.block_size = 512; //Size of an erasable block
+    cfg.block_count = 64; // Number of erasable blocks on the device
     cfg.lookahead = 64;
 
 

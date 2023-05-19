@@ -76,7 +76,7 @@
 #define WOLF_CONF_EDCURVE25519      0
 
 /*---------- WOLF_CONF_MD5 -----------*/
-#define WOLF_CONF_MD5      0
+#define WOLF_CONF_MD5      1
 
 /*---------- WOLF_CONF_SHA1 -----------*/
 #define WOLF_CONF_SHA1      0

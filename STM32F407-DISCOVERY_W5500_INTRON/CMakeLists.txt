@@ -22,6 +22,8 @@ project(11_Converter_F407_INTRON_DT C CXX ASM)
 #set(CMAKE_BUILD_TYPE release)
 
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
+set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
+
 SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"')
 add_definitions(${MYCOMPILE_FLAGS})
 add_definitions("-DUSE_FULL_LL_DRIVER")
@@ -59,6 +61,9 @@ include_directories(
     FATFS/Target
     Middlewares/Third_Party/FatFs/src
     ${littlefs}
+    wolfSSL
+    ${wolfssl}
+    ${wolfssl}/wolfssl
     )
 file (GLOB SOURCES_C
     Core/Src/*.c
@@ -74,6 +79,11 @@ file (GLOB SOURCES_C
 
 file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h  )
 add_library(littlefs_LIB ${littlefs_src} )
+
+file (GLOB wolfssl_src
+    ${wolfssl}/src/*.c
+)
+add_library(wolfssl_LIB ${wolfssl_src} )
 
 add_executable(${PROJECT_NAME}.elf
     ${SOURCES_C}
@@ -101,6 +111,7 @@ target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
 target_link_libraries(${PROJECT_NAME}.elf PUBLIC
     littlefs_LIB
+    wolfssl_LIB
     )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)

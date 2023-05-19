@@ -34,7 +34,7 @@
 #define WOLF_CONF_DEBUG      0
 
 /*---------- WOLF_CONF_WOLFCRYPT_ONLY -----------*/
-#define WOLF_CONF_WOLFCRYPT_ONLY      0
+#define WOLF_CONF_WOLFCRYPT_ONLY      1
 
 /*---------- WOLF_CONF_TLS13 -----------*/
 #define WOLF_CONF_TLS13      1

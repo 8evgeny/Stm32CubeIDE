@@ -82,6 +82,7 @@ add_library(littlefs_LIB ${littlefs_src} )
 
 file (GLOB wolfssl_src
     ${wolfssl}/src/*.c
+    wolfSSL/wolfssl_example.c
 )
 add_library(wolfssl_LIB ${wolfssl_src} )
 

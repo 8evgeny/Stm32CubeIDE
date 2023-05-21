@@ -26,7 +26,7 @@ set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
 
-SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"')
+#SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') //для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
 add_definitions("-DUSE_FULL_LL_DRIVER")
 
@@ -67,38 +67,24 @@ include_directories(
     ${wolfssl}
     ${wolfssl}/wolfssl
     )
-file (GLOB SOURCES_C
-    Core/Src/*.c
-    Core/Startup/startup_stm32f407vgtx.s
-    Drivers/STM32F4xx_HAL_Driver/Src/*.c
-    )
 
-file (GLOB w5500_src
-    ${w5500}/*.c
-    ${w5500}/W5500/w5500.c
-    )
+file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
+add_library(hal_LIB ${hal_src})
+
+file (GLOB w5500_src ${w5500}/*.c ${w5500}/W5500/w5500.c)
 add_library(w5500_LIB ${w5500_src})
 
-file (GLOB fatfs_src
-    FATFS/App/*.c
-    FATFS/Target/*.c
-    ${fatfs}/*.c
-    ${fatfs}/option/*.c
-    )
+file (GLOB fatfs_src FATFS/App/*.c FATFS/Target/*.c ${fatfs}/*.c ${fatfs}/option/*.c)
 add_library(fatfs_LIB ${fatfs_src})
 
 file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h)
 add_library(littlefs_LIB ${littlefs_src})
 
-file (GLOB wolfssl_src
-    ${wolfssl}/src/*.c
-    wolfSSL/wolfssl_example.c
-    )
+file (GLOB wolfssl_src ${wolfssl}/src/*.c wolfSSL/wolfssl_example.c)
 add_library(wolfssl_LIB ${wolfssl_src})
 
-add_executable(${PROJECT_NAME}.elf
-    ${SOURCES_C}
-    )
+file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s)
+add_executable(${PROJECT_NAME}.elf ${src})
 
 set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINKER_LANGUAGE CXX)
 set(LINKER_SCRIPT_FLASH "${CMAKE_SOURCE_DIR}/STM32F407VGTX_FLASH.ld")
@@ -121,6 +107,7 @@ set(LINKER_FLAGS "SHELL: \
 target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
 target_link_libraries(${PROJECT_NAME}.elf PUBLIC
+    hal_LIB
     w5500_LIB
     fatfs_LIB
     littlefs_LIB

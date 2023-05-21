@@ -21,6 +21,8 @@ project(11_Converter_F407_INTRON_DT C CXX ASM)
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
 
+set (w5500 ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Ethernet)
+set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
 
@@ -55,11 +57,11 @@ include_directories(
     Drivers/STM32F4xx_HAL_Driver/Inc
     Drivers/CMSIS/Core/Include
     Drivers/CMSIS/Include
-    ioLibrary_Driver/Ethernet
-    ioLibrary_Driver/Ethernet/W5500
+    ${w5500}
+    ${w5500}/W5500
     FATFS/App
     FATFS/Target
-    Middlewares/Third_Party/FatFs/src
+    ${fatfs}
     ${littlefs}
     wolfSSL
     ${wolfssl}
@@ -69,22 +71,30 @@ file (GLOB SOURCES_C
     Core/Src/*.c
     Core/Startup/startup_stm32f407vgtx.s
     Drivers/STM32F4xx_HAL_Driver/Src/*.c
-    ioLibrary_Driver/Ethernet/*.c
-    ioLibrary_Driver/Ethernet/W5500/w5500.c
-    FATFS/App/*.c
-    FATFS/Target/*.c
-    Middlewares/Third_Party/FatFs/src/*.c
-    Middlewares/Third_Party/FatFs/src/option/*.c
     )
 
-file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h  )
-add_library(littlefs_LIB ${littlefs_src} )
+file (GLOB w5500_src
+    ${w5500}/*.c
+    ${w5500}/W5500/w5500.c
+    )
+add_library(w5500_LIB ${w5500_src})
+
+file (GLOB fatfs_src
+    FATFS/App/*.c
+    FATFS/Target/*.c
+    ${fatfs}/*.c
+    ${fatfs}/option/*.c
+    )
+add_library(fatfs_LIB ${fatfs_src})
+
+file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h)
+add_library(littlefs_LIB ${littlefs_src})
 
 file (GLOB wolfssl_src
     ${wolfssl}/src/*.c
     wolfSSL/wolfssl_example.c
-)
-add_library(wolfssl_LIB ${wolfssl_src} )
+    )
+add_library(wolfssl_LIB ${wolfssl_src})
 
 add_executable(${PROJECT_NAME}.elf
     ${SOURCES_C}
@@ -111,6 +121,8 @@ set(LINKER_FLAGS "SHELL: \
 target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
 target_link_libraries(${PROJECT_NAME}.elf PUBLIC
+    w5500_LIB
+    fatfs_LIB
     littlefs_LIB
     wolfssl_LIB
     )

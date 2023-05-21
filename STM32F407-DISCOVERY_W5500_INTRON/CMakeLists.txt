@@ -49,8 +49,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
 #    --specs=nano.specs \
 
 include_directories(
-    USB_HOST/App
-    USB_HOST/Target
     Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
     Core/Inc
     Drivers/CMSIS/Device/ST/STM32F4xx/Include

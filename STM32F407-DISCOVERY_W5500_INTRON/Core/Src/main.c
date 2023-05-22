@@ -487,39 +487,58 @@ if (sdCartOn == 1)
 //Переносим на EEPROM index.html и main.html
     UART_Printf("copy to EEPROM index.html\r\n"); delayUS_ASM(10000);
     UINT br = 0;
-//    pindex = (char*)malloc(1024 * 10 * sizeof(char));
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    TCHAR* temp;
-    temp = f_gets(tmp7, f_size(&fil), &fil);
-    UART_Printf(tmp7); delayUS_ASM(10000);
-    while(temp)
-    {
-        temp = f_gets(tmp7, f_size(&fil), &fil);
-        UART_Printf(tmp7); delayUS_ASM(10000);
-    }
-    UART_Printf("len index.html: %d byte\r\n", f_size(&fil)); delayUS_ASM(10000);
-    UART_Printf("read index.html: %d byte\r\n", &br); delayUS_ASM(10000);
-    f_close(&fil);
     lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
-    lfs_ssize_t lenWrite = lfs_file_write(&lfs, &file, pindex, br);
-    UART_Printf("write to EEPROM index.html: %d byte\r\n", lenWrite); delayUS_ASM(10000);
-    lfs_file_close(&lfs, &file);
-    free(pindex);
-    UART_Printf("copy to EEPROM main.html\r\n"); delayUS_ASM(10000);
-    br = 0;
-    pmain = (char*)malloc(1024 * 16 * sizeof(char));
-    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_read(&fil, pmain, f_size(&fil), &br);
+
+    TCHAR c;
+    BYTE s[2];
+    UINT rc;
+uint8_t num = 0;
+    while (f_read(&fil, s, 1, &rc) == FR_OK)
+    {
+        c = s[0];
+        if (c != '\n' || (c == '\n' && num == 0))
+        {
+            UART_Printf("%c", c); delayUS_ASM(700);
+        }
+        if (num > 4)
+        {
+            break;
+        }
+
+        if (c=='\n')
+        {
+            ++num;
+        }
+
+        if (c!='\n')
+        {
+            num = 0;
+        }
+    }
+
+
+
+//    TCHAR* temp;
+//    temp = f_gets(tmp7, f_size(&fil), &fil);
+////    UART_Printf(tmp7); delayUS_ASM(10000);
+//    lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
+//    UART_Printf("write to EEPROM: %d byte\r\n", sizeof(tmp7)); delayUS_ASM(10000);
+//    while(temp)
+//    {
+//        temp = f_gets(tmp7, f_size(&fil), &fil);
+//    //    UART_Printf(tmp7); delayUS_ASM(10000);
+//        lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
+//        UART_Printf("write to EEPROM: %d byte\r\n", sizeof(tmp7)); delayUS_ASM(10000);
+//    }
+
     f_close(&fil);
-    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, pmain, br);
     lfs_file_close(&lfs, &file);
-    free(pmain);
-    UART_Printf("copy OK\r\n"); delayUS_ASM(10000);
+    UART_Printf("\r\ncopy OK\r\n"); delayUS_ASM(10000);
+
+
 } else //SD карты нет
 {
 //    #ifdef INTRON

@@ -372,6 +372,7 @@ uint16_t localport = 8888;
     char tmp4[5];
     char tmp5[12];
     char tmp6[3];
+    char tmp7[200];
     f_mount(&fs, "", 0);
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
@@ -486,16 +487,16 @@ if (sdCartOn == 1)
 //Переносим на EEPROM index.html и main.html
     UART_Printf("copy to EEPROM index.html\r\n"); delayUS_ASM(10000);
     UINT br = 0;
-    pindex = (char*)malloc(1024 * 10 * sizeof(char));
+//    pindex = (char*)malloc(1024 * 10 * sizeof(char));
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     TCHAR* temp;
-    temp = f_gets(pindex, f_size(&fil), &fil);
-    UART_Printf(pindex); delayUS_ASM(10000);
+    temp = f_gets(tmp7, f_size(&fil), &fil);
+    UART_Printf(tmp7); delayUS_ASM(10000);
     while(temp)
     {
-        temp = f_gets(pindex, f_size(&fil), &fil);
-        UART_Printf(pindex); delayUS_ASM(10000);
+        temp = f_gets(tmp7, f_size(&fil), &fil);
+        UART_Printf(tmp7); delayUS_ASM(10000);
     }
     UART_Printf("len index.html: %d byte\r\n", f_size(&fil)); delayUS_ASM(10000);
     UART_Printf("read index.html: %d byte\r\n", &br); delayUS_ASM(10000);

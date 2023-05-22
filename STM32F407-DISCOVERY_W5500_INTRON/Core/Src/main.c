@@ -484,6 +484,7 @@ if (sdCartOn == 1)
     UART_Printf("\r\n"); delayUS_ASM(10000);
 
 //Переносим на EEPROM index.html и main.html
+    UART_Printf("copy to EEPROM index.html\r\n"); delayUS_ASM(10000);
     UINT br = 0;
     pindex = (char*)malloc(1024 * 10 * sizeof(char));
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
@@ -495,6 +496,7 @@ if (sdCartOn == 1)
     lfs_file_write(&lfs, &file, pindex, br);
     lfs_file_close(&lfs, &file);
     free(pindex);
+    UART_Printf("copy to EEPROM main.html\r\n"); delayUS_ASM(10000);
     br = 0;
     pmain = (char*)malloc(1024 * 16 * sizeof(char));
     f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
@@ -506,7 +508,7 @@ if (sdCartOn == 1)
     lfs_file_write(&lfs, &file, pmain, br);
     lfs_file_close(&lfs, &file);
     free(pmain);
-
+    UART_Printf("copy OK\r\n"); delayUS_ASM(10000);
 } else //SD карты нет
 {
 //    #ifdef INTRON

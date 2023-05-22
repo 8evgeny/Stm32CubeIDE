@@ -492,31 +492,21 @@ if (sdCartOn == 1)
     lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
 
+    //Посимвольно читаем файл с SD и выводим в консоль
     TCHAR c;
     BYTE s[2];
     UINT rc;
-uint8_t num = 0;
+    uint8_t num = 0;
     while (f_read(&fil, s, 1, &rc) == FR_OK)
     {
         c = s[0];
         if (c != '\n' || (c == '\n' && num == 0))
         {
-            UART_Printf("%c", c); delayUS_ASM(700);
+            UART_Printf("%c", c); delayUS_ASM(100);
         }
-        if (num > 4)
-        {
-            break;
-        }
-
-        if (c=='\n')
-        {
-            ++num;
-        }
-
-        if (c!='\n')
-        {
-            num = 0;
-        }
+        if (num > 4) break;
+        if (c=='\n') ++num;
+        if (c!='\n') num = 0;
     }
 
 

@@ -1,4 +1,5 @@
 #include "w5500.h"
+#include <stdio.h>
 //-----------------------------------------------
 extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart6;
@@ -207,7 +208,7 @@ void SetWritePointer(uint8_t sock_num, uint16_t point)
 //-----------------------------------------------
 void w5500_ini(void)
 {
-	uint8_t i;
+//	uint8_t i;
   uint8_t dtt=0;
   uint8_t opcode=0;
   //Hard Reset

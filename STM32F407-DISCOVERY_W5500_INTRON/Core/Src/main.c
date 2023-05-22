@@ -473,8 +473,6 @@ if (sdCartOn == 1)
     f_lseek(&fil, 0);
     f_gets(tmp, 100, &fil);
     strncpy(md5, tmp, 32);
-    UART_Printf(md5); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
     f_close(&fil);
     //Пишем на EEPROM
     lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);

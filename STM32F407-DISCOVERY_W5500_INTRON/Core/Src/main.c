@@ -489,11 +489,21 @@ if (sdCartOn == 1)
     pindex = (char*)malloc(1024 * 10 * sizeof(char));
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
-    f_read(&fil, pindex, f_size(&fil), &br);
+    TCHAR* temp;
+    temp = f_gets(pindex, f_size(&fil), &fil);
+    UART_Printf(pindex); delayUS_ASM(10000);
+    while(temp)
+    {
+        temp = f_gets(pindex, f_size(&fil), &fil);
+        UART_Printf(pindex); delayUS_ASM(10000);
+    }
+    UART_Printf("len index.html: %d byte\r\n", f_size(&fil)); delayUS_ASM(10000);
+    UART_Printf("read index.html: %d byte\r\n", &br); delayUS_ASM(10000);
     f_close(&fil);
     lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, pindex, br);
+    lfs_ssize_t lenWrite = lfs_file_write(&lfs, &file, pindex, br);
+    UART_Printf("write to EEPROM index.html: %d byte\r\n", lenWrite); delayUS_ASM(10000);
     lfs_file_close(&lfs, &file);
     free(pindex);
     UART_Printf("copy to EEPROM main.html\r\n"); delayUS_ASM(10000);
@@ -581,7 +591,8 @@ if (sdCartOn == 1)
     ipmask[3] = atoi(tmp6);
 
     lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
+    lfs_ssize_t lenMD5 =lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
+    UART_Printf("read md5 from EEPROM: %d byte\r\n", lenMD5); delayUS_ASM(10000);
     lfs_file_close(&lfs, &file);
     strcpy(md5, tmp);
 //    UART_Printf(tmp); delayUS_ASM(10000);
@@ -598,17 +609,17 @@ if (sdCartOn == 1)
     sprintf(tmp,"md5: %s", md5);
     UART_Printf(tmp); delayUS_ASM(10000);
 //Далее два пути - читать непосредственно с EEPROM или из буфера
-//    // 2 буфера в куче
-//    pindex = (char*)malloc(1024 * 10 * sizeof(char));
-//    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
-//    lfs_file_read(&lfs, &file, pindex, sizeof (pindex));
-//    lfs_file_close(&lfs, &file);
-//    pmain = (char*)malloc(1024 * 16 * sizeof(char));
-//    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
-//    lfs_file_read(&lfs, &file, pmain, sizeof (pmain));
-//    lfs_file_close(&lfs, &file);
-
-
+    // 2 буфера в куче
+//    char *pindex;  // указатели на массивы
+    pindex = (char*)malloc(1024 * 10 * sizeof(char));
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_ssize_t len = lfs_file_read(&lfs, &file, pindex, /*sizeof (pindex)*/ 7000);
+    lfs_file_close(&lfs, &file);
+    pmain = (char*)malloc(1024 * 16 * sizeof(char));
+    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, pmain, sizeof (pmain));
+    lfs_file_close(&lfs, &file);
+    UART_Printf("read %d byte\r\n", len); delayUS_ASM(10000);
 } //end SD нет
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);

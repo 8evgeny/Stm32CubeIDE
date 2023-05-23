@@ -65,7 +65,8 @@ uint32_t count = 0;
 uint8_t sdCartOn = 0;
 char *pindex;  // указатели на массивы
 char *pmain;
-uint8_t num_block = 65; //8255
+uint8_t num_block_index = 65; //8255
+uint8_t num_block_main = 115;
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -487,13 +488,7 @@ if (sdCartOn == 1)
     UART_Printf(md5); delayUS_ASM(10000);
     UART_Printf("\r\n"); delayUS_ASM(10000);
 
-//Переносим на EEPROM index.html и main.html
-    UART_Printf("copy to EEPROM index.html\r\n"); delayUS_ASM(10000);
-    UINT br = 0;
-    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-
-    //Посимвольно читаем файл с SD и выводим в консоль
+//Посимвольно читаем файл с SD и выводим в консоль
 //    TCHAR c;
 //    BYTE s[2];
 //    UINT rc;
@@ -510,55 +505,58 @@ if (sdCartOn == 1)
 //        if (c!='\n') num = 0;
 //    }
 
-
-    //Построчно читаем файл с SD и выводим в консоль
+//Построчно читаем файл с SD и выводим в консоль
 //    TCHAR* temp;
 //    temp = f_gets(tmp7, 200, &fil);
 //    UART_Printf(tmp7); delayUS_ASM(3000);
-////    lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
 //    while(temp)
 //    {
 //        temp = f_gets(tmp7, 200, &fil);
 //        UART_Printf(tmp7); delayUS_ASM(3000);
-////        lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
 //    }
 
-//    f_close(&fil);
-//    lfs_file_close(&lfs, &file);
-//    UART_Printf("\r\ncopy OK\r\n"); delayUS_ASM(10000);
 
-UINT rc;
-
-char to_EEPROM[LEN_TO_EEPROM * num_block];
-char from_EEPROM[LEN_TO_EEPROM * num_block];
-
-f_read(&fil, to_EEPROM, LEN_TO_EEPROM * num_block, &rc);
-
-lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT | LFS_O_APPEND);
-lfs_file_rewind(&lfs, &file);
-lfs_file_truncate(&lfs, &file, 0);
-
-for (int i = 0; i < num_block; ++i)
-{
-    lfs_file_write(&lfs, &file, to_EEPROM + i * LEN_TO_EEPROM, LEN_TO_EEPROM);
-}
-
-lfs_file_close(&lfs, &file);
-
-lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
-lfs_file_rewind(&lfs, &file);
-lfs_file_read(&lfs, &file, from_EEPROM, LEN_TO_EEPROM * num_block);
-lfs_file_close(&lfs, &file);
-
-for (unsigned int i = 0; i < LEN_TO_EEPROM * num_block; ++i)
-{
-    if (to_EEPROM[i] != from_EEPROM[i])
+//Переносим на EEPROM index.html
+    UART_Printf("copy to EEPROM index.html\r\n"); delayUS_ASM(10000);
+    UINT br = 0;
+    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+//    char to_EEPROM[LEN_TO_EEPROM * num_block_index];
+//    char from_EEPROM[LEN_TO_EEPROM * num_block_index];
+    char *to_EEPROM;
+    char *from_EEPROM;
+to_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
+from_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
+    UINT rc;
+    f_read(&fil, to_EEPROM, LEN_TO_EEPROM * num_block_index, &rc);
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT | LFS_O_APPEND);
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_truncate(&lfs, &file, 0);
+    for (int i = 0; i < num_block_index; ++i)
     {
-        UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
+        lfs_file_write(&lfs, &file, to_EEPROM + i * LEN_TO_EEPROM, LEN_TO_EEPROM);
     }
-    UART_Printf("%c", to_EEPROM[i]); delayUS_ASM(100);
-}
+    lfs_file_close(&lfs, &file);
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_read(&lfs, &file, from_EEPROM, LEN_TO_EEPROM * num_block_index);
+    lfs_file_close(&lfs, &file);
+    for (unsigned int i = 0; i < LEN_TO_EEPROM * num_block_index; ++i)
+    {
+        if (to_EEPROM[i] != from_EEPROM[i])
+        {
+            UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
+        }
+        //выводим index.html
+//        UART_Printf("%c", to_EEPROM[i]); delayUS_ASM(100);
+    }
+    UART_Printf("\ncopy index.html OK\r\n"); delayUS_ASM(1000);
+    free (to_EEPROM);
+    free (from_EEPROM);
+//Переносим на EEPROM main.html
 
+
+    UART_Printf("\ncopy main.html OK\r\n"); delayUS_ASM(1000);
 } else //SD карты нет
 {
 

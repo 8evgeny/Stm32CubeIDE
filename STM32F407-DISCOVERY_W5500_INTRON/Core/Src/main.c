@@ -65,7 +65,7 @@ uint32_t count = 0;
 uint8_t sdCartOn = 0;
 char *pindex;  // указатели на массивы
 char *pmain;
-uint8_t num_block_index = 15;
+uint8_t num_block_index = 16;
 uint8_t num_block_main = 115;
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -536,6 +536,7 @@ from_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
     {
         UART_Printf("write to EEPROM %d \n", i); delayUS_ASM(1000);
         lfs_file_write(&lfs, &file, to_EEPROM + i * LEN_TO_EEPROM, LEN_TO_EEPROM);
+        lfs_file_sync(&lfs, &file);
     }
     lfs_file_close(&lfs, &file);
     lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );

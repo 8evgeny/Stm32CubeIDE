@@ -623,13 +623,6 @@ if (sdCartOn == 1)
         free (to_EEPROM);
         free (from_EEPROM);
 
-
-
-
-
-
-
-
 } else //SD карты нет
 {
 
@@ -720,18 +713,29 @@ if (sdCartOn == 1)
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"md5: %s", md5);
     UART_Printf(tmp); delayUS_ASM(10000);
-//Далее два пути - читать непосредственно с EEPROM или из буфера
-    // 2 буфера в куче
-//    char *pindex;  // указатели на массивы
-    pindex = (char*)malloc(1024 * 10 * sizeof(char));
+//Далее читаем из EEPROM в буфер
+
+    pindex = malloc(LEN_TO_EEPROM * num_block_index);
     lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_ssize_t len = lfs_file_read(&lfs, &file, pindex, /*sizeof (pindex)*/ 7000);
+    lfs_ssize_t len = lfs_file_read(&lfs, &file, pindex, LEN_TO_EEPROM * num_block_index);
     lfs_file_close(&lfs, &file);
-    pmain = (char*)malloc(1024 * 16 * sizeof(char));
-    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_read(&lfs, &file, pmain, sizeof (pmain));
-    lfs_file_close(&lfs, &file);
-    UART_Printf("read %d byte\r\n", len); delayUS_ASM(10000);
+    UART_Printf("read from EEPROM %d byte\n", len); delayUS_ASM(1000);
+    int j = 0;
+    for (int i = 0; i < LEN_TO_EEPROM * num_block_index; ++i)
+    {
+        //выводим
+        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+        if (j == 6 && pindex[i] == '>') break;
+        if (j == 5 && pindex[i] == 'l') j = 6;
+        if (j == 4 && pindex[i] == 'm') j = 5;
+        if (j == 3 && pindex[i] == 't') j = 4;
+        if (j == 2 && pindex[i] == 'h') j = 3;
+        if (j == 1 && pindex[i] == '/') j = 2;
+        if (j == 1 && pindex[i] != '/') j = 0;
+        if (pindex[i] == '<') j = 1;
+    }
+    free(pindex);
+
 } //end SD нет
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);

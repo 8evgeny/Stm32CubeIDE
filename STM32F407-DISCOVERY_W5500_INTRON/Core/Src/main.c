@@ -65,7 +65,7 @@ uint32_t count = 0;
 uint8_t sdCartOn = 0;
 char *pindex;  // указатели на массивы
 char *pmain;
-uint8_t num_block_index = 16;
+uint8_t num_block_index = 31;
 uint8_t num_block_main = 115;
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -525,13 +525,12 @@ if (sdCartOn == 1)
 //    char from_EEPROM[LEN_TO_EEPROM * num_block_index];
     char *to_EEPROM;
     char *from_EEPROM;
-to_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
-from_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
+    to_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
+    from_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
     UINT rc;
     f_read(&fil, to_EEPROM, LEN_TO_EEPROM * num_block_index, &rc);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT | LFS_O_APPEND);
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_rewind(&lfs, &file);
-    lfs_file_truncate(&lfs, &file, 0);
     for (int i = 0; i < num_block_index; ++i)
     {
         UART_Printf("write to EEPROM %d \n", i); delayUS_ASM(1000);
@@ -547,7 +546,7 @@ from_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
     {
         if (to_EEPROM[i] != from_EEPROM[i])
         {
-            UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
+//            UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
         }
         //выводим index.html
         UART_Printf("%c", to_EEPROM[i]); delayUS_ASM(100);

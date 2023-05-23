@@ -562,7 +562,8 @@ if (sdCartOn == 1)
         if (j == 1 && to_EEPROM[i] != '/') j = 0;
         if (to_EEPROM[i] == '<') j = 1;
     }
-    lfs_file_truncate(&lfs, &file, i);
+//    i - фактическая длина файла
+    lfs_file_truncate(&lfs, &file, i + 1);
     lfs_file_close(&lfs, &file);
 
     UART_Printf("\ncopy index.html OK\r\n"); delayUS_ASM(1000);

@@ -76,12 +76,13 @@ void littleFsInit()
 //    cfg.block_size = 1024;
 //    cfg.block_count = 32;
 //    cfg.lookahead = 256;
+
+//Работает
     cfg.read_size = 64;
     cfg.prog_size = 64;
     cfg.block_size = 512; //Size of an erasable block
     cfg.block_count = 64; // Number of erasable blocks on the device
     cfg.lookahead = 64;
-
 
     cfg.read_buffer = lfs_read_buf;
     cfg.prog_buffer = lfs_prog_buf;

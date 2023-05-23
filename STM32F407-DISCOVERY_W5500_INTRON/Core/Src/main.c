@@ -24,8 +24,7 @@
 
 extern lfs_t lfs;
 extern lfs_file_t file;
-#define LEN_TO_EEPROM 256
-//работает до 127
+#define LEN_TO_EEPROM 512
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -65,7 +64,7 @@ uint32_t count = 0;
 uint8_t sdCartOn = 0;
 char *pindex;  // указатели на массивы
 char *pmain;
-uint8_t num_block_index = 31;
+uint8_t num_block_index = 16;
 uint8_t num_block_main = 115;
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};

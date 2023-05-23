@@ -545,7 +545,7 @@ lfs_file_rewind(&lfs, &file);
 lfs_file_read(&lfs, &file, from_EEPROM, LEN_TO_EEPROM * 2);
 lfs_file_close(&lfs, &file);
 
-for (unsigned int i = 0; i < LEN_TO_EEPROM; ++i)
+for (unsigned int i = 0; i < LEN_TO_EEPROM * 2; ++i)
 {
     if (to_EEPROM[i] != from_EEPROM[i])
     {

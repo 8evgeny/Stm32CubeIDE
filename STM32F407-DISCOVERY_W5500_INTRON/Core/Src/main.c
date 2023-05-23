@@ -24,7 +24,8 @@
 
 extern lfs_t lfs;
 extern lfs_file_t file;
-
+char *to_EEPROM;
+char *from_EEPROM;
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -490,8 +491,6 @@ if (sdCartOn == 1)
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
 
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
-
     //Посимвольно читаем файл с SD и выводим в консоль
 //    TCHAR c;
 //    BYTE s[2];
@@ -510,22 +509,51 @@ if (sdCartOn == 1)
 //    }
 
 
+    //Построчно читаем файл с SD и выводим в консоль
+//    TCHAR* temp;
+//    temp = f_gets(tmp7, 200, &fil);
+//    UART_Printf(tmp7); delayUS_ASM(3000);
+////    lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
+//    while(temp)
+//    {
+//        temp = f_gets(tmp7, 200, &fil);
+//        UART_Printf(tmp7); delayUS_ASM(3000);
+////        lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
+//    }
 
-    TCHAR* temp;
-    temp = f_gets(tmp7, 200, &fil);
-    UART_Printf(tmp7); delayUS_ASM(3000);
-//    lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
-    while(temp)
+//    f_close(&fil);
+//    lfs_file_close(&lfs, &file);
+//    UART_Printf("\r\ncopy OK\r\n"); delayUS_ASM(10000);
+
+#define LEN_TO_EEPROM 120
+char to_EEPROM[LEN_TO_EEPROM];
+//char to_EEPROM[]= "Red_on_top_Green_below._Red_says_Stop_Green_says_Go";
+UINT rc;
+f_read(&fil, to_EEPROM, LEN_TO_EEPROM, &rc);
+
+lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
+lfs_file_rewind(&lfs, &file);
+
+lfs_file_write(&lfs, &file, to_EEPROM, LEN_TO_EEPROM);
+lfs_file_close(&lfs, &file);
+
+lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
+lfs_file_rewind(&lfs, &file);
+char from_EEPROM[LEN_TO_EEPROM];
+lfs_file_read(&lfs, &file, from_EEPROM, LEN_TO_EEPROM);
+lfs_file_close(&lfs, &file);
+
+for (unsigned int i = 0; i < LEN_TO_EEPROM; ++i)
+{
+    if (to_EEPROM[i] != from_EEPROM[i])
     {
-        temp = f_gets(tmp7, 200, &fil);
-        UART_Printf(tmp7); delayUS_ASM(3000);
-//        lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
+        UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
     }
-
-    f_close(&fil);
-    lfs_file_close(&lfs, &file);
-    UART_Printf("\r\ncopy OK\r\n"); delayUS_ASM(10000);
-
+    else
+    {
+//        UART_Printf("OK\r\n"); delayUS_ASM(1000);
+    }
+}
 
 } else //SD карты нет
 {

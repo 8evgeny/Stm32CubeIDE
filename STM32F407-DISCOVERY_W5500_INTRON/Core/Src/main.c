@@ -65,7 +65,7 @@ uint32_t count = 0;
 uint8_t sdCartOn = 0;
 char *pindex;  // указатели на массивы
 char *pmain;
-uint8_t num_block_index = 65; //8255
+uint8_t num_block_index = 30; //8255
 uint8_t num_block_main = 115;
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -353,8 +353,8 @@ int main(void)
 //  testEEPROM();
   UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
   littleFsInit();
-//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-//  FsForEeprom_test();
+  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+  FsForEeprom_test();
 
 
 #ifdef INTRON
@@ -534,6 +534,7 @@ from_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
     lfs_file_truncate(&lfs, &file, 0);
     for (int i = 0; i < num_block_index; ++i)
     {
+        UART_Printf("write to EEPROM %d \n", i); delayUS_ASM(1000);
         lfs_file_write(&lfs, &file, to_EEPROM + i * LEN_TO_EEPROM, LEN_TO_EEPROM);
     }
     lfs_file_close(&lfs, &file);
@@ -548,15 +549,12 @@ from_EEPROM = malloc(LEN_TO_EEPROM * num_block_index);
             UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
         }
         //выводим index.html
-//        UART_Printf("%c", to_EEPROM[i]); delayUS_ASM(100);
+        UART_Printf("%c", to_EEPROM[i]); delayUS_ASM(100);
     }
     UART_Printf("\ncopy index.html OK\r\n"); delayUS_ASM(1000);
     free (to_EEPROM);
     free (from_EEPROM);
-//Переносим на EEPROM main.html
 
-
-    UART_Printf("\ncopy main.html OK\r\n"); delayUS_ASM(1000);
 } else //SD карты нет
 {
 

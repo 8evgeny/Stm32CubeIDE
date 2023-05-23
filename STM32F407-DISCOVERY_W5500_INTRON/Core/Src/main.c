@@ -24,8 +24,9 @@
 
 extern lfs_t lfs;
 extern lfs_file_t file;
-char *to_EEPROM;
-char *from_EEPROM;
+#define LEN_TO_EEPROM 127
+char to_EEPROM[LEN_TO_EEPROM];
+char from_EEPROM[LEN_TO_EEPROM];
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -525,8 +526,7 @@ if (sdCartOn == 1)
 //    lfs_file_close(&lfs, &file);
 //    UART_Printf("\r\ncopy OK\r\n"); delayUS_ASM(10000);
 
-#define LEN_TO_EEPROM 120
-char to_EEPROM[LEN_TO_EEPROM];
+
 //char to_EEPROM[]= "Red_on_top_Green_below._Red_says_Stop_Green_says_Go";
 UINT rc;
 f_read(&fil, to_EEPROM, LEN_TO_EEPROM, &rc);
@@ -539,7 +539,7 @@ lfs_file_close(&lfs, &file);
 
 lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
 lfs_file_rewind(&lfs, &file);
-char from_EEPROM[LEN_TO_EEPROM];
+
 lfs_file_read(&lfs, &file, from_EEPROM, LEN_TO_EEPROM);
 lfs_file_close(&lfs, &file);
 

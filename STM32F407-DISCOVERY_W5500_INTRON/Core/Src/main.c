@@ -65,6 +65,7 @@ uint32_t count = 0;
 uint8_t sdCartOn = 0;
 char *pindex;  // указатели на массивы
 char *pmain;
+uint8_t num_block = 65; //8255
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -527,7 +528,7 @@ if (sdCartOn == 1)
 //    UART_Printf("\r\ncopy OK\r\n"); delayUS_ASM(10000);
 
 UINT rc;
-uint8_t num_block = 65; //8255
+
 char to_EEPROM[LEN_TO_EEPROM * num_block];
 char from_EEPROM[LEN_TO_EEPROM * num_block];
 
@@ -546,7 +547,6 @@ lfs_file_close(&lfs, &file);
 
 lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
 lfs_file_rewind(&lfs, &file);
-
 lfs_file_read(&lfs, &file, from_EEPROM, LEN_TO_EEPROM * num_block);
 lfs_file_close(&lfs, &file);
 
@@ -556,6 +556,7 @@ for (unsigned int i = 0; i < LEN_TO_EEPROM * num_block; ++i)
     {
         UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
     }
+    UART_Printf("%c", to_EEPROM[i]); delayUS_ASM(100);
 }
 
 } else //SD карты нет

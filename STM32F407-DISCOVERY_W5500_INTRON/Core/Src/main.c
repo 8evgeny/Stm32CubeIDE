@@ -349,8 +349,8 @@ int main(void)
 //  testEEPROM();
   UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
   littleFsInit();
-//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-//  FsForEeprom_test();
+  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+  FsForEeprom_test();
 
 
 #ifdef INTRON
@@ -489,40 +489,38 @@ if (sdCartOn == 1)
     UINT br = 0;
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
+
     lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
 
     //Посимвольно читаем файл с SD и выводим в консоль
-    TCHAR c;
-    BYTE s[2];
-    UINT rc;
-    uint8_t num = 0;
-    while (f_read(&fil, s, 1, &rc) == FR_OK)
-    {
-        c = s[0];
-        if (c != '\n' || (c == '\n' && num == 0))
-        {
-            UART_Printf("%c", c); delayUS_ASM(100);
-        }
-        if (num > 4) break;
-        if (c=='\n') ++num;
-        if (c!='\n') num = 0;
-    }
-
-
-
-//    TCHAR* temp;
-//    temp = f_gets(tmp7, f_size(&fil), &fil);
-////    UART_Printf(tmp7); delayUS_ASM(10000);
-//    lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
-//    UART_Printf("write to EEPROM: %d byte\r\n", sizeof(tmp7)); delayUS_ASM(10000);
-//    while(temp)
+//    TCHAR c;
+//    BYTE s[2];
+//    UINT rc;
+//    uint8_t num = 0;
+//    while (f_read(&fil, s, 1, &rc) == FR_OK)
 //    {
-//        temp = f_gets(tmp7, f_size(&fil), &fil);
-//    //    UART_Printf(tmp7); delayUS_ASM(10000);
-//        lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
-//        UART_Printf("write to EEPROM: %d byte\r\n", sizeof(tmp7)); delayUS_ASM(10000);
+//        c = s[0];
+//        if (c != '\n' || (c == '\n' && num == 0))
+//        {
+//            UART_Printf("%c", c); delayUS_ASM(100);
+//        }
+//        if (num > 4) break;
+//        if (c=='\n') ++num;
+//        if (c!='\n') num = 0;
 //    }
+
+
+
+    TCHAR* temp;
+    temp = f_gets(tmp7, 200, &fil);
+    UART_Printf(tmp7); delayUS_ASM(3000);
+//    lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
+    while(temp)
+    {
+        temp = f_gets(tmp7, 200, &fil);
+        UART_Printf(tmp7); delayUS_ASM(3000);
+//        lfs_file_write(&lfs, &file, &tmp7, sizeof(tmp7));
+    }
 
     f_close(&fil);
     lfs_file_close(&lfs, &file);
@@ -531,6 +529,7 @@ if (sdCartOn == 1)
 
 } else //SD карты нет
 {
+
 //    #ifdef INTRON
 //    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 197;
 //    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 198;

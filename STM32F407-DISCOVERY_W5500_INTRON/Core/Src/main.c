@@ -65,7 +65,7 @@ uint32_t count = 0;
 uint8_t sdCartOn = 0;
 char *pindex;  // указатели на массивы
 char *pmain;
-uint8_t num_block_index = 14;
+uint8_t num_block_index = 15;
 uint8_t num_block_main = 115;
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};

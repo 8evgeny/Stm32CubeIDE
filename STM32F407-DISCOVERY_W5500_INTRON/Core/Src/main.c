@@ -26,8 +26,7 @@ extern lfs_t lfs;
 extern lfs_file_t file;
 #define LEN_TO_EEPROM 127
 //работает до 127
-char to_EEPROM[LEN_TO_EEPROM * 2];
-char from_EEPROM[LEN_TO_EEPROM * 2];
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -528,32 +527,34 @@ if (sdCartOn == 1)
 //    UART_Printf("\r\ncopy OK\r\n"); delayUS_ASM(10000);
 
 UINT rc;
-f_read(&fil, to_EEPROM, LEN_TO_EEPROM * 2, &rc);
+uint8_t num_block = 65; //8255
+char to_EEPROM[LEN_TO_EEPROM * num_block];
+char from_EEPROM[LEN_TO_EEPROM * num_block];
+
+f_read(&fil, to_EEPROM, LEN_TO_EEPROM * num_block, &rc);
 
 lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT | LFS_O_APPEND);
 lfs_file_rewind(&lfs, &file);
 lfs_file_truncate(&lfs, &file, 0);
 
-lfs_file_write(&lfs, &file, to_EEPROM, LEN_TO_EEPROM);
-lfs_file_write(&lfs, &file, to_EEPROM + LEN_TO_EEPROM, LEN_TO_EEPROM);
+for (int i = 0; i < num_block; ++i)
+{
+    lfs_file_write(&lfs, &file, to_EEPROM + i * LEN_TO_EEPROM, LEN_TO_EEPROM);
+}
 
 lfs_file_close(&lfs, &file);
 
 lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
 lfs_file_rewind(&lfs, &file);
 
-lfs_file_read(&lfs, &file, from_EEPROM, LEN_TO_EEPROM * 2);
+lfs_file_read(&lfs, &file, from_EEPROM, LEN_TO_EEPROM * num_block);
 lfs_file_close(&lfs, &file);
 
-for (unsigned int i = 0; i < LEN_TO_EEPROM * 2; ++i)
+for (unsigned int i = 0; i < LEN_TO_EEPROM * num_block; ++i)
 {
     if (to_EEPROM[i] != from_EEPROM[i])
     {
         UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
-    }
-    else
-    {
-//        UART_Printf("OK\r\n"); delayUS_ASM(1000);
     }
 }
 

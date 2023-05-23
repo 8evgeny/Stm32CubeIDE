@@ -550,17 +550,17 @@ if (sdCartOn == 1)
 //            UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
         }
         //выводим index.html
-        UART_Printf("%c", to_EEPROM[i]); delayUS_ASM(100);
+        UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
 
         //определяю завершающий тег и делаю truncate
-        if (j == 6 && to_EEPROM[i] == '>') break;
-        if (j == 5 && to_EEPROM[i] == 'l') j = 6;
-        if (j == 4 && to_EEPROM[i] == 'm') j = 5;
-        if (j == 3 && to_EEPROM[i] == 't') j = 4;
-        if (j == 2 && to_EEPROM[i] == 'h') j = 3;
-        if (j == 1 && to_EEPROM[i] == '/') j = 2;
-        if (j == 1 && to_EEPROM[i] != '/') j = 0;
-        if (to_EEPROM[i] == '<') j = 1;
+        if (j == 6 && from_EEPROM[i] == '>') break;
+        if (j == 5 && from_EEPROM[i] == 'l') j = 6;
+        if (j == 4 && from_EEPROM[i] == 'm') j = 5;
+        if (j == 3 && from_EEPROM[i] == 't') j = 4;
+        if (j == 2 && from_EEPROM[i] == 'h') j = 3;
+        if (j == 1 && from_EEPROM[i] == '/') j = 2;
+        if (j == 1 && from_EEPROM[i] != '/') j = 0;
+        if (from_EEPROM[i] == '<') j = 1;
     }
 //    i - фактическая длина файла
     lfs_file_truncate(&lfs, &file, i + 1);
@@ -603,17 +603,17 @@ if (sdCartOn == 1)
     //            UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
             }
             //выводим main.html
-            UART_Printf("%c", to_EEPROM[i]); delayUS_ASM(100);
+            UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
 
             //определяю завершающий тег и делаю truncate
-            if (j == 6 && to_EEPROM[i] == '>') break;
-            if (j == 5 && to_EEPROM[i] == 'l') j = 6;
-            if (j == 4 && to_EEPROM[i] == 'm') j = 5;
-            if (j == 3 && to_EEPROM[i] == 't') j = 4;
-            if (j == 2 && to_EEPROM[i] == 'h') j = 3;
-            if (j == 1 && to_EEPROM[i] == '/') j = 2;
-            if (j == 1 && to_EEPROM[i] != '/') j = 0;
-            if (to_EEPROM[i] == '<') j = 1;
+            if (j == 6 && from_EEPROM[i] == '>') break;
+            if (j == 5 && from_EEPROM[i] == 'l') j = 6;
+            if (j == 4 && from_EEPROM[i] == 'm') j = 5;
+            if (j == 3 && from_EEPROM[i] == 't') j = 4;
+            if (j == 2 && from_EEPROM[i] == 'h') j = 3;
+            if (j == 1 && from_EEPROM[i] == '/') j = 2;
+            if (j == 1 && from_EEPROM[i] != '/') j = 0;
+            if (from_EEPROM[i] == '<') j = 1;
         }
     //    i - фактическая длина файла
         lfs_file_truncate(&lfs, &file, i + 1);

@@ -10,7 +10,7 @@ lfs_t lfs;
 lfs_file_t file;
 
 //Изменил параметры EEPROM
-uint8_t littlefs_mem[8192];
+uint8_t littlefs_mem[32768];
 //uint8_t littlefs_mem[131072];
 //The 256K is internally organized as 512 pages of 64-bytes each
 uint8_t lfs_read_buf[64];

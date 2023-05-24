@@ -21,7 +21,8 @@ project(11_Converter_F407_INTRON_DT C CXX ASM)
 
 set (w5500 ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Ethernet)
 set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
-set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs_new)
+#set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs_new)
+set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
 
 #SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') //для mbedTLS

@@ -22,9 +22,6 @@
 #include "my_function.h"
 #include "fsforeeprom.h"
 
-extern lfs_t lfs;
-extern lfs_file_t file;
-
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -63,9 +60,11 @@ uint32_t count = 0;
 uint8_t sdCartOn = 0;
 char *pindex;  // указатели на массивы
 char *pmain;
+extern lfs_t lfs;
+extern lfs_file_t file;
 uint8_t num_block_index = 1; //лишнее обрежется после конечного тега
 uint8_t num_block_main = 8;
-#define WRITE_ONCE_TO_EEPROM 4000 //без ошибок в один файл пишется 4080 байт
+#define WRITE_ONCE_TO_EEPROM 4100 //без ошибок в один файл пишется 4080 байт
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};

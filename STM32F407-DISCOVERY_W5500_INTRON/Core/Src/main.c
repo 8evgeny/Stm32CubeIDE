@@ -62,9 +62,9 @@ char *pindex;  // указатели на массивы
 char *pmain;
 extern lfs_t lfs;
 extern lfs_file_t file;
-uint8_t num_block_index = 4; //лишнее обрежется после конечного тега
+uint8_t num_block_index = 1; //лишнее обрежется после конечного тега
 uint8_t num_block_main = 8;
-#define WRITE_ONCE_TO_EEPROM 1060 //без ошибок в один файл пишется 4080 байт
+#define WRITE_ONCE_TO_EEPROM 4080 //без ошибок в один файл пишется 4080 байт
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -526,18 +526,18 @@ if (sdCartOn == 1)
     from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
     UINT rc;
     f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index, &rc);
-    lfs_file_open(&lfs, &file, "index1.html", LFS_O_WRONLY | LFS_O_CREAT );
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_rewind(&lfs, &file);
     lfs_file_truncate(&lfs, &file, 0); // Стираю файл
     for (int i = 0; i < num_block_index; ++i)
     {
-        UART_Printf("write to EEPROM %d \n", i); delayUS_ASM(1000);
+        UART_Printf("%d write to EEPROM\n", i + 1); delayUS_ASM(1000);
         lfs_file_seek(&lfs, &file, i * WRITE_ONCE_TO_EEPROM * num_block_index, LFS_SEEK_CUR);
         lfs_file_write(&lfs, &file, to_EEPROM + i * WRITE_ONCE_TO_EEPROM, WRITE_ONCE_TO_EEPROM);
         lfs_file_sync(&lfs, &file);
     }
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "index1.html", LFS_O_RDONLY );
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
     lfs_file_rewind(&lfs, &file);
     lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index);
     uint8_t j = 0;

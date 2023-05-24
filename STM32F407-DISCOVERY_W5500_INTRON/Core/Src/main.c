@@ -526,7 +526,7 @@ if (sdCartOn == 1)
     from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
     UINT rc;
     f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index, &rc);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT );
+    lfs_file_open(&lfs, &file, "index1.html", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_rewind(&lfs, &file);
     lfs_file_truncate(&lfs, &file, 0); // Стираю файл
     for (int i = 0; i < num_block_index; ++i)
@@ -537,7 +537,7 @@ if (sdCartOn == 1)
         lfs_file_sync(&lfs, &file);
     }
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
+    lfs_file_open(&lfs, &file, "index1.html", LFS_O_RDONLY );
     lfs_file_rewind(&lfs, &file);
     lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index);
     uint8_t j = 0;

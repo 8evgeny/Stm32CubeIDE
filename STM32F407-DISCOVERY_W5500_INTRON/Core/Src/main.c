@@ -526,8 +526,7 @@ if (sdCartOn == 1)
     from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
     UINT rc;
     f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index, &rc);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT );
-    lfs_file_rewind(&lfs, &file);
+    lfs_file_open(&lfs, &file, "index1", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_truncate(&lfs, &file, 0); // Стираю файл
     for (int i = 0; i < num_block_index; ++i)
     {
@@ -537,7 +536,7 @@ if (sdCartOn == 1)
         lfs_file_sync(&lfs, &file);
     }
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
+    lfs_file_open(&lfs, &file, "index1", LFS_O_RDONLY );
     lfs_file_rewind(&lfs, &file);
     lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index);
     uint8_t j = 0;
@@ -551,7 +550,7 @@ if (sdCartOn == 1)
             ++error;
         }
         //выводим index.html
-//        UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
+        UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
 
         //определяю завершающий тег и делаю truncate
         if (j == 6 && from_EEPROM[i] == '>') break;
@@ -564,63 +563,12 @@ if (sdCartOn == 1)
         if (from_EEPROM[i] == '<') j = 1;
     }
     UART_Printf("copy index.html to EEPROM: %d errors\n", error); delayUS_ASM(10000);
-//    i - фактическая длина файла
-    lfs_file_truncate(&lfs, &file, i + 1);
     lfs_file_close(&lfs, &file);
     free (to_EEPROM);
     free (from_EEPROM);
 
 
-    //Переносим на EEPROM main.html
-//        UART_Printf("copy to EEPROM main.html\r\n"); delayUS_ASM(10000);
-//        f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
-//        f_lseek(&fil, 0);
-//    //    char to_EEPROM[WRITE_ONCE_TO_EEPROM * num_block_index];
-//    //    char from_EEPROM[WRITE_ONCE_TO_EEPROM * num_block_index];
 
-//        to_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_main);
-//        from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_main);
-//        f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_main, &rc);
-//        lfs_file_open(&lfs, &file, "main.html", LFS_O_WRONLY | LFS_O_CREAT );
-//        lfs_file_rewind(&lfs, &file);
-//        lfs_file_truncate(&lfs, &file, 0); // Стираю файл
-//        for (int i = 0; i < num_block_main; ++i)
-//        {
-//            UART_Printf("write to EEPROM %d \n", i); delayUS_ASM(1000);
-//            lfs_file_write(&lfs, &file, to_EEPROM + i * WRITE_ONCE_TO_EEPROM, WRITE_ONCE_TO_EEPROM);
-//            lfs_file_sync(&lfs, &file);
-//        }
-//        lfs_file_close(&lfs, &file);
-//        lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
-//        lfs_file_rewind(&lfs, &file);
-//        lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_main);
-
-//        for (i = 0; i < WRITE_ONCE_TO_EEPROM * num_block_main; ++i)
-//        {
-//            if (to_EEPROM[i] != from_EEPROM[i])
-//            {
-//                UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
-//            }
-//            //выводим main.html
-//            UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
-
-//            //определяю завершающий тег и делаю truncate
-//            if (j == 6 && from_EEPROM[i] == '>') break;
-//            if (j == 5 && from_EEPROM[i] == 'l') j = 6;
-//            if (j == 4 && from_EEPROM[i] == 'm') j = 5;
-//            if (j == 3 && from_EEPROM[i] == 't') j = 4;
-//            if (j == 2 && from_EEPROM[i] == 'h') j = 3;
-//            if (j == 1 && from_EEPROM[i] == '/') j = 2;
-//            if (j == 1 && from_EEPROM[i] != '/') j = 0;
-//            if (from_EEPROM[i] == '<') j = 1;
-//        }
-//    //    i - фактическая длина файла
-//        lfs_file_truncate(&lfs, &file, i + 1);
-//        lfs_file_close(&lfs, &file);
-
-//        UART_Printf("\ncopy main.html OK\r\n"); delayUS_ASM(1000);
-//        free (to_EEPROM);
-//        free (from_EEPROM);
 
 } else //SD карты нет
 {

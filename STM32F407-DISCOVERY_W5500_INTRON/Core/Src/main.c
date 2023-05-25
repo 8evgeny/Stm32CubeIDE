@@ -521,8 +521,8 @@ if (sdCartOn == 1)
         if (c == '<') jj = 1;
     }
     UART_Printf("\nsize index.html: %d byte\n", numByteFileIndex); delayUS_ASM(10000);
-    uint8_t numIndeFiles = numByteFileIndex/1024 +1;
-    uint32_t lastPart = numByteFileIndex - (numIndeFiles - 1) * 1024;
+    uint8_t numIndexFiles = numByteFileIndex/WRITE_ONCE_TO_EEPROM +1;
+    uint32_t lastPart = numByteFileIndex - (numIndexFiles - 1) * WRITE_ONCE_TO_EEPROM;
     UART_Printf("last part: %d bytes\n", lastPart); delayUS_ASM(10000);
     f_lseek(&fil, 0);
 
@@ -533,7 +533,7 @@ if (sdCartOn == 1)
     lfs_file_close(&lfs, &file);
 
 //Переносим на EEPROM index.html в виде нескольких файлов
-    UART_Printf("copy to eeprom %d files\n", numIndeFiles); delayUS_ASM(10000);
+    UART_Printf("copy to eeprom %d files\n", numIndexFiles); delayUS_ASM(10000);
 
     char *to_EEPROM;
     char *from_EEPROM;
@@ -544,11 +544,11 @@ if (sdCartOn == 1)
     uint8_t errors = 0;
     f_read(&fil, to_EEPROM, numByteFileIndex, &rc2);
     f_close(&fil);
-    for (int i = 0; i < numIndeFiles;++i)
+    for (int i = 0; i < numIndexFiles;++i)
     {
-        sprintf(nameIndexFile,"index__%d",i);
+        sprintf(nameIndexFile,"index_%d", i);
         lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
-        if (i != numIndeFiles - 1) //Не последний
+        if (i != numIndexFiles - 1) //Не последний
         {
             lfs_file_write(&lfs, &file, to_EEPROM + i * WRITE_ONCE_TO_EEPROM , WRITE_ONCE_TO_EEPROM);
         }
@@ -561,18 +561,18 @@ if (sdCartOn == 1)
     }
 
     UART_Printf("verify\n"); delayUS_ASM(1000);
-    for (int i = 0; i < numIndeFiles;++i)
+    for (int i = 0; i < numIndexFiles; ++i)
     {
         errors = 0;
-        sprintf(nameIndexFile,"index__%d",i);
-        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_RDONLY | LFS_O_CREAT );
-        if (i != numIndeFiles - 1) //Не последний
+        sprintf(nameIndexFile,"index_%d", i);
+        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_RDONLY );
+        if (i != numIndexFiles - 1) //Не последний
         {
-            lfs_file_read(&lfs, &file, from_EEPROM , 1024);
+            lfs_file_read(&lfs, &file, from_EEPROM , WRITE_ONCE_TO_EEPROM);
 
             for (int ii = 0; ii < WRITE_ONCE_TO_EEPROM; ++ii)
             {
-//                UART_Printf("%c", (to_EEPROM + i*WRITE_ONCE_TO_EEPROM)[ii]); delayUS_ASM(100);
+                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
                 if ((to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii] != from_EEPROM[ii])
                     ++errors;
             }
@@ -583,7 +583,7 @@ if (sdCartOn == 1)
 
              for (int ii = 0; ii < lastPart; ++ii)
             {
-//                UART_Printf("%c", (to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii]); delayUS_ASM(100);
+                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
                 if ((to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii] != from_EEPROM[ii])
                     ++errors;
             }
@@ -687,8 +687,42 @@ if (sdCartOn == 1)
 //Далее читаем из EEPROM число байт
     lfs_file_open(&lfs, &file, "indexLen", LFS_O_RDONLY);
     lfs_file_read(&lfs, &file, &indexLen, sizeof (indexLen));
+    lfs_file_close(&lfs, &file);
     uint32_t numByteFileIndex = atoi(indexLen);
-    UART_Printf("index.html len = %d\n", numByteFileIndex); delayUS_ASM(10000);
+
+    char *from_EEPROM;
+    from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM);
+    pindex = malloc(numByteFileIndex);
+
+    UART_Printf("\nsize index.html: %d byte\n", numByteFileIndex); delayUS_ASM(10000);
+    uint8_t numIndexFiles = numByteFileIndex/WRITE_ONCE_TO_EEPROM +1;
+    uint32_t lastPart = numByteFileIndex - (numIndexFiles - 1) * WRITE_ONCE_TO_EEPROM;
+    UART_Printf("last part: %d bytes\n", lastPart); delayUS_ASM(10000);
+     UART_Printf("num files: %d\n", numIndexFiles); delayUS_ASM(10000);
+    char nameIndexFile[20];
+    for (int i = 0; i < numIndexFiles; ++i)
+    {
+        sprintf(nameIndexFile,"index_%d", i);
+        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_RDONLY );
+
+        UART_Printf("\n%s  read from EEPROM\n", nameIndexFile); delayUS_ASM(1000);
+        if (i != numIndexFiles - 1) //Не последний
+        {
+            lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM);
+
+            for (int ii = 0; ii < WRITE_ONCE_TO_EEPROM; ++ii)
+                UART_Printf("%c", from_EEPROM [ii]); delayUS_ASM(100);
+        }
+        else
+        {
+            lfs_file_read(&lfs, &file, from_EEPROM , lastPart);
+
+             for (int ii = 0; ii < lastPart; ++ii)
+                UART_Printf("%c", from_EEPROM [ii]); delayUS_ASM(100);
+        }
+        lfs_file_close(&lfs, &file);
+    }
+
 
 
 } //end SD нет

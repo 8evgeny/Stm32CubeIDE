@@ -64,6 +64,7 @@ extern lfs_t lfs;
 extern lfs_file_t file;
 uint8_t num_block_index = 1; //лишнее обрежется после конечного тега
 uint8_t num_block_main = 8;
+char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024 //без ошибок в один файл пишется 4080 байт
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -358,8 +359,8 @@ int main(void)
 //  testEEPROM();
   UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
   littleFsInit();
-  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-  FsForEeprom_test();
+//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+//  FsForEeprom_test();
 
 
 #ifdef INTRON
@@ -526,7 +527,6 @@ if (sdCartOn == 1)
     f_lseek(&fil, 0);
 
     //Число байт пишем на EEPROM
-    char indexLen[8];
     sprintf(indexLen,"%d", numByteFileIndex);
     lfs_file_open(&lfs, &file, "indexLen", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_write(&lfs, &file, &indexLen, sizeof(indexLen));
@@ -684,28 +684,12 @@ if (sdCartOn == 1)
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"md5: %s", md5);
     UART_Printf(tmp); delayUS_ASM(10000);
-//Далее читаем из EEPROM в буфер
+//Далее читаем из EEPROM число байт
+    lfs_file_open(&lfs, &file, "indexLen", LFS_O_RDONLY);
+    lfs_file_read(&lfs, &file, &indexLen, sizeof (indexLen));
+    uint32_t numByteFileIndex = atoi(indexLen);
+    UART_Printf("index.html len = %d\n", numByteFileIndex); delayUS_ASM(10000);
 
-    pindex = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_ssize_t len = lfs_file_read(&lfs, &file, pindex, WRITE_ONCE_TO_EEPROM * num_block_index);
-    lfs_file_close(&lfs, &file);
-    UART_Printf("read from EEPROM %d byte\n", len); delayUS_ASM(1000);
-    int j = 0;
-    for (int i = 0; i < WRITE_ONCE_TO_EEPROM * num_block_index; ++i)
-    {
-        //выводим
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
-        if (j == 6 && pindex[i] == '>') break;
-        if (j == 5 && pindex[i] == 'l') j = 6;
-        if (j == 4 && pindex[i] == 'm') j = 5;
-        if (j == 3 && pindex[i] == 't') j = 4;
-        if (j == 2 && pindex[i] == 'h') j = 3;
-        if (j == 1 && pindex[i] == '/') j = 2;
-        if (j == 1 && pindex[i] != '/') j = 0;
-        if (pindex[i] == '<') j = 1;
-    }
-    free(pindex);
 
 } //end SD нет
 

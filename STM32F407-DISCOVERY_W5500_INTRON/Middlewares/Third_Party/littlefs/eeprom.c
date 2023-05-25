@@ -109,19 +109,19 @@ void FsForEeprom_test()
     char fileToEEPROM_2[] = "1234567890asdfghjklzxcv";
     char fileFromEEPROM_2[sizeof (fileToEEPROM_2)];
 
-    lfs_file_open(&lfs, &file, "testEEPROM", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM3", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &fileToEEPROM, sizeof(fileToEEPROM));
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "testEEPROM", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM3", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &fileFromEEPROM, sizeof(fileFromEEPROM));
     lfs_file_close(&lfs, &file);
 
-    lfs_file_open(&lfs, &file, "testEEPROM2", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM4", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &fileToEEPROM_2, sizeof(fileToEEPROM_2));
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "testEEPROM2", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM4", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &fileFromEEPROM_2, sizeof(fileFromEEPROM_2));
     lfs_file_close(&lfs, &file);
 

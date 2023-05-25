@@ -64,7 +64,7 @@ extern lfs_t lfs;
 extern lfs_file_t file;
 uint8_t num_block_index = 1; //лишнее обрежется после конечного тега
 uint8_t num_block_main = 8;
-#define WRITE_ONCE_TO_EEPROM 4080 //без ошибок в один файл пишется 4080 байт
+#define WRITE_ONCE_TO_EEPROM 128 //без ошибок в один файл пишется 4080 байт
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -558,7 +558,7 @@ if (sdCartOn == 1)
             ++error;
         }
         //выводим index.html
-        UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
+//        UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
 
         //определяю завершающий тег и делаю truncate
         if (j == 6 && from_EEPROM[i] == '>') break;

@@ -279,25 +279,31 @@ void testEEPROM()
                             'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
     uint8_t erase_value[36] = {'H','e','l','l','o'};
 
-    AT24C_ReadBytes (0x004A, rd_value, 36);
+//    AT24C_ReadBytes (0x004A, rd_value, 36);
+    uint16_t num = 36;
+    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(20000);
 
     UART_Printf("EEPROM write:"); delayUS_ASM(20000);
     UART_Printf("%s\r\n",erase_value); delayUS_ASM(20000);
-    AT24C_WriteBytes (0x004A, erase_value, 36);
+    BSP_EEPROM_WriteBuffer(erase_value, 0x004A, 36);
+//    AT24C_WriteBytes (0x004A, erase_value, 36);
 
     delayUS_ASM(100000);
 
-    AT24C_ReadBytes (0x004A, rd_value, 36);
+//    AT24C_ReadBytes (0x004A, rd_value, 36);
+    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
 
     UART_Printf("EEPROM write:"); delayUS_ASM(10000);
     UART_Printf("%s\r\n",wr_value); delayUS_ASM(10000);
-    AT24C_WriteBytes (0x004A, wr_value, 36);
+    BSP_EEPROM_WriteBuffer(wr_value, 0x004A, 36);
+//    AT24C_WriteBytes (0x004A, wr_value, 36);
 
     delayUS_ASM(100000);
 
-    AT24C_ReadBytes (0x004A, rd_value, 36);
+//    AT24C_ReadBytes (0x004A, rd_value, 36);
+    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
 }
 
@@ -349,7 +355,8 @@ int main(void)
 //    delayUS_ASM(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
-//  testEEPROM();
+  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
+  testEEPROM();
   UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
   littleFsInit();
   UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);

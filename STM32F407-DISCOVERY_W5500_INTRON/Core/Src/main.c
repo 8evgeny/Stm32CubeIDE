@@ -523,11 +523,27 @@ if (sdCartOn == 1)
     f_lseek(&fil, 0);
 
     uint8_t numIndeFiles = numByteFileIndex/1024 +1;
-
-
-
+    uint32_t lastPart = numByteFileIndex - (numIndeFiles - 1) * 1024;
+    UART_Printf("last part: %d bytes\n", lastPart); delayUS_ASM(10000);
 //Переносим на EEPROM index.html в виде нескольких файлов
     UART_Printf("copy to eeprom %d files\n", numIndeFiles); delayUS_ASM(10000);
+
+//    char *to_EEPROM;
+//    char *from_EEPROM;
+//    to_EEPROM = malloc(1024);
+//    from_EEPROM = malloc(1024);
+//    UINT rc2;
+//    char nameIndexFile[20];
+//    for (int i = 0; i < numIndeFiles;++i)
+//    {
+//        f_lseek(&fil, i * 1024);
+//        f_read(&fil, to_EEPROM, 1024, &rc2);
+//        sprintf(nameIndexFile,"index___%d",i);
+//        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
+//        lfs_file_write(&lfs, &file, to_EEPROM , 1024);
+
+//    }
+
 
 
     char *to_EEPROM;

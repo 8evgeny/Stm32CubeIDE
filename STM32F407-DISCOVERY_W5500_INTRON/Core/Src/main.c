@@ -531,7 +531,7 @@ if (sdCartOn == 1)
     char *to_EEPROM;
     char *from_EEPROM;
     to_EEPROM = malloc(numByteFileIndex);
-    from_EEPROM = malloc(1024);
+    from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM + 1);
     UINT rc2;
     char nameIndexFile[20];
     uint8_t errors = 0;
@@ -539,11 +539,11 @@ if (sdCartOn == 1)
     f_close(&fil);
     for (int i = 0; i < numIndeFiles;++i)
     {
-        sprintf(nameIndexFile,"index___%d",i);
+        sprintf(nameIndexFile,"index_%d",i);
         lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
         if (i != numIndeFiles - 1) //Не последний
         {
-            lfs_file_write(&lfs, &file, to_EEPROM + i*1024 , 1024);
+            lfs_file_write(&lfs, &file, to_EEPROM + i * WRITE_ONCE_TO_EEPROM , WRITE_ONCE_TO_EEPROM);
         }
         else
         {
@@ -551,7 +551,7 @@ if (sdCartOn == 1)
             //
             //
             //
-            lfs_file_write(&lfs, &file, to_EEPROM + i*1024 , lastPart);
+            lfs_file_write(&lfs, &file, to_EEPROM + i * WRITE_ONCE_TO_EEPROM , lastPart);
         }
         UART_Printf("%s  write to EEPROM\n", nameIndexFile); delayUS_ASM(1000);
         lfs_file_close(&lfs, &file);
@@ -561,16 +561,16 @@ if (sdCartOn == 1)
     for (int i = 0; i < numIndeFiles;++i)
     {
         errors = 0;
-        sprintf(nameIndexFile,"index___%d",i);
-        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
+        sprintf(nameIndexFile,"index_%d",i);
+        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_RDONLY | LFS_O_CREAT );
         if (i != numIndeFiles - 1) //Не последний
         {
             lfs_file_read(&lfs, &file, from_EEPROM , 1024);
 
-            for (int ii = 0; ii < 1024; ++ii)
+            for (int ii = 0; ii < WRITE_ONCE_TO_EEPROM; ++ii)
             {
-                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
-                if ((to_EEPROM + i*1024)[ii] != from_EEPROM[ii])
+//                UART_Printf("%c", (to_EEPROM + i*WRITE_ONCE_TO_EEPROM)[ii]); delayUS_ASM(100);
+                if ((to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii] != from_EEPROM[ii])
                     ++errors;
             }
 
@@ -585,8 +585,8 @@ if (sdCartOn == 1)
 
              for (int ii = 0; ii < lastPart; ++ii)
             {
-                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
-                if ((to_EEPROM + i*1024)[ii] != from_EEPROM[ii])
+//                UART_Printf("%c", (to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii]); delayUS_ASM(100);
+                if ((to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii] != from_EEPROM[ii])
                     ++errors;
             }
         }

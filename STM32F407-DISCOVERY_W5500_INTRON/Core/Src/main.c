@@ -493,22 +493,34 @@ if (sdCartOn == 1)
     UART_Printf(md5); delayUS_ASM(10000);
     UART_Printf("\r\n"); delayUS_ASM(10000);
 
+
 //Посимвольно читаем файл с SD и выводим в консоль
-//    TCHAR c;
-//    BYTE s[2];
-//    UINT rc;
-//    uint8_t num = 0;
-//    while (f_read(&fil, s, 1, &rc) == FR_OK)
-//    {
-//        c = s[0];
-//        if (c != '\n' || (c == '\n' && num == 0))
-//        {
+    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
+    TCHAR c;
+    BYTE s[2];
+    UINT rc;
+    uint8_t jj = 0;
+    uint32_t numByteFileIndex = 0;
+    while (f_read(&fil, s, 1, &rc) == FR_OK)
+    {
+        c = s[0];
+        if (c != '\n' || (c == '\n' && num == 0))
+        {
 //            UART_Printf("%c", c); delayUS_ASM(100);
-//        }
-//        if (num > 4) break;
-//        if (c=='\n') ++num;
-//        if (c!='\n') num = 0;
-//    }
+        }
+       ++numByteFileIndex;
+        //определяю завершающий тег
+        if (jj == 6 && c == '>') break;
+        if (jj == 5 && c == 'l') jj = 6;
+        if (jj == 4 && c == 'm') jj = 5;
+        if (jj == 3 && c == 't') jj = 4;
+        if (jj == 2 && c == 'h') jj = 3;
+        if (jj == 1 && c == '/') jj = 2;
+        if (jj == 1 && c != '/') jj = 0;
+        if (c == '<') jj = 1;
+    }
+    UART_Printf("\nsize index.html: %d byte\n", numByteFileIndex); delayUS_ASM(10000);
+    f_lseek(&fil, 0);
 
 //Построчно читаем файл с SD и выводим в консоль
 //    TCHAR* temp;
@@ -523,17 +535,16 @@ if (sdCartOn == 1)
 
 //Переносим на EEPROM index.html
     UART_Printf("copy to EEPROM index.html\r\n"); delayUS_ASM(10000);
-    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
-    UART_Printf("size index.html: %d byte\n", f_size(&fil)); delayUS_ASM(10000);
-    f_lseek(&fil, 0);
+
+
 
     char *to_EEPROM;
     char *from_EEPROM;
     to_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
     from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
-    UINT rc;
-    f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index, &rc);
-    lfs_file_open(&lfs, &file, "index_", LFS_O_WRONLY | LFS_O_CREAT );
+    UINT rc1;
+    f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index, &rc1);
+    lfs_file_open(&lfs, &file, "index__", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_truncate(&lfs, &file, 0); // Стираю файл
     for (int i = 0; i < num_block_index; ++i)
     {
@@ -543,7 +554,7 @@ if (sdCartOn == 1)
         lfs_file_sync(&lfs, &file);
     }
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "index_", LFS_O_RDONLY );
+    lfs_file_open(&lfs, &file, "index__", LFS_O_RDONLY );
     lfs_file_rewind(&lfs, &file);
     lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index);
     uint8_t j = 0;
@@ -569,7 +580,7 @@ if (sdCartOn == 1)
         if (j == 1 && from_EEPROM[i] != '/') j = 0;
         if (from_EEPROM[i] == '<') j = 1;
     }
-    UART_Printf("copy index.html to EEPROM: %d errors\n", error); delayUS_ASM(10000);
+    UART_Printf("\ncopy index.html to EEPROM: %d errors\n", error); delayUS_ASM(10000);
     lfs_file_close(&lfs, &file);
     free (to_EEPROM);
     free (from_EEPROM);

@@ -40,7 +40,7 @@ int user_provided_block_device_prog(const struct lfs_config *c,
                                     lfs_block_t block, lfs_off_t off,
                                     const void *buffer, lfs_size_t size)
 {
-    UART_Printf("*** device_prog ***\n"); delayUS_ASM(10000);
+//    UART_Printf("*** device_prog ***\n"); delayUS_ASM(10000);
     uint32_t addr = (uint32_t)(block * c->block_size + off);
     uint8_t *buffer_data = (uint8_t *)buffer;
 //    AT24C_WriteBytes(addr, buffer_data, size);
@@ -109,19 +109,19 @@ void FsForEeprom_test()
     char fileToEEPROM_2[] = "1234567890asdfghjklzxcv";
     char fileFromEEPROM_2[sizeof (fileToEEPROM_2)];
 
-    lfs_file_open(&lfs, &file, "testEEPROM3", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM8", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &fileToEEPROM, sizeof(fileToEEPROM));
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "testEEPROM3", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM8", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &fileFromEEPROM, sizeof(fileFromEEPROM));
     lfs_file_close(&lfs, &file);
 
-    lfs_file_open(&lfs, &file, "testEEPROM4", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM5", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &fileToEEPROM_2, sizeof(fileToEEPROM_2));
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "testEEPROM4", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM5", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &fileFromEEPROM_2, sizeof(fileFromEEPROM_2));
     lfs_file_close(&lfs, &file);
 

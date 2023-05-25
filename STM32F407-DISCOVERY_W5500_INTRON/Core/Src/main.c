@@ -522,20 +522,12 @@ if (sdCartOn == 1)
     UART_Printf("\nsize index.html: %d byte\n", numByteFileIndex); delayUS_ASM(10000);
     f_lseek(&fil, 0);
 
-//Построчно читаем файл с SD и выводим в консоль
-//    TCHAR* temp;
-//    temp = f_gets(tmp7, 200, &fil);
-//    UART_Printf(tmp7); delayUS_ASM(3000);
-//    while(temp)
-//    {
-//        temp = f_gets(tmp7, 200, &fil);
-//        UART_Printf(tmp7); delayUS_ASM(3000);
-//    }
+    uint8_t numIndeFiles = numByteFileIndex/1024 +1;
 
 
-//Переносим на EEPROM index.html
-    UART_Printf("copy to EEPROM index.html\r\n"); delayUS_ASM(10000);
 
+//Переносим на EEPROM index.html в виде нескольких файлов
+    UART_Printf("copy to eeprom %d files\n", numIndeFiles); delayUS_ASM(10000);
 
 
     char *to_EEPROM;

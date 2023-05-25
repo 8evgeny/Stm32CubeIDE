@@ -64,7 +64,7 @@ extern lfs_t lfs;
 extern lfs_file_t file;
 uint8_t num_block_index = 1; //лишнее обрежется после конечного тега
 uint8_t num_block_main = 8;
-#define WRITE_ONCE_TO_EEPROM 128 //без ошибок в один файл пишется 4080 байт
+#define WRITE_ONCE_TO_EEPROM 1024 //без ошибок в один файл пишется 4080 байт
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -354,8 +354,8 @@ int main(void)
 //    delayUS_ASM(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
-  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
-  testEEPROM();
+//  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
+//  testEEPROM();
   UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
   littleFsInit();
   UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
@@ -533,7 +533,7 @@ if (sdCartOn == 1)
     from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
     UINT rc;
     f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index, &rc);
-    lfs_file_open(&lfs, &file, "index1", LFS_O_WRONLY | LFS_O_CREAT );
+    lfs_file_open(&lfs, &file, "index_", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_truncate(&lfs, &file, 0); // Стираю файл
     for (int i = 0; i < num_block_index; ++i)
     {
@@ -543,7 +543,7 @@ if (sdCartOn == 1)
         lfs_file_sync(&lfs, &file);
     }
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "index1", LFS_O_RDONLY );
+    lfs_file_open(&lfs, &file, "index_", LFS_O_RDONLY );
     lfs_file_rewind(&lfs, &file);
     lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index);
     uint8_t j = 0;

@@ -20,7 +20,7 @@
 #include "net.h"
 #include "loopback.h"
 #include "my_function.h"
-#include "fsforeeprom.h"
+#include "eeprom.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -204,72 +204,72 @@ FATFS fs;
 FIL fil;
 
 //-------------------------------------------------------
-int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
-{
-  uint16_t i;
-  //Disable Pos
-  LL_I2C_DisableBitPOS(I2C1);
-  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
-  LL_I2C_GenerateStartCondition(I2C1);
-  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-  //read state
-  (void) I2C1->SR1;
-  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
-  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-  LL_I2C_ClearFlag_ADDR(I2C1);
-  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
-  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
-  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  for(i=0;i<bytes_count;i++)
-  {
-    LL_I2C_TransmitData8(I2C1, buf[i]);
-    while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  }
-  LL_I2C_GenerateStopCondition(I2C1);
-  return i;
-}
-//-------------------------------------------------------
-int AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
-{
-  uint16_t i;
-  //Disable Pos
-  LL_I2C_DisableBitPOS(I2C1);
-  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
-  LL_I2C_GenerateStartCondition(I2C1);
-  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-  //read state
-  (void) I2C1->SR1;
-  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
-  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-  LL_I2C_ClearFlag_ADDR(I2C1);
-  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
-  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
-  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  LL_I2C_GenerateStartCondition(I2C1);
-  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-  (void) I2C1->SR1;
-  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_READ);
-  while (!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-  LL_I2C_ClearFlag_ADDR(I2C1);
-  for(i=0;i<bytes_count;i++)
-  {
-    if(i<(bytes_count-1))
-    {
-      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
-      buf[i] = LL_I2C_ReceiveData8(I2C1);
-    }
-    else
-    {
-      LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
-      LL_I2C_GenerateStopCondition(I2C1);
-      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
-      buf[i] = LL_I2C_ReceiveData8(I2C1);
-    }
-  }
-  return i;
-}
+//int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
+//{
+//  uint16_t i;
+//  //Disable Pos
+//  LL_I2C_DisableBitPOS(I2C1);
+//  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+//  LL_I2C_GenerateStartCondition(I2C1);
+//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+//  //read state
+//  (void) I2C1->SR1;
+//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
+//  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+//  LL_I2C_ClearFlag_ADDR(I2C1);
+//  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
+//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
+//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  for(i=0;i<bytes_count;i++)
+//  {
+//    LL_I2C_TransmitData8(I2C1, buf[i]);
+//    while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  }
+//  LL_I2C_GenerateStopCondition(I2C1);
+//  return i;
+//}
+////-------------------------------------------------------
+//int AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
+//{
+//  uint16_t i;
+//  //Disable Pos
+//  LL_I2C_DisableBitPOS(I2C1);
+//  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+//  LL_I2C_GenerateStartCondition(I2C1);
+//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+//  //read state
+//  (void) I2C1->SR1;
+//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
+//  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+//  LL_I2C_ClearFlag_ADDR(I2C1);
+//  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
+//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
+//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  LL_I2C_GenerateStartCondition(I2C1);
+//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+//  (void) I2C1->SR1;
+//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_READ);
+//  while (!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+//  LL_I2C_ClearFlag_ADDR(I2C1);
+//  for(i=0;i<bytes_count;i++)
+//  {
+//    if(i<(bytes_count-1))
+//    {
+//      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
+//      buf[i] = LL_I2C_ReceiveData8(I2C1);
+//    }
+//    else
+//    {
+//      LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
+//      LL_I2C_GenerateStopCondition(I2C1);
+//      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
+//      buf[i] = LL_I2C_ReceiveData8(I2C1);
+//    }
+//  }
+//  return i;
+//}
 //-------------------------------------------------------
 void testEEPROM()
 {

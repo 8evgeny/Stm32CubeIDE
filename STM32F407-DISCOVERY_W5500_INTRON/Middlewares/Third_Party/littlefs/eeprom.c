@@ -1,4 +1,4 @@
-#include "fsforeeprom.h"
+#include "eeprom.h"
 #include <string.h>
 #include "main.h"
 extern void UART_Printf(const char* fmt, ...);
@@ -29,7 +29,7 @@ int user_provided_block_device_read(const struct lfs_config *c,
     uint32_t addr = (uint32_t)(block * c->block_size + off);
     uint16_t NumByteToRead = (uint16_t)size;
     uint8_t *buffer_data = (uint8_t *)buffer;
-    AT24C_ReadBytes(addr, buffer_data, NumByteToRead);
+//    AT24C_ReadBytes(addr, buffer_data, NumByteToRead);
     return 0;
 }
 
@@ -40,7 +40,7 @@ int user_provided_block_device_prog(const struct lfs_config *c,
 //    UART_Printf("*** user_provided_block_device_prog ***"); delayUS_ASM(10000);
     uint32_t addr = (uint32_t)(block * c->block_size + off);
     uint8_t *buffer_data = (uint8_t *)buffer;
-    AT24C_WriteBytes(addr, buffer_data, size);
+//    AT24C_WriteBytes(addr, buffer_data, size);
     return 0;
 }
 

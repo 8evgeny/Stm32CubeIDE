@@ -692,10 +692,9 @@ if (sdCartOn == 1)
     lfs_file_close(&lfs, &file);
     uint32_t numByteFileIndex = atoi(indexLen);
 
-
     char *from_EEPROM;
     from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM + 1);
-//    pindex = malloc(numByteFileIndex);
+    pindex = malloc(numByteFileIndex);
 
     UART_Printf("\nsize index.html: %d byte\n", numByteFileIndex); delayUS_ASM(10000);
     uint8_t numIndexFiles = numByteFileIndex/WRITE_ONCE_TO_EEPROM +1;
@@ -711,19 +710,21 @@ if (sdCartOn == 1)
         if (i != numIndexFiles - 1) //Не последний
         {
             lfs_file_read(&lfs, &file, from_EEPROM , WRITE_ONCE_TO_EEPROM);
+            strncpy(pindex + i * WRITE_ONCE_TO_EEPROM, from_EEPROM, WRITE_ONCE_TO_EEPROM);
 
             for (int ii = 0; ii < WRITE_ONCE_TO_EEPROM; ++ii)
             {
-                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
+//                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
             }
         }
         else
         {
             lfs_file_read(&lfs, &file, from_EEPROM , lastPart);
+            strncpy(pindex + i * WRITE_ONCE_TO_EEPROM, from_EEPROM, lastPart);
 
              for (int ii = 0; ii < lastPart; ++ii)
             {
-                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
+//                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
             }
         }
         lfs_file_sync(&lfs, &file);
@@ -731,6 +732,11 @@ if (sdCartOn == 1)
     }
     UART_Printf("\n"); delayUS_ASM(100);
 
+    for (int i = 0; i < numByteFileIndex; ++i)
+    {
+        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+    }
+    UART_Printf("\n"); delayUS_ASM(100);
 
 } //end SD нет
 

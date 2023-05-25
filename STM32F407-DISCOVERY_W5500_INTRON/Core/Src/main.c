@@ -546,7 +546,7 @@ if (sdCartOn == 1)
     f_close(&fil);
     for (int i = 0; i < numIndexFiles;++i)
     {
-        sprintf(nameIndexFile,"index_%d", i);
+        sprintf(nameIndexFile,"index%d", i);
         lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
         if (i != numIndexFiles - 1) //Не последний
         {
@@ -557,6 +557,7 @@ if (sdCartOn == 1)
             lfs_file_write(&lfs, &file, to_EEPROM + i * WRITE_ONCE_TO_EEPROM , lastPart);
         }
         UART_Printf("%s  write to EEPROM\n", nameIndexFile); delayUS_ASM(1000);
+        lfs_file_sync(&lfs, &file);
         lfs_file_close(&lfs, &file);
     }
 
@@ -564,7 +565,7 @@ if (sdCartOn == 1)
     for (int i = 0; i < numIndexFiles; ++i)
     {
         errors = 0;
-        sprintf(nameIndexFile,"index_%d", i);
+        sprintf(nameIndexFile,"index%d", i);
         lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_RDONLY );
         if (i != numIndexFiles - 1) //Не последний
         {
@@ -588,6 +589,7 @@ if (sdCartOn == 1)
                     ++errors;
             }
         }
+        lfs_file_sync(&lfs, &file);
         lfs_file_close(&lfs, &file);
         UART_Printf("\n%s  %d errors\n", nameIndexFile, errors ); delayUS_ASM(1000);
     }
@@ -690,9 +692,10 @@ if (sdCartOn == 1)
     lfs_file_close(&lfs, &file);
     uint32_t numByteFileIndex = atoi(indexLen);
 
+
     char *from_EEPROM;
-    from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM);
-    pindex = malloc(numByteFileIndex);
+    from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM + 1);
+//    pindex = malloc(numByteFileIndex);
 
     UART_Printf("\nsize index.html: %d byte\n", numByteFileIndex); delayUS_ASM(10000);
     uint8_t numIndexFiles = numByteFileIndex/WRITE_ONCE_TO_EEPROM +1;
@@ -702,10 +705,11 @@ if (sdCartOn == 1)
     char nameIndexFile[20];
     for (int i = 0; i < numIndexFiles; ++i)
     {
-        sprintf(nameIndexFile,"index_%d", i);
-        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_RDONLY );
+        sprintf(nameIndexFile,"index%d", i);
+        lfs_file_open(&lfs, &file, (const char *)nameIndexFile, LFS_O_RDONLY );
 
-        UART_Printf("\n%s  read from EEPROM\n", nameIndexFile); delayUS_ASM(1000);
+        uint32_t sz = lfs_file_size(&lfs, &file);
+        UART_Printf("\n%s  read from EEPROM size: %d\n", nameIndexFile, sz); delayUS_ASM(1000);
         if (i != numIndexFiles - 1) //Не последний
         {
             lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM);
@@ -720,6 +724,7 @@ if (sdCartOn == 1)
              for (int ii = 0; ii < lastPart; ++ii)
                 UART_Printf("%c", from_EEPROM [ii]); delayUS_ASM(100);
         }
+        lfs_file_sync(&lfs, &file);
         lfs_file_close(&lfs, &file);
     }
 

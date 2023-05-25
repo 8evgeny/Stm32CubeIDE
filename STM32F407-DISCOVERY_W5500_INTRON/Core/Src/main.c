@@ -274,9 +274,9 @@ FIL fil;
 void testEEPROM()
 {
     uint8_t rd_value[36] = {0};
-    uint8_t wr_value[36] = {'a','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
+    uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
                             'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
-    uint8_t erase_value[36] = {'H','e','l','l','o'};
+    uint8_t erase_value[36] = {'H','e','f','l','o'};
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
     uint16_t num = 36;
@@ -354,12 +354,12 @@ int main(void)
 //    delayUS_ASM(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
-//  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
-//  testEEPROM();
+  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
+  testEEPROM();
   UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
   littleFsInit();
-  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-  FsForEeprom_test();
+//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+//  FsForEeprom_test();
 
 
 #ifdef INTRON

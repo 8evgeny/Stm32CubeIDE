@@ -520,11 +520,18 @@ if (sdCartOn == 1)
         if (c == '<') jj = 1;
     }
     UART_Printf("\nsize index.html: %d byte\n", numByteFileIndex); delayUS_ASM(10000);
-    f_lseek(&fil, 0);
-
     uint8_t numIndeFiles = numByteFileIndex/1024 +1;
     uint32_t lastPart = numByteFileIndex - (numIndeFiles - 1) * 1024;
     UART_Printf("last part: %d bytes\n", lastPart); delayUS_ASM(10000);
+    f_lseek(&fil, 0);
+
+    //Число байт пишем на EEPROM
+    char indexLen[8];
+    sprintf(indexLen,"%d", numByteFileIndex);
+    lfs_file_open(&lfs, &file, "indexLen", LFS_O_WRONLY | LFS_O_CREAT );
+    lfs_file_write(&lfs, &file, &indexLen, sizeof(indexLen));
+    lfs_file_close(&lfs, &file);
+
 //Переносим на EEPROM index.html в виде нескольких файлов
     UART_Printf("copy to eeprom %d files\n", numIndeFiles); delayUS_ASM(10000);
 
@@ -569,7 +576,6 @@ if (sdCartOn == 1)
                 if ((to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii] != from_EEPROM[ii])
                     ++errors;
             }
-
         }
         else
         {
@@ -582,13 +588,11 @@ if (sdCartOn == 1)
                     ++errors;
             }
         }
-
         lfs_file_close(&lfs, &file);
         UART_Printf("\n%s  %d errors\n", nameIndexFile, errors ); delayUS_ASM(1000);
     }
     free (to_EEPROM);
     free (from_EEPROM);
-
 
 } else //SD карты нет
 {

@@ -528,70 +528,84 @@ if (sdCartOn == 1)
 //Переносим на EEPROM index.html в виде нескольких файлов
     UART_Printf("copy to eeprom %d files\n", numIndeFiles); delayUS_ASM(10000);
 
-//    char *to_EEPROM;
-//    char *from_EEPROM;
-//    to_EEPROM = malloc(1024);
-//    from_EEPROM = malloc(1024);
-//    UINT rc2;
-//    char nameIndexFile[20];
-//    for (int i = 0; i < numIndeFiles;++i)
-//    {
-//        f_lseek(&fil, i * 1024);
-//        f_read(&fil, to_EEPROM, 1024, &rc2);
-//        sprintf(nameIndexFile,"index___%d",i);
-//        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
-//        lfs_file_write(&lfs, &file, to_EEPROM , 1024);
-
-//    }
-
-
-
     char *to_EEPROM;
     char *from_EEPROM;
-    to_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
-    from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
-    UINT rc1;
-    f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index, &rc1);
-    lfs_file_open(&lfs, &file, "index__", LFS_O_WRONLY | LFS_O_CREAT );
-    lfs_file_truncate(&lfs, &file, 0); // Стираю файл
-    for (int i = 0; i < num_block_index; ++i)
+    to_EEPROM = malloc(1024);
+    from_EEPROM = malloc(1024);
+    UINT rc2;
+    char nameIndexFile[20];
+    for (int i = 0; i < numIndeFiles;++i)
     {
-        UART_Printf("%d write to EEPROM\n", i + 1); delayUS_ASM(1000);
-        lfs_file_seek(&lfs, &file, i * WRITE_ONCE_TO_EEPROM * num_block_index, LFS_SEEK_CUR);
-        lfs_file_write(&lfs, &file, to_EEPROM + i * WRITE_ONCE_TO_EEPROM, WRITE_ONCE_TO_EEPROM);
-        lfs_file_sync(&lfs, &file);
-    }
-    lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "index__", LFS_O_RDONLY );
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index);
-    uint8_t j = 0;
-    unsigned int i;
-    unsigned int error = 0;
-    for (i = 0; i < WRITE_ONCE_TO_EEPROM * num_block_index; ++i)
-    {
-        if (to_EEPROM[i] != from_EEPROM[i])
+        f_lseek(&fil, i * 1024);
+        sprintf(nameIndexFile,"index___%d",i);
+        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
+        if (i != numIndeFiles - 1) //Не последний
         {
-//            UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
-            ++error;
+            f_read(&fil, to_EEPROM, 1024, &rc2);
+            lfs_file_write(&lfs, &file, to_EEPROM , 1024);
         }
-        //выводим index.html
-//        UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
-
-        //определяю завершающий тег и делаю truncate
-        if (j == 6 && from_EEPROM[i] == '>') break;
-        if (j == 5 && from_EEPROM[i] == 'l') j = 6;
-        if (j == 4 && from_EEPROM[i] == 'm') j = 5;
-        if (j == 3 && from_EEPROM[i] == 't') j = 4;
-        if (j == 2 && from_EEPROM[i] == 'h') j = 3;
-        if (j == 1 && from_EEPROM[i] == '/') j = 2;
-        if (j == 1 && from_EEPROM[i] != '/') j = 0;
-        if (from_EEPROM[i] == '<') j = 1;
+        else
+        {
+            //Очистка памяти сначала
+            //
+            //
+            //
+            f_read(&fil, to_EEPROM, lastPart, &rc2);
+            lfs_file_write(&lfs, &file, to_EEPROM , lastPart);
+        }
+        UART_Printf("%s write to EEPROM\n", nameIndexFile); delayUS_ASM(1000);
+        lfs_file_close(&lfs, &file);
     }
-    UART_Printf("\ncopy index.html to EEPROM: %d errors\n", error); delayUS_ASM(10000);
-    lfs_file_close(&lfs, &file);
     free (to_EEPROM);
     free (from_EEPROM);
+
+
+//    char *to_EEPROM;
+//    char *from_EEPROM;
+//    to_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
+//    from_EEPROM = malloc(WRITE_ONCE_TO_EEPROM * num_block_index);
+//    UINT rc1;
+//    f_read(&fil, to_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index, &rc1);
+//    lfs_file_open(&lfs, &file, "index__", LFS_O_WRONLY | LFS_O_CREAT );
+//    lfs_file_truncate(&lfs, &file, 0); // Стираю файл
+//    for (int i = 0; i < num_block_index; ++i)
+//    {
+//        UART_Printf("%d write to EEPROM\n", i + 1); delayUS_ASM(1000);
+//        lfs_file_seek(&lfs, &file, i * WRITE_ONCE_TO_EEPROM * num_block_index, LFS_SEEK_CUR);
+//        lfs_file_write(&lfs, &file, to_EEPROM + i * WRITE_ONCE_TO_EEPROM, WRITE_ONCE_TO_EEPROM);
+//        lfs_file_sync(&lfs, &file);
+//    }
+//    lfs_file_close(&lfs, &file);
+//    lfs_file_open(&lfs, &file, "index__", LFS_O_RDONLY );
+//    lfs_file_rewind(&lfs, &file);
+//    lfs_file_read(&lfs, &file, from_EEPROM, WRITE_ONCE_TO_EEPROM * num_block_index);
+//    uint8_t j = 0;
+//    unsigned int i;
+//    unsigned int error = 0;
+//    for (i = 0; i < WRITE_ONCE_TO_EEPROM * num_block_index; ++i)
+//    {
+//        if (to_EEPROM[i] != from_EEPROM[i])
+//        {
+////            UART_Printf("ERROR_EEPROM\r\n"); delayUS_ASM(1000);
+//            ++error;
+//        }
+//        //выводим index.html
+////        UART_Printf("%c", from_EEPROM[i]); delayUS_ASM(100);
+
+//        //определяю завершающий тег и делаю truncate
+//        if (j == 6 && from_EEPROM[i] == '>') break;
+//        if (j == 5 && from_EEPROM[i] == 'l') j = 6;
+//        if (j == 4 && from_EEPROM[i] == 'm') j = 5;
+//        if (j == 3 && from_EEPROM[i] == 't') j = 4;
+//        if (j == 2 && from_EEPROM[i] == 'h') j = 3;
+//        if (j == 1 && from_EEPROM[i] == '/') j = 2;
+//        if (j == 1 && from_EEPROM[i] != '/') j = 0;
+//        if (from_EEPROM[i] == '<') j = 1;
+//    }
+//    UART_Printf("\ncopy index.html to EEPROM: %d errors\n", error); delayUS_ASM(10000);
+//    lfs_file_close(&lfs, &file);
+//    free (to_EEPROM);
+//    free (from_EEPROM);
 
 
 

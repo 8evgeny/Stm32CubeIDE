@@ -84,8 +84,8 @@ void littleFsInit()
 //Работает
     cfg.read_size = 64;
     cfg.prog_size = 64;
-    cfg.block_size = 512; //Size of an erasable block
-    cfg.block_count = 64; // Number of erasable blocks on the device
+    cfg.block_size = 64; //Size of an erasable block
+    cfg.block_count = 512; // Number of erasable blocks on the device
     cfg.lookahead = 64;
 
     cfg.read_buffer = lfs_read_buf;
@@ -109,11 +109,11 @@ void FsForEeprom_test()
     char fileToEEPROM_2[] = "1234567890asdfghjklzxcv";
     char fileFromEEPROM_2[sizeof (fileToEEPROM_2)];
 
-    lfs_file_open(&lfs, &file, "testEEPROM8", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM__", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &fileToEEPROM, sizeof(fileToEEPROM));
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "testEEPROM8", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "testEEPROM__", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &fileFromEEPROM, sizeof(fileFromEEPROM));
     lfs_file_close(&lfs, &file);
 

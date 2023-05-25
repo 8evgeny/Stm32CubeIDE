@@ -354,12 +354,12 @@ int main(void)
 //    delayUS_ASM(1000);
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
-  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
-  testEEPROM();
+//  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
+//  testEEPROM();
   UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
   littleFsInit();
-//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-//  FsForEeprom_test();
+  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+  FsForEeprom_test();
 
 
 #ifdef INTRON

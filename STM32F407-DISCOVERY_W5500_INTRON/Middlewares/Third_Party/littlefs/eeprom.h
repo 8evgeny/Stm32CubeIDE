@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "lfs.h"
 #include "main.h"
+#include "stm32f4xx_hal_def.h"
 #define EEPROM_I2C_ADDRESS          0xA0
 #define EEPROM_OK                   0
 #define EEPROM_FAIL                 1

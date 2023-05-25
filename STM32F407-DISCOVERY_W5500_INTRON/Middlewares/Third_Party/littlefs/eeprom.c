@@ -361,3 +361,9 @@ uint32_t BSP_EEPROM_WriteBuffer(uint8_t *pBuffer, uint16_t WriteAddr, uint16_t N
     /* If all operations OK, return EEPROM_OK (0) */
     return EEPROM_OK;
 }
+
+HAL_StatusTypeDef EEPROM_IO_IsDeviceReady(uint16_t DevAddress, uint32_t Trials)
+{
+    HAL_StatusTypeDef status = HAL_I2C_IsDeviceReady(&hi2c1, DevAddress, Trials, 300);
+    return status;
+}

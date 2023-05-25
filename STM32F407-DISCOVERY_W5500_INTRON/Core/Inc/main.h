@@ -27,14 +27,6 @@ asm volatile ("MOV R0,%[loops]\n                       \
               );                                       \
 } while(0)
 
-typedef enum
-{
-  HAL_OK       = 0x00,
-  HAL_ERROR    = 0x01,
-  HAL_BUSY     = 0x02,
-  HAL_TIMEOUT  = 0x03
-} HAL_StatusTypeDef;
-
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/

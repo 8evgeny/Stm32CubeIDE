@@ -706,6 +706,7 @@ if (sdCartOn == 1)
     for (int i = 0; i < numIndexFiles; ++i)
     {
         sprintf(nameIndexFile,"index%d", i);
+        UART_Printf("%s read from eeprom\n", nameIndexFile); delayUS_ASM(5000);
         lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_RDONLY );
         if (i != numIndexFiles - 1) //Не последний
         {
@@ -731,7 +732,7 @@ if (sdCartOn == 1)
         lfs_file_close(&lfs, &file);
     }
     UART_Printf("\n"); delayUS_ASM(100);
-
+    UART_Printf("print index.html\n"); delayUS_ASM(5000);
     for (int i = 0; i < numByteFileIndex; ++i)
     {
         UART_Printf("%c", pindex[i]); delayUS_ASM(100);

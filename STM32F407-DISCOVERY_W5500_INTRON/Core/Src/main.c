@@ -530,19 +530,20 @@ if (sdCartOn == 1)
 
     char *to_EEPROM;
     char *from_EEPROM;
-    to_EEPROM = malloc(1024);
+    to_EEPROM = malloc(numByteFileIndex);
     from_EEPROM = malloc(1024);
     UINT rc2;
     char nameIndexFile[20];
+    uint8_t errors = 0;
+    f_read(&fil, to_EEPROM, numByteFileIndex, &rc2);
+    f_close(&fil);
     for (int i = 0; i < numIndeFiles;++i)
     {
-        f_lseek(&fil, i * 1024);
         sprintf(nameIndexFile,"index___%d",i);
         lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
         if (i != numIndeFiles - 1) //Не последний
         {
-            f_read(&fil, to_EEPROM, 1024, &rc2);
-            lfs_file_write(&lfs, &file, to_EEPROM , 1024);
+            lfs_file_write(&lfs, &file, to_EEPROM + i*1024 , 1024);
         }
         else
         {
@@ -550,11 +551,48 @@ if (sdCartOn == 1)
             //
             //
             //
-            f_read(&fil, to_EEPROM, lastPart, &rc2);
-            lfs_file_write(&lfs, &file, to_EEPROM , lastPart);
+            lfs_file_write(&lfs, &file, to_EEPROM + i*1024 , lastPart);
         }
-        UART_Printf("%s write to EEPROM\n", nameIndexFile); delayUS_ASM(1000);
+        UART_Printf("%s  write to EEPROM\n", nameIndexFile); delayUS_ASM(1000);
         lfs_file_close(&lfs, &file);
+    }
+
+    UART_Printf("verify\n"); delayUS_ASM(1000);
+    for (int i = 0; i < numIndeFiles;++i)
+    {
+        errors = 0;
+        sprintf(nameIndexFile,"index___%d",i);
+        lfs_file_open(&lfs, &file, nameIndexFile, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
+        if (i != numIndeFiles - 1) //Не последний
+        {
+            lfs_file_read(&lfs, &file, from_EEPROM , 1024);
+
+            for (int ii = 0; ii < 1024; ++ii)
+            {
+                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
+                if ((to_EEPROM + i*1024)[ii] != from_EEPROM[ii])
+                    ++errors;
+            }
+
+        }
+        else
+        {
+            //Очистка памяти сначала
+            //
+            //
+            //
+            lfs_file_read(&lfs, &file, from_EEPROM , lastPart);
+
+             for (int ii = 0; ii < lastPart; ++ii)
+            {
+                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
+                if ((to_EEPROM + i*1024)[ii] != from_EEPROM[ii])
+                    ++errors;
+            }
+        }
+
+        lfs_file_close(&lfs, &file);
+        UART_Printf("\n%s  %d errors\n", nameIndexFile, errors ); delayUS_ASM(1000);
     }
     free (to_EEPROM);
     free (from_EEPROM);

@@ -481,7 +481,6 @@ if (sdCartOn == 1)
     UART_Printf(md5); delayUS_ASM(10000);
     UART_Printf("\r\n"); delayUS_ASM(10000);
 
-    UART_Printf("copy index.html\n"); delayUS_ASM(5000);
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
     uint32_t numByteFileIndex = fil.obj.objsize;
     UINT rc_;
@@ -489,25 +488,37 @@ if (sdCartOn == 1)
     f_read(&fil, pindex, numByteFileIndex, &rc_);
     f_close(&fil);
 
-//    UART_Printf("print index.html\n"); delayUS_ASM(5000);
-//    for (int i = 0; i < numByteFileIndex; ++i)
-//    {
-//        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
-//    }
-//    UART_Printf("\n"); delayUS_ASM(100);
+    UART_Printf("print index.html\n"); delayUS_ASM(5000);
+    for (int i = 0; i < numByteFileIndex; ++i)
+    {
+        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+    }
+    UART_Printf("\n"); delayUS_ASM(100);
 
+    UART_Printf("copy index.html\n"); delayUS_ASM(5000);
     lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_write(&lfs, &file, &pindex, numByteFileIndex);
     lfs_file_close(&lfs, &file);
-    free(pindex);
 
-    UART_Printf("copy main.html\n"); delayUS_ASM(5000);
-    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
-    uint32_t numByteFileMain = fil.obj.objsize;
-    pmain = malloc(numByteFileMain);
-    UINT rc__;
-    f_read(&fil, pmain, numByteFileMain, &rc__);
-    f_close(&fil);
+    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
+    lfs_file_read(&lfs, &file, &pindex, numByteFileIndex);
+    lfs_file_close(&lfs, &file);
+
+    UART_Printf("print index.html\n"); delayUS_ASM(5000);
+    for (int i = 0; i < numByteFileIndex; ++i)
+    {
+        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+    }
+    UART_Printf("\n"); delayUS_ASM(100);
+    free (pindex);
+
+//    UART_Printf("copy main.html\n"); delayUS_ASM(5000);
+//    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
+//    uint32_t numByteFileMain = fil.obj.objsize;
+//    pmain = malloc(numByteFileMain);
+//    UINT rc__;
+//    f_read(&fil, pmain, numByteFileMain, &rc__);
+//    f_close(&fil);
 
 //    UART_Printf("print main.html\n"); delayUS_ASM(5000);
 //    for (int i = 0; i < numByteFileMain; ++i)
@@ -516,9 +527,9 @@ if (sdCartOn == 1)
 //    }
 //    UART_Printf("\n"); delayUS_ASM(100);
 
-    lfs_file_open(&lfs, &file, "main.html", LFS_O_WRONLY | LFS_O_CREAT );
-    lfs_file_write(&lfs, &file, &pmain, numByteFileMain);
-    lfs_file_close(&lfs, &file);
+//    lfs_file_open(&lfs, &file, "main.html", LFS_O_WRONLY | LFS_O_CREAT );
+//    lfs_file_write(&lfs, &file, &pmain, numByteFileMain);
+//    lfs_file_close(&lfs, &file);
 
 } else //SD карты нет
 {
@@ -591,15 +602,30 @@ if (sdCartOn == 1)
 
     lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
     uint32_t numByteFileIndex = lfs_file_size(&lfs, &file);
+    pindex = malloc(numByteFileIndex);
     lfs_file_read(&lfs, &file, &pindex, numByteFileIndex);
     lfs_file_close(&lfs, &file);
+
     UART_Printf("print index.html from eeprom\n"); delayUS_ASM(5000);
     for (int i = 0; i < numByteFileIndex; ++i)
     {
         UART_Printf("%c", pindex[i]); delayUS_ASM(100);
     }
     UART_Printf("\n"); delayUS_ASM(100);
+    free (pindex);
 
+//    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDONLY );
+//    uint32_t numByteFileMain = lfs_file_size(&lfs, &file);
+//    pmain = malloc(numByteFileMain);
+//    lfs_file_read(&lfs, &file, &pmain, numByteFileMain);
+//    lfs_file_close(&lfs, &file);
+//    UART_Printf("print main.html from eeprom\n"); delayUS_ASM(5000);
+//    for (int i = 0; i < numByteFileMain; ++i)
+//    {
+//        UART_Printf("%c", pmain[i]); delayUS_ASM(100);
+//    }
+//    UART_Printf("\n"); delayUS_ASM(100);
+//    free (pmain);
 
 } //end SD нет
 

@@ -340,95 +340,14 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     free (pindex);
 }
 
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
+void copyParametersToEEPROM()
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_USART6_UART_Init();
-  MX_SPI3_Init();
-  MX_TIM1_Init();
-  MX_SPI1_Init();
-  MX_SPI2_Init();
-  MX_FATFS_Init();
-  MX_RNG_Init();
-  MX_RTC_Init();
-  MX_I2C1_Init();
-  /* USER CODE BEGIN 2 */
-    //Сброс W5500 - уже в net_ini
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
-//    delayUS_ASM(1000);
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-
-//  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
-//  testEEPROM();
-  UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
-  littleFsInit();
-//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-//  FsForEeprom_test();
-
-
-#ifdef INTRON
-//uint8_t  destip[4] = {192,168,1,198};
-uint16_t  destport = 8888;
-uint16_t localport = 8888;
-#endif
-
-#ifndef INTRON
-//uint8_t  destip[4] = {192,168,1,197};
-uint16_t  destport = 8888;
-uint16_t localport = 8888;
-#endif
-
     char tmp[100];
     char tmp1[5];
     char tmp2[5];
     char tmp3[5];
     char tmp4[5];
-    char tmp5[12];
-    char tmp6[3];
-    char tmp7[100];
-    f_mount(&fs, "", 0);
-    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
-    if (result == 0)
-    {
-        sdCartOn = 1;
-        UART_Printf("SD_READ\n");
-        delayUS_ASM(10000);
-    }
-
-    if (result != 0)
-        UART_Printf("SD_NOT_OPEN\n");
-        delayUS_ASM(10000);
-if (sdCartOn == 1)
-{
-    f_lseek(&fil, 0);//размер - f_size(&fil)
+    f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp1, 5, &fil);
     ipaddr[0] = atoi(tmp1);
     f_gets(tmp2, 5, &fil);
@@ -500,24 +419,25 @@ if (sdCartOn == 1)
     lfs_file_close(&lfs, &file);
 
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
     f_gets(tmp, 100, &fil);
     strncpy(md5, tmp, 32);
     f_close(&fil);
     lfs_file_open(&lfs, &file, "md5", LFS_O_WRONLY | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
     f_close(&fil);
     UART_Printf(md5); delayUS_ASM(10000);
     UART_Printf("\r\n"); delayUS_ASM(10000);
 
-    copyFileToEEPROM("index.html");
+    sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+}
 
-
-} else //SD карты нет
+void loadParaametersFromEEPROM()
 {
-
+    char tmp[100];
+    char tmp5[12];
+    char tmp6[3];
     UART_Printf("Load data from EEPROM\r\n"); delayUS_ASM(10000);
     lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
@@ -568,8 +488,7 @@ if (sdCartOn == 1)
     ipmask[3] = atoi(tmp6);
 
     lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_ssize_t lenMD5 =lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
-    UART_Printf("read md5 from EEPROM: %d byte\r\n", lenMD5); delayUS_ASM(10000);
+    lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
     lfs_file_close(&lfs, &file);
     strcpy(md5, tmp);
 
@@ -584,37 +503,115 @@ if (sdCartOn == 1)
     sprintf(tmp,"md5: %s", md5);
     UART_Printf(tmp); delayUS_ASM(10000);
 
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
-    uint32_t numByteFileIndex = lfs_file_size(&lfs, &file);
-    pindex = malloc(numByteFileIndex);
-    lfs_file_read(&lfs, &file, &pindex, numByteFileIndex);
-    lfs_file_close(&lfs, &file);
-
-    UART_Printf("print index.html from eeprom\n"); delayUS_ASM(5000);
-    for (int i = 0; i < numByteFileIndex; ++i)
-    {
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
-    }
-    UART_Printf("\n"); delayUS_ASM(100);
-    free (pindex);
-
-//    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDONLY );
-//    uint32_t numByteFileMain = lfs_file_size(&lfs, &file);
-//    pmain = malloc(numByteFileMain);
-//    lfs_file_read(&lfs, &file, &pmain, numByteFileMain);
-//    lfs_file_close(&lfs, &file);
-//    UART_Printf("print main.html from eeprom\n"); delayUS_ASM(5000);
-//    for (int i = 0; i < numByteFileMain; ++i)
-//    {
-//        UART_Printf("%c", pmain[i]); delayUS_ASM(100);
-//    }
-//    UART_Printf("\n"); delayUS_ASM(100);
-//    free (pmain);
-
-} //end SD нет
-
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
     UART_Printf(tmp); delayUS_ASM(10000);
+}
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_USART6_UART_Init();
+  MX_SPI3_Init();
+  MX_TIM1_Init();
+  MX_SPI1_Init();
+  MX_SPI2_Init();
+  MX_FATFS_Init();
+  MX_RNG_Init();
+  MX_RTC_Init();
+  MX_I2C1_Init();
+  /* USER CODE BEGIN 2 */
+    //Сброс W5500 - уже в net_ini
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+//    delayUS_ASM(1000);
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+
+//  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
+//  testEEPROM();
+  UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
+  littleFsInit();
+//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+//  FsForEeprom_test();
+
+
+#ifdef INTRON
+//uint8_t  destip[4] = {192,168,1,198};
+uint16_t  destport = 8888;
+uint16_t localport = 8888;
+#endif
+
+#ifndef INTRON
+//uint8_t  destip[4] = {192,168,1,197};
+uint16_t  destport = 8888;
+uint16_t localport = 8888;
+#endif
+
+    f_mount(&fs, "", 0);
+    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    if (result == 0)
+    {
+        sdCartOn = 1;
+        UART_Printf("SD_READ\n");
+        delayUS_ASM(10000);
+    }
+
+    if (result != 0)
+        UART_Printf("SD_NOT_OPEN\n");
+        delayUS_ASM(10000);
+    f_close(&fil);
+
+    if (sdCartOn == 1)
+    {
+        copyParametersToEEPROM();
+        copyFileToEEPROM("index.html");
+
+    } else //SD карты нет
+    {
+        loadParaametersFromEEPROM();
+
+        lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
+        uint32_t numByteFileIndex = lfs_file_size(&lfs, &file);
+        pindex = malloc(numByteFileIndex);
+        lfs_file_read(&lfs, &file, &pindex, numByteFileIndex);
+        lfs_file_close(&lfs, &file);
+
+        UART_Printf("print index.html from eeprom\n"); delayUS_ASM(5000);
+        for (int i = 0; i < numByteFileIndex; ++i)
+        {
+            UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+        }
+        UART_Printf("\n"); delayUS_ASM(100);
+        free (pindex);
+
+    } //end SD нет
+
+
     net_ini();
     delayUS_ASM(10000);
 

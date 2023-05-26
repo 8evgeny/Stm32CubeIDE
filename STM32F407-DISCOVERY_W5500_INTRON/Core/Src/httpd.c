@@ -105,7 +105,7 @@ void tcp_send_http_one(void)
             }
             else
             {
-                lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_CUR);
+                lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_SET);
                 bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
             }
 			w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
@@ -185,7 +185,7 @@ void tcp_send_http_first(void)
         }
         else
         {
-            lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_CUR);
+            lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_SET);
             bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
@@ -251,7 +251,7 @@ void tcp_send_http_middle(void)
         }
         else
         {
-            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + count_bytes, LFS_SEEK_CUR);
+            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + count_bytes, LFS_SEEK_SET);
             bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
         }
 //HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
@@ -311,7 +311,7 @@ void tcp_send_http_last(void)
         }
         else //EEPROM
         {
-            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes, LFS_SEEK_CUR);
+            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes, LFS_SEEK_SET);
             bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);

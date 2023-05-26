@@ -105,8 +105,8 @@ void tcp_send_http_one(void)
             }
             else
             {
-
-
+                lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_CUR);
+                bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
             }
 			w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 			end_point+=len_sect;
@@ -185,7 +185,8 @@ void tcp_send_http_first(void)
         }
         else
         {
-
+            lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_CUR);
+            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -250,7 +251,8 @@ void tcp_send_http_middle(void)
         }
         else
         {
-
+            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + count_bytes, LFS_SEEK_CUR);
+            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
         }
 //HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
 //HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n** block **\r\n", 15, 0x1000);
@@ -305,11 +307,12 @@ void tcp_send_http_last(void)
         if (sdCartOn == 1)
         {
             result=f_lseek(&MyFile, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes); //Установим курсор чтения в файле
-            result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+            result=f_read(&MyFile,sect+3, len_sect, (UINT *)&bytesread);
         }
         else //EEPROM
         {
-
+            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes, LFS_SEEK_CUR);
+            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -433,6 +436,8 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
+// !!!!!!!!!!!!!
+
 
                 }
             }
@@ -501,6 +506,8 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
+// !!!!!!!!!!!!!
+
 
                 }
             }
@@ -570,6 +577,8 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
+// !!!!!!!!!!!!!
+
 
                 }
             }
@@ -639,6 +648,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
+// !!!!!!!!!!!!!
+
+
 
                 }
             }
@@ -673,7 +685,7 @@ void http_request(void)
             else //EEPROM
             {
 
-
+// !!!!!!!!!!!!!
 
 
             }
@@ -711,13 +723,8 @@ void http_request(void)
             {
                 UART_Printf("password not OK\r\n"); delayUS_ASM(10000);
             }
-
         }
 	}
-
-
-//    HAL_UART_Transmit(&huart6,(uint8_t*)httpsockprop[tcpprop.cur_sock].fname,strlen(httpsockprop[tcpprop.cur_sock].fname),0x1000);
-//    HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
 
     if (sdCartOn == 1)
     {

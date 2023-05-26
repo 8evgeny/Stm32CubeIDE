@@ -96,10 +96,15 @@ void tcp_send_http_one(void)
 			//не последний сектор
 			if(i<(num_sect-1)) len_sect=512;
 			else len_sect=data_len;
-			result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
-			sprintf(str1,"f_lseek: %d\r\n",result);
-//            HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-			result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+            if (sdCartOn == 1)
+            {
+                result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
+                result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+            }
+            else
+            {
+
+            }
 			w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 			end_point+=len_sect;
 			data_len -= len_sect;
@@ -170,10 +175,15 @@ void tcp_send_http_first(void)
 		//не последний сектор
 		if(i<(num_sect-1)) len_sect=512;
 		else len_sect=data_len;
-		result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
-		sprintf(str1,"f_lseek: %d\r\n",result);
-//        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+        if (sdCartOn == 1)
+        {
+            result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
+            result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+        }
+        else
+        {
+
+        }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
 		data_len -= len_sect;
@@ -230,8 +240,15 @@ void tcp_send_http_middle(void)
 		//не последний сектор
 		if(i<(num_sect-1)) len_sect=512;
 		else len_sect=data_len;
-		result=f_lseek(&MyFile,(DWORD)(i*512) + count_bytes); //Установим курсор чтения в файле
-		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+        if (sdCartOn == 1)
+        {
+            result=f_lseek(&MyFile,(DWORD)(i*512) + count_bytes); //Установим курсор чтения в файле
+            result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+        }
+        else
+        {
+
+        }
 //HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
 //HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n** block **\r\n", 15, 0x1000);
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
@@ -284,10 +301,8 @@ void tcp_send_http_last(void)
 		else len_sect=data_len;
         if (sdCartOn == 1)
         {
-        result=f_lseek(&MyFile, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes); //Установим курсор чтения в файле
-		sprintf(str1,"f_lseek: %d\r\n",result);
-//        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+            result=f_lseek(&MyFile, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes); //Установим курсор чтения в файле
+            result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
         }
         else //EEPROM
         {
@@ -654,6 +669,9 @@ void http_request(void)
             }
             else //EEPROM
             {
+
+
+
 
             }
         }

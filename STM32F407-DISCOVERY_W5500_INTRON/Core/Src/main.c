@@ -324,7 +324,7 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     memset(pindex, 0x00, numByteFile);
     free (pindex);
 
-    printFileFromEEPROM(nameFile_onSD);
+//    printFileFromEEPROM(nameFile_onSD);
 }
 
 void printFileFromEEPROM(const char* nameFile_onEEPROM)
@@ -596,13 +596,13 @@ uint16_t localport = 8888;
         copyFileToEEPROM("index.html");
         copyFileToEEPROM("main.html");
 
-    } else //SD карты нет
+    } else
     {
         loadParaametersFromEEPROM();
-        printFileFromEEPROM("index.html");
-        printFileFromEEPROM("main.html");
+//        printFileFromEEPROM("index.html");
+//        printFileFromEEPROM("main.html");
 
-    } //end SD нет
+    }
 
 
     net_ini();

@@ -382,7 +382,7 @@ uint16_t localport = 8888;
     char tmp4[5];
     char tmp5[12];
     char tmp6[3];
-    char tmp7[200];
+    char tmp7[100];
     f_mount(&fs, "", 0);
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
@@ -409,10 +409,8 @@ if (sdCartOn == 1)
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
-//Пишем на EEPROM
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
+    lfs_file_open(&lfs, &file, "host_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
 
@@ -429,10 +427,8 @@ if (sdCartOn == 1)
     sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
-    //Пишем на EEPROM
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
+    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
 
@@ -449,10 +445,8 @@ if (sdCartOn == 1)
     sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
-    //Пишем на EEPROM
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
+    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
 
@@ -469,10 +463,8 @@ if (sdCartOn == 1)
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
-    //Пишем на EEPROM
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
+    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
 
@@ -481,8 +473,7 @@ if (sdCartOn == 1)
     f_gets(tmp, 100, &fil);
     strncpy(md5, tmp, 32);
     f_close(&fil);
-    //Пишем на EEPROM
-    lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_open(&lfs, &file, "md5", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_rewind(&lfs, &file);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -490,61 +481,23 @@ if (sdCartOn == 1)
     UART_Printf(md5); delayUS_ASM(10000);
     UART_Printf("\r\n"); delayUS_ASM(10000);
 
-//Посимвольно читаем файл с SD
     f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
-    TCHAR c;
-    BYTE s[2];
-    UINT rc;
-    uint8_t jj = 0;
-    uint32_t numByteFileIndex = 0;
-    while (f_read(&fil, s, 1, &rc) == FR_OK)
-    {
-        c = s[0];
-        if (c != '\n' || (c == '\n' && num == 0))
-        {
-//            UART_Printf("%c", c); delayUS_ASM(100);
-        }
-       ++numByteFileIndex;
-        //определяю завершающий тег
-        if (jj == 6 && c == '>') break;
-        if (jj == 5 && c == 'l') jj = 6;
-        if (jj == 4 && c == 'm') jj = 5;
-        if (jj == 3 && c == 't') jj = 4;
-        if (jj == 2 && c == 'h') jj = 3;
-        if (jj == 1 && c == '/') jj = 2;
-        if (jj == 1 && c != '/') jj = 0;
-        if (c == '<') jj = 1;
-    }
-    UART_Printf("\nsize index.html: %d byte\n", numByteFileIndex); delayUS_ASM(10000);
-    uint8_t numIndexFiles = numByteFileIndex/WRITE_ONCE_TO_EEPROM +1;
-    uint32_t lastPart = numByteFileIndex - (numIndexFiles - 1) * WRITE_ONCE_TO_EEPROM;
-    UART_Printf("last part: %d bytes\n", lastPart); delayUS_ASM(10000);
-    f_lseek(&fil, 0);
-
-//Пробую один файл
+    uint32_t numByteFileIndex = fil.obj.objsize;
     UINT rc_;
     pindex = malloc(numByteFileIndex);
+//    UART_Printf("size index.html %d\n",numByteFileIndex); delayUS_ASM(5000);
     f_read(&fil, pindex, numByteFileIndex, &rc_);
+    f_close(&fil);
 //    UART_Printf("print index.html\n"); delayUS_ASM(5000);
 //    for (int i = 0; i < numByteFileIndex; ++i)
 //    {
 //        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
 //    }
 //    UART_Printf("\n"); delayUS_ASM(100);
+
     lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_write(&lfs, &file, &pindex, numByteFileIndex);
     lfs_file_close(&lfs, &file);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
-    lfs_file_read(&lfs, &file, &pindex, numByteFileIndex);
-    lfs_file_close(&lfs, &file);
-    UART_Printf("print index.html from eeprom\n"); delayUS_ASM(5000);
-    for (int i = 0; i < numByteFileIndex; ++i)
-    {
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
-    }
-    UART_Printf("\n"); delayUS_ASM(100);
-
-
 
 } else //SD карты нет
 {
@@ -553,7 +506,6 @@ if (sdCartOn == 1)
     lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
-
     strncpy(tmp6,tmp5,3);
     ipaddr[0] = atoi(tmp6);
     strncpy(tmp6,tmp5+3,3);
@@ -566,7 +518,6 @@ if (sdCartOn == 1)
     lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
-
     strncpy(tmp6,tmp5,3);
     destip[0] = atoi(tmp6);
     strncpy(tmp6,tmp5+3,3);
@@ -579,7 +530,6 @@ if (sdCartOn == 1)
     lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
-
     strncpy(tmp6,tmp5,3);
     ipgate[0] = atoi(tmp6);
     strncpy(tmp6,tmp5+3,3);
@@ -592,7 +542,6 @@ if (sdCartOn == 1)
     lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
-
     strncpy(tmp6,tmp5,3);
     ipmask[0] = atoi(tmp6);
     strncpy(tmp6,tmp5+3,3);
@@ -618,7 +567,6 @@ if (sdCartOn == 1)
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"md5: %s", md5);
     UART_Printf(tmp); delayUS_ASM(10000);
-
 
     lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
     uint32_t numByteFileIndex = lfs_file_size(&lfs, &file);

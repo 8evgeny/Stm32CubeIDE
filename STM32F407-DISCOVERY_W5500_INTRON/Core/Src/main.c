@@ -573,7 +573,7 @@ if (sdCartOn == 1)
 
             for (int ii = 0; ii < WRITE_ONCE_TO_EEPROM; ++ii)
             {
-                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
+//                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
                 if ((to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii] != from_EEPROM[ii])
                     ++errors;
             }
@@ -584,7 +584,7 @@ if (sdCartOn == 1)
 
              for (int ii = 0; ii < lastPart; ++ii)
             {
-                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
+//                UART_Printf("%c", from_EEPROM[ii]); delayUS_ASM(100);
                 if ((to_EEPROM + i * WRITE_ONCE_TO_EEPROM)[ii] != from_EEPROM[ii])
                     ++errors;
             }

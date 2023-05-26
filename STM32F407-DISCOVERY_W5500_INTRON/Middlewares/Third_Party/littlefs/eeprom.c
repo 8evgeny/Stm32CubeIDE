@@ -27,7 +27,7 @@ int user_provided_block_device_read(const struct lfs_config *c,
                                     lfs_block_t block, lfs_off_t off,
                                     void *buffer, lfs_size_t size)
 {
-//    UART_Printf("*** device_read ***\n"); delayUS_ASM(10000);
+//    UART_Printf("*** device_read ***\n"); delayUS_ASM(2000);
     uint32_t addr = (uint32_t)(block * c->block_size + off);
     uint16_t NumByteToRead = (uint16_t)size;
     uint8_t *buffer_data = (uint8_t *)buffer;
@@ -40,7 +40,7 @@ int user_provided_block_device_prog(const struct lfs_config *c,
                                     lfs_block_t block, lfs_off_t off,
                                     const void *buffer, lfs_size_t size)
 {
-//    UART_Printf("*** device_prog ***\n"); delayUS_ASM(10000);
+//    UART_Printf("*** device_prog ***\n"); delayUS_ASM(2000);
     uint32_t addr = (uint32_t)(block * c->block_size + off);
     uint8_t *buffer_data = (uint8_t *)buffer;
 //    AT24C_WriteBytes(addr, buffer_data, size);

@@ -271,6 +271,8 @@ FIL fil;
 //  return i;
 //}
 //-------------------------------------------------------
+void printFileFromEEPROM(const char* nameFile_onEEPROM);
+
 void testEEPROM()
 {
     uint8_t rd_value[36] = {0};
@@ -319,36 +321,21 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     lfs_file_open(&lfs, &file, nameFile_onSD, LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_write(&lfs, &file, pindex, numByteFile);
     lfs_file_close(&lfs, &file);
-
     memset(pindex, 0x00, numByteFile);
-
-    lfs_file_open(&lfs, &file, nameFile_onSD, LFS_O_RDONLY );
-    lfs_file_read(&lfs, &file, pindex, numByteFile);
-    lfs_file_close(&lfs, &file);
-
-    UART_Printf("print %s\n", nameFile_onSD); delayUS_ASM(5000);
-    for (int i = 0; i < numByteFile; ++i)
-    {
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
-    }
-    UART_Printf("\n"); delayUS_ASM(100);
     free (pindex);
+
+    printFileFromEEPROM(nameFile_onSD);
 }
 
 void printFileFromEEPROM(const char* nameFile_onEEPROM)
 {
-    UART_Printf("print %s from eeprom\n", nameFile_onEEPROM ); delayUS_ASM(5000);
-    int result = lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
-
+    lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
     uint32_t numByteFile = lfs_file_size(&lfs, &file);
-    UART_Printf("file %s %d byte open: %d\n",nameFile_onEEPROM, numByteFile, result); delayUS_ASM(5000);
-
     pindex = malloc(numByteFile);
-
-    lfs_file_read(&lfs, &file, &pindex, numByteFile);
-
+    lfs_file_read(&lfs, &file, pindex, numByteFile);
     lfs_file_close(&lfs, &file);
 
+    UART_Printf("print %s\n", nameFile_onEEPROM); delayUS_ASM(5000);
     for (int i = 0; i < numByteFile; ++i)
     {
         UART_Printf("%c", pindex[i]); delayUS_ASM(100);

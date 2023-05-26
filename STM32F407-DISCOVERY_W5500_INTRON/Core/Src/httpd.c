@@ -769,7 +769,15 @@ void http_request(void)
             httpsockprop[tcpprop.cur_sock].data_size = strlen(http_header);
         }
         //затем размер самого документа
-        httpsockprop[tcpprop.cur_sock].data_size += f_size(&MyFile);
+       if (sdCartOn == 1)
+       {
+           httpsockprop[tcpprop.cur_sock].data_size += f_size(&MyFile);
+       }
+       else
+       {
+           httpsockprop[tcpprop.cur_sock].data_size += lfs_file_size(&lfs, &file);
+       }
+
     }
     else
     {
@@ -789,7 +797,10 @@ void http_request(void)
     }
     httpsockprop[tcpprop.cur_sock].cnt_data_part = httpsockprop[tcpprop.cur_sock].cnt_rem_data_part;
     sprintf(str1,"data size:%lu; cnt data part:%u; last_data_part_size:%u\r\n",
-    (unsigned long)httpsockprop[tcpprop.cur_sock].data_size, httpsockprop[tcpprop.cur_sock].cnt_rem_data_part, httpsockprop[tcpprop.cur_sock].last_data_part_size);
+            (unsigned long)httpsockprop[tcpprop.cur_sock].data_size,
+            httpsockprop[tcpprop.cur_sock].cnt_rem_data_part,
+            httpsockprop[tcpprop.cur_sock].last_data_part_size);
+
     HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
     if (httpsockprop[tcpprop.cur_sock].cnt_rem_data_part==1)
     {

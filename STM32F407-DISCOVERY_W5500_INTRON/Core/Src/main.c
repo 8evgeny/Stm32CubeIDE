@@ -58,8 +58,7 @@ void receivePackets(uint8_t, uint8_t* , uint16_t );
 #define SLAVE_OWN_ADDRESS                       0xA0
 uint32_t count = 0;
 uint8_t sdCartOn = 0;
-char *pindex;  // указатели на массивы
-char *pmain;
+char *pindex;
 extern lfs_t lfs;
 extern lfs_file_t file;
 uint8_t num_block_index = 1; //лишнее обрежется после конечного тега
@@ -307,7 +306,39 @@ void testEEPROM()
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
 }
 
+void copyFileToEEPROM(const char* nameFile_onSD)
+{
+    f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
+    uint32_t numByteFile = fil.obj.objsize;
+    UINT rc;
+    pindex = malloc(numByteFile);
+    f_read(&fil, pindex, numByteFile, &rc);
+    f_close(&fil);
 
+    UART_Printf("print index.html\n"); delayUS_ASM(5000);
+    for (int i = 0; i < numByteFile; ++i)
+    {
+        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+    }
+    UART_Printf("\n"); delayUS_ASM(100);
+
+    UART_Printf("copy %s\n", nameFile_onSD); delayUS_ASM(5000);
+    lfs_file_open(&lfs, &file, nameFile_onSD, LFS_O_WRONLY | LFS_O_CREAT );
+    lfs_file_write(&lfs, &file, &pindex, numByteFile);
+    lfs_file_close(&lfs, &file);
+
+    lfs_file_open(&lfs, &file, nameFile_onSD, LFS_O_RDONLY );
+    lfs_file_read(&lfs, &file, &pindex, numByteFile);
+    lfs_file_close(&lfs, &file);
+
+    UART_Printf("print %s\n", nameFile_onSD); delayUS_ASM(5000);
+    for (int i = 0; i < numByteFile; ++i)
+    {
+        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+    }
+    UART_Printf("\n"); delayUS_ASM(100);
+    free (pindex);
+}
 
 /* USER CODE END 0 */
 
@@ -481,55 +512,8 @@ if (sdCartOn == 1)
     UART_Printf(md5); delayUS_ASM(10000);
     UART_Printf("\r\n"); delayUS_ASM(10000);
 
-    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
-    uint32_t numByteFileIndex = fil.obj.objsize;
-    UINT rc_;
-    pindex = malloc(numByteFileIndex);
-    f_read(&fil, pindex, numByteFileIndex, &rc_);
-    f_close(&fil);
+    copyFileToEEPROM("index.html");
 
-    UART_Printf("print index.html\n"); delayUS_ASM(5000);
-    for (int i = 0; i < numByteFileIndex; ++i)
-    {
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
-    }
-    UART_Printf("\n"); delayUS_ASM(100);
-
-    UART_Printf("copy index.html\n"); delayUS_ASM(5000);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_WRONLY | LFS_O_CREAT );
-    lfs_file_write(&lfs, &file, &pindex, numByteFileIndex);
-    lfs_file_close(&lfs, &file);
-
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDONLY );
-    lfs_file_read(&lfs, &file, &pindex, numByteFileIndex);
-    lfs_file_close(&lfs, &file);
-
-    UART_Printf("print index.html\n"); delayUS_ASM(5000);
-    for (int i = 0; i < numByteFileIndex; ++i)
-    {
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
-    }
-    UART_Printf("\n"); delayUS_ASM(100);
-    free (pindex);
-
-//    UART_Printf("copy main.html\n"); delayUS_ASM(5000);
-//    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
-//    uint32_t numByteFileMain = fil.obj.objsize;
-//    pmain = malloc(numByteFileMain);
-//    UINT rc__;
-//    f_read(&fil, pmain, numByteFileMain, &rc__);
-//    f_close(&fil);
-
-//    UART_Printf("print main.html\n"); delayUS_ASM(5000);
-//    for (int i = 0; i < numByteFileMain; ++i)
-//    {
-//        UART_Printf("%c", pmain[i]); delayUS_ASM(100);
-//    }
-//    UART_Printf("\n"); delayUS_ASM(100);
-
-//    lfs_file_open(&lfs, &file, "main.html", LFS_O_WRONLY | LFS_O_CREAT );
-//    lfs_file_write(&lfs, &file, &pmain, numByteFileMain);
-//    lfs_file_close(&lfs, &file);
 
 } else //SD карты нет
 {

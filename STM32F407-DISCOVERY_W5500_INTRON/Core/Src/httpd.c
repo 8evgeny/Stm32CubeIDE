@@ -741,6 +741,9 @@ void http_request(void)
         result = lfs_file_open(&lfs, &file, httpsockprop[tcpprop.cur_sock].fname, LFS_O_RDONLY );
         sprintf(str1,"f_open: %d\r\n", result);
         HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+        uint32_t sz = lfs_file_size(&lfs, &file);
+        sprintf(str1,"f_size: %lu\r\n",sz);
+        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
     }
     if (result==FR_OK)
     {

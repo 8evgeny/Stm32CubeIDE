@@ -346,6 +346,67 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM)
 
 void copyParametersToEEPROM()
 {
+    UART_Printf("copy parameters to eeprom\n"); delayUS_ASM(10000);
+    char tmp[100];
+    char tmp1[5];
+    char tmp2[5];
+    char tmp3[5];
+    char tmp4[5];
+    f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 5, &fil);
+    f_gets(tmp2, 5, &fil);
+    f_gets(tmp3, 5, &fil);
+    f_gets(tmp4, 5, &fil);
+    f_close(&fil);
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    lfs_file_open(&lfs, &file, "host_IP", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+
+    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 100, &fil);
+    f_gets(tmp2, 100, &fil);
+    f_gets(tmp3, 100, &fil);
+    f_gets(tmp4, 100, &fil);
+    f_close(&fil);
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+
+    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 100, &fil);
+    f_gets(tmp2, 100, &fil);
+    f_gets(tmp3, 100, &fil);
+    f_gets(tmp4, 100, &fil);
+    f_close(&fil);
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+
+    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 100, &fil);
+    f_gets(tmp2, 100, &fil);
+    f_gets(tmp3, 100, &fil);
+    f_gets(tmp4, 100, &fil);
+    f_close(&fil);
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+
+    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp, 100, &fil);
+    strncpy(md5, tmp, 32);
+    f_close(&fil);
+    lfs_file_open(&lfs, &file, "md5", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+}
+
+void setParametersFromSD()
+{
     char tmp[100];
     char tmp1[5];
     char tmp2[5];
@@ -364,9 +425,6 @@ void copyParametersToEEPROM()
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "host_IP", LFS_O_WRONLY | LFS_O_CREAT);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
 
     f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
@@ -382,9 +440,6 @@ void copyParametersToEEPROM()
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_WRONLY | LFS_O_CREAT);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
 
     f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
@@ -400,9 +455,6 @@ void copyParametersToEEPROM()
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_WRONLY | LFS_O_CREAT);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
 
     f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
@@ -418,26 +470,18 @@ void copyParametersToEEPROM()
     UART_Printf(tmp); delayUS_ASM(10000);
     f_close(&fil);
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_WRONLY | LFS_O_CREAT);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
 
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp, 100, &fil);
     strncpy(md5, tmp, 32);
     f_close(&fil);
-    lfs_file_open(&lfs, &file, "md5", LFS_O_WRONLY | LFS_O_CREAT);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
-    f_close(&fil);
-    UART_Printf(md5); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
+    UART_Printf("md5: %s\n",md5); delayUS_ASM(10000);
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
     UART_Printf(tmp); delayUS_ASM(10000);
 }
 
-void loadParaametersFromEEPROM()
+void SetParaametersFromEEPROM()
 {
     char tmp[100];
     char tmp5[12];
@@ -592,13 +636,14 @@ uint16_t localport = 8888;
 
     if (sdCartOn == 1)
     {
-        copyParametersToEEPROM();
-        copyFileToEEPROM("index.html");
-        copyFileToEEPROM("main.html");
+        setParametersFromSD();
+//        copyParametersToEEPROM();
+//        copyFileToEEPROM("index.html");
+//        copyFileToEEPROM("main.html");
 
     } else
     {
-        loadParaametersFromEEPROM();
+        SetParaametersFromEEPROM();
 //        printFileFromEEPROM("index.html");
 //        printFileFromEEPROM("main.html");
 

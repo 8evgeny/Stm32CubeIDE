@@ -732,12 +732,13 @@ if (sdCartOn == 1)
         lfs_file_close(&lfs, &file);
     }
     UART_Printf("\n"); delayUS_ASM(100);
-    UART_Printf("print index.html\n"); delayUS_ASM(5000);
-    for (int i = 0; i < numByteFileIndex; ++i)
-    {
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
-    }
-    UART_Printf("\n"); delayUS_ASM(100);
+
+//    UART_Printf("print index.html\n"); delayUS_ASM(5000);
+//    for (int i = 0; i < numByteFileIndex; ++i)
+//    {
+//        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+//    }
+//    UART_Printf("\n"); delayUS_ASM(100);
 
 } //end SD нет
 

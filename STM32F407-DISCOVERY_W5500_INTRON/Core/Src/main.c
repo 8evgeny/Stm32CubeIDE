@@ -347,6 +347,21 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM)
     free (pindex);
 }
 
+void testReadFile(const char* nameFile_onEEPROM)
+{
+    UART_Printf("test read %s\n", nameFile_onEEPROM); delayUS_ASM(1000);
+    uint32_t time = HAL_GetTick();
+    lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
+    uint32_t numByteFile = lfs_file_size(&lfs, &file);
+    pindex = malloc(numByteFile);
+    lfs_file_read(&lfs, &file, pindex, numByteFile);
+    lfs_file_close(&lfs, &file);
+    free (pindex);
+    char tmp[30];
+    sprintf(tmp,"time test read %s: %ds\n", nameFile_onEEPROM, (HAL_GetTick() - time)/1000 );
+    UART_Printf(tmp); delayUS_ASM(5000);
+}
+
 void copyParametersToEEPROM()
 {
     UART_Printf("copy parameters to eeprom\n"); delayUS_ASM(10000);
@@ -651,6 +666,8 @@ uint16_t localport = 8888;
     } else
     {
         SetParaametersFromEEPROM();
+        testReadFile("index.html");
+        testReadFile("main.html");
 //        printFileFromEEPROM("index.html");
 //        printFileFromEEPROM("main.html");
 

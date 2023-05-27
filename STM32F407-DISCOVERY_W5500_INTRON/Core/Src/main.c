@@ -310,6 +310,7 @@ void testEEPROM()
 
 void copyFileToEEPROM(const char* nameFile_onSD)
 {
+    uint32_t time = HAL_GetTick();
     f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
     uint32_t numByteFile = fil.obj.objsize;
     UINT rc;
@@ -323,7 +324,9 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     lfs_file_close(&lfs, &file);
     memset(pindex, 0x00, numByteFile);
     free (pindex);
-
+    char tmp[30];
+    sprintf(tmp,"time copy %s: %d\n",nameFile_onSD, HAL_GetTick() - time );
+    UART_Printf(tmp); delayUS_ASM(5000);
 //    printFileFromEEPROM(nameFile_onSD);
 }
 
@@ -642,8 +645,8 @@ uint16_t localport = 8888;
     {
         setParametersFromSD();
         copyParametersToEEPROM();
-//        copyFileToEEPROM("index.html");
-//        copyFileToEEPROM("main.html");
+        copyFileToEEPROM("index.html");
+        copyFileToEEPROM("main.html");
 
     } else
     {

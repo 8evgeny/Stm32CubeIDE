@@ -318,14 +318,14 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     f_read(&fil, pindex, numByteFile, &rc);
     f_close(&fil);
 
-    UART_Printf("copy %s\n", nameFile_onSD); delayUS_ASM(5000);
+    UART_Printf("copy %s ... ", nameFile_onSD); delayUS_ASM(5000);
     lfs_file_open(&lfs, &file, nameFile_onSD, LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_write(&lfs, &file, pindex, numByteFile);
     lfs_file_close(&lfs, &file);
     memset(pindex, 0x00, numByteFile);
     free (pindex);
     char tmp[30];
-    sprintf(tmp,"time copy %s: %d\n",nameFile_onSD, HAL_GetTick() - time );
+    sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
     UART_Printf(tmp); delayUS_ASM(5000);
 //    printFileFromEEPROM(nameFile_onSD);
 }
@@ -349,7 +349,7 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM)
 
 void testReadFile(const char* nameFile_onEEPROM)
 {
-    UART_Printf("test read %s\n", nameFile_onEEPROM); delayUS_ASM(1000);
+    UART_Printf("test read %s ... ", nameFile_onEEPROM); delayUS_ASM(1000);
     uint32_t time = HAL_GetTick();
     lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
     uint32_t numByteFile = lfs_file_size(&lfs, &file);
@@ -358,7 +358,7 @@ void testReadFile(const char* nameFile_onEEPROM)
     lfs_file_close(&lfs, &file);
     free (pindex);
     char tmp[30];
-    sprintf(tmp,"time test read %s: %ds\n", nameFile_onEEPROM, (HAL_GetTick() - time)/1000 );
+    sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
     UART_Printf(tmp); delayUS_ASM(5000);
 }
 

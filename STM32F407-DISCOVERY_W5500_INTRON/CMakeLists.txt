@@ -63,6 +63,7 @@ include_directories(
     wolfSSL
     ${wolfssl}
     ${wolfssl}/wolfssl
+    wolfssl-examples-master/embedded
     )
 
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
@@ -77,7 +78,13 @@ add_library(fatfs_LIB ${fatfs_src})
 file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h)
 add_library(littlefs_LIB ${littlefs_src})
 
-file (GLOB wolfssl_src ${wolfssl}/src/*.c wolfSSL/wolfssl_example.c)
+file (GLOB wolfssl_src ${wolfssl}/src/*.c
+    ${wolfssl}/wolfcrypt/src/*.c
+    wolfSSL/wolfssl_example.c
+#    wolfssl-examples-master/embedded/*.c
+wolfssl-examples-master/embedded/tls-client-server.c
+wolfssl-examples-master/embedded/tls-server-size.c
+    )
 add_library(wolfssl_LIB ${wolfssl_src})
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s)

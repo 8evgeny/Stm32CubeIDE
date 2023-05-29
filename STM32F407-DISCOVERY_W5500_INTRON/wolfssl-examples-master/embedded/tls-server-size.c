@@ -20,7 +20,7 @@
  */
 
 #include <stdio.h>
-
+#include "main.h"
 #ifndef WOLFSSL_USER_SETTINGS
     #include <wolfssl/options.h>
 #endif
@@ -52,6 +52,8 @@
 #else
     #define HEAP_HINT_SERVER NULL
 #endif /* WOLFSSL_STATIC_MEMORY */
+
+void UART_Printf(const char* fmt, ...);
 
 
 /* Buffer for server connection to allocate dynamic memory from. */
@@ -236,8 +238,9 @@ static void wolfssl_free(WOLFSSL_CTX* ctx, WOLFSSL* ssl)
 
 
 /* Main entry point. */
-int main(int argc, char* argv[])
+int tls_server_size_test()
 {
+    UART_Printf("tls_server_size_test\n");delayUS_ASM(1000);
     int ret = 0;
     WOLFSSL_CTX* server_ctx = NULL;
     WOLFSSL*     server_ssl = NULL;
@@ -246,8 +249,8 @@ int main(int argc, char* argv[])
     wolfSSL_Debugging_ON();
 #endif
     /* Initialize wolfSSL library. */
-    wolfSSL_Init();
-
+    int result =  wolfSSL_Init();
+    UART_Printf("wolfSSL_Init %d\n", result); delayUS_ASM(1000);
 #ifdef WOLFSSL_STATIC_MEMORY
     if (wc_LoadStaticMemory(&HEAP_HINT_SERVER, gTestMemoryServer,
                                sizeof(gTestMemoryServer),

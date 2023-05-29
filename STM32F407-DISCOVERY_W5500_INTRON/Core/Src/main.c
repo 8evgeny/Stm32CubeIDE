@@ -48,7 +48,7 @@ extern void FsForEeprom_test();
 extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
-
+int tls_server_size_test();
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -673,7 +673,6 @@ uint16_t localport = 8888;
 
     }
 
-
     net_ini();
     delayUS_ASM(10000);
 
@@ -774,6 +773,9 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
 #endif
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
+
+
+    tls_server_size_test();
 
 uint8_t firstSend = 1;
   while (1)

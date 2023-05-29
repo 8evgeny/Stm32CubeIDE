@@ -431,7 +431,8 @@ int tls_client_serverTest()
     UART_Printf("wolfssl_client_new: %d\n", ret); delayUS_ASM(10000);
 
     /* Loop to perform SSL handshake. */
-    while (ret == 0) {
+    while (ret == 0)
+    {
         ret = wolfssl_client_connect(client_ssl);
         if (ret == 0)
             ret = wolfssl_server_accept(server_ssl);
@@ -442,23 +443,27 @@ int tls_client_serverTest()
     }
 
     if (ret == 0)
-        printf("Handshake complete\n");
-
+    {
+        UART_Printf("Handshake complete\n"); delayUS_ASM(10000);
+    }
     /* Send and receive HTTP messages. */
-    if (ret == 0) {
-        printf("\nClient Sending:\n");
+    if (ret == 0)
+    {
+        UART_Printf("\nClient Sending:\n"); delayUS_ASM(10000);
         ret = wolfssl_send(client_ssl, msgHTTPGet);
     }
-    if (ret == 0) {
-        printf("\nServer Received:\n");
+    if (ret == 0)
+    {
+        UART_Printf("\nServer Received:\n"); delayUS_ASM(10000);
         ret = wolfssl_recv(server_ssl);
     }
-    if (ret == 0) {
-        printf("\nServer Sending:\n");
+    if (ret == 0)
+    {
+        UART_Printf("\nServer Sending:\n"); delayUS_ASM(10000);
         ret = wolfssl_send(server_ssl, msgHTTPIndex);
     }
     if (ret == 0) {
-        printf("\nClient Received:\n");
+        UART_Printf("\nClient Received:\n"); delayUS_ASM(10000);
         ret = wolfssl_recv(client_ssl);
     }
 
@@ -474,10 +479,13 @@ int tls_client_serverTest()
     wolfSSL_Cleanup();
 
     if (ret == 0)
-        printf("Done\n");
+    {
+        UART_Printf("Done\n"); delayUS_ASM(10000);
+    }
     else {
         char buffer[80];
-        printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
+        UART_Printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
+        delayUS_ASM(10000);
     }
 
     return (ret == 0) ? 0 : 1;

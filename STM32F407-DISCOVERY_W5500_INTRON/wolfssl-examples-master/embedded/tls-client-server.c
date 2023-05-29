@@ -27,6 +27,9 @@
 
 #include "certs.h"
 
+extern void UART_Printf(const char* fmt, ...);
+#include "main.h"
+
 #if !defined(NO_WOLFSSL_CLIENT) && !defined(NO_WOLFSSL_SERVER)
 
 /* I/O buffer size - wolfSSL buffers messages internally as well. */
@@ -384,8 +387,9 @@ static void wolfssl_server_memstats(WOLFSSL* server_ssl)
 }
 
 /* Main entry point. */
-int main(int argc, char* argv[])
+int tls_client_serverTest()
 {
+    UART_Printf("tls_client_serverTest\n"); delayUS_ASM(10000);
     int ret = 0;
     WOLFSSL_CTX* client_ctx = NULL;
     WOLFSSL*     client_ssl = NULL;
@@ -396,7 +400,8 @@ int main(int argc, char* argv[])
     wolfSSL_Debugging_ON();
 #endif
     /* Initialize wolfSSL library. */
-    wolfSSL_Init();
+   int res = wolfSSL_Init();
+    UART_Printf("wolfSSL_Init: %d\n", res); delayUS_ASM(10000);
 
 #ifdef WOLFSSL_STATIC_MEMORY
     if (wc_LoadStaticMemory(&HEAP_HINT_SERVER, gTestMemoryServer,
@@ -415,9 +420,15 @@ int main(int argc, char* argv[])
 
     /* Create server and client SSL objects. */
     if (ret == 0)
+    {
         ret = wolfssl_server_new(&server_ctx, &server_ssl);
+    }
+    UART_Printf("wolfssl_server_new: %d\n", ret); delayUS_ASM(10000);
     if (ret == 0)
+    {
         ret = wolfssl_client_new(&client_ctx, &client_ssl);
+    }
+    UART_Printf("wolfssl_client_new: %d\n", ret); delayUS_ASM(10000);
 
     /* Loop to perform SSL handshake. */
     while (ret == 0) {

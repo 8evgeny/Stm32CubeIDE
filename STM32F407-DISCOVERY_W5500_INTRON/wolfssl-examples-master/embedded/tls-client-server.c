@@ -27,8 +27,7 @@
 
 #include "certs.h"
 
-extern void UART_Printf(const char* fmt, ...);
-#include "main.h"
+extern void Printf(const char* fmt, ...);
 
 #if !defined(NO_WOLFSSL_CLIENT) && !defined(NO_WOLFSSL_SERVER)
 
@@ -163,15 +162,16 @@ static int wolfssl_client_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
     /* Create and initialize WOLFSSL_CTX */
     if ((client_ctx = wolfSSL_CTX_new_ex(wolfTLSv1_2_client_method(),
                                                    HEAP_HINT_CLIENT)) == NULL) {
-        printf("ERROR: failed to create WOLFSSL_CTX\n");
+        Printf("ERROR: failed to create WOLFSSL_CTX\n");
         ret = -1;
     }
 
     if (ret == 0) {
         /* Load CA certificates into WOLFSSL_CTX */
+        Printf("** Load CA certificates into WOLFSSL_CTX **\n");
         if (wolfSSL_CTX_load_verify_buffer(client_ctx, CA_CERTS, CA_CERTS_LEN,
                  WOLFSSL_FILETYPE_ASN1) != WOLFSSL_SUCCESS) {
-            printf("ERROR: failed to load CA certificate\n");
+            Printf("ERROR: failed to load CA certificate\n");
             ret = -1;
         }
     }
@@ -185,7 +185,7 @@ static int wolfssl_client_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
     if (ret == 0) {
         /* Create a WOLFSSL object */
         if ((client_ssl = wolfSSL_new(client_ctx)) == NULL) {
-            printf("ERROR: failed to create WOLFSSL object\n");
+            Printf("ERROR: failed to create WOLFSSL object\n");
             ret = -1;
         }
     }
@@ -211,10 +211,10 @@ static int wolfssl_client_connect(WOLFSSL* client_ssl)
 
     if (wolfSSL_connect(client_ssl) != WOLFSSL_SUCCESS) {
         if (wolfSSL_want_read(client_ssl)) {
-            printf("Client waiting for server\n");
+            Printf("Client waiting for server\n");
         }
         else if (wolfSSL_want_write(client_ssl)) {
-            printf("Client waiting for buffer\n");
+            Printf("Client waiting for buffer\n");
         }
         else
             ret = -1;
@@ -232,27 +232,30 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
     WOLFSSL*     server_ssl = NULL;
 
     /* Create and initialize WOLFSSL_CTX */
+    Printf("** Create and initialize WOLFSSL_CTX **\n");
     if ((server_ctx = wolfSSL_CTX_new_ex(wolfTLSv1_2_server_method(),
                                                    HEAP_HINT_SERVER)) == NULL) {
-        printf("ERROR: failed to create WOLFSSL_CTX\n");
+        Printf("ERROR: failed to create WOLFSSL_CTX\n");
         ret = -1;
     }
 
     if (ret == 0) {
         /* Load client certificates into WOLFSSL_CTX */
+        Printf("** Load client certificates into WOLFSSL_CTX **\n");
         if (wolfSSL_CTX_use_certificate_buffer(server_ctx, SERVER_CERT,
                 SERVER_CERT_LEN, WOLFSSL_FILETYPE_ASN1) != WOLFSSL_SUCCESS) {
-            printf("ERROR: failed to load server certificate\n");
+            Printf("ERROR: failed to load server certificate\n");
             ret = -1;
         }
     }
 
     if (ret == 0) {
         /* Load client certificates into WOLFSSL_CTX */
+        Printf("** Load client certificates into WOLFSSL_CTX **\n");
         if (wolfSSL_CTX_use_PrivateKey_buffer(server_ctx,
                 SERVER_KEY, SERVER_KEY_LEN, WOLFSSL_FILETYPE_ASN1) !=
                 WOLFSSL_SUCCESS) {
-            printf("ERROR: failed to load server key\n");
+            Printf("ERROR: failed to load server key\n");
             ret = -1;
         }
     }
@@ -266,7 +269,7 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
     if (ret == 0) {
         /* Create a WOLFSSL object */
         if ((server_ssl = wolfSSL_new(server_ctx)) == NULL) {
-            printf("ERROR: failed to create WOLFSSL object\n");
+            Printf("ERROR: failed to create WOLFSSL object\n");
             ret = -1;
         }
     }
@@ -291,10 +294,10 @@ static int wolfssl_server_accept(WOLFSSL* server_ssl)
 
     if (wolfSSL_accept(server_ssl) != WOLFSSL_SUCCESS) {
         if (wolfSSL_want_read(server_ssl)) {
-            printf("Server waiting for server\n");
+            Printf("Server waiting for server\n");
         }
         else if (wolfSSL_want_write(server_ssl)) {
-            printf("Server waiting for buffer\n");
+            Printf("Server waiting for buffer\n");
         }
         else
             ret = -1;
@@ -309,7 +312,7 @@ static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 {
     int ret;
 
-    printf("%s", msg);
+    Printf("%s", msg);
     ret = wolfSSL_write(ssl, msg, XSTRLEN(msg));
     if (ret < XSTRLEN(msg))
         ret = -1;
@@ -328,7 +331,7 @@ static int wolfssl_recv(WOLFSSL* ssl)
     ret = wolfSSL_read(ssl, reply, sizeof(reply)-1);
     if (ret > 0) {
         reply[ret] = '\0';
-        printf("%s", reply);
+        Printf("%s", reply);
         ret = 0;
     }
 
@@ -355,15 +358,15 @@ static void wolfssl_memstats(WOLFSSL* ssl)
     XMEMSET(&ssl_stats, 0 , sizeof(ssl_stats));
 
     if (wolfSSL_is_static_memory(ssl, &ssl_stats) != 1)
-        printf("static memory was not used with ssl");
+        Printf("static memory was not used with ssl");
     else {
-        printf("*** This is memory state before wolfSSL_free is called\n");
-        printf("peak connection memory = %d\n", ssl_stats.peakMem);
-        printf("current memory in use  = %d\n", ssl_stats.curMem);
-        printf("peak connection allocs = %d\n", ssl_stats.peakAlloc);
-        printf("current connection allocs = %d\n",ssl_stats.curAlloc);
-        printf("total connection allocs   = %d\n",ssl_stats.totalAlloc);
-        printf("total connection frees    = %d\n\n", ssl_stats.totalFr);
+        Printf("*** This is memory state before wolfSSL_free is called\n");
+        Printf("peak connection memory = %d\n", ssl_stats.peakMem);
+        Printf("current memory in use  = %d\n", ssl_stats.curMem);
+        Printf("peak connection allocs = %d\n", ssl_stats.peakAlloc);
+        Printf("current connection allocs = %d\n",ssl_stats.curAlloc);
+        Printf("total connection allocs   = %d\n",ssl_stats.totalAlloc);
+        Printf("total connection frees    = %d\n\n", ssl_stats.totalFr);
     }
 #endif
 }
@@ -372,7 +375,7 @@ static void wolfssl_memstats(WOLFSSL* ssl)
 static void wolfssl_client_memstats(WOLFSSL* client_ssl)
 {
 #ifdef WOLFSSL_STATIC_MEMORY
-    printf("Client Memory Stats\n");
+    Printf("Client Memory Stats\n");
 #endif
     wolfssl_memstats(client_ssl);
 }
@@ -381,7 +384,7 @@ static void wolfssl_client_memstats(WOLFSSL* client_ssl)
 static void wolfssl_server_memstats(WOLFSSL* server_ssl)
 {
 #ifdef WOLFSSL_STATIC_MEMORY
-    printf("Server Memory Stats\n");
+    Printf("Server Memory Stats\n");
 #endif
     wolfssl_memstats(server_ssl);
 }
@@ -389,7 +392,7 @@ static void wolfssl_server_memstats(WOLFSSL* server_ssl)
 /* Main entry point. */
 int tls_client_serverTest()
 {
-    UART_Printf("tls_client_serverTest\n"); delayUS_ASM(10000);
+    Printf("tls_client_serverTest\n");
     int ret = 0;
     WOLFSSL_CTX* client_ctx = NULL;
     WOLFSSL*     client_ssl = NULL;
@@ -401,19 +404,19 @@ int tls_client_serverTest()
 #endif
     /* Initialize wolfSSL library. */
    int res = wolfSSL_Init();
-    UART_Printf("wolfSSL_Init: %d\n", res); delayUS_ASM(10000);
+    Printf("wolfSSL_Init: %d\n", res);
 
 #ifdef WOLFSSL_STATIC_MEMORY
     if (wc_LoadStaticMemory(&HEAP_HINT_SERVER, gTestMemoryServer,
                                sizeof(gTestMemoryServer),
                                WOLFMEM_GENERAL | WOLFMEM_TRACK_STATS, 1) != 0) {
-        printf("unable to load static memory");
+        Printf("unable to load static memory");
         ret = -1;
     }
     if (wc_LoadStaticMemory(&HEAP_HINT_CLIENT, gTestMemoryClient,
                                sizeof(gTestMemoryClient),
                                WOLFMEM_GENERAL | WOLFMEM_TRACK_STATS, 1) != 0) {
-        printf("unable to load static memory");
+        Printf("unable to load static memory");
         ret = -1;
     }
 #endif
@@ -423,12 +426,12 @@ int tls_client_serverTest()
     {
         ret = wolfssl_server_new(&server_ctx, &server_ssl);
     }
-    UART_Printf("wolfssl_server_new: %d\n", ret); delayUS_ASM(10000);
+    Printf("wolfssl_server_new: %d\n", ret);
     if (ret == 0)
     {
         ret = wolfssl_client_new(&client_ctx, &client_ssl);
     }
-    UART_Printf("wolfssl_client_new: %d\n", ret); delayUS_ASM(10000);
+    Printf("wolfssl_client_new: %d\n", ret);
 
     /* Loop to perform SSL handshake. */
     while (ret == 0)
@@ -444,26 +447,26 @@ int tls_client_serverTest()
 
     if (ret == 0)
     {
-        UART_Printf("Handshake complete\n"); delayUS_ASM(10000);
+        Printf("Handshake complete\n");
     }
     /* Send and receive HTTP messages. */
     if (ret == 0)
     {
-        UART_Printf("\nClient Sending:\n"); delayUS_ASM(10000);
+        Printf("\nClient Sending:\n");
         ret = wolfssl_send(client_ssl, msgHTTPGet);
     }
     if (ret == 0)
     {
-        UART_Printf("\nServer Received:\n"); delayUS_ASM(10000);
+        Printf("\nServer Received:\n");
         ret = wolfssl_recv(server_ssl);
     }
     if (ret == 0)
     {
-        UART_Printf("\nServer Sending:\n"); delayUS_ASM(10000);
+        Printf("\nServer Sending:\n");
         ret = wolfssl_send(server_ssl, msgHTTPIndex);
     }
     if (ret == 0) {
-        UART_Printf("\nClient Received:\n"); delayUS_ASM(10000);
+        Printf("\nClient Received:\n");
         ret = wolfssl_recv(client_ssl);
     }
 
@@ -480,13 +483,12 @@ int tls_client_serverTest()
 
     if (ret == 0)
     {
-        UART_Printf("Done\n"); delayUS_ASM(10000);
+        Printf("Done\n");
     }
     else {
         char buffer[80];
-        UART_Printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
-        delayUS_ASM(10000);
-    }
+        Printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
+     }
 
     return (ret == 0) ? 0 : 1;
 }
@@ -497,7 +499,7 @@ int main(int argc, char* argv[])
 {
     (void)argc;
     (void)argv;
-    printf("Must build wolfSSL with client and server enabled for this example\n");
+    Printf("Must build wolfSSL with client and server enabled for this example\n");
     return 0;
 }
 

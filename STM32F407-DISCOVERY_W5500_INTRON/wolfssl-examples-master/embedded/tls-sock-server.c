@@ -28,7 +28,7 @@
 #include "sockets.h"
 #include "tls-info.h"
 #include "certs.h"
-
+extern void Printf(const char* fmt, ...);
 #if !defined(NO_WOLFSSL_SERVER)
 
 /* Application data to send. */
@@ -50,12 +50,13 @@ static const char msgHTTPIndex[] =
 /* Create a new wolfSSL CTX server with a certificate for authentication. */
 static int wolfssl_server_ctx_new(WOLFSSL_CTX** ctx)
 {
+    Printf("-- wolfssl_server_ctx_new --\n");
     int ret = 0;
     WOLFSSL_CTX* server_ctx = NULL;
 
     /* Create and initialize WOLFSSL_CTX */
     if ((server_ctx = wolfSSL_CTX_new(wolfSSLv23_server_method())) == NULL) {
-        printf("ERROR: failed to create WOLFSSL_CTX\n");
+        Printf("ERROR: failed to create WOLFSSL_CTX\n");
         ret = -1;
     }
 
@@ -63,7 +64,7 @@ static int wolfssl_server_ctx_new(WOLFSSL_CTX** ctx)
         /* Load client certificates into WOLFSSL_CTX */
         if (wolfSSL_CTX_use_certificate_buffer(server_ctx, SERVER_CERT,
                 SERVER_CERT_LEN, WOLFSSL_FILETYPE_ASN1) != WOLFSSL_SUCCESS) {
-            printf("ERROR: failed to load server certificate\n");
+            Printf("ERROR: failed to load server certificate\n");
             ret = -1;
         }
     }
@@ -72,7 +73,7 @@ static int wolfssl_server_ctx_new(WOLFSSL_CTX** ctx)
         /* Load client certificates into WOLFSSL_CTX */
         if (wolfSSL_CTX_use_PrivateKey_buffer(server_ctx, SERVER_KEY,
                 SERVER_KEY_LEN, WOLFSSL_FILETYPE_ASN1) != WOLFSSL_SUCCESS) {
-            printf("ERROR: failed to load server key\n");
+            Printf("ERROR: failed to load server key\n");
             ret = -1;
         }
     }
@@ -91,13 +92,14 @@ static int wolfssl_server_ctx_new(WOLFSSL_CTX** ctx)
 /* Create a new wolfSSL server with a certificate for authentication. */
 static int wolfssl_server_ssl_new(WOLFSSL_CTX* ctx, WOLFSSL** ssl)
 {
+    Printf("-- wolfssl_server_ssl_new --\n");
     int ret = 0;
     WOLFSSL*     server_ssl = NULL;
 
     if (ret == 0) {
         /* Create a WOLFSSL object */
         if ((server_ssl = wolfSSL_new(ctx)) == NULL) {
-            printf("ERROR: failed to create WOLFSSL object\n");
+            Printf("ERROR: failed to create WOLFSSL object\n");
             ret = -1;
         }
     }
@@ -117,6 +119,7 @@ static int wolfssl_server_ssl_new(WOLFSSL_CTX* ctx, WOLFSSL** ssl)
 /* Server accepting a client using TLS */
 static int wolfssl_server_accept(WOLFSSL* ssl)
 {
+    Printf("-- wolfssl_server_accept --\n");
     int ret = 0;
 
     if (wolfSSL_accept(ssl) != WOLFSSL_SUCCESS) {
@@ -134,10 +137,11 @@ static int wolfssl_server_accept(WOLFSSL* ssl)
 /* Send application data. */
 static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 {
+    Printf("-- wolfssl_send --\n");
     int ret = 0;
     int len;
 
-    printf("Sending:\n%s\n", msg);
+    Printf("Sending:\n%s\n", msg);
     len = wolfSSL_write(ssl, msg, XSTRLEN(msg));
     if (len < 0)
         ret = len;
@@ -150,17 +154,18 @@ static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 /* Receive application data. */
 static int wolfssl_recv(WOLFSSL* ssl)
 {
+    Printf("-- wolfssl_recv --\n");
     int  ret;
     int  err = 0;
     byte reply[80];
     int  total = 0;
 
-    printf("Receive:\n");
+    Printf("Receive:\n");
     do {
         ret = wolfSSL_read(ssl, reply, sizeof(reply)-1);
         if (ret > 0) {
             reply[ret] = '\0';
-            printf("%s", reply);
+            Printf("%s", reply);
             total += ret;
             err = 0;
         }
@@ -178,6 +183,7 @@ static int wolfssl_recv(WOLFSSL* ssl)
 /* Establish a socket to listen on. */
 static int wolfssl_server_listen_tcp(SOCKET_T* fd)
 {
+    Printf("-- wolfssl_server_listen_tcp --\n");
     word16 port = wolfSSLPort;
 
     return tcp_listen(fd, &port, 1, 0, 0);
@@ -187,6 +193,7 @@ static int wolfssl_server_listen_tcp(SOCKET_T* fd)
 static int wolfssl_server_accept_tcp(WOLFSSL* ssl, SOCKET_T fd,
                                      SOCKET_T* acceptfd)
 {
+    Printf("-- wolfssl_server_accept_tcp --\n");
     int      ret = 0;
     SOCKET_T clientfd = WOLFSSL_SOCKET_INVALID;
 
@@ -208,6 +215,7 @@ static int wolfssl_server_accept_tcp(WOLFSSL* ssl, SOCKET_T fd,
 /* Server operations. */
 static int server(WOLFSSL_CTX* server_ctx, SOCKET_T sockfd)
 {
+    Printf("-- server --\n");
     int      ret;
     WOLFSSL* server_ssl = NULL;
     SOCKET_T clientfd = WOLFSSL_SOCKET_INVALID;
@@ -245,8 +253,9 @@ static int server(WOLFSSL_CTX* server_ctx, SOCKET_T sockfd)
 }
 
 /* Main entry point. */
-int main(int argc, char* argv[])
+int tls_sock_serverTest()
 {
+    Printf("** tls_sock_serverTest **\n");
     int          ret = 0;
     WOLFSSL_CTX* server_ctx = NULL;
     SOCKET_T     sockfd   = WOLFSSL_SOCKET_INVALID;
@@ -273,10 +282,10 @@ int main(int argc, char* argv[])
     wolfSSL_Cleanup();
 
     if (ret == 0)
-        printf("Done\n");
+        Printf("Done\n");
     else {
         char buffer[80];
-        printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
+        Printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
     }
 
     return (ret == 0) ? 0 : 1;
@@ -288,7 +297,7 @@ int main(int argc, char* argv[])
 {
     (void)argc;
     (void)argv;
-    printf("Must build wolfSSL with server enabled for this example\n");
+    Printf("Must build wolfSSL with server enabled for this example\n");
     return 0;
 }
 

@@ -48,7 +48,11 @@ extern void FsForEeprom_test();
 extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
+
 int tls_client_serverTest();
+int tls_server_sizeTest();
+int tls_sock_serverTest();
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -776,6 +780,10 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 
     tls_client_serverTest();
+//    tls_server_sizeTest();
+//    tls_sock_serverTest();//не собирается
+
+
 
 uint8_t firstSend = 1;
   while (1)

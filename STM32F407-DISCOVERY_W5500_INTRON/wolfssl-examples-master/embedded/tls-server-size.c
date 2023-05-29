@@ -20,7 +20,7 @@
  */
 
 #include <stdio.h>
-#include "main.h"
+extern void Printf(const char* fmt, ...);
 #ifndef WOLFSSL_USER_SETTINGS
     #include <wolfssl/options.h>
 #endif
@@ -82,7 +82,7 @@ static const char msgHTTPIndex[] =
 /* Server attempts to read data from client. */
 static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
-
+    Printf("-- recv_server --\n");
     if (server_buffer_sz > 0) {
         if (sz > server_buffer_sz)
             sz = server_buffer_sz;
@@ -101,6 +101,7 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 /* Server attempts to write data to client. */
 static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
+    Printf("send_server\n");
     if (client_buffer_sz < BUFFER_SIZE)
     {
         if (sz > BUFFER_SIZE - client_buffer_sz)
@@ -118,6 +119,7 @@ static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 /* Create a new wolfSSL server with a certificate for authentication. */
 static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
 {
+    Printf("wolfssl_server_new\n");
     int          ret = 0;
     WOLFSSL_CTX* server_ctx = NULL;
     WOLFSSL*     server_ssl = NULL;
@@ -125,7 +127,7 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
     /* Create and initialize WOLFSSL_CTX */
     if ((server_ctx = wolfSSL_CTX_new_ex(wolfTLSv1_2_server_method(),
                                                    HEAP_HINT_SERVER)) == NULL) {
-        printf("ERROR: failed to create WOLFSSL_CTX\n");
+        Printf("ERROR: failed to create WOLFSSL_CTX\n");
         ret = -1;
     }
 
@@ -133,7 +135,7 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
         /* Load client certificates into WOLFSSL_CTX */
         if (wolfSSL_CTX_use_certificate_buffer(server_ctx, SERVER_CERT,
                 SERVER_CERT_LEN, WOLFSSL_FILETYPE_ASN1) != WOLFSSL_SUCCESS) {
-            printf("ERROR: failed to load server certificate\n");
+            Printf("ERROR: failed to load server certificate\n");
             ret = -1;
         }
     }
@@ -143,7 +145,7 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
         if (wolfSSL_CTX_use_PrivateKey_buffer(server_ctx,
                 SERVER_KEY, SERVER_KEY_LEN, WOLFSSL_FILETYPE_ASN1) !=
                 WOLFSSL_SUCCESS) {
-            printf("ERROR: failed to load server key\n");
+            Printf("ERROR: failed to load server key\n");
             ret = -1;
         }
     }
@@ -157,7 +159,7 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
     if (ret == 0) {
         /* Create a WOLFSSL object */
         if ((server_ssl = wolfSSL_new(server_ctx)) == NULL) {
-            printf("ERROR: failed to create WOLFSSL object\n");
+            Printf("ERROR: failed to create WOLFSSL object\n");
             ret = -1;
         }
     }
@@ -178,14 +180,15 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
 /* Server accepting a client using TLS */
 static int wolfssl_server_accept(WOLFSSL* server_ssl)
 {
+    Printf("-- wolfssl_server_accept --\n");
     int ret = 0;
 
     if (wolfSSL_accept(server_ssl) != WOLFSSL_SUCCESS) {
         if (wolfSSL_want_read(server_ssl)) {
-            printf("Server waiting for server\n");
+            Printf("Server waiting for server\n");
         }
         else if (wolfSSL_want_write(server_ssl)) {
-            printf("Server waiting for buffer\n");
+            Printf("Server waiting for buffer\n");
         }
         else
             ret = -1;
@@ -198,9 +201,10 @@ static int wolfssl_server_accept(WOLFSSL* server_ssl)
 /* Send application data. */
 static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 {
+    Printf("wolfssl_send\n");
     int ret;
 
-    printf("%s", msg);
+    Printf("%s", msg);
     ret = wolfSSL_write(ssl, msg, XSTRLEN(msg));
     if (ret < XSTRLEN(msg))
         ret = -1;
@@ -213,13 +217,14 @@ static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 /* Receive application data. */
 static int wolfssl_recv(WOLFSSL* ssl)
 {
+    Printf("wolfssl_recv\n");
     int ret;
     byte reply[256];
 
     ret = wolfSSL_read(ssl, reply, sizeof(reply)-1);
     if (ret > 0) {
         reply[ret] = '\0';
-        printf("%s", reply);
+        Printf("%s", reply);
         ret = 0;
     }
 
@@ -230,6 +235,7 @@ static int wolfssl_recv(WOLFSSL* ssl)
 /* Free the WOLFSSL object and context. */
 static void wolfssl_free(WOLFSSL_CTX* ctx, WOLFSSL* ssl)
 {
+    Printf("wolfssl_free\n");
     if (ssl != NULL)
         wolfSSL_free(ssl);
     if (ctx != NULL)
@@ -238,9 +244,9 @@ static void wolfssl_free(WOLFSSL_CTX* ctx, WOLFSSL* ssl)
 
 
 /* Main entry point. */
-int tls_server_size_test()
+int tls_server_sizeTest()
 {
-    UART_Printf("tls_server_size_test\n");delayUS_ASM(1000);
+    Printf("tls_server_sizeTest\n");
     int ret = 0;
     WOLFSSL_CTX* server_ctx = NULL;
     WOLFSSL*     server_ssl = NULL;
@@ -249,13 +255,12 @@ int tls_server_size_test()
     wolfSSL_Debugging_ON();
 #endif
     /* Initialize wolfSSL library. */
-    int result =  wolfSSL_Init();
-    UART_Printf("wolfSSL_Init %d\n", result); delayUS_ASM(1000);
+    wolfSSL_Init();
 #ifdef WOLFSSL_STATIC_MEMORY
     if (wc_LoadStaticMemory(&HEAP_HINT_SERVER, gTestMemoryServer,
                                sizeof(gTestMemoryServer),
                                WOLFMEM_GENERAL | WOLFMEM_TRACK_STATS, 1) != 0) {
-        printf("unable to load static memory");
+        Printf("unable to load static memory");
         ret = -1;
 #endif
 
@@ -263,7 +268,8 @@ int tls_server_size_test()
         ret = wolfssl_server_new(&server_ctx, &server_ssl);
 
     /* Loop to perform SSL handshake. */
-    while (ret == 0) {
+    while (ret == 0)
+    {
             ret = wolfssl_server_accept(server_ssl);
         if (ret == 0 && wolfSSL_is_init_finished(server_ssl)) {
             break;
@@ -271,15 +277,15 @@ int tls_server_size_test()
     }
 
     if (ret == 0)
-        printf("Handshake complete\n");
+        Printf("Handshake complete\n");
 
     /* Send and receive HTTP messages. */
     if (ret == 0) {
-        printf("\nServer Received:\n");
+        Printf("\nServer Received:\n");
         ret = wolfssl_recv(server_ssl);
     }
     if (ret == 0) {
-        printf("\nServer Sending:\n");
+        Printf("\nServer Sending:\n");
         ret = wolfssl_send(server_ssl, msgHTTPIndex);
     }
 
@@ -290,10 +296,10 @@ int tls_server_size_test()
     wolfSSL_Cleanup();
 
     if (ret == 0)
-        printf("Done\n");
+        Printf("Done\n");
     else {
         char buffer[80];
-        printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
+        Printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
     }
 
     return (ret == 0) ? 0 : 1;
@@ -306,7 +312,7 @@ int main(int argc, char* argv[])
 {
     (void)argc;
     (void)argv;
-    printf("Must build wolfSSL with TLS v1.2 and server enabled for this example\n");
+    Printf("Must build wolfSSL with TLS v1.2 and server enabled for this example\n");
     return 0;
 }
 

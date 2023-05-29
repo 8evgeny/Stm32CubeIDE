@@ -659,15 +659,15 @@ uint16_t localport = 8888;
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-        copyParametersToEEPROM();
-        copyFileToEEPROM("index.html");
-        copyFileToEEPROM("main.html");
+//        copyParametersToEEPROM();
+//        copyFileToEEPROM("index.html");
+//        copyFileToEEPROM("main.html");
 
     } else
     {
         SetParaametersFromEEPROM();
-        testReadFile("index.html");
-        testReadFile("main.html");
+//        testReadFile("index.html");
+//        testReadFile("main.html");
 //        printFileFromEEPROM("index.html");
 //        printFileFromEEPROM("main.html");
 

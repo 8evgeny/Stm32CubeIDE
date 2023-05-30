@@ -44,7 +44,7 @@
     #define WOLFSSL_MISC_INCLUDED
     #include <wolfcrypt/src/misc.c>
 #endif
-
+extern void Printf(const char* fmt, ...);
 #ifdef HAVE_ERRNO_H
     #include <errno.h>
 #endif

@@ -125,7 +125,9 @@ void SetWritePointer(uint8_t sock_num, uint16_t point);
 void w5500_writeSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t len);
 void RecvSocket(uint8_t sock_num);
 void SendSocket(uint8_t sock_num);
-
+uint8_t GetSocketStatus(uint8_t sock_num);
+uint16_t GetSizeRX(uint8_t sock_num);
+void w5500_readSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t len);
 #include "httpd.h"
 
 #endif /* W5500_H_ */

@@ -24,9 +24,10 @@
 #include "certs.h"
 #define HEAP_HINT_SERVER NULL
 /* I/O buffer size - wolfSSL buffers messages internally as well. */
-#define BUFFER_SIZE           2048
-
-
+#define BUFFER_SIZE           512
+#include "w5500.h"
+char tempBuf[2048];
+int indexTempBuf = 0;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
@@ -163,40 +164,80 @@ void network_init(void)
 	
 }
 
+
+
+
 /* Server attempts to read data from client. */
 static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
     Printf("\n-- recv_server --\n");
-    if (server_buffer_sz > 0) {
-        if (sz > server_buffer_sz)
-            sz = server_buffer_sz;
-        XMEMCPY(buff, server_buffer, sz);
-        if (sz < server_buffer_sz) {
-            XMEMMOVE(server_buffer, server_buffer + sz, server_buffer_sz - sz);
-        }
-        server_buffer_sz -= sz;
-    }
-    else
-        sz = WOLFSSL_CBIO_ERR_WANT_READ;
+//    if (server_buffer_sz > 0) {
+//        if (sz > server_buffer_sz)
+//            sz = server_buffer_sz;
+//        XMEMCPY(buff, server_buffer, sz);
+//        if (sz < server_buffer_sz) {
+//            XMEMMOVE(server_buffer, server_buffer + sz, server_buffer_sz - sz);
+//        }
+//        server_buffer_sz -= sz;
+//    }
+//    else
+//        sz = WOLFSSL_CBIO_ERR_WANT_READ;
 
-    return sz;
+//    return sz;
+
+    uint16_t point;
+    uint16_t len;
+
+      if(GetSocketStatus(0)==SOCK_ESTABLISHED)
+      {
+          len = GetSizeRX(0);
+          //Если пришел пустой пакет, то уходим из функции
+          if(!len) return 0;
+          //Отобразим размер принятых данных
+          Printf("socket %d len_packet:0x%04X\r\n",0,len);
+
+          //указатель на начало чтения приёмного буфера
+          point = GetReadPointer(0);
+          w5500_readSockBuf(0, point, (uint8_t*)tempBuf, len);
+          if (sz < len)
+          {
+              if (indexTempBuf == 0) //Не было ранее частей
+              {
+                  XMEMCPY(buff, tempBuf, sz);
+                  return sz;
+              }
+              else //в буфере что-то есть - завершаем
+              {
+                  XMEMCPY(buff, tempBuf + indexTempBuf, len);
+                  indexTempBuf = 0;
+                  return sz;
+              }
+
+           }
+          else // запрошено данных больше чем получено
+          {
+              XMEMCPY(buff, tempBuf + indexTempBuf, len);
+              indexTempBuf += len;
+              return WOLFSSL_CBIO_ERR_WANT_READ;
+          }
+      }
+      return 0;
 }
 
 /* Server attempts to write data to client. */
 static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
     Printf("\n-- send_server --\n");
-    if (client_buffer_sz < BUFFER_SIZE)
-    {
-        if (sz > BUFFER_SIZE - client_buffer_sz)
-            sz = BUFFER_SIZE - client_buffer_sz;
-        XMEMCPY(client_buffer + client_buffer_sz, buff, sz);
-        client_buffer_sz += sz;
-    }
-    else
-        sz = WOLFSSL_CBIO_ERR_WANT_WRITE;
-
-    return sz;
+//    if (client_buffer_sz < BUFFER_SIZE)
+//    {
+//        if (sz > BUFFER_SIZE - client_buffer_sz)
+//            sz = BUFFER_SIZE - client_buffer_sz;
+//        XMEMCPY(client_buffer + client_buffer_sz, buff, sz);
+//        client_buffer_sz += sz;
+//    }
+//    else
+//        sz = WOLFSSL_CBIO_ERR_WANT_WRITE;
+//    return sz;
 }
 
 /* Create a new wolfSSL server with a certificate for authentication. */
@@ -260,6 +301,69 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
     return ret;
 }
 
+/* Server accepting a client using TLS */
+static int wolfssl_server_accept(WOLFSSL* server_ssl)
+{
+    Printf("\n-- wolfssl_server_accept --\n");
+    int ret = 0;
+
+    if (wolfSSL_accept(server_ssl) != WOLFSSL_SUCCESS)
+    {
+        if (wolfSSL_want_read(server_ssl)) {
+            Printf("Server waiting for server\n");
+        }
+        else if (wolfSSL_want_write(server_ssl)) {
+            Printf("Server waiting for buffer\n");
+        }
+        else
+            ret = -1;
+    }
+
+    return ret;
+}
+
+/* Send application data. */
+static int wolfssl_send(WOLFSSL* ssl, const char* msg)
+{
+    Printf("\n-- wolfssl_send --\n");
+    int ret;
+
+    Printf("%s", msg);
+    ret = wolfSSL_write(ssl, msg, XSTRLEN(msg));
+    if (ret < XSTRLEN(msg))
+        ret = -1;
+    else
+        ret = 0;
+
+    return ret;
+}
+
+/* Receive application data. */
+static int wolfssl_recv(WOLFSSL* ssl)
+{
+    Printf("\n-- wolfssl_recv --\n");
+    int ret;
+    byte reply[256];
+
+    ret = wolfSSL_read(ssl, reply, sizeof(reply)-1);
+    if (ret > 0) {
+        reply[ret] = '\0';
+        Printf("%s", reply);
+        ret = 0;
+    }
+
+    return ret;
+}
+
+/* Free the WOLFSSL object and context. */
+static void wolfssl_free(WOLFSSL_CTX* ctx, WOLFSSL* ssl)
+{
+    Printf("\n-- wolfssl_free --\n");
+    if (ssl != NULL)
+        wolfSSL_free(ssl);
+    if (ctx != NULL)
+        wolfSSL_CTX_free(ctx);
+}
 
 
 void tlsProcess()
@@ -270,6 +374,21 @@ void tlsProcess()
     WOLFSSL*     server_ssl = NULL;
     wolfSSL_Init();
     ret = wolfssl_server_new(&server_ctx, &server_ssl);
+    while (ret == 0)
+    {
+        ret = wolfssl_server_accept(server_ssl);
+        if (ret == 0 && wolfSSL_is_init_finished(server_ssl))
+        {
+            break;
+        }
+    }
+    if (ret == 0)
+    {
+        Printf("Handshake complete\n");
+    }
+
+
+
 
 }
 

@@ -4,6 +4,7 @@
 extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart6;
 extern http_sock_prop_ptr httpsockprop[2];
+extern void Printf(const char* fmt, ...);
 //-----------------------------------------------
 extern char str1[60];
 extern tcp_prop_ptr tcpprop;
@@ -288,17 +289,15 @@ void w5500_packetReceive(uint8_t sn)
                 httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
                 http_request();
             }
-            char HandShake[30] = {0x16,             //Content Type: Handshake (22)
-                                  0x03, 0x01,       //Version: TLS 1.0 (0x0301)
-                                  0x02, 0x00,       //Length: 512
-                                  0x01,             //Handshake Type: Client Hello (1)
-                                  0x00, 0x01, 0xfc, //Length: 508
-                                  0x03, 0x03        //Version: TLS 1.2 (0x0303)
-                                 };
-            if (strncmp(tmpbuf, HandShake, 1) == 0) // Остальное может измениться
+
+            if (
+                (tmpbuf[0] == 0x16)                           //Content Type: Handshake (22)
+               && (tmpbuf[1] == 0x03) && (tmpbuf[2] == 0x01)  //Version: TLS 1.0 (0x0301)
+               && (tmpbuf[3] == 0x02) && (tmpbuf[4] == 0x00)  //Length: 512
+//               && (tmpbuf[5] == 0x01)                         //Handshake Type: Client Hello (1)
+               )
             {
-//                MX_MBEDTLS_HandShake();
-//                HAL_UART_Transmit(&huart6,(uint8_t*)"Client Hello",strlen("Client Hello"),0x1000);
+                Printf("Handshake... \n");
             }
 
 

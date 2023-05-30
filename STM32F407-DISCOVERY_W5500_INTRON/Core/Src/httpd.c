@@ -342,10 +342,6 @@ void http_request(void)
   {
     RXbyte = w5500_readSockBufByte(tcpprop.cur_sock,point+i);
     i++;
-    if (RXbyte == 0x16)
-    {
-        Printf("Handshake... \n");
-    }
   }
 	point+=i;
 	RXbyte = w5500_readSockBufByte(tcpprop.cur_sock,point);

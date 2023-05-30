@@ -170,7 +170,8 @@ void network_init(void)
 /* Server attempts to read data from client. */
 static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
-    Printf("\n-- recv_server --\n");
+//    Printf("\n-- recv_server --\n");
+
 //    if (server_buffer_sz > 0) {
 //        if (sz > server_buffer_sz)
 //            sz = server_buffer_sz;

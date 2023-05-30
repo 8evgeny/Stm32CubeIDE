@@ -21,7 +21,7 @@ extern lfs_file_t file;
 //-----------------------------------------------
 http_sock_prop_ptr httpsockprop[2];
 tcp_prop_ptr tcpprop;
-
+extern void Printf(const char* fmt, ...);
 //extern FATFS fs;
 extern FIL fil;
 FIL MyFile;
@@ -337,10 +337,15 @@ void http_request(void)
   // ищем первый "/" в HTTP заголовке
   point = GetReadPointer(tcpprop.cur_sock);
   i = 0;
+
   while (RXbyte != (uint8_t)'/')
   {
     RXbyte = w5500_readSockBufByte(tcpprop.cur_sock,point+i);
     i++;
+    if (RXbyte == 0x16)
+    {
+        Printf("Handshake... \n");
+    }
   }
 	point+=i;
 	RXbyte = w5500_readSockBufByte(tcpprop.cur_sock,point);

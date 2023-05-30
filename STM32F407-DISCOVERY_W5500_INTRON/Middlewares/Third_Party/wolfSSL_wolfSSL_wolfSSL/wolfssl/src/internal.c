@@ -24,7 +24,7 @@
 #ifdef HAVE_CONFIG_H
     #include <config.h>
 #endif
-
+extern void Printf(const char* fmt, ...);
 #include <wolfssl/wolfcrypt/settings.h>
 
 /*

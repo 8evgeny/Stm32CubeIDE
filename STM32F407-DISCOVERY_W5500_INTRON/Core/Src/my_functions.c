@@ -26,8 +26,8 @@
 /* I/O buffer size - wolfSSL buffers messages internally as well. */
 #define BUFFER_SIZE           512
 #include "w5500.h"
-char tempBuf[2048];
-int indexTempBuf = 0;
+char tempBufRead[2048];
+int indexTempBufRead = 0;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
@@ -199,26 +199,26 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 
           //указатель на начало чтения приёмного буфера
           point = GetReadPointer(0);
-          w5500_readSockBuf(0, point, (uint8_t*)tempBuf, len);
+          w5500_readSockBuf(0, point, (uint8_t*)tempBufRead, len);
           if (sz < len)
           {
-              if (indexTempBuf == 0) //Не было ранее частей
+              if (indexTempBufRead == 0) //Не было ранее частей
               {
-                  XMEMCPY(buff, tempBuf, sz);
+                  XMEMCPY(buff, tempBufRead, sz);
                   return sz;
               }
               else //в буфере что-то есть - завершаем
               {
-                  XMEMCPY(buff, tempBuf + indexTempBuf, len);
-                  indexTempBuf = 0;
+                  XMEMCPY(buff, tempBufRead + indexTempBufRead, len);
+                  indexTempBufRead = 0;
                   return sz;
               }
 
            }
           else // запрошено данных больше чем получено
           {
-              XMEMCPY(buff, tempBuf + indexTempBuf, len);
-              indexTempBuf += len;
+              XMEMCPY(buff, tempBufRead + indexTempBufRead, len);
+              indexTempBufRead += len;
               return WOLFSSL_CBIO_ERR_WANT_READ;
           }
       }

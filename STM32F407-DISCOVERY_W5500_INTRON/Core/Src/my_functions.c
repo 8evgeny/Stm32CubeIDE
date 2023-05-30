@@ -20,6 +20,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "ssl.h"
+#include "certs.h"
+#define HEAP_HINT_SERVER NULL
+/* I/O buffer size - wolfSSL buffers messages internally as well. */
+#define BUFFER_SIZE           2048
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -68,7 +74,16 @@ uint8_t memsize[2][8] = { {2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
-														
+
+/* Buffer for client connection to allocate dynamic memory from. */
+static unsigned char client_buffer[BUFFER_SIZE];
+static int client_buffer_sz = 0;
+/* Buffer for server connection to allocate dynamic memory from. */
+static unsigned char server_buffer[BUFFER_SIZE];
+static int server_buffer_sz = 0;
+
+
+
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void UART_Printf(const char* fmt, ...) {
@@ -112,7 +127,6 @@ void Chip_selection_call_back(void)
     /* wizchip initialize*/
 }
 
-
 void wizchip_initialize(void)
 {
     if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1)
@@ -129,7 +143,6 @@ void wizchip_initialize(void)
           UART_Printf("Unknown PHY Link stauts.\r\n");
     }while(tmp == PHY_LINK_OFF);
 }
-
 
 void network_init(void)
 {
@@ -149,5 +162,117 @@ void network_init(void)
 	UART_Printf("======================\r\n");
 	
 }
+
+/* Server attempts to read data from client. */
+static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
+{
+    Printf("\n-- recv_server --\n");
+    if (server_buffer_sz > 0) {
+        if (sz > server_buffer_sz)
+            sz = server_buffer_sz;
+        XMEMCPY(buff, server_buffer, sz);
+        if (sz < server_buffer_sz) {
+            XMEMMOVE(server_buffer, server_buffer + sz, server_buffer_sz - sz);
+        }
+        server_buffer_sz -= sz;
+    }
+    else
+        sz = WOLFSSL_CBIO_ERR_WANT_READ;
+
+    return sz;
+}
+
+/* Server attempts to write data to client. */
+static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
+{
+    Printf("\n-- send_server --\n");
+    if (client_buffer_sz < BUFFER_SIZE)
+    {
+        if (sz > BUFFER_SIZE - client_buffer_sz)
+            sz = BUFFER_SIZE - client_buffer_sz;
+        XMEMCPY(client_buffer + client_buffer_sz, buff, sz);
+        client_buffer_sz += sz;
+    }
+    else
+        sz = WOLFSSL_CBIO_ERR_WANT_WRITE;
+
+    return sz;
+}
+
+/* Create a new wolfSSL server with a certificate for authentication. */
+static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
+{
+    Printf("\n-- wolfssl_server_new --\n");
+    int          ret = 0;
+    WOLFSSL_CTX* server_ctx = NULL;
+    WOLFSSL*     server_ssl = NULL;
+
+    /* Create and initialize WOLFSSL_CTX */
+    if ((server_ctx = wolfSSL_CTX_new_ex(wolfTLSv1_2_server_method(),
+                                                   HEAP_HINT_SERVER)) == NULL) {
+        Printf("ERROR: failed to create WOLFSSL_CTX\n");
+        ret = -1;
+    }
+
+    if (ret == 0) {
+        /* Load client certificates into WOLFSSL_CTX */
+        if (wolfSSL_CTX_use_certificate_buffer(server_ctx, SERVER_CERT,
+                SERVER_CERT_LEN, WOLFSSL_FILETYPE_ASN1) != WOLFSSL_SUCCESS) {
+            Printf("ERROR: failed to load server certificate\n");
+            ret = -1;
+        }
+    }
+
+    if (ret == 0) {
+        /* Load client certificates into WOLFSSL_CTX */
+        if (wolfSSL_CTX_use_PrivateKey_buffer(server_ctx,
+                SERVER_KEY, SERVER_KEY_LEN, WOLFSSL_FILETYPE_ASN1) !=
+                WOLFSSL_SUCCESS) {
+            Printf("ERROR: failed to load server key\n");
+            ret = -1;
+        }
+    }
+
+    if (ret == 0) {
+        /* Register callbacks */
+        wolfSSL_SetIORecv(server_ctx, recv_server);
+        wolfSSL_SetIOSend(server_ctx, send_server);
+    }
+
+    if (ret == 0) {
+        /* Create a WOLFSSL object */
+        if ((server_ssl = wolfSSL_new(server_ctx)) == NULL) {
+            Printf("ERROR: failed to create WOLFSSL object\n");
+            ret = -1;
+        }
+    }
+
+    if (ret == 0) {
+        *ctx = server_ctx;
+        *ssl = server_ssl;
+    }
+    else {
+        if (server_ssl != NULL)
+            wolfSSL_free(server_ssl);
+        if (server_ctx != NULL)
+            wolfSSL_CTX_free(server_ctx);
+    }
+    return ret;
+}
+
+
+
+void tlsProcess()
+{
+    Printf("-- tlsProcess --\n");
+    int ret = 0;
+    WOLFSSL_CTX* server_ctx = NULL;
+    WOLFSSL*     server_ssl = NULL;
+    wolfSSL_Init();
+    ret = wolfssl_server_new(&server_ctx, &server_ssl);
+
+}
+
+
 /* USER CODE END 0 */
 

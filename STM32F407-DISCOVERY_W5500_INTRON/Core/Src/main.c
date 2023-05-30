@@ -49,9 +49,10 @@ extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
 
-int tls_client_serverTest();
-int tls_server_sizeTest();
-int tls_sock_serverTest();
+extern int tls_client_serverTest();
+extern int tls_server_sizeTest();
+extern int tls_sock_serverTest();
+extern void tlsProcess();
 
 /* USER CODE END PD */
 
@@ -783,7 +784,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 //    tls_server_sizeTest();
 //    tls_sock_serverTest();//не собирается
 
-
+    tlsProcess();
 
 uint8_t firstSend = 1;
   while (1)

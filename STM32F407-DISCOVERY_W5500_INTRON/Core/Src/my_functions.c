@@ -1,24 +1,4 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
 
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "ssl.h"
 #include "certs.h"
@@ -26,10 +6,7 @@
 /* I/O buffer size - wolfSSL buffers messages internally as well. */
 #define BUFFER_SIZE           512
 #include "w5500.h"
-char tempBufRead[2048];
-int indexTempBufRead = 0;
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -37,27 +14,10 @@ int indexTempBufRead = 0;
 #include "socket.h"
 #include "loopback.h"
 #include "my_function.h"
-/* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
 extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart6;
 
-/* USER CODE BEGIN PV */
 uint8_t gDATABUF[DATA_BUF_SIZE];
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
                             .ip = {192, 168, 1, 197},
@@ -67,14 +27,9 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
                             .dhcp = NETINFO_STATIC };
 
 uint8_t tmp;//int32_t ret = 0;
+
 // задание размеров буферов W5500 для сокетов по 2 Кбайта 														
-uint8_t memsize[2][8] = { {2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};													
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
+uint8_t memsize[2][8] = { {2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};	//Не вызывается
 
 /* Buffer for client connection to allocate dynamic memory from. */
 static unsigned char client_buffer[BUFFER_SIZE];
@@ -84,9 +39,6 @@ static unsigned char server_buffer[BUFFER_SIZE];
 static int server_buffer_sz = 0;
 
 
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
 void UART_Printf(const char* fmt, ...) {
     char buff[512];
     va_list args;
@@ -108,8 +60,7 @@ void Printf(const char* fmt, ...) {
     va_end(args);
 }
 
-/* Chip selection call back */
-void Chip_selection_call_back(void)
+void Chip_selection_call_back(void) //Не вызывается
 {
 #if   _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_VDM_
     reg_wizchip_cs_cbfunc(wizchip_select, wizchip_deselect);
@@ -128,7 +79,7 @@ void Chip_selection_call_back(void)
     /* wizchip initialize*/
 }
 
-void wizchip_initialize(void)
+void wizchip_initialize(void)//Не вызывается
 {
     if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1)
     {
@@ -145,7 +96,7 @@ void wizchip_initialize(void)
     }while(tmp == PHY_LINK_OFF);
 }
 
-void network_init(void)
+void network_init(void) //Не вызывается
 {
    uint8_t tmpstr[6];
 	ctlnetwork(CN_SET_NETINFO, (void*)&gWIZNETINFO);
@@ -164,7 +115,22 @@ void network_init(void)
 	
 }
 
+/* Client attempts to write data to server. */
+static int send_client(WOLFSSL* ssl, char* buff, int sz, void* ctx)
+{
+    Printf("\n-- send_client --\n");
+    if (server_buffer_sz < BUFFER_SIZE)
+    {
+        if (sz > BUFFER_SIZE - server_buffer_sz)
+            sz = BUFFER_SIZE - server_buffer_sz;
+        XMEMCPY(server_buffer + server_buffer_sz, buff, sz);
+        server_buffer_sz += sz;
+    }
+    else
+        sz = WOLFSSL_CBIO_ERR_WANT_WRITE;
 
+    return sz;
+}
 
 
 /* Server attempts to read data from client. */
@@ -172,57 +138,21 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
 //    Printf("\n-- recv_server --\n");
 
-//    if (server_buffer_sz > 0) {
-//        if (sz > server_buffer_sz)
-//            sz = server_buffer_sz;
-//        XMEMCPY(buff, server_buffer, sz);
-//        if (sz < server_buffer_sz) {
-//            XMEMMOVE(server_buffer, server_buffer + sz, server_buffer_sz - sz);
-//        }
-//        server_buffer_sz -= sz;
-//    }
-//    else
-//        sz = WOLFSSL_CBIO_ERR_WANT_READ;
+    if (server_buffer_sz > 0)
+    {
+        if (sz > server_buffer_sz)
+            sz = server_buffer_sz;
+        XMEMCPY(buff, server_buffer, sz);
+        if (sz < server_buffer_sz) {
+            XMEMMOVE(server_buffer, server_buffer + sz, server_buffer_sz - sz);
+        }
+        server_buffer_sz -= sz;
+    }
+    else
+        sz = WOLFSSL_CBIO_ERR_WANT_READ;
+    return sz;
 
-//    return sz;
 
-    uint16_t point;
-    uint16_t len;
-
-      if(GetSocketStatus(0)==SOCK_ESTABLISHED)
-      {
-          len = GetSizeRX(0);
-          //Если пришел пустой пакет, то уходим из функции
-          if(!len) return 0;
-          //Отобразим размер принятых данных
-          Printf("socket %d len_packet:0x%04X\r\n",0,len);
-
-          //указатель на начало чтения приёмного буфера
-          point = GetReadPointer(0);
-          w5500_readSockBuf(0, point, (uint8_t*)tempBufRead, len);
-          if (sz < len)
-          {
-              if (indexTempBufRead == 0) //Не было ранее частей
-              {
-                  XMEMCPY(buff, tempBufRead, sz);
-                  return sz;
-              }
-              else //в буфере что-то есть - завершаем
-              {
-                  XMEMCPY(buff, tempBufRead + indexTempBufRead, len);
-                  indexTempBufRead = 0;
-                  return sz;
-              }
-
-           }
-          else // запрошено данных больше чем получено
-          {
-              XMEMCPY(buff, tempBufRead + indexTempBufRead, len);
-              indexTempBufRead += len;
-              return WOLFSSL_CBIO_ERR_WANT_READ;
-          }
-      }
-      return 0;
 }
 
 /* Server attempts to write data to client. */
@@ -387,12 +317,43 @@ void tlsProcess()
     {
         Printf("Handshake complete\n");
     }
-
-
-
-
 }
 
 
-/* USER CODE END 0 */
+//uint16_t point;
+//uint16_t len;
+//if(GetSocketStatus(0)==SOCK_ESTABLISHED)
+//{
+//  len = GetSizeRX(0);
+//  //Если пришел пустой пакет, то уходим из функции
+//  if(!len) return WOLFSSL_CBIO_ERR_WANT_READ;
+//  //Отобразим размер принятых данных
+//  Printf("socket %d len_packet: %d sz: %d\n",0,len, sz);
+
+//  //указатель на начало чтения приёмного буфера
+//  point = GetReadPointer(0);
+//  w5500_readSockBuf(0, point, (uint8_t*)tempBufRead, len);
+//  if (sz < len)
+//  {
+//      if (indexTempBufRead == 0) //Не было ранее частей
+//      {
+//          XMEMCPY(buff, tempBufRead, sz);
+//          return sz;
+//      }
+//      else //в буфере что-то есть - завершаем
+//      {
+//          XMEMCPY(buff, tempBufRead + indexTempBufRead, len);
+//          indexTempBufRead = 0;
+//          return sz;
+//      }
+
+//   }
+//  else // запрошено данных больше чем получено
+//  {
+//      XMEMCPY(buff, tempBufRead + indexTempBufRead, len);
+//      indexTempBufRead += len;
+//      return WOLFSSL_CBIO_ERR_WANT_READ;
+//  }
+//}
+//return 0;
 

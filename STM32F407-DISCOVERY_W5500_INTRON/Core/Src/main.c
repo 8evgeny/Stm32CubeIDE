@@ -780,7 +780,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 
-    tls_client_serverTest();
+//    tls_client_serverTest();
 //    tls_server_sizeTest();
 //    tls_sock_serverTest();//не собирается
 

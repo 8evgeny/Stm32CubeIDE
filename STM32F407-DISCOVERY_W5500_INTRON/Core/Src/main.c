@@ -166,6 +166,7 @@ static void MX_RTC_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 void UART_Printf(const char* fmt, ...);
+extern void print_network_information(void);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
@@ -611,6 +612,8 @@ void wep_define_func(void)
     // AJAX JavaScript functions
     reg_httpServer_webContent((uint8_t *)"ajax.js", (uint8_t *)w5x00web_ajax_js);			// ajax.js			: JavaScript for AJAX request transfer
 
+//    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page2);
+//    reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);
 }
 
 
@@ -713,16 +716,22 @@ uint16_t localport = 8888;
 
     }
 
-//    net_ini();
+    net_ini();
     delayUS_ASM(10000);
 
   //Callbacks
-    reg_wizchip_cris_cbfunc(wizchip_cris_enter, wizchip_cris_exit);
-    reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
-    reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
-    reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
-    wizchip_initialize();
-    network_init();
+//    reg_wizchip_cris_cbfunc(wizchip_cris_enter, wizchip_cris_exit);
+//    reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
+//    reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
+//    reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
+//    wizchip_initialize();
+//    network_init();
+
+//Делает то-же самое
+//    WIZCHIPInitialize();
+//    wizchip_setnetinfo(&defaultNetInfo);
+//    ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
+//    print_network_information();
 
 //    HAL_TIM_Base_Start_IT(&htim1);
 //    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
@@ -820,11 +829,10 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 
 //web server - РАБОТАЕТ
-printf("web server\n");
-    uint8_t i;
-    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
-    wep_define_func();
-    display_reg_webContent_list();
+//    uint8_t i;
+//    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
+//    wep_define_func();
+//    display_reg_webContent_list();
 
 
 
@@ -832,13 +840,13 @@ uint8_t firstSend = 1;
   while (1)
   {
 //web server - РАБОТАЕТ
-    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+//    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
-//     net_poll();
+     net_poll();
 
 #ifdef INTRON
     for (uint8_t i = 4; i < 8 ;++i)

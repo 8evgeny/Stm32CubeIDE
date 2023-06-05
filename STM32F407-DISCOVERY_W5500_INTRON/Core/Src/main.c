@@ -820,6 +820,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 
 //web server - РАБОТАЕТ
+printf("web server\n");
     uint8_t i;
     httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
     wep_define_func();

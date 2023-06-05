@@ -19,7 +19,7 @@ extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart6;
 
 uint8_t gDATABUF[DATA_BUF_SIZE];
-wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
+wiz_NetInfo defaultNetInfo = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
                             .ip = {192, 168, 1, 222},
                             .sn = {255,255,255,0},			
                             .gw = {192, 168, 1, 1},
@@ -58,6 +58,25 @@ void Printf(const char* fmt, ...) {
     HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff)
                           ,HAL_MAX_DELAY                          );
     va_end(args);
+}
+
+int _write(int fd, char *str, int len)
+{
+    for(int i=0; i<len; i++)
+    {
+        HAL_UART_Transmit(&huart6, (uint8_t *)&str[i], 1, 0xFFFF);
+    }
+    return len;
+}
+
+void print_network_information(void)
+{
+    wizchip_getnetinfo(&defaultNetInfo);
+    printf("Mac addr:\t%02x:%02x:%02x:%02x:%02x:%02x\n\r",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
+    printf("IP address:\t%d.%d.%d.%d\n\r",defaultNetInfo.ip[0],defaultNetInfo.ip[1],defaultNetInfo.ip[2],defaultNetInfo.ip[3]);
+    printf("SM Mask:\t%d.%d.%d.%d\n\r",defaultNetInfo.sn[0],defaultNetInfo.sn[1],defaultNetInfo.sn[2],defaultNetInfo.sn[3]);
+    printf("Gate way:\t%d.%d.%d.%d\n\r",defaultNetInfo.gw[0],defaultNetInfo.gw[1],defaultNetInfo.gw[2],defaultNetInfo.gw[3]);
+    printf("DNS serv:\t%d.%d.%d.%d\n\r",defaultNetInfo.dns[0],defaultNetInfo.dns[1],defaultNetInfo.dns[2],defaultNetInfo.dns[3]);
 }
 
 void Chip_selection_call_back(void)
@@ -99,18 +118,18 @@ void wizchip_initialize(void)
 void network_init(void)
 {
    uint8_t tmpstr[6];
-	ctlnetwork(CN_SET_NETINFO, (void*)&gWIZNETINFO);
-	ctlnetwork(CN_GET_NETINFO, (void*)&gWIZNETINFO);
+    ctlnetwork(CN_SET_NETINFO, (void*)&defaultNetInfo);
+    ctlnetwork(CN_GET_NETINFO, (void*)&defaultNetInfo);
 
 	// Display Network Information
 	ctlwizchip(CW_GET_ID,(void*)tmpstr);
     Printf("\r\n=== %s NET CONF ===\r\n",(char*)tmpstr);
-    Printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\r\n",gWIZNETINFO.mac[0],gWIZNETINFO.mac[1],gWIZNETINFO.mac[2],
-		  gWIZNETINFO.mac[3],gWIZNETINFO.mac[4],gWIZNETINFO.mac[5]);
-    Printf("SIP: %d.%d.%d.%d\r\n", gWIZNETINFO.ip[0],gWIZNETINFO.ip[1],gWIZNETINFO.ip[2],gWIZNETINFO.ip[3]);
-    Printf("GAR: %d.%d.%d.%d\r\n", gWIZNETINFO.gw[0],gWIZNETINFO.gw[1],gWIZNETINFO.gw[2],gWIZNETINFO.gw[3]);
-    Printf("SUB: %d.%d.%d.%d\r\n", gWIZNETINFO.sn[0],gWIZNETINFO.sn[1],gWIZNETINFO.sn[2],gWIZNETINFO.sn[3]);
-    Printf("DNS: %d.%d.%d.%d\r\n", gWIZNETINFO.dns[0],gWIZNETINFO.dns[1],gWIZNETINFO.dns[2],gWIZNETINFO.dns[3]);
+    Printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\r\n",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],
+          defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
+    Printf("SIP: %d.%d.%d.%d\r\n", defaultNetInfo.ip[0],defaultNetInfo.ip[1],defaultNetInfo.ip[2],defaultNetInfo.ip[3]);
+    Printf("GAR: %d.%d.%d.%d\r\n", defaultNetInfo.gw[0],defaultNetInfo.gw[1],defaultNetInfo.gw[2],defaultNetInfo.gw[3]);
+    Printf("SUB: %d.%d.%d.%d\r\n", defaultNetInfo.sn[0],defaultNetInfo.sn[1],defaultNetInfo.sn[2],defaultNetInfo.sn[3]);
+    Printf("DNS: %d.%d.%d.%d\r\n", defaultNetInfo.dns[0],defaultNetInfo.dns[1],defaultNetInfo.dns[2],defaultNetInfo.dns[3]);
     Printf("======================\r\n");
 	
 }

@@ -11,7 +11,7 @@ extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 extern uint8_t destip[4];
 extern uint8_t sdCartOn;
-extern char md5[32];
+extern char MD5[32];
 uint8_t temp[4];
 uint8_t passwordOK = 0;
 uint8_t loginOK = 0;
@@ -713,7 +713,7 @@ void http_request(void)
 //            char md5[34] = {'p','5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b',
 //                            '3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
 
-            if (strncmp(tmpbuf + 1, md5 , 32) == 0)
+            if (strncmp(tmpbuf + 1, MD5 , 32) == 0)
             {
                 UART_Printf("password OK\r\n"); delayUS_ASM(10000);
                 passwordOK = 1;

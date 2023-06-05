@@ -20,7 +20,7 @@ extern UART_HandleTypeDef huart6;
 
 uint8_t gDATABUF[DATA_BUF_SIZE];
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
-                            .ip = {192, 168, 1, 197},
+                            .ip = {192, 168, 1, 222},
                             .sn = {255,255,255,0},			
                             .gw = {192, 168, 1, 1},
                             .dns = {0,0,0,0},
@@ -60,7 +60,7 @@ void Printf(const char* fmt, ...) {
     va_end(args);
 }
 
-void Chip_selection_call_back(void) //Не вызывается
+void Chip_selection_call_back(void)
 {
 #if   _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_VDM_
     reg_wizchip_cs_cbfunc(wizchip_select, wizchip_deselect);
@@ -79,24 +79,24 @@ void Chip_selection_call_back(void) //Не вызывается
     /* wizchip initialize*/
 }
 
-void wizchip_initialize(void)//Не вызывается
+void wizchip_initialize(void)
 {
     if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1)
     {
-       UART_Printf("WIZCHIP Initialized fail.\r\n");
+       Printf("WIZCHIP Initialized fail.\r\n");
        while(1);
     }
-		else{UART_Printf("WIZCHIP Initialized OK.\r\n");}
+        else{Printf("WIZCHIP Initialized OK.\r\n");}
 
     /* PHY link status check */
     do
     {
        if(ctlwizchip(CW_GET_PHYLINK, (void*)&tmp) == -1)
-          UART_Printf("Unknown PHY Link stauts.\r\n");
+          Printf("Unknown PHY Link stauts.\r\n");
     }while(tmp == PHY_LINK_OFF);
 }
 
-void network_init(void) //Не вызывается
+void network_init(void)
 {
    uint8_t tmpstr[6];
 	ctlnetwork(CN_SET_NETINFO, (void*)&gWIZNETINFO);
@@ -104,14 +104,14 @@ void network_init(void) //Не вызывается
 
 	// Display Network Information
 	ctlwizchip(CW_GET_ID,(void*)tmpstr);
-	UART_Printf("\r\n=== %s NET CONF ===\r\n",(char*)tmpstr);
-	UART_Printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\r\n",gWIZNETINFO.mac[0],gWIZNETINFO.mac[1],gWIZNETINFO.mac[2],
+    Printf("\r\n=== %s NET CONF ===\r\n",(char*)tmpstr);
+    Printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\r\n",gWIZNETINFO.mac[0],gWIZNETINFO.mac[1],gWIZNETINFO.mac[2],
 		  gWIZNETINFO.mac[3],gWIZNETINFO.mac[4],gWIZNETINFO.mac[5]);
-	UART_Printf("SIP: %d.%d.%d.%d\r\n", gWIZNETINFO.ip[0],gWIZNETINFO.ip[1],gWIZNETINFO.ip[2],gWIZNETINFO.ip[3]);
-	UART_Printf("GAR: %d.%d.%d.%d\r\n", gWIZNETINFO.gw[0],gWIZNETINFO.gw[1],gWIZNETINFO.gw[2],gWIZNETINFO.gw[3]);
-	UART_Printf("SUB: %d.%d.%d.%d\r\n", gWIZNETINFO.sn[0],gWIZNETINFO.sn[1],gWIZNETINFO.sn[2],gWIZNETINFO.sn[3]);
-	UART_Printf("DNS: %d.%d.%d.%d\r\n", gWIZNETINFO.dns[0],gWIZNETINFO.dns[1],gWIZNETINFO.dns[2],gWIZNETINFO.dns[3]);
-	UART_Printf("======================\r\n");
+    Printf("SIP: %d.%d.%d.%d\r\n", gWIZNETINFO.ip[0],gWIZNETINFO.ip[1],gWIZNETINFO.ip[2],gWIZNETINFO.ip[3]);
+    Printf("GAR: %d.%d.%d.%d\r\n", gWIZNETINFO.gw[0],gWIZNETINFO.gw[1],gWIZNETINFO.gw[2],gWIZNETINFO.gw[3]);
+    Printf("SUB: %d.%d.%d.%d\r\n", gWIZNETINFO.sn[0],gWIZNETINFO.sn[1],gWIZNETINFO.sn[2],gWIZNETINFO.sn[3]);
+    Printf("DNS: %d.%d.%d.%d\r\n", gWIZNETINFO.dns[0],gWIZNETINFO.dns[1],gWIZNETINFO.dns[2],gWIZNETINFO.dns[3]);
+    Printf("======================\r\n");
 	
 }
 

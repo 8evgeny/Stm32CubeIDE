@@ -21,6 +21,10 @@
 #include "loopback.h"
 #include "my_function.h"
 #include "eeprom.h"
+#include "wizchip_init.h"
+#include "SSLInterface.h"
+#include "httpServer.h"
+#include "webpage.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -133,9 +137,19 @@ uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
-char md5[32];
+char MD5[32];
 uint8_t destip[4];
 extern uint8_t macaddr[6];
+extern wiz_NetInfo defaultNetInfo;
+
+uint8_t RX_BUF[DATA_BUF_SIZE];
+uint8_t TX_BUF[DATA_BUF_SIZE];
+#define MAX_HTTPSOCK	4
+uint8_t socknumlist[] = {0, 1, 2, 3};
+#define HTTP_SOCKET     0
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -425,7 +439,7 @@ void copyParametersToEEPROM()
 
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp, 100, &fil);
-    strncpy(md5, tmp, 32);
+    strncpy(MD5, tmp, 32);
     f_close(&fil);
     lfs_file_open(&lfs, &file, "md5", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
@@ -500,9 +514,9 @@ void setParametersFromSD()
 
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp, 100, &fil);
-    strncpy(md5, tmp, 32);
+    strncpy(MD5, tmp, 32);
     f_close(&fil);
-    UART_Printf("md5: %s\n",md5); delayUS_ASM(10000);
+    UART_Printf("md5: %s\n",MD5); delayUS_ASM(10000);
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
     UART_Printf(tmp); delayUS_ASM(10000);
@@ -565,7 +579,7 @@ void SetParaametersFromEEPROM()
     lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
     lfs_file_close(&lfs, &file);
-    strcpy(md5, tmp);
+    strcpy(MD5, tmp);
 
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
@@ -575,12 +589,33 @@ void SetParaametersFromEEPROM()
     UART_Printf(tmp); delayUS_ASM(10000);
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
     UART_Printf(tmp); delayUS_ASM(10000);
-    sprintf(tmp,"md5: %s", md5);
+    sprintf(tmp,"md5: %s", MD5);
     UART_Printf(tmp); delayUS_ASM(10000);
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
     UART_Printf(tmp); delayUS_ASM(10000);
 }
+
+void wep_define_func(void)
+{
+    // Index page and netinfo / base64 image demo
+    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
+    reg_httpServer_webContent((uint8_t *)"netinfo.html", (uint8_t *)netinfo_page);			// netinfo.html 	: Network information example page
+    reg_httpServer_webContent((uint8_t *)"netinfo.js", (uint8_t *)w5x00web_netinfo_js);     // netinfo.js 		: JavaScript for Read Network configuration 	(+ ajax.js)
+    reg_httpServer_webContent((uint8_t *)"img.html", (uint8_t *)img_page);					// img.html 		: Base64 Image data example page
+
+    // Example #1
+    reg_httpServer_webContent((uint8_t *)"dio.html", (uint8_t *)dio_page);					// dio.html 		: Digital I/O control example page
+    reg_httpServer_webContent((uint8_t *)"dio.js", (uint8_t *)w5x00web_dio_js);             // dio.js 			: JavaScript for digital I/O control 	(+ ajax.js)
+
+    // AJAX JavaScript functions
+    reg_httpServer_webContent((uint8_t *)"ajax.js", (uint8_t *)w5x00web_ajax_js);			// ajax.js			: JavaScript for AJAX request transfer
+
+}
+
+
+
+
 /* USER CODE END 0 */
 
 /**
@@ -678,7 +713,7 @@ uint16_t localport = 8888;
 
     }
 
-    net_ini();
+//    net_ini();
     delayUS_ASM(10000);
 
   //Callbacks
@@ -686,16 +721,13 @@ uint16_t localport = 8888;
     reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
     reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
     reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
-    delayUS_ASM(10000);
+    wizchip_initialize();
+    network_init();
+
 //    HAL_TIM_Base_Start_IT(&htim1);
 //    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
 //    UART_Printf("TIM1\r\n");
 
-
-//  /* wizchip initialize*/
-//  wizchip_initialize();
-//  /* Network initialization */
-//  network_init();
 
   /* USER CODE END 2 */
 
@@ -756,10 +788,10 @@ uint8_t sn = 0;
   extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 
-for (uint8_t i = 4; i < 8 ;++i)
-{
-    socket(i, Sn_MR_UDP, localport + i, 0x00);
-}
+//for (uint8_t i = 4; i < 8 ;++i)
+//{
+//    socket(i, Sn_MR_UDP, localport + i, 0x00);
+//}
 
 //OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
 //OpenSocket(1, Sn_MR_UDP);
@@ -786,14 +818,26 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 //    tlsProcess();
 
+
+//web server - РАБОТАЕТ
+    uint8_t i;
+    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
+    wep_define_func();
+    display_reg_webContent_list();
+
+
+
 uint8_t firstSend = 1;
   while (1)
   {
+//web server - РАБОТАЕТ
+    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
-     net_poll();
+//     net_poll();
 
 #ifdef INTRON
     for (uint8_t i = 4; i < 8 ;++i)

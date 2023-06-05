@@ -19,11 +19,13 @@ project(11_Converter_F407_INTRON_DT C CXX ASM)
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
 
-set (w5500 ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Ethernet)
+set (ioLibrary_Eth ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Ethernet)
+set (ioLibrary_Int ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Internet/httpServer)
 set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
 #set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs_new)
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
+set (tls ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
 
 #SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') //для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
@@ -54,8 +56,8 @@ include_directories(
     Drivers/STM32F4xx_HAL_Driver/Inc
     Drivers/CMSIS/Core/Include
     Drivers/CMSIS/Include
-    ${w5500}
-    ${w5500}/W5500
+    ${ioLibrary_Eth}
+    ${ioLibrary_Int}
     FATFS/App
     FATFS/Target
     ${fatfs}
@@ -64,13 +66,19 @@ include_directories(
     ${wolfssl}
     ${wolfssl}/wolfssl
     wolfssl-examples-master/embedded
+    ${tls}
+    ${tls}/mbedtls/include
     )
 
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
 add_library(hal_LIB ${hal_src})
 
-file (GLOB w5500_src ${w5500}/*.c ${w5500}/W5500/w5500.c)
-add_library(w5500_LIB ${w5500_src})
+file (GLOB ioLibrary_Driver_src
+    ${ioLibrary_Eth}/*.c
+    ${ioLibrary_Eth}/W5500/*.c
+    ${ioLibrary_Int}/*.c
+    )
+add_library(ioLibrary_Driver_LIB ${ioLibrary_Driver_src})
 
 file (GLOB fatfs_src FATFS/App/*.c FATFS/Target/*.c ${fatfs}/*.c ${fatfs}/option/*.c)
 add_library(fatfs_LIB ${fatfs_src})
@@ -86,6 +94,9 @@ file (GLOB wolfssl_src ${wolfssl}/src/*.c
 #    wolfssl-examples-master/embedded/tls-sock-server.c
     )
 add_library(wolfssl_LIB ${wolfssl_src})
+
+file (GLOB tls_src ${tls}/*.c ${tls}/mbedtls/library/*.c)
+add_library(tls_LIB ${tls_src})
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s)
 add_executable(${PROJECT_NAME}.elf ${src})
@@ -112,10 +123,11 @@ target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
 target_link_libraries(${PROJECT_NAME}.elf PUBLIC
     hal_LIB
-    w5500_LIB
+    ioLibrary_Driver_LIB
     fatfs_LIB
     littlefs_LIB
     wolfssl_LIB
+    tls_LIB
     )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)

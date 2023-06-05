@@ -146,7 +146,6 @@ uint8_t RX_BUF[DATA_BUF_SIZE];
 uint8_t TX_BUF[DATA_BUF_SIZE];
 #define MAX_HTTPSOCK	4
 uint8_t socknumlist[] = {0, 1, 2, 3};
-#define HTTP_SOCKET     0
 
 
 
@@ -821,9 +820,11 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее такти�
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 
-    tls_client_serverTest(); // работает
+//    tls_client_serverTest(); // работает
+
 //    tls_server_sizeTest();
-//    tls_sock_serverTest();//не собирается
+
+    tls_sock_serverTest();//не собирается
 
 //    tlsProcess();
 

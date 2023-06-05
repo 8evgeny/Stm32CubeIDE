@@ -26,6 +26,17 @@ asm volatile ("MOV R0,%[loops]\n                       \
               : : [loops] "r" (34*us) : "memory"       \
               );                                       \
 } while(0)
+#define HTTP_SOCKET     0
+#define ETH_MAX_BUF_SIZE	2048
+#define SERVER_PORT			8883
+#ifdef INTRON
+#define MAC_ADDR {0x00,0x15,0x42,0xBF,0xF0,0x51}
+#endif
+#ifndef INTRON
+#define MAC_ADDR {0x00,0x15,0x42,0xBF,0xF0,0x52}
+#endif
+
+#include "types.h"
 
 /* USER CODE END Header */
 
@@ -51,6 +62,8 @@ void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_cris_enter(void);
 void 	wizchip_cris_exit(void);
+#include "stdio.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

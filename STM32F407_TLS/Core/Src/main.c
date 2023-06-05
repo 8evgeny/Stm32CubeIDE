@@ -138,7 +138,6 @@ uint8_t RX_BUF[DATA_BUF_SIZE];
 uint8_t TX_BUF[DATA_BUF_SIZE];
 #define MAX_HTTPSOCK	4
 uint8_t socknumlist[] = {0, 1, 2, 3};
-#define HTTP_SOCKET     0
 
 /* USER CODE END PV */
 
@@ -672,7 +671,7 @@ int main(void)
       for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
 
 //web server - НЕ РАБОТАЕТ
-//        printf("Creating socket...\r\n");
+        printf("Creating socket...\r\n");
 //        stat = socket(HTTP_SOCKET, Sn_MR_TCP, 80, 0);
 //        if(stat != HTTP_SOCKET) printf("socket() failed, code = %d\r\n", stat);
 //        else printf("Socket created, connecting...\r\n");

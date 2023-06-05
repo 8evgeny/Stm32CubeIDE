@@ -26,7 +26,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
               : : [loops] "r" (34*us) : "memory"       \
               );                                       \
 } while(0)
-
+#define HTTP_SOCKET     0
 #define ETH_MAX_BUF_SIZE	2048
 #define SERVER_PORT			8883
 #ifdef INTRON

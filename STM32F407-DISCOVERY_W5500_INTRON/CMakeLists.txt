@@ -65,6 +65,8 @@ include_directories(
     wolfSSL
     ${wolfssl}
     ${wolfssl}/wolfssl
+    ${wolfssl}/wolfcrypt
+    ${wolfssl}/wolfssl/wolfcrypt
     wolfssl-examples-master/embedded
     ${tls}
     ${tls}/mbedtls/include
@@ -91,7 +93,7 @@ file (GLOB wolfssl_src ${wolfssl}/src/*.c
     wolfSSL/wolfssl_example.c
     wolfssl-examples-master/embedded/tls-client-server.c
     wolfssl-examples-master/embedded/tls-server-size.c
-#    wolfssl-examples-master/embedded/tls-sock-server.c
+    wolfssl-examples-master/embedded/tls-sock-server.c
     )
 add_library(wolfssl_LIB ${wolfssl_src})
 

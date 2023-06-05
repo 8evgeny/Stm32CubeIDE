@@ -24,10 +24,18 @@
 #endif
 #include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/ssl.h>
+#define SOCKET_T int
+#define WOLFSSL_SOCKET_INVALID  (SOCKET_T)(0)
+
+
 
 #include "sockets.h"
 #include "tls-info.h"
 #include "certs.h"
+
+#include "socket.h"
+#include "main.h"
+
 extern void Printf(const char* fmt, ...);
 #if !defined(NO_WOLFSSL_SERVER)
 
@@ -181,21 +189,47 @@ static int wolfssl_recv(WOLFSSL* ssl)
 }
 
 /* Establish a socket to listen on. */
-static int wolfssl_server_listen_tcp(SOCKET_T* fd)
+static int wolfssl_server_listen_tcp(int fd)
 {
     Printf("-- wolfssl_server_listen_tcp --\n");
-    word16 port = wolfSSLPort;
+    char Message[128];
+    uint8_t rIP[4];
+    uint8_t reqnr;
+    uint8_t stat;
+//    word16 port = wolfSSLPort;
+    Printf("Creating socket...\r\n");
+    stat = socket(fd, Sn_MR_TCP, 80, 0);
+    if(stat != 0) Printf("socket() failed, code = %d\r\n", stat);
+    else Printf("Socket created, connecting...\r\n");
+    stat = listen(HTTP_SOCKET);
+    if(stat != SOCK_OK) Printf("listen() failed, code = %d\r\n", stat);
+    else Printf("listen() OK\r\n");
+    while(WIZCHIP_READ(HTTP_SOCKET) == SOCK_LISTEN) {HAL_Delay(2);}
+    Printf("Input connection\r\n");
+    if(WIZCHIP_READ(HTTP_SOCKET) != SOCK_ESTABLISHED) Printf("Error socket status\r\n");
+
+        getsockopt(HTTP_SOCKET, SO_DESTIP, rIP);
+        Printf("IP:  %d.%d.%d.%d\r\n", rIP[0], rIP[1], rIP[2], rIP[3]);
+        sprintf(Message, "input connection nr - %d\n", reqnr);
+        Printf(Message);
+//        send(0, (uint8_t*)Message, strlen(Message));
+        disconnect(HTTP_SOCKET);
+        printf("Closing socket.\r\n");
+        close(HTTP_SOCKET);
+        HAL_Delay(1000);
+
 
     return tcp_listen(fd, &port, 1, 0, 0);
+    return listen(0);
 }
 
 /* Accept the TCP connection from the client. */
-static int wolfssl_server_accept_tcp(WOLFSSL* ssl, SOCKET_T fd,
-                                     SOCKET_T* acceptfd)
+static int wolfssl_server_accept_tcp(WOLFSSL* ssl, int fd,
+                                     int* acceptfd)
 {
     Printf("-- wolfssl_server_accept_tcp --\n");
     int      ret = 0;
-    SOCKET_T clientfd = WOLFSSL_SOCKET_INVALID;
+    int clientfd = WOLFSSL_SOCKET_INVALID;
 
     ret = tcp_accept(&fd, &clientfd);
     if (ret == 0) {
@@ -213,12 +247,12 @@ static int wolfssl_server_accept_tcp(WOLFSSL* ssl, SOCKET_T fd,
 
 
 /* Server operations. */
-static int server(WOLFSSL_CTX* server_ctx, SOCKET_T sockfd)
+static int server(WOLFSSL_CTX* server_ctx, uint8_t sockfd)
 {
     Printf("-- server --\n");
     int      ret;
     WOLFSSL* server_ssl = NULL;
-    SOCKET_T clientfd = WOLFSSL_SOCKET_INVALID;
+    uint8_t clientfd = WOLFSSL_SOCKET_INVALID;
 
     do {
         ret = wolfssl_server_ssl_new(server_ctx, &server_ssl);
@@ -268,10 +302,10 @@ int tls_sock_serverTest()
 
     ret = wolfssl_server_ctx_new(&server_ctx);
     if (ret == 0)
-        ret = wolfssl_server_listen_tcp(&sockfd);
+        ret = wolfssl_server_listen_tcp(0);
 
     /* Do server */
-    ret = server(server_ctx, sockfd);
+    ret = server(server_ctx, 0);
 
     if (server_ctx != NULL)
         wolfSSL_CTX_free(server_ctx);

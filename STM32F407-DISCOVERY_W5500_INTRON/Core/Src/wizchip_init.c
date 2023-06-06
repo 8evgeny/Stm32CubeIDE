@@ -9,11 +9,10 @@
 extern void Printf(const char* fmt, ...);
 
 void WIZCHIPInitialize(){
-
-	csDisable();
-	reg_wizchip_spi_cbfunc(spiReadByte, spiWriteByte);
-	reg_wizchip_cs_cbfunc(csEnable, csDisable);
-
+    wizchip_cs_deselect();
+    reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
+    reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
+    reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
 
 	uint8_t tmp;
 	//w5500, w5200
@@ -36,33 +35,67 @@ void WIZCHIPInitialize(){
 		  return;
 		}
 	} while (tmp == PHY_LINK_OFF);
-
-
-
 }
 
+//void csEnable(void)
+//{
+//	HAL_GPIO_WritePin(WIZCHIP_CS_PORT, WIZCHIP_CS_PIN, GPIO_PIN_RESET);
+//}
 
+//void csDisable(void)
+//{
+//	HAL_GPIO_WritePin(WIZCHIP_CS_PORT, WIZCHIP_CS_PIN, GPIO_PIN_SET);
+//}
 
+//void spiWriteByte(uint8_t tx)
+//{
+//	uint8_t rx;
+//	HAL_SPI_TransmitReceive(&WIZCHIP_SPI, &tx, &rx, 1, 10);
+//}
 
-void csEnable(void)
+//uint8_t spiReadByte(void)
+//{
+//	uint8_t rx = 0, tx = 0xFF;
+//	HAL_SPI_TransmitReceive(&WIZCHIP_SPI, &tx, &rx, 1, 10);
+//	return rx;
+//}
+
+void wizchip_spi_readburst(uint8_t* pBuf, uint16_t len)
 {
-	HAL_GPIO_WritePin(WIZCHIP_CS_PORT, WIZCHIP_CS_PIN, GPIO_PIN_RESET);
+    HAL_SPI_Receive(&hspi1, pBuf, len , 1000);
 }
 
-void csDisable(void)
+void wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len)
 {
-	HAL_GPIO_WritePin(WIZCHIP_CS_PORT, WIZCHIP_CS_PIN, GPIO_PIN_SET);
+    HAL_SPI_Transmit(&hspi1, pBuf, len , 1000);
 }
 
-void spiWriteByte(uint8_t tx)
+void wizchip_cs_deselect(void)
 {
-	uint8_t rx;
-	HAL_SPI_TransmitReceive(&WIZCHIP_SPI, &tx, &rx, 1, 10);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 }
 
-uint8_t spiReadByte(void)
+void wizchip_cs_select(void)
 {
-	uint8_t rx = 0, tx = 0xFF;
-	HAL_SPI_TransmitReceive(&WIZCHIP_SPI, &tx, &rx, 1, 10);
-	return rx;
+     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+}
+
+uint8_t wizchip_spi_readbyte(void)
+{
+    uint8_t wb=0xFF;
+    HAL_SPI_Receive(&hspi1, &wb, 1, 1000);
+    return	wb;
+}
+
+void wizchip_spi_writebyte(uint8_t wb)
+{
+    HAL_SPI_Transmit(&hspi1, &wb, 1, 1000);
+}
+
+void wizchip_cris_enter(void)
+{
+}
+
+void wizchip_cris_exit(void)
+{
 }

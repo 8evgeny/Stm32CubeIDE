@@ -75,6 +75,16 @@ static const char msgHTTPIndex[] =
     "</body>\n"
     "</html>\n";
 
+static const char msgHTTPIndex2[] =
+    "<html>\n"
+    "<head>\n"
+    "<title>Welcome to wolfSSL!</title>\n"
+    "</head>\n"
+    "<body>\n"
+    "<p>wolfSSL has successfully performed handshake!</p>\n"
+    "</body>\n"
+    "</html>\n";
+
 void w5500_packetReceive_forTLS(uint8_t sn)
 {
     uint16_t len;
@@ -317,15 +327,20 @@ int tls_server_sizeTest()
         Printf("Handshake ERROR\n");
 
 
+    wolfssl_send(server_ssl, msgHTTPIndex2);
+
+
+
+
     /* Send and receive HTTP messages. */
-    if (ret == 0) {
-        Printf("\nServer Received:\n");
-        ret = wolfssl_recv(server_ssl);
-    }
-    if (ret == 0) {
-        Printf("\nServer Sending:\n");
-        ret = wolfssl_send(server_ssl, msgHTTPIndex);
-    }
+//    if (ret == 0) {
+//        Printf("\nServer Received:\n");
+//        ret = wolfssl_recv(server_ssl);
+//    }
+//    if (ret == 0) {
+//        Printf("\nServer Sending:\n");
+//        ret = wolfssl_send(server_ssl, msgHTTPIndex);
+//    }
 //while (1)
 //{
 //    wolfssl_recv(server_ssl);

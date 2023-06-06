@@ -109,6 +109,7 @@ void w5500_packetSend_forTLS(uint8_t sn)
 //    w5500_writeSockBuf(0, end_point, (uint8_t*)client_buffer, client_buffer_sz);
 //    SendSocket(0);
     send(sn, client_buffer, client_buffer_sz);
+    client_buffer_sz = 0;
 //    DisconnectSocket(sn); //Разъединяемся
 //    SocketClosedWait(sn);
 //    printf("socket %d (one) closed\r\n",sn);
@@ -167,7 +168,8 @@ static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
     else
         sz = WOLFSSL_CBIO_ERR_WANT_WRITE;
 
-    w5500_packetSend_forTLS(0);
+     if (client_buffer_sz > 0)
+         w5500_packetSend_forTLS(0);
 
     return sz;
 }

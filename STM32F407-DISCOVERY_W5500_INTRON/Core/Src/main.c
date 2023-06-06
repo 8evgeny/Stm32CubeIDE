@@ -584,7 +584,7 @@ void workEEPROM()
     }
 }
 
-void prepeareUDP_PLIS()
+void prepearUDP_PLIS()
 {
     uint8_t sn = 0;
     //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
@@ -739,7 +739,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-    prepeareUDP_PLIS();
+    prepearUDP_PLIS();
 
 //    tls_client_serverTest(); // работает
     tls_server_sizeTest();

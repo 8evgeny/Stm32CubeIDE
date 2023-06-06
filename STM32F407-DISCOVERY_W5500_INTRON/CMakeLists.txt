@@ -13,6 +13,9 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
 #Режим http / https
 add_definitions(-DTLS_ON)
+add_definitions(-UWOLFSSL_TLS13)
+#add_definitions(-DWOLFSSL_ALLOW_TLSV10)
+#add_definitions(-UNO_OLD_TLS)
 #add_definitions(-DMBEDTLS_ECDSA_C)
 #add_definitions(-DMBEDTLS_ECP_C)
 #add_definitions(-DMBEDTLS_SHA256_C)

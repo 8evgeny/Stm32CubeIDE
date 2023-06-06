@@ -330,7 +330,7 @@ int tls_server_sizeTest()
     }
 
 
-    wolfSSL_set_fd(server_ssl, 0);
+//    wolfSSL_set_fd(server_ssl, 0);
 
 
 
@@ -341,7 +341,7 @@ int tls_server_sizeTest()
     }
     if (ret == 0) {
         Printf("\nServer Sending:\n");
-        ret = wolfssl_send(server_ssl, msgHTTPIndex);
+        ret = wolfssl_send(server_ssl, msgHTTPIndex2);
     }
 
 //    /* Dispose of SSL objects. */

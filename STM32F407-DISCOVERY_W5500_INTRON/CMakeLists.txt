@@ -12,7 +12,7 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #add_definitions(-DINTRON)
 
 #Режим http / https
-#add_definitions(-DTLS_ON)
+add_definitions(-DTLS_ON)
 
 project(11_Converter_F407_INTRON_DT C CXX ASM)
 
@@ -93,7 +93,7 @@ file (GLOB wolfssl_src ${wolfssl}/src/*.c
     wolfSSL/wolfssl_example.c
     wolfssl-examples-master/embedded/tls-client-server.c
     wolfssl-examples-master/embedded/tls-server-size.c
-    wolfssl-examples-master/embedded/tls-sock-server.c
+#    wolfssl-examples-master/embedded/tls-sock-server.c
     )
 add_library(wolfssl_LIB ${wolfssl_src})
 

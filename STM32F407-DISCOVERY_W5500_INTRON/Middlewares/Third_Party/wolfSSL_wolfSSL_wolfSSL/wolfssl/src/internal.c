@@ -10446,6 +10446,7 @@ static int GetDtlsRecordHeader(WOLFSSL* ssl, word32* inOutIdx,
 static int GetRecordHeader(WOLFSSL* ssl, word32* inOutIdx,
                            RecordLayerHeader* rh, word16 *size)
 {
+    WOLFSSL_MSG("-- GetRecordHeader --");
     byte tls12minor;
 #ifdef WOLFSSL_DTLS
     int ret;
@@ -19141,6 +19142,7 @@ int ProcessReply(WOLFSSL* ssl)
    closed and the endpoint wants to check for an alert sent by the other end. */
 int ProcessReplyEx(WOLFSSL* ssl, int allowSocketErr)
 {
+//    WOLFSSL_MSG("ProcessReplyEx");
     int    ret = 0, type = internal_error, readSz;
     int    atomicUser = 0;
     word32 startIdx = 0;

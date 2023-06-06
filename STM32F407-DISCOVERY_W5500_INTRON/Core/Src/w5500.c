@@ -18,6 +18,10 @@ extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 extern uint16_t local_port;
+extern unsigned char server_buffer[BUFFER_SIZE];
+extern int server_buffer_sz;
+extern unsigned char client_buffer[BUFFER_SIZE];
+extern int client_buffer_sz ;
 //#include "mbedtls.h"
 //-----------------------------------------------
 void w5500_writeReg(uint8_t op, uint16_t addres, uint8_t data)
@@ -266,6 +270,58 @@ UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
 //-----------------------------------------------
 extern void tcp_send_http_middle(void);
 extern void tcp_send_http_last(void);
+
+void w5500_packetReceive_forTLS(uint8_t sn)
+{
+  uint16_t point;
+  uint16_t len;
+    if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
+    {
+
+            len = GetSizeRX(sn);
+            //Если пришел пустой пакет, то уходим из функции
+            if(!len) return;
+            //Отобразим размер принятых данных
+            printf("socket %d len_data: %d\n", sn, len);
+            //указатель на начало чтения приёмного буфера
+            point = GetReadPointer(sn);
+            server_buffer_sz = len;
+            w5500_readSockBuf(sn, point, (uint8_t*)server_buffer, len);
+
+            DisconnectSocket(sn); //Разъединяемся
+            SocketClosedWait(sn);
+            printf("socket %d (one) closed\r\n",sn);
+    delayUS_ASM(100000);
+            OpenSocket(sn,Mode_TCP);
+    delayUS_ASM(100000);
+            //Ждём инициализации сокета (статус SOCK_INIT)
+            SocketInitWait(sn);
+            //Продолжаем слушать сокет
+            ListenSocket(sn);
+            SocketListenWait(sn);
+    }
+
+}
+
+void w5500_packetSend_forTLS(uint8_t sn)
+{
+    uint16_t end_point = 0;
+    w5500_writeSockBuf(0, end_point, (uint8_t*)client_buffer, client_buffer_sz);
+    SendSocket(0);
+
+//    DisconnectSocket(sn); //Разъединяемся
+//    SocketClosedWait(sn);
+//    printf("socket %d (one) closed\r\n",sn);
+//delayUS_ASM(100000);
+//    OpenSocket(sn,Mode_TCP);
+//delayUS_ASM(100000);
+//    //Ждём инициализации сокета (статус SOCK_INIT)
+//    SocketInitWait(sn);
+//    //Продолжаем слушать сокет
+//    ListenSocket(sn);
+//    SocketListenWait(sn);
+}
+
 void w5500_packetReceive(uint8_t sn)
 {
   uint16_t point;
@@ -318,8 +374,7 @@ void w5500_packetReceive(uint8_t sn)
         tcp_send_http_last();
         DisconnectSocket(sn); //Разъединяемся
         SocketClosedWait(sn);
-        sprintf(str1,"S%d (one) closed\r\n",sn);
-        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+        printf("socket %d (one) closed\r\n",sn);
 delayUS_ASM(100000);
         OpenSocket(sn,Mode_TCP);
 delayUS_ASM(100000);
@@ -331,7 +386,6 @@ delayUS_ASM(100000);
       }
     }
     }
-	
-	
+
 }
 //-----------------------------------------------

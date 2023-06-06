@@ -822,9 +822,9 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 //    tls_client_serverTest(); // работает
 
-//    tls_server_sizeTest();
+    tls_server_sizeTest();
 
-    tls_sock_serverTest();//не собирается
+//    tls_sock_serverTest();//не собирается
 
 //    tlsProcess();
 

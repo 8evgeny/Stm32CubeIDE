@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include "w5500.h"
 extern void Printf(const char* fmt, ...);
 #ifndef WOLFSSL_USER_SETTINGS
     #include <wolfssl/options.h>
@@ -31,8 +32,6 @@ extern void Printf(const char* fmt, ...);
 
 #if !defined(NO_WOLFSSL_SERVER) && !defined(WOLFSSL_NO_TLS12)
 
-/* I/O buffer size - wolfSSL buffers messages internally as well. */
-#define BUFFER_SIZE           2048
 /* Size of static buffer for dynamic memory allocation. */
 #ifdef WOLFSSL_STATIC_MEMORY_SMALL
     #define STATIC_MEM_SIZE       (24*1024)
@@ -57,10 +56,10 @@ void UART_Printf(const char* fmt, ...);
 
 
 /* Buffer for server connection to allocate dynamic memory from. */
-static unsigned char client_buffer[BUFFER_SIZE];
-static int client_buffer_sz = 0;
-static unsigned char server_buffer[BUFFER_SIZE];
-static int server_buffer_sz = 0;
+unsigned char client_buffer[BUFFER_SIZE];
+int client_buffer_sz = 0;
+unsigned char server_buffer[BUFFER_SIZE];
+int server_buffer_sz = 0;
 
 
 /* Application data to send. */
@@ -82,7 +81,11 @@ static const char msgHTTPIndex[] =
 /* Server attempts to read data from client. */
 static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
-    Printf("-- recv_server --\n");
+//    Printf("-- recv_server --\n");
+
+    w5500_packetReceive_forTLS(0);
+
+
     if (server_buffer_sz > 0) {
         if (sz > server_buffer_sz)
             sz = server_buffer_sz;
@@ -101,7 +104,7 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 /* Server attempts to write data to client. */
 static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
-    Printf("send_server\n");
+    Printf("-- send_server %d byte --\n", sz);
     if (client_buffer_sz < BUFFER_SIZE)
     {
         if (sz > BUFFER_SIZE - client_buffer_sz)
@@ -111,6 +114,8 @@ static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
     }
     else
         sz = WOLFSSL_CBIO_ERR_WANT_WRITE;
+
+    w5500_packetSend_forTLS(0);
 
     return sz;
 }
@@ -180,12 +185,12 @@ static int wolfssl_server_new(WOLFSSL_CTX** ctx, WOLFSSL** ssl)
 /* Server accepting a client using TLS */
 static int wolfssl_server_accept(WOLFSSL* server_ssl)
 {
-    Printf("-- wolfssl_server_accept --\n");
+//Printf("-- wolfssl_server_accept --\n");
     int ret = 0;
 
     if (wolfSSL_accept(server_ssl) != WOLFSSL_SUCCESS) {
         if (wolfSSL_want_read(server_ssl)) {
-            Printf("Server waiting for server\n");
+//Printf("Server waiting for server\n");
         }
         else if (wolfSSL_want_write(server_ssl)) {
             Printf("Server waiting for buffer\n");
@@ -278,6 +283,9 @@ int tls_server_sizeTest()
 
     if (ret == 0)
         Printf("Handshake complete\n");
+    else
+        Printf("Handshake ERROR\n");
+
 
     /* Send and receive HTTP messages. */
     if (ret == 0) {

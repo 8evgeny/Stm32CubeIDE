@@ -74,6 +74,8 @@ uint8_t num_block_index = 1; //лишнее обрежется после кон
 uint8_t num_block_main = 8;
 char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024 //без ошибок в один файл пишется 4080 байт
+uint16_t local_port = LOCAL_PORT;
+
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -715,7 +717,7 @@ uint16_t localport = 8888;
 
     }
 
-    net_ini();
+//    net_ini();
     delayUS_ASM(10000);
 
   //Callbacks
@@ -727,10 +729,12 @@ uint16_t localport = 8888;
 //    network_init();
 
 //Делает то-же самое
-//    WIZCHIPInitialize();
+    WIZCHIPInitialize();
 //    wizchip_setnetinfo(&defaultNetInfo);
-//    ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
-//    print_network_information();
+    ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
+    print_network_information();
+    socket(0, Sn_MR_TCP, local_port, 0/*SF_UNI_BLOCK*/);
+    listen(0);
 
 //    HAL_TIM_Base_Start_IT(&htim1);
 //    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
@@ -822,7 +826,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 //    tls_client_serverTest(); // работает
 
-    tls_server_sizeTest();
+//    tls_server_sizeTest();
 
 //    tls_sock_serverTest();//не собирается
 
@@ -847,7 +851,7 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
     /* USER CODE BEGIN 3 */
 
-//     net_poll();
+     net_poll();
 
 #ifdef INTRON
     for (uint8_t i = 4; i < 8 ;++i)

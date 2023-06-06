@@ -743,9 +743,6 @@ int main(void)
 
 //    tls_client_serverTest(); // работает
     tls_server_sizeTest();
-//    tls_sock_serverTest();//не собирается
-//    tlsProcess();
-
 
 //web serverWIZ - РАБОТАЕТ
 //    uint8_t i;
@@ -759,8 +756,11 @@ int main(void)
 
 //web serverWIZ - РАБОТАЕТ
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+//      httpServer_run(0);
 
 //      net_poll(); //Старый код http сервер
+
+
       sendReceiveUDP();
 
     /* USER CODE END WHILE */

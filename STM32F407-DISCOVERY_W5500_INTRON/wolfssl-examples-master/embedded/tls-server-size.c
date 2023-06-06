@@ -59,7 +59,6 @@ unsigned char client_buffer[BUFFER_SIZE];
 int client_buffer_sz = 0;
 unsigned char server_buffer[BUFFER_SIZE];
 int server_buffer_sz = 0;
-_Bool packetReceive_forTLS = 0;
 
 /* Application data to send. */
 static const char msgHTTPIndex[] =
@@ -78,70 +77,45 @@ static const char msgHTTPIndex[] =
 
 void w5500_packetReceive_forTLS(uint8_t sn)
 {
-
-  uint16_t point;
-  uint16_t len;
+    uint16_t len;
     if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
     {
+        len = GetSizeRX(sn);
+        //Если пришел пустой пакет, то уходим из функции
+        if(!len)
+        {
+           return;
+        }
+        else
+        {
+        }
+        //Отобразим размер принятых данных
+        printf("socket %d len_data: %d\n", sn, len);
 
-            len = GetSizeRX(sn);
-            //Если пришел пустой пакет, то уходим из функции
-            if(!len)
-            {
-               return;
-            }
-            else
-            {
-              packetReceive_forTLS = 1;
-            }
-            //Отобразим размер принятых данных
-            printf("socket %d len_data: %d\n", sn, len);
-
-            recv(sn, server_buffer, len);
-            server_buffer_sz = len;
+        recv(sn, server_buffer, len);
+        server_buffer_sz = len;
     }
 
 }
 
 void w5500_packetSend_forTLS(uint8_t sn)
 {
-//    uint16_t end_point = 0;
-//    w5500_writeSockBuf(0, end_point, (uint8_t*)client_buffer, client_buffer_sz);
-//    SendSocket(0);
     send(sn, client_buffer, client_buffer_sz);
-    printf("send %d byte\n", client_buffer_sz);
-    printf("client_buffer_sz = 0\n");
+//    printf("send %d byte\n", client_buffer_sz);
+//    printf("client_buffer_sz = 0\n");
     client_buffer_sz = 0;
-//    DisconnectSocket(sn); //Разъединяемся
-//    SocketClosedWait(sn);
-//    printf("socket %d (one) closed\r\n",sn);
-//delayUS_ASM(100000);
-//    OpenSocket(sn,Mode_TCP);
-//delayUS_ASM(100000);
-//    //Ждём инициализации сокета (статус SOCK_INIT)
-//    SocketInitWait(sn);
-//    //Продолжаем слушать сокет
-//    ListenSocket(sn);
-//    SocketListenWait(sn);
 }
-
-
-
 
 /* Server attempts to read data from client. */
 static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
 //    Printf("-- recv_server --\n");
-
-     if (server_buffer_sz < sz)
-         w5500_packetReceive_forTLS(0);
-
-if (packetReceive_forTLS == 1)
-{
-    printf("server_buffer_sz = %d\n", server_buffer_sz);
-    printf("sz = %d\n", sz);
-}
-    if (server_buffer_sz > 0) {
+    if (server_buffer_sz < sz)
+        w5500_packetReceive_forTLS(0);
+//    printf("server_buffer_sz = %d\n", server_buffer_sz);
+//    printf("sz = %d\n", sz);
+    if (server_buffer_sz > 0)
+    {
         if (sz > server_buffer_sz)
             sz = server_buffer_sz;
         XMEMCPY(buff, server_buffer, sz);
@@ -278,17 +252,17 @@ static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 /* Receive application data. */
 static int wolfssl_recv(WOLFSSL* ssl)
 {
-    Printf("wolfssl_recv\n");
+//Printf("-- wolfssl_recv --\n");
     int ret;
     byte reply[256];
 
     ret = wolfSSL_read(ssl, reply, sizeof(reply)-1);
     if (ret > 0) {
         reply[ret] = '\0';
-        Printf("%s", reply);
+//Printf("from client: %s", reply);
         ret = 0;
     }
-
+//printf("buf: %s\n",reply);
     return ret;
 }
 
@@ -352,8 +326,12 @@ int tls_server_sizeTest()
         Printf("\nServer Sending:\n");
         ret = wolfssl_send(server_ssl, msgHTTPIndex);
     }
+//while (1)
+//{
+//    wolfssl_recv(server_ssl);
+//}
 
-    /* Dispose of SSL objects. */
+//    /* Dispose of SSL objects. */
     wolfssl_free(server_ctx, server_ssl);
 
     /* Cleanup wolfSSL library. */

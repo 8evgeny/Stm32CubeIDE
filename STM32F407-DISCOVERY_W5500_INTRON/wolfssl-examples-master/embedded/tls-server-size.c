@@ -79,7 +79,6 @@ static const char msgHTTPIndex[] =
 void w5500_packetReceive_forTLS(uint8_t sn)
 {
 
-
   uint16_t point;
   uint16_t len;
     if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
@@ -100,23 +99,6 @@ void w5500_packetReceive_forTLS(uint8_t sn)
 
             recv(sn, server_buffer, len);
             server_buffer_sz = len;
-
-//            //указатель на начало чтения приёмного буфера
-//            point = GetReadPointer(sn);
-//            server_buffer_sz = len;
-//            w5500_readSockBuf(sn, point, (uint8_t*)server_buffer, len);
-
-//            DisconnectSocket(sn); //Разъединяемся
-//            SocketClosedWait(sn);
-//            printf("socket %d (one) closed\r\n",sn);
-//    delayUS_ASM(100000);
-//            OpenSocket(sn,Mode_TCP);
-//    delayUS_ASM(100000);
-//            //Ждём инициализации сокета (статус SOCK_INIT)
-//            SocketInitWait(sn);
-//            //Продолжаем слушать сокет
-//            ListenSocket(sn);
-//            SocketListenWait(sn);
     }
 
 }
@@ -148,7 +130,9 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
 //    Printf("-- recv_server --\n");
 
-    w5500_packetReceive_forTLS(0);
+     if (server_buffer_sz < sz)
+         w5500_packetReceive_forTLS(0);
+
 if (packetReceive_forTLS == 1)
 {
     printf("server_buffer_sz = %d\n", server_buffer_sz);

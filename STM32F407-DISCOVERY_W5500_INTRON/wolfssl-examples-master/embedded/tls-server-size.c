@@ -109,6 +109,8 @@ void w5500_packetSend_forTLS(uint8_t sn)
 //    w5500_writeSockBuf(0, end_point, (uint8_t*)client_buffer, client_buffer_sz);
 //    SendSocket(0);
     send(sn, client_buffer, client_buffer_sz);
+    printf("send %d byte\n", client_buffer_sz);
+    printf("client_buffer_sz = 0\n");
     client_buffer_sz = 0;
 //    DisconnectSocket(sn); //Разъединяемся
 //    SocketClosedWait(sn);

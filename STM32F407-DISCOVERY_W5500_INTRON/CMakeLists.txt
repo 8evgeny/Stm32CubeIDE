@@ -12,7 +12,7 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #add_definitions(-DINTRON)
 
 #Режим http / https
-#add_definitions(-DTLS_ON)
+add_definitions(-DTLS_ON)
 
 project(11_Converter_F407_INTRON_DT C CXX ASM)
 

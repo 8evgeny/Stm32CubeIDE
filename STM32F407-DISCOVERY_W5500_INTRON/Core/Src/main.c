@@ -626,83 +626,8 @@ void prepeareUDP_PLIS()
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
 
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
+void sendReceiveUDP()
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_USART6_UART_Init();
-  MX_SPI3_Init();
-  MX_TIM1_Init();
-  MX_SPI1_Init();
-  MX_SPI2_Init();
-  MX_FATFS_Init();
-  MX_RNG_Init();
-  MX_RTC_Init();
-  MX_I2C1_Init();
-  /* USER CODE BEGIN 2 */
-
-    workEEPROM();
-//    net_ini();
-    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-    prepeareUDP_PLIS();
-
-//    tls_client_serverTest(); // работает
-//    tls_server_sizeTest();
-//    tls_sock_serverTest();//не собирается
-//    tlsProcess();
-
-
-//web serverWIZ - РАБОТАЕТ
-//    uint8_t i;
-//    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
-//    wep_define_func();
-//    display_reg_webContent_list();
-
-//uint8_t firstSend = 1;
-  while (1)
-  {
-//web serverWIZ - РАБОТАЕТ
-//    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
-
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-
-     net_poll();
-
 #ifdef INTRON
     for (uint8_t i = 4; i < 8 ;++i)
     {
@@ -761,6 +686,86 @@ int main(void)
 //        rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
 //        rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31]
 //        );
+}
+
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_USART6_UART_Init();
+  MX_SPI3_Init();
+  MX_TIM1_Init();
+  MX_SPI1_Init();
+  MX_SPI2_Init();
+  MX_FATFS_Init();
+  MX_RNG_Init();
+  MX_RTC_Init();
+  MX_I2C1_Init();
+  /* USER CODE BEGIN 2 */
+
+    workEEPROM();
+//    net_ini();
+    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+
+    prepeareUDP_PLIS();
+
+//    tls_client_serverTest(); // работает
+    tls_server_sizeTest();
+//    tls_sock_serverTest();//не собирается
+//    tlsProcess();
+
+
+//web serverWIZ - РАБОТАЕТ
+//    uint8_t i;
+//    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
+//    wep_define_func();
+//    display_reg_webContent_list();
+
+//uint8_t firstSend = 1;
+  while (1)
+  {
+
+//web serverWIZ - РАБОТАЕТ
+//    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+
+//      net_poll(); //Старый код http сервер
+      sendReceiveUDP();
+
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
 
   }
   /* USER CODE END 3 */

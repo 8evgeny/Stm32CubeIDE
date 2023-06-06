@@ -13,7 +13,9 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
 #Режим http / https
 add_definitions(-DTLS_ON)
-
+#add_definitions(-DMBEDTLS_ECDSA_C)
+#add_definitions(-DMBEDTLS_ECP_C)
+#add_definitions(-DMBEDTLS_SHA256_C)
 project(11_Converter_F407_INTRON_DT C CXX ASM)
 
 #set(CMAKE_BUILD_TYPE debug)

@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include "w5500.h"
+#include "socket.h"
 extern void Printf(const char* fmt, ...);
 #ifndef WOLFSSL_USER_SETTINGS
     #include <wolfssl/options.h>
@@ -51,16 +52,14 @@ extern void Printf(const char* fmt, ...);
 #else
     #define HEAP_HINT_SERVER NULL
 #endif /* WOLFSSL_STATIC_MEMORY */
-
 void UART_Printf(const char* fmt, ...);
-
 
 /* Buffer for server connection to allocate dynamic memory from. */
 unsigned char client_buffer[BUFFER_SIZE];
 int client_buffer_sz = 0;
 unsigned char server_buffer[BUFFER_SIZE];
 int server_buffer_sz = 0;
-
+_Bool packetReceive_forTLS = 0;
 
 /* Application data to send. */
 static const char msgHTTPIndex[] =
@@ -77,6 +76,72 @@ static const char msgHTTPIndex[] =
     "</body>\n"
     "</html>\n";
 
+void w5500_packetReceive_forTLS(uint8_t sn)
+{
+
+
+  uint16_t point;
+  uint16_t len;
+    if(GetSocketStatus(sn)==SOCK_ESTABLISHED)
+    {
+
+            len = GetSizeRX(sn);
+            //Если пришел пустой пакет, то уходим из функции
+            if(!len)
+            {
+               return;
+            }
+            else
+            {
+              packetReceive_forTLS = 1;
+            }
+            //Отобразим размер принятых данных
+            printf("socket %d len_data: %d\n", sn, len);
+
+            recv(sn, server_buffer, len);
+            server_buffer_sz = len;
+
+//            //указатель на начало чтения приёмного буфера
+//            point = GetReadPointer(sn);
+//            server_buffer_sz = len;
+//            w5500_readSockBuf(sn, point, (uint8_t*)server_buffer, len);
+
+//            DisconnectSocket(sn); //Разъединяемся
+//            SocketClosedWait(sn);
+//            printf("socket %d (one) closed\r\n",sn);
+//    delayUS_ASM(100000);
+//            OpenSocket(sn,Mode_TCP);
+//    delayUS_ASM(100000);
+//            //Ждём инициализации сокета (статус SOCK_INIT)
+//            SocketInitWait(sn);
+//            //Продолжаем слушать сокет
+//            ListenSocket(sn);
+//            SocketListenWait(sn);
+    }
+
+}
+
+void w5500_packetSend_forTLS(uint8_t sn)
+{
+//    uint16_t end_point = 0;
+//    w5500_writeSockBuf(0, end_point, (uint8_t*)client_buffer, client_buffer_sz);
+//    SendSocket(0);
+    send(sn, client_buffer, client_buffer_sz);
+//    DisconnectSocket(sn); //Разъединяемся
+//    SocketClosedWait(sn);
+//    printf("socket %d (one) closed\r\n",sn);
+//delayUS_ASM(100000);
+//    OpenSocket(sn,Mode_TCP);
+//delayUS_ASM(100000);
+//    //Ждём инициализации сокета (статус SOCK_INIT)
+//    SocketInitWait(sn);
+//    //Продолжаем слушать сокет
+//    ListenSocket(sn);
+//    SocketListenWait(sn);
+}
+
+
+
 
 /* Server attempts to read data from client. */
 static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
@@ -84,8 +149,11 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 //    Printf("-- recv_server --\n");
 
     w5500_packetReceive_forTLS(0);
-
-
+if (packetReceive_forTLS == 1)
+{
+    printf("server_buffer_sz = %d\n", server_buffer_sz);
+    printf("sz = %d\n", sz);
+}
     if (server_buffer_sz > 0) {
         if (sz > server_buffer_sz)
             sz = server_buffer_sz;

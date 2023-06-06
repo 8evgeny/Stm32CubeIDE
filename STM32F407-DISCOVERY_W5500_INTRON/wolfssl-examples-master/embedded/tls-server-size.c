@@ -59,7 +59,7 @@ unsigned char client_buffer[BUFFER_SIZE];
 int client_buffer_sz = 0;
 unsigned char server_buffer[BUFFER_SIZE];
 int server_buffer_sz = 0;
-
+int Handshake = 0;
 /* Application data to send. */
 static const char msgHTTPIndex[] =
     "HTTP/1.1 200 OK\n"
@@ -119,11 +119,13 @@ void w5500_packetSend_forTLS(uint8_t sn)
 /* Server attempts to read data from client. */
 static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
-//    Printf("-- recv_server --\n");
     if (server_buffer_sz < sz)
         w5500_packetReceive_forTLS(0);
-//    printf("server_buffer_sz = %d\n", server_buffer_sz);
-//    printf("sz = %d\n", sz);
+    if (Handshake == 1)
+    {
+        printf("server_buffer_sz = %d\n", server_buffer_sz);
+        printf("sz = %d\n", sz);
+    }
     if (server_buffer_sz > 0)
     {
         if (sz > server_buffer_sz)
@@ -322,29 +324,25 @@ int tls_server_sizeTest()
     }
 
     if (ret == 0)
+    {
+        Handshake = 1;
         Printf("Handshake complete\n");
-    else
-        Printf("Handshake ERROR\n");
+    }
 
 
-    wolfssl_send(server_ssl, msgHTTPIndex2);
-
+    wolfSSL_set_fd(server_ssl, 0);
 
 
 
     /* Send and receive HTTP messages. */
-//    if (ret == 0) {
-//        Printf("\nServer Received:\n");
-//        ret = wolfssl_recv(server_ssl);
-//    }
-//    if (ret == 0) {
-//        Printf("\nServer Sending:\n");
-//        ret = wolfssl_send(server_ssl, msgHTTPIndex);
-//    }
-//while (1)
-//{
-//    wolfssl_recv(server_ssl);
-//}
+    if (ret == 0) {
+        Printf("\nServer Received:\n");
+        ret = wolfssl_recv(server_ssl);
+    }
+    if (ret == 0) {
+        Printf("\nServer Sending:\n");
+        ret = wolfssl_send(server_ssl, msgHTTPIndex);
+    }
 
 //    /* Dispose of SSL objects. */
     wolfssl_free(server_ctx, server_ssl);
@@ -354,7 +352,8 @@ int tls_server_sizeTest()
 
     if (ret == 0)
         Printf("Done\n");
-    else {
+    else
+    {
         char buffer[80];
         Printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
     }

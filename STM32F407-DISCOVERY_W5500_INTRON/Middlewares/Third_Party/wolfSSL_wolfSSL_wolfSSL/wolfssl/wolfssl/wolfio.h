@@ -54,7 +54,7 @@
 #ifdef HAVE_LIBZ
     #include "zlib.h"
 #endif
-
+#include "ssl.h"
 #ifndef USE_WINDOWS_API
     #if defined(WOLFSSL_LWIP) && !defined(WOLFSSL_APACHE_MYNEWT)
         /* lwIP needs to be configured to use sockets API in this mode */
@@ -506,6 +506,7 @@ WOLFSSL_API int BioReceive(WOLFSSL* ssl, char* buf, int sz, void* ctx);
         unsigned char** respBuf, unsigned char* httpBuf, int httpBufSz,
         int dynType, void* heap);
 #endif /* HAVE_HTTP_CLIENT */
+
 
 
 /* I/O callbacks */

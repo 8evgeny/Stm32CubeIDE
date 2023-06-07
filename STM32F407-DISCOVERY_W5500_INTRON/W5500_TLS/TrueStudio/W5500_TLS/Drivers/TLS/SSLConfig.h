@@ -2,8 +2,8 @@
 #define MBEDTLS_CONFIG_H
 
 /************************ macro define ***********************************/
-#define MBEDTLS_SSL_CLI_C   //complie SSL cleint protocols
-
+//#define MBEDTLS_SSL_CLI_C   //complie SSL cleint protocols
+#define MBEDTLS_SSL_SRV_C   //complie SSL cleint protocols
 
 /************************ ssl config *************************************/
 

@@ -63,6 +63,35 @@ void polarSSLTest()
     /*  initialize ssl context  */
     ret = wiz_tls_init(&tlsContext,&server_fd);
     printf("init [%d] \r\n", ret);
+
+
+#if defined(MBEDTLS_DEBUG_C)
+    printf( "  . Performing the SSL/TLS handshake..." );
+#endif
+
+    while(getSn_SR(HTTP_SOCKET) == SOCK_LISTEN)
+    {
+            HAL_Delay(2);
+    }
+    printf("Input connection\r\n");
+    if(getSn_SR(HTTP_SOCKET) != SOCK_ESTABLISHED) printf("Error socket status\r\n");
+    uint8_t rIP[4];
+    getSn_DIPR(HTTP_SOCKET,  rIP);
+    printf("IP:  %d.%d.%d.%d\r\n", rIP[0], rIP[1], rIP[2], rIP[3]);
+
+    ret = mbedtls_ssl_handshake( tlsContext.ssl );
+
+//    while( ( ret = mbedtls_ssl_handshake( tlsContext.ssl ) ) != 0 )
+//    {
+//        if( ret != MBEDTLS_ERR_SSL_WANT_READ && ret != MBEDTLS_ERR_SSL_WANT_WRITE )
+//        {
+
+//            printf( " failed\n\r  ! mbedtls_ssl_handshake returned %d: %s\n\r", ret );
+
+//        }
+//    }
+printf( " OK ..." );
+
 }
 
 

@@ -112,8 +112,6 @@ typedef struct data_sect {
 //--------------------------------------------------
 void w5500_ini(void);
 void w5500_packetReceive(uint8_t sn);
-void  w5500_packetReceive_forTLS(uint8_t sn);
-void w5500_packetSend_forTLS(uint8_t sn);
 uint16_t GetReadPointer(uint8_t sock_num);
 uint8_t w5500_readSockBufByte(uint8_t sock_num, uint16_t point);
 void SocketClosedWait(uint8_t sock_num);

@@ -133,8 +133,9 @@ void w5500_packetSend_forTLS(uint8_t sn)
 /* Server attempts to read data from client. */
 static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
-    if (server_buffer_sz < sz)
+    if (server_buffer_sz <= 0)
         w5500_packetReceive_forTLS(0);
+
     if (Handshake == 1)
     {
         printf("server_buffer_sz = %d\n", server_buffer_sz);
@@ -143,12 +144,17 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
     if (server_buffer_sz > 0)
     {
         if (sz > server_buffer_sz)
+        {
             sz = server_buffer_sz;
+        }
         XMEMCPY(buff, server_buffer, sz);
-        if (sz < server_buffer_sz) {
+        if (sz <= server_buffer_sz)
+        {
             XMEMMOVE(server_buffer, server_buffer + sz, server_buffer_sz - sz);
         }
         server_buffer_sz -= sz;
+
+
     }
     else
         sz = WOLFSSL_CBIO_ERR_WANT_READ;

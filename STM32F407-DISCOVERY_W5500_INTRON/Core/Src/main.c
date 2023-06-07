@@ -62,7 +62,6 @@ char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port = LOCAL_PORT;
 
-
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -1309,82 +1308,6 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 }
 
-///**
-// * @brief Default function to enable interrupt.
-// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
-// * null function is called.
-// */
-//void 	  wizchip_cris_enter(void)           {
-
-//}
-
-///**
-// * @brief Default function to disable interrupt.
-// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
-// * null function is called.
-// */
-//void 	  wizchip_cris_exit(void)          {
-
-//}
-
-//*
-// * @brief Default function to select chip.
-// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
-// * null function is called.
-
-//void 	wizchip_cs_select(void)            {
-//     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-//}
-
-///**
-// * @brief Default function to deselect chip.
-// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
-// * null function is called.
-// */
-//void 	wizchip_cs_deselect(void)          {
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-//}
-
-
-///**
-// * @brief Default function to read in SPI interface.
-// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
-// * null function is called.
-// */
-//uint8_t wizchip_spi_readbyte(void)        {
-//    uint8_t wb=0xFF;
-//    HAL_SPI_Receive(&hspi1, &wb, 1, 1000);
-//    return	wb;
-//}
-///**
-// * @brief Default function to write in SPI interface.
-// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
-// * null function is called.
-// */
-//void 	wizchip_spi_writebyte(uint8_t wb) {
-//        HAL_SPI_Transmit(&hspi1, &wb, 1, 1000);
-//}
-
-///**
-// * @brief Default function to burst read in SPI interface.
-// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
-// * null function is called.
-// */
-//void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len) 	{
-//    HAL_SPI_Receive(&hspi1, pBuf, len , 1000);
-//}
-
-///**
-// * @brief Default function to burst write in SPI interface.
-// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
-// * null function is called.
-// */
-//void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len) {
-//    HAL_SPI_Transmit(&hspi1, pBuf, len , 1000);
-//}
-
-
-
 /* USER CODE END 4 */
 
 /**
@@ -1455,71 +1378,3 @@ F0 подаем на вход таймера TIM1 (PE9) и по переднем
 Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
 
 #endif
-//int AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
-//{
-//  uint16_t i;
-//  //Disable Pos
-//  LL_I2C_DisableBitPOS(I2C1);
-//  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
-//  LL_I2C_GenerateStartCondition(I2C1);
-//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-//  //read state
-//  (void) I2C1->SR1;
-//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
-//  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-//  LL_I2C_ClearFlag_ADDR(I2C1);
-//  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
-//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-//  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
-//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-//  LL_I2C_GenerateStartCondition(I2C1);
-//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-//  (void) I2C1->SR1;
-//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_READ);
-//  while (!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-//  LL_I2C_ClearFlag_ADDR(I2C1);
-//  for(i=0;i<bytes_count;i++)
-//  {
-//    if(i<(bytes_count-1))
-//    {
-//      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
-//      buf[i] = LL_I2C_ReceiveData8(I2C1);
-//    }
-//    else
-//    {
-//      LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
-//      LL_I2C_GenerateStopCondition(I2C1);
-//      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
-//      buf[i] = LL_I2C_ReceiveData8(I2C1);
-//    }
-//  }
-//  return i;
-//}
-//-------------------------------------------------------
-
-//-------------------------------------------------------
-//int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
-//{
-//  uint16_t i;
-//  //Disable Pos
-//  LL_I2C_DisableBitPOS(I2C1);
-//  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
-//  LL_I2C_GenerateStartCondition(I2C1);
-//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-//  //read state
-//  (void) I2C1->SR1;
-//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
-//  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-//  LL_I2C_ClearFlag_ADDR(I2C1);
-//  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
-//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-//  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
-//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-//  for(i=0;i<bytes_count;i++)
-//  {
-//    LL_I2C_TransmitData8(I2C1, buf[i]);
-//    while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-//  }
-//  LL_I2C_GenerateStopCondition(I2C1);
-//  return i;
-//}

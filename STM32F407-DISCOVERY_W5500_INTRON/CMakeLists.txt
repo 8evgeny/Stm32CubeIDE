@@ -77,6 +77,7 @@ include_directories(
     wolfssl-examples-master/embedded
     ${polarssl}
     ${polarssl}/mbedtls/include
+    ${polarssl}/mbedtls/include/mbedtls
     )
 
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)

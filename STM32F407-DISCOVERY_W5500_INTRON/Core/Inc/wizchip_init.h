@@ -4,7 +4,9 @@
 
 #include "main.h"
 #include "wizchip_conf.h"
-
+#define DATA_BUF_SIZE   2048
+#define SOCK_TCPS        0
+#define SOCK_UDPS        1
 
 /* CS */
 extern SPI_HandleTypeDef hspi1;
@@ -25,4 +27,5 @@ uint8_t wizchip_spi_readbyte(void);
 void wizchip_spi_writebyte(uint8_t wb);
 void wizchip_cris_enter(void);
 void wizchip_cris_exit(void);
+void print_network_information(void);
 #endif

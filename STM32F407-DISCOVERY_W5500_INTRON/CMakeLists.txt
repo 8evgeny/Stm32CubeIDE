@@ -14,6 +14,8 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #Режим http / https
 add_definitions(-DTLS_ON)
 add_definitions(-UWOLFSSL_TLS13)
+add_definitions(-UMBEDTLS_SSL_CLI_C)
+add_definitions(-DMBEDTLS_SSL_SRV_C)
 #add_definitions(-DWOLFSSL_ALLOW_TLSV10)
 #add_definitions(-UNO_OLD_TLS)
 #add_definitions(-DMBEDTLS_ECDSA_C)
@@ -30,7 +32,7 @@ set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
 #set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs_new)
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
-set (tls ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
+set (polarssl ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
 
 #SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') //для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
@@ -73,8 +75,9 @@ include_directories(
     ${wolfssl}/wolfcrypt
     ${wolfssl}/wolfssl/wolfcrypt
     wolfssl-examples-master/embedded
-    ${tls}
-    ${tls}/mbedtls/include
+    ${polarssl}
+    ${polarssl}/mbedtls/include
+    ${polarssl}/mbedtls/include/mbedtls
     )
 
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
@@ -102,8 +105,10 @@ file (GLOB wolfssl_src ${wolfssl}/src/*.c
     )
 add_library(wolfssl_LIB ${wolfssl_src})
 
-file (GLOB tls_src ${tls}/*.c ${tls}/mbedtls/library/*.c)
-add_library(tls_LIB ${tls_src})
+file (GLOB polarssl_src ${polarssl}/*.c
+    ${polarssl}/mbedtls/library/*.c
+    )
+add_library(polarssl_LIB ${polarssl_src})
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s)
 add_executable(${PROJECT_NAME}.elf ${src})
@@ -134,7 +139,7 @@ target_link_libraries(${PROJECT_NAME}.elf PUBLIC
     fatfs_LIB
     littlefs_LIB
     wolfssl_LIB
-    tls_LIB
+    polarssl_LIB
     )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)

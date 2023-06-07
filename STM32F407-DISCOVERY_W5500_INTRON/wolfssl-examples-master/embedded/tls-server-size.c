@@ -103,6 +103,14 @@ void w5500_packetReceive_forTLS(uint8_t sn)
         printf("socket %d len_data: %d\n", sn, len);
 
         recv(sn, server_buffer, len);
+
+//        printf("from client %d byte\n", len);
+//        for (int i = 0;i < len; ++i)
+//        {
+//            printf("%X",server_buffer[i]);
+//        }
+//        printf("\n");
+
         server_buffer_sz = len;
     }
 
@@ -111,8 +119,14 @@ void w5500_packetReceive_forTLS(uint8_t sn)
 void w5500_packetSend_forTLS(uint8_t sn)
 {
     send(sn, client_buffer, client_buffer_sz);
-//    printf("send %d byte\n", client_buffer_sz);
-//    printf("client_buffer_sz = 0\n");
+
+//    printf("from server %d byte\n", client_buffer_sz);
+//    for (int i = 0;i < client_buffer_sz; ++i)
+//    {
+//        printf("%X",client_buffer[i]);
+//    }
+//    printf("\n");
+
     client_buffer_sz = 0;
 }
 

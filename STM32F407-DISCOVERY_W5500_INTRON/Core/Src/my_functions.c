@@ -1,28 +1,12 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
 
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "ssl.h"
+#include "certs.h"
+#define HEAP_HINT_SERVER NULL
+/* I/O buffer size - wolfSSL buffers messages internally as well. */
+#define BUFFER_SIZE           512
+#include "w5500.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
@@ -30,47 +14,31 @@
 #include "socket.h"
 #include "loopback.h"
 #include "my_function.h"
-/* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
 extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart6;
 
-/* USER CODE BEGIN PV */
 uint8_t gDATABUF[DATA_BUF_SIZE];
-wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
-                            .ip = {192, 168, 1, 197},
+wiz_NetInfo defaultNetInfo = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
+                            .ip = {192, 168, 1, 222},
                             .sn = {255,255,255,0},			
                             .gw = {192, 168, 1, 1},
                             .dns = {0,0,0,0},
                             .dhcp = NETINFO_STATIC };
 
 uint8_t tmp;//int32_t ret = 0;
+
 // задание размеров буферов W5500 для сокетов по 2 Кбайта 														
-uint8_t memsize[2][8] = { {2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};													
-/* USER CODE END PV */
+uint8_t memsize[2][8] = { {2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};	//Не вызывается
 
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
+/* Buffer for client connection to allocate dynamic memory from. */
+static unsigned char client_buffer[BUFFER_SIZE];
+static int client_buffer_sz = 0;
+/* Buffer for server connection to allocate dynamic memory from. */
+static unsigned char server_buffer[BUFFER_SIZE];
+static int server_buffer_sz = 0;
 
-/* USER CODE END PFP */
-														
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+
 void UART_Printf(const char* fmt, ...) {
     char buff[512];
     va_list args;
@@ -82,7 +50,35 @@ void UART_Printf(const char* fmt, ...) {
     va_end(args);
 }
 
-/* Chip selection call back */
+void Printf(const char* fmt, ...) {
+    char buff[512];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buff, sizeof(buff), fmt, args);
+    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff)
+                          ,HAL_MAX_DELAY                          );
+    va_end(args);
+}
+
+int _write(int fd, char *str, int len)
+{
+    for(int i=0; i<len; i++)
+    {
+        HAL_UART_Transmit(&huart6, (uint8_t *)&str[i], 1, 0xFFFF);
+    }
+    return len;
+}
+
+void print_network_information(void)
+{
+    wizchip_getnetinfo(&defaultNetInfo);
+    printf("Mac addr:\t%02x:%02x:%02x:%02x:%02x:%02x\n\r",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
+    printf("IP address:\t%d.%d.%d.%d\n\r",defaultNetInfo.ip[0],defaultNetInfo.ip[1],defaultNetInfo.ip[2],defaultNetInfo.ip[3]);
+    printf("SM Mask:\t%d.%d.%d.%d\n\r",defaultNetInfo.sn[0],defaultNetInfo.sn[1],defaultNetInfo.sn[2],defaultNetInfo.sn[3]);
+    printf("Gate way:\t%d.%d.%d.%d\n\r",defaultNetInfo.gw[0],defaultNetInfo.gw[1],defaultNetInfo.gw[2],defaultNetInfo.gw[3]);
+    printf("DNS serv:\t%d.%d.%d.%d\n\r",defaultNetInfo.dns[0],defaultNetInfo.dns[1],defaultNetInfo.dns[2],defaultNetInfo.dns[3]);
+}
+
 void Chip_selection_call_back(void)
 {
 #if   _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_VDM_
@@ -102,42 +98,44 @@ void Chip_selection_call_back(void)
     /* wizchip initialize*/
 }
 
-
 void wizchip_initialize(void)
 {
     if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1)
     {
-       UART_Printf("WIZCHIP Initialized fail.\r\n");
+       Printf("WIZCHIP Initialized fail.\r\n");
        while(1);
     }
-		else{UART_Printf("WIZCHIP Initialized OK.\r\n");}
+        else{Printf("WIZCHIP Initialized OK.\r\n");}
 
     /* PHY link status check */
     do
     {
        if(ctlwizchip(CW_GET_PHYLINK, (void*)&tmp) == -1)
-          UART_Printf("Unknown PHY Link stauts.\r\n");
+          Printf("Unknown PHY Link stauts.\r\n");
     }while(tmp == PHY_LINK_OFF);
 }
-
 
 void network_init(void)
 {
    uint8_t tmpstr[6];
-	ctlnetwork(CN_SET_NETINFO, (void*)&gWIZNETINFO);
-	ctlnetwork(CN_GET_NETINFO, (void*)&gWIZNETINFO);
+    ctlnetwork(CN_SET_NETINFO, (void*)&defaultNetInfo);
+    ctlnetwork(CN_GET_NETINFO, (void*)&defaultNetInfo);
 
 	// Display Network Information
 	ctlwizchip(CW_GET_ID,(void*)tmpstr);
-	UART_Printf("\r\n=== %s NET CONF ===\r\n",(char*)tmpstr);
-	UART_Printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\r\n",gWIZNETINFO.mac[0],gWIZNETINFO.mac[1],gWIZNETINFO.mac[2],
-		  gWIZNETINFO.mac[3],gWIZNETINFO.mac[4],gWIZNETINFO.mac[5]);
-	UART_Printf("SIP: %d.%d.%d.%d\r\n", gWIZNETINFO.ip[0],gWIZNETINFO.ip[1],gWIZNETINFO.ip[2],gWIZNETINFO.ip[3]);
-	UART_Printf("GAR: %d.%d.%d.%d\r\n", gWIZNETINFO.gw[0],gWIZNETINFO.gw[1],gWIZNETINFO.gw[2],gWIZNETINFO.gw[3]);
-	UART_Printf("SUB: %d.%d.%d.%d\r\n", gWIZNETINFO.sn[0],gWIZNETINFO.sn[1],gWIZNETINFO.sn[2],gWIZNETINFO.sn[3]);
-	UART_Printf("DNS: %d.%d.%d.%d\r\n", gWIZNETINFO.dns[0],gWIZNETINFO.dns[1],gWIZNETINFO.dns[2],gWIZNETINFO.dns[3]);
-	UART_Printf("======================\r\n");
+    Printf("\r\n=== %s NET CONF ===\r\n",(char*)tmpstr);
+    Printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\r\n",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],
+          defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
+    Printf("SIP: %d.%d.%d.%d\r\n", defaultNetInfo.ip[0],defaultNetInfo.ip[1],defaultNetInfo.ip[2],defaultNetInfo.ip[3]);
+    Printf("GAR: %d.%d.%d.%d\r\n", defaultNetInfo.gw[0],defaultNetInfo.gw[1],defaultNetInfo.gw[2],defaultNetInfo.gw[3]);
+    Printf("SUB: %d.%d.%d.%d\r\n", defaultNetInfo.sn[0],defaultNetInfo.sn[1],defaultNetInfo.sn[2],defaultNetInfo.sn[3]);
+    Printf("DNS: %d.%d.%d.%d\r\n", defaultNetInfo.dns[0],defaultNetInfo.dns[1],defaultNetInfo.dns[2],defaultNetInfo.dns[3]);
+    Printf("======================\r\n");
 	
 }
-/* USER CODE END 0 */
+
+
+
+
+
 

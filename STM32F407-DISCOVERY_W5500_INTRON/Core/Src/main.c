@@ -1,29 +1,15 @@
 /* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2023 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+
 #include "socket.h"
 #include "w5500.h"
 #include "net.h"
 #include "loopback.h"
 #include "my_function.h"
-#include "fsforeeprom.h"
-
-extern lfs_t lfs;
-extern lfs_file_t file;
+#include "eeprom.h"
+#include "wizchip_init.h"
+#include "SSLInterface.h"
+#include "httpServer.h"
+#include "webpage.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -32,11 +18,13 @@ extern lfs_file_t file;
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
 #include "stdio.h"
 #include "stdarg.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,6 +39,10 @@ extern void FsForEeprom_test();
 extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
+extern int tls_client_serverTest();
+extern int tls_server_sizeTest();
+extern int tls_sock_serverTest();
+extern void tlsProcess();
 
 /* USER CODE END PD */
 
@@ -61,8 +53,15 @@ void receivePackets(uint8_t, uint8_t* , uint16_t );
 #define SLAVE_OWN_ADDRESS                       0xA0
 uint32_t count = 0;
 uint8_t sdCartOn = 0;
-char *pindex;  // указатели на массивы
-char *pmain;
+char *pindex;
+extern lfs_t lfs;
+extern lfs_file_t file;
+uint8_t num_block_index = 1;
+uint8_t num_block_main = 8;
+char indexLen[8];
+#define WRITE_ONCE_TO_EEPROM 1024
+uint16_t local_port = LOCAL_PORT;
+
 
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
@@ -104,6 +103,7 @@ uint32_t num;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
 
 RNG_HandleTypeDef hrng;
 
@@ -121,13 +121,20 @@ UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
+
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
-char md5[32];
+char MD5[32];
 uint8_t destip[4];
 extern uint8_t macaddr[6];
+extern wiz_NetInfo defaultNetInfo;
+uint8_t RX_BUF[DATA_BUF_SIZE];
+uint8_t TX_BUF[DATA_BUF_SIZE];
+#define MAX_HTTPSOCK	4
+uint8_t socknumlist[] = {0, 1, 2, 3};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -143,7 +150,9 @@ static void MX_RNG_Init(void);
 static void MX_RTC_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
+
 void UART_Printf(const char* fmt, ...);
+extern void print_network_information(void);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 // Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
@@ -192,113 +201,492 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 }
 
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 FATFS fs;
 FIL fil;
-
-//-------------------------------------------------------
-int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
-{
-  uint16_t i;
-  //Disable Pos
-  LL_I2C_DisableBitPOS(I2C1);
-  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
-  LL_I2C_GenerateStartCondition(I2C1);
-  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-  //read state
-  (void) I2C1->SR1;
-  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
-  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-  LL_I2C_ClearFlag_ADDR(I2C1);
-  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
-  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
-  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  for(i=0;i<bytes_count;i++)
-  {
-    LL_I2C_TransmitData8(I2C1, buf[i]);
-    while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  }
-  LL_I2C_GenerateStopCondition(I2C1);
-  return i;
-}
-//-------------------------------------------------------
-int AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
-{
-  uint16_t i;
-  //Disable Pos
-  LL_I2C_DisableBitPOS(I2C1);
-  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
-  LL_I2C_GenerateStartCondition(I2C1);
-  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-  //read state
-  (void) I2C1->SR1;
-  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
-  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-  LL_I2C_ClearFlag_ADDR(I2C1);
-  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
-  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
-  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
-  LL_I2C_GenerateStartCondition(I2C1);
-  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
-  (void) I2C1->SR1;
-  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_READ);
-  while (!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
-  LL_I2C_ClearFlag_ADDR(I2C1);
-  for(i=0;i<bytes_count;i++)
-  {
-    if(i<(bytes_count-1))
-    {
-      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
-      buf[i] = LL_I2C_ReceiveData8(I2C1);
-    }
-    else
-    {
-      LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
-      LL_I2C_GenerateStopCondition(I2C1);
-      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
-      buf[i] = LL_I2C_ReceiveData8(I2C1);
-    }
-  }
-  return i;
-}
-//-------------------------------------------------------
+void printFileFromEEPROM(const char* nameFile_onEEPROM);
 void testEEPROM()
 {
-    UART_Printf("**** Test EEPROM ****\r\n"); delayUS_ASM(20000);
     uint8_t rd_value[36] = {0};
-    uint8_t wr_value[36] = {'a','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
+    uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
                             'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
-    uint8_t erase_value[36] = {'H','e','l','l','o'};
+    uint8_t erase_value[36] = {'H','e','f','l','o'};
 
-    AT24C_ReadBytes (0x004A, rd_value, 36);
+//    AT24C_ReadBytes (0x004A, rd_value, 36);
+    uint16_t num = 36;
+    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(20000);
 
     UART_Printf("EEPROM write:"); delayUS_ASM(20000);
     UART_Printf("%s\r\n",erase_value); delayUS_ASM(20000);
-    AT24C_WriteBytes (0x004A, erase_value, 36);
+    BSP_EEPROM_WriteBuffer(erase_value, 0x004A, 36);
+//    AT24C_WriteBytes (0x004A, erase_value, 36);
 
     delayUS_ASM(100000);
 
-    AT24C_ReadBytes (0x004A, rd_value, 36);
+//    AT24C_ReadBytes (0x004A, rd_value, 36);
+    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
 
     UART_Printf("EEPROM write:"); delayUS_ASM(10000);
     UART_Printf("%s\r\n",wr_value); delayUS_ASM(10000);
-    AT24C_WriteBytes (0x004A, wr_value, 36);
+    BSP_EEPROM_WriteBuffer(wr_value, 0x004A, 36);
+//    AT24C_WriteBytes (0x004A, wr_value, 36);
 
     delayUS_ASM(100000);
 
-    AT24C_ReadBytes (0x004A, rd_value, 36);
+//    AT24C_ReadBytes (0x004A, rd_value, 36);
+    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
 }
 
+void copyFileToEEPROM(const char* nameFile_onSD)
+{
+    uint32_t time = HAL_GetTick();
+    f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
+    uint32_t numByteFile = fil.obj.objsize;
+    UINT rc;
+    pindex = malloc(numByteFile);
+    f_read(&fil, pindex, numByteFile, &rc);
+    f_close(&fil);
 
+    UART_Printf("copy %s ... ", nameFile_onSD); delayUS_ASM(5000);
+    lfs_file_open(&lfs, &file, nameFile_onSD, LFS_O_WRONLY | LFS_O_CREAT );
+    lfs_file_write(&lfs, &file, pindex, numByteFile);
+    lfs_file_close(&lfs, &file);
+    memset(pindex, 0x00, numByteFile);
+    free (pindex);
+    char tmp[30];
+    sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
+    UART_Printf(tmp); delayUS_ASM(5000);
+//    printFileFromEEPROM(nameFile_onSD);
+}
+
+void printFileFromEEPROM(const char* nameFile_onEEPROM)
+{
+    lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
+    uint32_t numByteFile = lfs_file_size(&lfs, &file);
+    pindex = malloc(numByteFile);
+    lfs_file_read(&lfs, &file, pindex, numByteFile);
+    lfs_file_close(&lfs, &file);
+
+    UART_Printf("print %s\n", nameFile_onEEPROM); delayUS_ASM(5000);
+    for (int i = 0; i < numByteFile; ++i)
+    {
+        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+    }
+    UART_Printf("\n"); delayUS_ASM(100);
+    free (pindex);
+}
+
+void testReadFile(const char* nameFile_onEEPROM)
+{
+    UART_Printf("test read %s ... ", nameFile_onEEPROM); delayUS_ASM(1000);
+    uint32_t time = HAL_GetTick();
+    lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
+    uint32_t numByteFile = lfs_file_size(&lfs, &file);
+    pindex = malloc(numByteFile);
+    lfs_file_read(&lfs, &file, pindex, numByteFile);
+    lfs_file_close(&lfs, &file);
+    free (pindex);
+    char tmp[30];
+    sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
+    UART_Printf(tmp); delayUS_ASM(5000);
+}
+
+void copyParametersToEEPROM()
+{
+    UART_Printf("copy parameters to eeprom\n"); delayUS_ASM(10000);
+    char tmp[100];
+    char tmp1[5];
+    char tmp2[5];
+    char tmp3[5];
+    char tmp4[5];
+    f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 5, &fil);
+    f_gets(tmp2, 5, &fil);
+    f_gets(tmp3, 5, &fil);
+    f_gets(tmp4, 5, &fil);
+    f_close(&fil);
+    sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    UART_Printf("host_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    lfs_file_open(&lfs, &file, "host_IP", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+
+    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 100, &fil);
+    f_gets(tmp2, 100, &fil);
+    f_gets(tmp3, 100, &fil);
+    f_gets(tmp4, 100, &fil);
+    f_close(&fil);
+    sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    UART_Printf("dest_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+
+    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 100, &fil);
+    f_gets(tmp2, 100, &fil);
+    f_gets(tmp3, 100, &fil);
+    f_gets(tmp4, 100, &fil);
+    f_close(&fil);
+    sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    UART_Printf("gate_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+
+    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 100, &fil);
+    f_gets(tmp2, 100, &fil);
+    f_gets(tmp3, 100, &fil);
+    f_gets(tmp4, 100, &fil);
+    f_close(&fil);
+    sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+    UART_Printf("mask_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+
+    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp, 100, &fil);
+    strncpy(MD5, tmp, 32);
+    f_close(&fil);
+    lfs_file_open(&lfs, &file, "md5", LFS_O_WRONLY | LFS_O_CREAT);
+    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
+    lfs_file_close(&lfs, &file);
+}
+
+void setParametersFromSD()
+{
+    char tmp[100];
+    char tmp1[5];
+    char tmp2[5];
+    char tmp3[5];
+    char tmp4[5];
+    f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp1, 5, &fil);
+    ipaddr[0] = atoi(tmp1);
+    f_gets(tmp2, 5, &fil);
+    ipaddr[1] = atoi(tmp2);
+    f_gets(tmp3, 5, &fil);
+    ipaddr[2] = atoi(tmp3);
+    f_gets(tmp4, 5, &fil);
+    ipaddr[3] = atoi(tmp4);
+    sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    f_close(&fil);
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+
+    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp1, 100, &fil);
+    destip[0] = atoi(tmp1);
+    f_gets(tmp2, 100, &fil);
+    destip[1] = atoi(tmp2);
+    f_gets(tmp3, 100, &fil);
+    destip[2] = atoi(tmp3);
+    f_gets(tmp4, 100, &fil);
+    destip[3] = atoi(tmp4);
+    sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    f_close(&fil);
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+
+    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp1, 100, &fil);
+    ipgate[0] = atoi(tmp1);
+    f_gets(tmp2, 100, &fil);
+    ipgate[1] = atoi(tmp2);
+    f_gets(tmp3, 100, &fil);
+    ipgate[2] = atoi(tmp3);
+    f_gets(tmp4, 100, &fil);
+    ipgate[3] = atoi(tmp4);
+    sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    f_close(&fil);
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+
+    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp1, 100, &fil);
+    ipmask[0] = atoi(tmp1);
+    f_gets(tmp2, 100, &fil);
+    ipmask[1] = atoi(tmp2);
+    f_gets(tmp3, 100, &fil);
+    ipmask[2] = atoi(tmp3);
+    f_gets(tmp4, 100, &fil);
+    ipmask[3] = atoi(tmp4);
+    sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    f_close(&fil);
+    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
+
+    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp, 100, &fil);
+    strncpy(MD5, tmp, 32);
+    f_close(&fil);
+    UART_Printf("md5: %s\n",MD5); delayUS_ASM(10000);
+
+    sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+}
+
+void SetParaametersFromEEPROM()
+{
+    char tmp[100];
+    char tmp5[23];
+    char tmp6[3];
+    UART_Printf("Load data from EEPROM\r\n"); delayUS_ASM(10000);
+    lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+    strncpy(tmp6,tmp5,3);
+    ipaddr[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+5,3);
+    ipaddr[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+10,3);
+    ipaddr[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+15,3);
+    ipaddr[3] = atoi(tmp6);
+
+    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+    strncpy(tmp6,tmp5,3);
+    destip[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+5,3);
+    destip[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+10,3);
+    destip[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+15,3);
+    destip[3] = atoi(tmp6);
+
+    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+    strncpy(tmp6,tmp5,3);
+    ipgate[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+5,3);
+    ipgate[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+10,3);
+    ipgate[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+15,3);
+    ipgate[3] = atoi(tmp6);
+
+    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
+    lfs_file_close(&lfs, &file);
+    strncpy(tmp6,tmp5,3);
+    ipmask[0] = atoi(tmp6);
+    strncpy(tmp6,tmp5+5,3);
+    ipmask[1] = atoi(tmp6);
+    strncpy(tmp6,tmp5+10,3);
+    ipmask[2] = atoi(tmp6);
+    strncpy(tmp6,tmp5+15,3);
+    ipmask[3] = atoi(tmp6);
+
+    lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
+    lfs_file_close(&lfs, &file);
+    strcpy(MD5, tmp);
+
+    sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+    sprintf(tmp,"md5: %s", MD5);
+    UART_Printf(tmp); delayUS_ASM(10000);
+
+    sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    UART_Printf(tmp); delayUS_ASM(10000);
+}
+
+void wep_define_func(void)
+{
+    // Index page and netinfo / base64 image demo
+    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
+    reg_httpServer_webContent((uint8_t *)"netinfo.html", (uint8_t *)netinfo_page);			// netinfo.html 	: Network information example page
+    reg_httpServer_webContent((uint8_t *)"netinfo.js", (uint8_t *)w5x00web_netinfo_js);     // netinfo.js 		: JavaScript for Read Network configuration 	(+ ajax.js)
+    reg_httpServer_webContent((uint8_t *)"img.html", (uint8_t *)img_page);					// img.html 		: Base64 Image data example page
+
+    // Example #1
+    reg_httpServer_webContent((uint8_t *)"dio.html", (uint8_t *)dio_page);					// dio.html 		: Digital I/O control example page
+    reg_httpServer_webContent((uint8_t *)"dio.js", (uint8_t *)w5x00web_dio_js);             // dio.js 			: JavaScript for digital I/O control 	(+ ajax.js)
+
+    // AJAX JavaScript functions
+    reg_httpServer_webContent((uint8_t *)"ajax.js", (uint8_t *)w5x00web_ajax_js);			// ajax.js			: JavaScript for AJAX request transfer
+
+//    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page2);
+//    reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);
+}
+
+void net_ini_WIZNET()
+{
+    uint8_t sn_TCP = 0; // Сокет 0
+    WIZCHIPInitialize();
+    ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
+    print_network_information();
+    socket(sn_TCP, Sn_MR_TCP, local_port, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
+    if (SOCK_OK == listen(sn_TCP))
+        printf("socket %d listening\n", sn_TCP);
+}
+
+void workEEPROM()
+{
+    //  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
+    //  testEEPROM();
+      UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
+      littleFsInit();
+    //  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+    //  FsForEeprom_test();
+
+    f_mount(&fs, "", 0);
+    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    if (result == 0)
+    {
+        sdCartOn = 1;
+        UART_Printf("SD_READ\n");
+        delayUS_ASM(10000);
+    }
+
+    if (result != 0)
+        UART_Printf("SD_NOT_OPEN\n");
+        delayUS_ASM(10000);
+    f_close(&fil);
+
+    if (sdCartOn == 1)
+    {
+        setParametersFromSD();
+//        copyParametersToEEPROM();
+//        copyFileToEEPROM("index.html");
+//        copyFileToEEPROM("main.html");
+
+    } else
+    {
+        SetParaametersFromEEPROM();
+//        testReadFile("index.html");
+//        testReadFile("main.html");
+//        printFileFromEEPROM("index.html");
+//        printFileFromEEPROM("main.html");
+
+    }
+}
+
+void prepearUDP_PLIS()
+{
+    uint8_t sn = 0;
+    //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
+    //char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
+    //char buf2[] = "1234567890\r\n";
+    //char buf3[] = "2345678901\r\n";
+    //char buf4[] = "3456789012\r\n";
+    //char buf5[] = "4567890123\r\n";
+    //char buf6[] = "5678901234\r\n";
+    //char buf7[] = "6789012345\r\n";
+    //char buf8[] = "7890123456\r\n";
+    //char buf[82] ;
+    #define SOCK_UDPS        1
+    #define DATA_BUF_SIZE   2048
+      extern uint8_t gDATABUF[DATA_BUF_SIZE];
+
+
+    //for (uint8_t i = 4; i < 8 ;++i)
+    //{
+    //    socket(i, Sn_MR_UDP, localport + i, 0x00);
+    //}
+
+    //OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
+    //OpenSocket(1, Sn_MR_UDP);
+    //OpenSocket(2, Sn_MR_UDP);
+    //OpenSocket(3, Sn_MR_UDP);
+    //OpenSocket(4, Sn_MR_UDP);
+    //OpenSocket(5, Sn_MR_UDP);
+    //OpenSocket(6, Sn_MR_UDP);
+    //OpenSocket(7, Sn_MR_UDP);
+
+    #ifdef INTRON
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
+    #endif
+    #ifndef INTRON
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
+    //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
+    #endif
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
+}
+
+void sendReceiveUDP()
+{
+#ifdef INTRON
+    for (uint8_t i = 4; i < 8 ;++i)
+    {
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+
+      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+
+      sendPackets(4, destip, destport + 4 );
+      if (firstSend != 1)
+          receivePackets(4, destip, destport + 4 );
+    }
+    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
+#endif
+
+#ifndef INTRON
+//    for (uint8_t i = 4; i < 8 ;++i)
+//    {
+//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+
+//      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+
+//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
+//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+
+//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+
+//      sendPackets(4, destip, destport + 4 );
+//      if (firstSend != 1)
+//          receivePackets(4, destip, destport + 4 );
+//    }
+//    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
+#endif
+
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+
+//    HAL_Delay(1000);
+//UART_Printf("txCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
+//        txCyclon[0],txCyclon[1],txCyclon[2],txCyclon[3],txCyclon[4],txCyclon[5],txCyclon[6],txCyclon[7],
+//        txCyclon[8],txCyclon[9],txCyclon[10],txCyclon[11],txCyclon[12],txCyclon[13],txCyclon[14],txCyclon[15],
+//        txCyclon[16],txCyclon[17],txCyclon[18],txCyclon[19],txCyclon[20],txCyclon[21],txCyclon[22],txCyclon[23],
+//        txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31]
+//        );
+//UART_Printf("rxCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
+//        rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
+//        rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
+//        rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
+//        rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31]
+//        );
+}
 
 /* USER CODE END 0 */
 
@@ -341,446 +729,43 @@ int main(void)
   MX_RTC_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-    //Сброс W5500 - уже в net_ini
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
-//    delayUS_ASM(1000);
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
 
-//  testEEPROM();
-  UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
-  littleFsInit();
-//  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-//  FsForEeprom_test();
-
-
-#ifdef INTRON
-//uint8_t  destip[4] = {192,168,1,198};
-uint16_t  destport = 8888;
-uint16_t localport = 8888;
-#endif
-
-#ifndef INTRON
-//uint8_t  destip[4] = {192,168,1,197};
-uint16_t  destport = 8888;
-uint16_t localport = 8888;
-#endif
-
-    char tmp[100];
-    char tmp1[5];
-    char tmp2[5];
-    char tmp3[5];
-    char tmp4[5];
-    char tmp5[12];
-    char tmp6[3];
-    f_mount(&fs, "", 0);
-    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
-    if (result == 0)
-    {
-        sdCartOn = 1;
-        UART_Printf("SD_READ\n");
-        delayUS_ASM(10000);
-    }
-
-    if (result != 0)
-        UART_Printf("SD_NOT_OPEN\n");
-        delayUS_ASM(10000);
-if (sdCartOn == 1)
-{
-    f_lseek(&fil, 0);//размер - f_size(&fil)
-    f_gets(tmp1, 5, &fil);
-    ipaddr[0] = atoi(tmp1);
-    f_gets(tmp2, 5, &fil);
-    ipaddr[1] = atoi(tmp2);
-    f_gets(tmp3, 5, &fil);
-    ipaddr[2] = atoi(tmp3);
-    f_gets(tmp4, 5, &fil);
-    ipaddr[3] = atoi(tmp4);
-    sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    f_close(&fil);
-//Пишем на EEPROM
-    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
-//    UART_Printf(tmp); delayUS_ASM(10000);
-
-    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_gets(tmp1, 100, &fil);
-    destip[0] = atoi(tmp1);
-    f_gets(tmp2, 100, &fil);
-    destip[1] = atoi(tmp2);
-    f_gets(tmp3, 100, &fil);
-    destip[2] = atoi(tmp3);
-    f_gets(tmp4, 100, &fil);
-    destip[3] = atoi(tmp4);
-    sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    f_close(&fil);
-    //Пишем на EEPROM
-    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
-//    UART_Printf(tmp); delayUS_ASM(10000);
-
-    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_gets(tmp1, 100, &fil);
-    ipgate[0] = atoi(tmp1);
-    f_gets(tmp2, 100, &fil);
-    ipgate[1] = atoi(tmp2);
-    f_gets(tmp3, 100, &fil);
-    ipgate[2] = atoi(tmp3);
-    f_gets(tmp4, 100, &fil);
-    ipgate[3] = atoi(tmp4);
-    sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    f_close(&fil);
-    //Пишем на EEPROM
-    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
-//    UART_Printf(tmp); delayUS_ASM(10000);
-
-    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_gets(tmp1, 100, &fil);
-    ipmask[0] = atoi(tmp1);
-    f_gets(tmp2, 100, &fil);
-    ipmask[1] = atoi(tmp2);
-    f_gets(tmp3, 100, &fil);
-    ipmask[2] = atoi(tmp3);
-    f_gets(tmp4, 100, &fil);
-    ipmask[3] = atoi(tmp4);
-    sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    f_close(&fil);
-    //Пишем на EEPROM
-    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
-//    UART_Printf(tmp); delayUS_ASM(10000);
-
-    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_gets(tmp, 100, &fil);
-    strncpy(md5, tmp, 32);
-    UART_Printf(md5); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
-    f_close(&fil);
-    //Пишем на EEPROM
-    lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
-    lfs_file_close(&lfs, &file);
-    f_close(&fil);
-    UART_Printf(md5); delayUS_ASM(10000);
-    UART_Printf("\r\n"); delayUS_ASM(10000);
-
-//Переносим на EEPROM index.html и main.html
-    UINT br = 0;
-    pindex = (char*)malloc(1024 * 10 * sizeof(char));
-    f_open(&fil, "index.html", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_read(&fil, pindex, f_size(&fil), &br);
-    f_close(&fil);
-    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, pindex, br);
-    lfs_file_close(&lfs, &file);
-    free(pindex);
-    br = 0;
-    pmain = (char*)malloc(1024 * 16 * sizeof(char));
-    f_open(&fil, "main.html", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_read(&fil, pmain, f_size(&fil), &br);
-    f_close(&fil);
-    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs, &file);
-    lfs_file_write(&lfs, &file, pmain, br);
-    lfs_file_close(&lfs, &file);
-    free(pmain);
-
-} else //SD карты нет
-{
-//    #ifdef INTRON
-//    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 197;
-//    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 198;
-//    #endif
-//    #ifndef INTRON
-//    ipaddr[0] = 192;ipaddr[1] = 168;ipaddr[2] = 1;ipaddr[3] = 198;
-//    destip[0] = 192;destip[1] = 168;destip[2] = 1;destip[3] = 197;
-//    #endif
-//    ipgate[0] = 192;ipgate[1] = 168;ipgate[2] = 1;ipgate[3] = 1;
-//    ipmask[0] = 255;ipmask[1] = 255;ipmask[2] = 255;ipmask[3] = 0;
-
-    UART_Printf("Load data from EEPROM\r\n"); delayUS_ASM(10000);
-
-    lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
-    lfs_file_close(&lfs, &file);
-//    UART_Printf(tmp5); delayUS_ASM(10000);
-//    UART_Printf("\r\n"); delayUS_ASM(10000);
-    strncpy(tmp6,tmp5,3);
-    ipaddr[0] = atoi(tmp6);
-    strncpy(tmp6,tmp5+3,3);
-    ipaddr[1] = atoi(tmp6);
-    strncpy(tmp6,tmp5+6,3);
-    ipaddr[2] = atoi(tmp6);
-    strncpy(tmp6,tmp5+9,3);
-    ipaddr[3] = atoi(tmp6);
-
-    lfs_file_open(&lfs, &file, "dest_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
-    lfs_file_close(&lfs, &file);
-//    UART_Printf(tmp5); delayUS_ASM(10000);
-//    UART_Printf("\r\n"); delayUS_ASM(10000);
-    strncpy(tmp6,tmp5,3);
-    destip[0] = atoi(tmp6);
-    strncpy(tmp6,tmp5+3,3);
-    destip[1] = atoi(tmp6);
-    strncpy(tmp6,tmp5+6,3);
-    destip[2] = atoi(tmp6);
-    strncpy(tmp6,tmp5+9,3);
-    destip[3] = atoi(tmp6);
-
-    lfs_file_open(&lfs, &file, "gate_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
-    lfs_file_close(&lfs, &file);
-//    UART_Printf(tmp5); delayUS_ASM(10000);
-//    UART_Printf("\r\n"); delayUS_ASM(10000);
-    strncpy(tmp6,tmp5,3);
-    ipgate[0] = atoi(tmp6);
-    strncpy(tmp6,tmp5+3,3);
-    ipgate[1] = atoi(tmp6);
-    strncpy(tmp6,tmp5+6,3);
-    ipgate[2] = atoi(tmp6);
-    strncpy(tmp6,tmp5+9,3);
-    ipgate[3] = atoi(tmp6);
-
-    lfs_file_open(&lfs, &file, "mask_IP", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
-    lfs_file_close(&lfs, &file);
-//    UART_Printf(tmp5); delayUS_ASM(10000);
-//    UART_Printf("\r\n"); delayUS_ASM(10000);
-    strncpy(tmp6,tmp5,3);
-    ipmask[0] = atoi(tmp6);
-    strncpy(tmp6,tmp5+3,3);
-    ipmask[1] = atoi(tmp6);
-    strncpy(tmp6,tmp5+6,3);
-    ipmask[2] = atoi(tmp6);
-    strncpy(tmp6,tmp5+9,3);
-    ipmask[3] = atoi(tmp6);
-
-    lfs_file_open(&lfs, &file, "md5", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_read(&lfs, &file, &tmp, sizeof (tmp));
-    lfs_file_close(&lfs, &file);
-    strcpy(md5, tmp);
-//    UART_Printf(tmp); delayUS_ASM(10000);
-//    UART_Printf("\r\n"); delayUS_ASM(10000);
-
-    sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    sprintf(tmp,"md5: %s", md5);
-    UART_Printf(tmp); delayUS_ASM(10000);
-//Далее два пути - читать непосредственно с EEPROM или из буфера
-//    // 2 буфера в куче
-//    pindex = (char*)malloc(1024 * 10 * sizeof(char));
-//    lfs_file_open(&lfs, &file, "index.html", LFS_O_RDWR | LFS_O_CREAT);
-//    lfs_file_read(&lfs, &file, pindex, sizeof (pindex));
-//    lfs_file_close(&lfs, &file);
-//    pmain = (char*)malloc(1024 * 16 * sizeof(char));
-//    lfs_file_open(&lfs, &file, "main.html", LFS_O_RDWR | LFS_O_CREAT);
-//    lfs_file_read(&lfs, &file, pmain, sizeof (pmain));
-//    lfs_file_close(&lfs, &file);
-
-
-} //end SD нет
-
-    sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
-    UART_Printf(tmp); delayUS_ASM(10000);
-    net_ini();
-    delayUS_ASM(10000);
-
-  //Callbacks
-    reg_wizchip_cris_cbfunc(wizchip_cris_enter, wizchip_cris_exit);
-    reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
-    reg_wizchip_spi_cbfunc(wizchip_spi_readbyte, wizchip_spi_writebyte);
-    reg_wizchip_spiburst_cbfunc(wizchip_spi_readburst, wizchip_spi_writeburst);
-    delayUS_ASM(10000);
-//    HAL_TIM_Base_Start_IT(&htim1);
-//    HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
-//    UART_Printf("TIM1\r\n");
-
-
-//  /* wizchip initialize*/
-//  wizchip_initialize();
-//  /* Network initialization */
-//  network_init();
+    workEEPROM();
+//    net_ini();
+    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-#if(0)
-    SPI1 - обмен в режиме мастер с W5500
-            SYN -  PA5
-            MISO - PA6
-            MOSI - PA7
+    prepearUDP_PLIS();
 
-    W5500   SCLK - PA5
-            SCS  - PD11 выбор
-            INT  - PD8 вход INT
-            MOSI - PA7
-            RST  - PC9
-            MISO - PA6
+//    tls_client_serverTest(); // работает
+    tls_server_sizeTest(); //Web сервер WolfSSL
 
-    SPI3 - обмен в режиме слейв с INTRON
-            SYN -  PC10
-            MISO - PC11
-            MOSI - PC12
+//web serverWIZ - РАБОТАЕТ
+//    uint8_t i;
+//    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
+//    wep_define_func();
+//    display_reg_webContent_list();
 
-    SPI2 - обмен с ПЛИС
-            SYN  -  PB10 - 99
-            MISO -  PC2 - 101
-            MOSI -  PC3 - 103
-            CLK_EN - PC4 - 100
-            RESET  - PC5 - 104
-            TE_SEL - PC8 - 94 выбор тактирования (1 - внешнее)
-            FPGA_EN- PA8 - 96 (1 - разрешение работы общее)
-            CPU_INT- PB15 - 97  (Сигнал ПЛИС о готовности данных)
-            F0 -           135
-            C4 -           134
-
-F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
-
-Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
-Контроллер воспринимает как 64 байта (в два раза чаще)
-Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
-
-#endif
-
-uint8_t sn = 0;
-//socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-//char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
-//char buf2[] = "1234567890\r\n";
-//char buf3[] = "2345678901\r\n";
-//char buf4[] = "3456789012\r\n";
-//char buf5[] = "4567890123\r\n";
-//char buf6[] = "5678901234\r\n";
-//char buf7[] = "6789012345\r\n";
-//char buf8[] = "7890123456\r\n";
-//char buf[82] ;
-#define SOCK_UDPS        1
-#define DATA_BUF_SIZE   2048
-  extern uint8_t gDATABUF[DATA_BUF_SIZE];
-
-
-for (uint8_t i = 4; i < 8 ;++i)
-{
-    socket(i, Sn_MR_UDP, localport + i, 0x00);
-}
-
-//OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
-//OpenSocket(1, Sn_MR_UDP);
-//OpenSocket(2, Sn_MR_UDP);
-//OpenSocket(3, Sn_MR_UDP);
-//OpenSocket(4, Sn_MR_UDP);
-//OpenSocket(5, Sn_MR_UDP);
-//OpenSocket(6, Sn_MR_UDP);
-//OpenSocket(7, Sn_MR_UDP);
-
-#ifdef INTRON
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
-#endif
-#ifndef INTRON
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
-//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
-#endif
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
-
-uint8_t firstSend = 1;
+//uint8_t firstSend = 1;
   while (1)
   {
+
+//web serverWIZ - РАБОТАЕТ
+//    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+//      httpServer_run(0);
+
+//      net_poll(); //Старый код http сервер
+
+
+      sendReceiveUDP();
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-     net_poll();
-
-#ifdef INTRON
-    for (uint8_t i = 4; i < 8 ;++i)
-    {
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-
-      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-
-      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
-      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
-
-      sendPackets(4, destip, destport + 4 );
-      if (firstSend != 1)
-          receivePackets(4, destip, destport + 4 );
-    }
-    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
-#endif
-
-#ifndef INTRON
-//    for (uint8_t i = 4; i < 8 ;++i)
-//    {
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-
-//      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-
-//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
-//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
-
-//      sendPackets(4, destip, destport + 4 );
-//      if (firstSend != 1)
-//          receivePackets(4, destip, destport + 4 );
-//    }
-    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
-#endif
-
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-//    HAL_Delay(1000);
-//UART_Printf("txCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
-//        txCyclon[0],txCyclon[1],txCyclon[2],txCyclon[3],txCyclon[4],txCyclon[5],txCyclon[6],txCyclon[7],
-//        txCyclon[8],txCyclon[9],txCyclon[10],txCyclon[11],txCyclon[12],txCyclon[13],txCyclon[14],txCyclon[15],
-//        txCyclon[16],txCyclon[17],txCyclon[18],txCyclon[19],txCyclon[20],txCyclon[21],txCyclon[22],txCyclon[23],
-//        txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31]
-//        );
-//UART_Printf("rxCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
-//        rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
-//        rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
-//        rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
-//        rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31]
-//        );
 
   }
   /* USER CODE END 3 */
@@ -842,42 +827,22 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 0 */
 
-  LL_I2C_InitTypeDef I2C_InitStruct = {0};
-
-  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
-  /**I2C1 GPIO Configuration
-  PB6   ------> I2C1_SCL
-  PB7   ------> I2C1_SDA
-  */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_6|LL_GPIO_PIN_7;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  GPIO_InitStruct.Alternate = LL_GPIO_AF_4;
-  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /* Peripheral clock enable */
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C1);
-
   /* USER CODE BEGIN I2C1_Init 1 */
 
   /* USER CODE END I2C1_Init 1 */
-  /** I2C Initialization
-  */
-  LL_I2C_DisableOwnAddress2(I2C1);
-  LL_I2C_DisableGeneralCall(I2C1);
-  LL_I2C_EnableClockStretching(I2C1);
-  I2C_InitStruct.PeripheralMode = LL_I2C_MODE_I2C;
-  I2C_InitStruct.ClockSpeed = 100000;
-  I2C_InitStruct.DutyCycle = LL_I2C_DUTYCYCLE_2;
-  I2C_InitStruct.OwnAddress1 = 0;
-  I2C_InitStruct.TypeAcknowledge = LL_I2C_ACK;
-  I2C_InitStruct.OwnAddrSize = LL_I2C_OWNADDRESS1_7BIT;
-  LL_I2C_Init(I2C1, &I2C_InitStruct);
-  LL_I2C_SetOwnAddress2(I2C1, 0);
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
@@ -1344,79 +1309,79 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 }
 
-/**
- * @brief Default function to enable interrupt.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	  wizchip_cris_enter(void)           {
+///**
+// * @brief Default function to enable interrupt.
+// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+// * null function is called.
+// */
+//void 	  wizchip_cris_enter(void)           {
 
-}
+//}
 
-/**
- * @brief Default function to disable interrupt.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	  wizchip_cris_exit(void)          {
+///**
+// * @brief Default function to disable interrupt.
+// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+// * null function is called.
+// */
+//void 	  wizchip_cris_exit(void)          {
 
-}
+//}
 
-/**
- * @brief Default function to select chip.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	wizchip_cs_select(void)            {
-     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-}
+//*
+// * @brief Default function to select chip.
+// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+// * null function is called.
 
-/**
- * @brief Default function to deselect chip.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	wizchip_cs_deselect(void)          {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-}
+//void 	wizchip_cs_select(void)            {
+//     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+//}
+
+///**
+// * @brief Default function to deselect chip.
+// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+// * null function is called.
+// */
+//void 	wizchip_cs_deselect(void)          {
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+//}
 
 
-/**
- * @brief Default function to read in SPI interface.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-uint8_t wizchip_spi_readbyte(void)        {
-    uint8_t wb=0xFF;
-    HAL_SPI_Receive(&hspi1, &wb, 1, 1000);
-    return	wb;
-}
-/**
- * @brief Default function to write in SPI interface.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	wizchip_spi_writebyte(uint8_t wb) {
-        HAL_SPI_Transmit(&hspi1, &wb, 1, 1000);
-}
+///**
+// * @brief Default function to read in SPI interface.
+// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+// * null function is called.
+// */
+//uint8_t wizchip_spi_readbyte(void)        {
+//    uint8_t wb=0xFF;
+//    HAL_SPI_Receive(&hspi1, &wb, 1, 1000);
+//    return	wb;
+//}
+///**
+// * @brief Default function to write in SPI interface.
+// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+// * null function is called.
+// */
+//void 	wizchip_spi_writebyte(uint8_t wb) {
+//        HAL_SPI_Transmit(&hspi1, &wb, 1, 1000);
+//}
 
-/**
- * @brief Default function to burst read in SPI interface.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len) 	{
-    HAL_SPI_Receive(&hspi1, pBuf, len , 1000);
-}
+///**
+// * @brief Default function to burst read in SPI interface.
+// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+// * null function is called.
+// */
+//void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len) 	{
+//    HAL_SPI_Receive(&hspi1, pBuf, len , 1000);
+//}
 
-/**
- * @brief Default function to burst write in SPI interface.
- * @note This function help not to access wrong address. If you do not describe this function or register any functions,
- * null function is called.
- */
-void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len) {
-    HAL_SPI_Transmit(&hspi1, pBuf, len , 1000);
-}
+///**
+// * @brief Default function to burst write in SPI interface.
+// * @note This function help not to access wrong address. If you do not describe this function or register any functions,
+// * null function is called.
+// */
+//void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len) {
+//    HAL_SPI_Transmit(&hspi1, pBuf, len , 1000);
+//}
 
 
 
@@ -1453,4 +1418,108 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+#if(0)
+    SPI1 - обмен в режиме мастер с W5500
+            SYN -  PA5
+            MISO - PA6
+            MOSI - PA7
 
+    W5500   SCLK - PA5
+            SCS  - PD11 выбор
+            INT  - PD8 вход INT
+            MOSI - PA7
+            RST  - PC9
+            MISO - PA6
+
+    SPI3 - обмен в режиме слейв с INTRON
+            SYN -  PC10
+            MISO - PC11
+            MOSI - PC12
+
+    SPI2 - обмен с ПЛИС
+            SYN  -  PB10 - 99
+            MISO -  PC2 - 101
+            MOSI -  PC3 - 103
+            CLK_EN - PC4 - 100
+            RESET  - PC5 - 104
+            TE_SEL - PC8 - 94 выбор тактирования (1 - внешнее)
+            FPGA_EN- PA8 - 96 (1 - разрешение работы общее)
+            CPU_INT- PB15 - 97  (Сигнал ПЛИС о готовности данных)
+            F0 -           135
+            C4 -           134
+
+F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
+
+Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
+Контроллер воспринимает как 64 байта (в два раза чаще)
+Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
+
+#endif
+//int AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count)
+//{
+//  uint16_t i;
+//  //Disable Pos
+//  LL_I2C_DisableBitPOS(I2C1);
+//  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+//  LL_I2C_GenerateStartCondition(I2C1);
+//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+//  //read state
+//  (void) I2C1->SR1;
+//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
+//  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+//  LL_I2C_ClearFlag_ADDR(I2C1);
+//  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
+//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
+//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  LL_I2C_GenerateStartCondition(I2C1);
+//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+//  (void) I2C1->SR1;
+//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_READ);
+//  while (!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+//  LL_I2C_ClearFlag_ADDR(I2C1);
+//  for(i=0;i<bytes_count;i++)
+//  {
+//    if(i<(bytes_count-1))
+//    {
+//      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
+//      buf[i] = LL_I2C_ReceiveData8(I2C1);
+//    }
+//    else
+//    {
+//      LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_NACK);
+//      LL_I2C_GenerateStopCondition(I2C1);
+//      while(!LL_I2C_IsActiveFlag_RXNE(I2C1)){};
+//      buf[i] = LL_I2C_ReceiveData8(I2C1);
+//    }
+//  }
+//  return i;
+//}
+//-------------------------------------------------------
+
+//-------------------------------------------------------
+//int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count)
+//{
+//  uint16_t i;
+//  //Disable Pos
+//  LL_I2C_DisableBitPOS(I2C1);
+//  LL_I2C_AcknowledgeNextData(I2C1, LL_I2C_ACK);
+//  LL_I2C_GenerateStartCondition(I2C1);
+//  while(!LL_I2C_IsActiveFlag_SB(I2C1)){};
+//  //read state
+//  (void) I2C1->SR1;
+//  LL_I2C_TransmitData8(I2C1, SLAVE_OWN_ADDRESS | I2C_REQUEST_WRITE);
+//  while(!LL_I2C_IsActiveFlag_ADDR(I2C1)){};
+//  LL_I2C_ClearFlag_ADDR(I2C1);
+//  LL_I2C_TransmitData8(I2C1, (uint8_t) (addr>>8));
+//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  LL_I2C_TransmitData8(I2C1, (uint8_t) addr);
+//  while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  for(i=0;i<bytes_count;i++)
+//  {
+//    LL_I2C_TransmitData8(I2C1, buf[i]);
+//    while(!LL_I2C_IsActiveFlag_TXE(I2C1)){};
+//  }
+//  LL_I2C_GenerateStopCondition(I2C1);
+//  return i;
+//}

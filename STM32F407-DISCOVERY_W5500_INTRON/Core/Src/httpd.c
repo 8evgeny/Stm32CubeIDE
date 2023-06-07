@@ -1,4 +1,5 @@
 #include "httpd.h"
+#include "lfs.h"
 //-----------------------------------------------
 extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
@@ -10,16 +11,17 @@ extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 extern uint8_t destip[4];
 extern uint8_t sdCartOn;
-extern char md5[32];
+extern char MD5[32];
 uint8_t temp[4];
 uint8_t passwordOK = 0;
 uint8_t loginOK = 0;
 extern void UART_Printf(const char* fmt, ...);
-
+extern lfs_t lfs;
+extern lfs_file_t file;
 //-----------------------------------------------
 http_sock_prop_ptr httpsockprop[2];
 tcp_prop_ptr tcpprop;
-
+extern void Printf(const char* fmt, ...);
 //extern FATFS fs;
 extern FIL fil;
 FIL MyFile;
@@ -96,10 +98,16 @@ void tcp_send_http_one(void)
 			//не последний сектор
 			if(i<(num_sect-1)) len_sect=512;
 			else len_sect=data_len;
-			result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
-			sprintf(str1,"f_lseek: %d\r\n",result);
-//            HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-			result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+            if (sdCartOn == 1)
+            {
+                result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
+                result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+            }
+            else
+            {
+                lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_SET);
+                bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
+            }
 			w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 			end_point+=len_sect;
 			data_len -= len_sect;
@@ -170,10 +178,16 @@ void tcp_send_http_first(void)
 		//не последний сектор
 		if(i<(num_sect-1)) len_sect=512;
 		else len_sect=data_len;
-		result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
-		sprintf(str1,"f_lseek: %d\r\n",result);
-//        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+        if (sdCartOn == 1)
+        {
+            result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
+            result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+        }
+        else
+        {
+            lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_SET);
+            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
+        }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
 		data_len -= len_sect;
@@ -230,8 +244,16 @@ void tcp_send_http_middle(void)
 		//не последний сектор
 		if(i<(num_sect-1)) len_sect=512;
 		else len_sect=data_len;
-		result=f_lseek(&MyFile,(DWORD)(i*512) + count_bytes); //Установим курсор чтения в файле
-		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+        if (sdCartOn == 1)
+        {
+            result=f_lseek(&MyFile,(DWORD)(i*512) + count_bytes); //Установим курсор чтения в файле
+            result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+        }
+        else
+        {
+            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + count_bytes, LFS_SEEK_SET);
+            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
+        }
 //HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
 //HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n** block **\r\n", 15, 0x1000);
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
@@ -284,14 +306,13 @@ void tcp_send_http_last(void)
 		else len_sect=data_len;
         if (sdCartOn == 1)
         {
-        result=f_lseek(&MyFile, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes); //Установим курсор чтения в файле
-		sprintf(str1,"f_lseek: %d\r\n",result);
-//        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-		result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+            result=f_lseek(&MyFile, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes); //Установим курсор чтения в файле
+            result=f_read(&MyFile,sect+3, len_sect, (UINT *)&bytesread);
         }
         else //EEPROM
         {
-
+            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes, LFS_SEEK_SET);
+            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -316,6 +337,7 @@ void http_request(void)
   // ищем первый "/" в HTTP заголовке
   point = GetReadPointer(tcpprop.cur_sock);
   i = 0;
+
   while (RXbyte != (uint8_t)'/')
   {
     RXbyte = w5500_readSockBufByte(tcpprop.cur_sock,point+i);
@@ -415,6 +437,8 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
+// !!!!!!!!!!!!!
+
 
                 }
             }
@@ -483,6 +507,8 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
+// !!!!!!!!!!!!!
+
 
                 }
             }
@@ -552,6 +578,8 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
+// !!!!!!!!!!!!!
+
 
                 }
             }
@@ -621,6 +649,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
+// !!!!!!!!!!!!!
+
+
 
                 }
             }
@@ -655,6 +686,9 @@ void http_request(void)
             else //EEPROM
             {
 
+// !!!!!!!!!!!!!
+
+
             }
         }
 
@@ -679,7 +713,7 @@ void http_request(void)
 //            char md5[34] = {'p','5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b',
 //                            '3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
 
-            if (strncmp(tmpbuf + 1, md5 , 32) == 0)
+            if (strncmp(tmpbuf + 1, MD5 , 32) == 0)
             {
                 UART_Printf("password OK\r\n"); delayUS_ASM(10000);
                 passwordOK = 1;
@@ -690,14 +724,8 @@ void http_request(void)
             {
                 UART_Printf("password not OK\r\n"); delayUS_ASM(10000);
             }
-
         }
 	}
-
-
-//    HAL_UART_Transmit(&huart6,(uint8_t*)httpsockprop[tcpprop.cur_sock].fname,strlen(httpsockprop[tcpprop.cur_sock].fname),0x1000);
-//    HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n",2,0x1000);
-
 
     if (sdCartOn == 1)
     {
@@ -707,85 +735,102 @@ void http_request(void)
         HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
         sprintf(str1,"f_size: %lu\r\n",f_size(&MyFile));
         HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-        if (result==FR_OK)
+    }
+    else //eeprom
+    {
+        lfs_file_close(&lfs, &file);
+        result = lfs_file_open(&lfs, &file, httpsockprop[tcpprop.cur_sock].fname, LFS_O_RDONLY );
+        sprintf(str1,"f_open: %d\r\n", result);
+        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+        uint32_t sz = lfs_file_size(&lfs, &file);
+        sprintf(str1,"f_size: %lu\r\n",sz);
+        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+    }
+    if (result==FR_OK)
+    {
+        //изучим расширение файла
+        ss1 = strchr(httpsockprop[tcpprop.cur_sock].fname,ch1);
+        ss1++;
+        if (strncmp(ss1,"jpg", 3) == 0)
         {
-            //изучим расширение файла
-            ss1 = strchr(httpsockprop[tcpprop.cur_sock].fname,ch1);
-            ss1++;
-            if (strncmp(ss1,"jpg", 3) == 0)
-            {
-                httpsockprop[tcpprop.cur_sock].http_doc = EXISTING_JPG;
-                //сначала включаем в размер размер заголовка
-                httpsockprop[tcpprop.cur_sock].data_size = strlen(jpg_header);
-            }
-            if (strncmp(ss1,"ico", 3) == 0)
-            {
-                httpsockprop[tcpprop.cur_sock].http_doc = EXISTING_ICO;
-                //сначала включаем в размер размер заголовка
-                httpsockprop[tcpprop.cur_sock].data_size = strlen(icon_header);
-            }
-            else
-            {
-                httpsockprop[tcpprop.cur_sock].http_doc = EXISTING_HTML;
-                //сначала включаем в размер размер заголовка
-                httpsockprop[tcpprop.cur_sock].data_size = strlen(http_header);
-            }
-            //затем размер самого документа
-            httpsockprop[tcpprop.cur_sock].data_size += f_size(&MyFile);
+            httpsockprop[tcpprop.cur_sock].http_doc = EXISTING_JPG;
+            //сначала включаем в размер размер заголовка
+            httpsockprop[tcpprop.cur_sock].data_size = strlen(jpg_header);
+        }
+        if (strncmp(ss1,"ico", 3) == 0)
+        {
+            httpsockprop[tcpprop.cur_sock].http_doc = EXISTING_ICO;
+            //сначала включаем в размер размер заголовка
+            httpsockprop[tcpprop.cur_sock].data_size = strlen(icon_header);
         }
         else
         {
-            httpsockprop[tcpprop.cur_sock].http_doc = E404_HTML;
+            httpsockprop[tcpprop.cur_sock].http_doc = EXISTING_HTML;
             //сначала включаем в размер размер заголовка
-            httpsockprop[tcpprop.cur_sock].data_size = strlen(error_header);
-            //затем размер самого документа
-            httpsockprop[tcpprop.cur_sock].data_size += sizeof(e404_htm);
+            httpsockprop[tcpprop.cur_sock].data_size = strlen(http_header);
         }
-        httpsockprop[tcpprop.cur_sock].cnt_rem_data_part = httpsockprop[tcpprop.cur_sock].data_size / tcp_size_wnd + 1;
-        httpsockprop[tcpprop.cur_sock].last_data_part_size = httpsockprop[tcpprop.cur_sock].data_size % tcp_size_wnd;
-        //борьба с неправильным расчётом, когда общий размер делится на минимальный размер окна без остатка
-        if(httpsockprop[tcpprop.cur_sock].last_data_part_size==0)
-        {
-            httpsockprop[tcpprop.cur_sock].last_data_part_size=tcp_size_wnd;
-            httpsockprop[tcpprop.cur_sock].cnt_rem_data_part--;
-        }
-        httpsockprop[tcpprop.cur_sock].cnt_data_part = httpsockprop[tcpprop.cur_sock].cnt_rem_data_part;
-        sprintf(str1,"data size:%lu; cnt data part:%u; last_data_part_size:%u\r\n",
-        (unsigned long)httpsockprop[tcpprop.cur_sock].data_size, httpsockprop[tcpprop.cur_sock].cnt_rem_data_part, httpsockprop[tcpprop.cur_sock].last_data_part_size);
-        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-        if (httpsockprop[tcpprop.cur_sock].cnt_rem_data_part==1)
-        {
-            httpsockprop[tcpprop.cur_sock].data_stat = DATA_ONE;
-        }
-        else if (httpsockprop[tcpprop.cur_sock].cnt_rem_data_part>1)
-        {
-            httpsockprop[tcpprop.cur_sock].data_stat = DATA_FIRST;
-        }
-        if(httpsockprop[tcpprop.cur_sock].data_stat==DATA_ONE)
-        {
-             tcp_send_http_one();
-            DisconnectSocket(tcpprop.cur_sock); //Разъединяемся
-            SocketClosedWait(tcpprop.cur_sock);
-            delayUS_ASM(100000); //Иначе сокет иногда виснет
-            OpenSocket(tcpprop.cur_sock,Mode_TCP);
-            delayUS_ASM(100000);
-            //Ждём инициализации сокета (статус SOCK_INIT)
-            UART_Printf("SocketInitWait\r\n"); delayUS_ASM(10000);
-            SocketInitWait(tcpprop.cur_sock);
-            UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
-            //Продолжаем слушать сокет
-            ListenSocket(tcpprop.cur_sock);
-            SocketListenWait(tcpprop.cur_sock);
+        //затем размер самого документа
+       if (sdCartOn == 1)
+       {
+           httpsockprop[tcpprop.cur_sock].data_size += f_size(&MyFile);
+       }
+       else
+       {
+           httpsockprop[tcpprop.cur_sock].data_size += lfs_file_size(&lfs, &file);
+       }
 
-        }
-        else if(httpsockprop[tcpprop.cur_sock].data_stat==DATA_FIRST)
-        {
-            tcp_send_http_first();
-        }
-    }//end if (sdCartOn == 1)
-    else //EEPROM
+    }
+    else
     {
+        httpsockprop[tcpprop.cur_sock].http_doc = E404_HTML;
+        //сначала включаем в размер размер заголовка
+        httpsockprop[tcpprop.cur_sock].data_size = strlen(error_header);
+        //затем размер самого документа
+        httpsockprop[tcpprop.cur_sock].data_size += sizeof(e404_htm);
+    }
+    httpsockprop[tcpprop.cur_sock].cnt_rem_data_part = httpsockprop[tcpprop.cur_sock].data_size / tcp_size_wnd + 1;
+    httpsockprop[tcpprop.cur_sock].last_data_part_size = httpsockprop[tcpprop.cur_sock].data_size % tcp_size_wnd;
+    //борьба с неправильным расчётом, когда общий размер делится на минимальный размер окна без остатка
+    if(httpsockprop[tcpprop.cur_sock].last_data_part_size==0)
+    {
+        httpsockprop[tcpprop.cur_sock].last_data_part_size=tcp_size_wnd;
+        httpsockprop[tcpprop.cur_sock].cnt_rem_data_part--;
+    }
+    httpsockprop[tcpprop.cur_sock].cnt_data_part = httpsockprop[tcpprop.cur_sock].cnt_rem_data_part;
+    sprintf(str1,"data size:%lu; cnt data part:%u; last_data_part_size:%u\r\n",
+            (unsigned long)httpsockprop[tcpprop.cur_sock].data_size,
+            httpsockprop[tcpprop.cur_sock].cnt_rem_data_part,
+            httpsockprop[tcpprop.cur_sock].last_data_part_size);
 
+    HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+    if (httpsockprop[tcpprop.cur_sock].cnt_rem_data_part==1)
+    {
+        httpsockprop[tcpprop.cur_sock].data_stat = DATA_ONE;
+    }
+    else if (httpsockprop[tcpprop.cur_sock].cnt_rem_data_part>1)
+    {
+        httpsockprop[tcpprop.cur_sock].data_stat = DATA_FIRST;
+    }
+    if(httpsockprop[tcpprop.cur_sock].data_stat==DATA_ONE)
+    {
+         tcp_send_http_one();
+        DisconnectSocket(tcpprop.cur_sock); //Разъединяемся
+        SocketClosedWait(tcpprop.cur_sock);
+        delayUS_ASM(100000); //Иначе сокет иногда виснет
+        OpenSocket(tcpprop.cur_sock,Mode_TCP);
+        delayUS_ASM(100000);
+        //Ждём инициализации сокета (статус SOCK_INIT)
+        UART_Printf("SocketInitWait\r\n"); delayUS_ASM(10000);
+        SocketInitWait(tcpprop.cur_sock);
+        UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
+        //Продолжаем слушать сокет
+        ListenSocket(tcpprop.cur_sock);
+        SocketListenWait(tcpprop.cur_sock);
+
+    }
+    else if(httpsockprop[tcpprop.cur_sock].data_stat==DATA_FIRST)
+    {
+        tcp_send_http_first();
     }
 }
 //-----------------------------------------------

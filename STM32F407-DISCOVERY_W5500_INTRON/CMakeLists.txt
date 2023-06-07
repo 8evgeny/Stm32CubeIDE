@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-#Будет один код для 2-х плат F407 адрес будет меняться в CMake
-
 # Set ARM compiler
 set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 #set(CMAKE_C_COMPILER ${TOOLS_PATH}/bin/arm-none-eabi-gcc)
@@ -14,15 +12,27 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #add_definitions(-DINTRON)
 
 #Режим http / https
-#add_definitions(-DTLS_ON)
-
+add_definitions(-DTLS_ON)
+add_definitions(-UWOLFSSL_TLS13)
+#add_definitions(-DWOLFSSL_ALLOW_TLSV10)
+#add_definitions(-UNO_OLD_TLS)
+#add_definitions(-DMBEDTLS_ECDSA_C)
+#add_definitions(-DMBEDTLS_ECP_C)
+#add_definitions(-DMBEDTLS_SHA256_C)
 project(11_Converter_F407_INTRON_DT C CXX ASM)
 
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
 
+set (ioLibrary_Eth ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Ethernet)
+set (ioLibrary_Int ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Internet/httpServer)
+set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
+#set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs_new)
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
-SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"')
+set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
+set (tls ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
+
+#SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') //для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
 add_definitions("-DUSE_FULL_LL_DRIVER")
 
@@ -45,39 +55,58 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
 #    --specs=nano.specs \
 
 include_directories(
-    USB_HOST/App
-    USB_HOST/Target
     Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
     Core/Inc
     Drivers/CMSIS/Device/ST/STM32F4xx/Include
     Drivers/STM32F4xx_HAL_Driver/Inc
     Drivers/CMSIS/Core/Include
     Drivers/CMSIS/Include
-    ioLibrary_Driver/Ethernet
-    ioLibrary_Driver/Ethernet/W5500
+    ${ioLibrary_Eth}
+    ${ioLibrary_Int}
     FATFS/App
     FATFS/Target
-    Middlewares/Third_Party/FatFs/src
+    ${fatfs}
     ${littlefs}
-    )
-file (GLOB SOURCES_C
-    Core/Src/*.c
-    Core/Startup/startup_stm32f407vgtx.s
-    Drivers/STM32F4xx_HAL_Driver/Src/*.c
-    ioLibrary_Driver/Ethernet/*.c
-    ioLibrary_Driver/Ethernet/W5500/w5500.c
-    FATFS/App/*.c
-    FATFS/Target/*.c
-    Middlewares/Third_Party/FatFs/src/*.c
-    Middlewares/Third_Party/FatFs/src/option/*.c
+    wolfSSL
+    ${wolfssl}
+    ${wolfssl}/wolfssl
+    ${wolfssl}/wolfcrypt
+    ${wolfssl}/wolfssl/wolfcrypt
+    wolfssl-examples-master/embedded
+    ${tls}
+    ${tls}/mbedtls/include
     )
 
-file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h  )
-add_library(littlefs_LIB ${littlefs_src} )
+file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
+add_library(hal_LIB ${hal_src})
 
-add_executable(${PROJECT_NAME}.elf
-    ${SOURCES_C}
+file (GLOB ioLibrary_Driver_src
+    ${ioLibrary_Eth}/*.c
+    ${ioLibrary_Eth}/W5500/*.c
+    ${ioLibrary_Int}/*.c
     )
+add_library(ioLibrary_Driver_LIB ${ioLibrary_Driver_src})
+
+file (GLOB fatfs_src FATFS/App/*.c FATFS/Target/*.c ${fatfs}/*.c ${fatfs}/option/*.c)
+add_library(fatfs_LIB ${fatfs_src})
+
+file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h)
+add_library(littlefs_LIB ${littlefs_src})
+
+file (GLOB wolfssl_src ${wolfssl}/src/*.c
+    ${wolfssl}/wolfcrypt/src/*.c
+    wolfSSL/wolfssl_example.c
+    wolfssl-examples-master/embedded/tls-client-server.c
+    wolfssl-examples-master/embedded/tls-server-size.c
+#    wolfssl-examples-master/embedded/tls-sock-server.c
+    )
+add_library(wolfssl_LIB ${wolfssl_src})
+
+file (GLOB tls_src ${tls}/*.c ${tls}/mbedtls/library/*.c)
+add_library(tls_LIB ${tls_src})
+
+file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s)
+add_executable(${PROJECT_NAME}.elf ${src})
 
 set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINKER_LANGUAGE CXX)
 set(LINKER_SCRIPT_FLASH "${CMAKE_SOURCE_DIR}/STM32F407VGTX_FLASH.ld")
@@ -100,7 +129,12 @@ set(LINKER_FLAGS "SHELL: \
 target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
 target_link_libraries(${PROJECT_NAME}.elf PUBLIC
+    hal_LIB
+    ioLibrary_Driver_LIB
+    fatfs_LIB
     littlefs_LIB
+    wolfssl_LIB
+    tls_LIB
     )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)
@@ -118,6 +152,6 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
 #    COMMAND st-flash erase
 #    COMMENT "Erasing . . .")
 
-#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-#    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
-#    COMMENT "Write Flash ")
+add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
+    COMMENT "Write Flash ")

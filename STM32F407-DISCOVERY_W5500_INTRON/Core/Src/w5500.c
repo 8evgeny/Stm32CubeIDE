@@ -1,8 +1,11 @@
 #include "w5500.h"
+#include <stdio.h>
+
 //-----------------------------------------------
 extern SPI_HandleTypeDef hspi1;
 extern UART_HandleTypeDef huart6;
 extern http_sock_prop_ptr httpsockprop[2];
+extern void Printf(const char* fmt, ...);
 //-----------------------------------------------
 extern char str1[60];
 extern tcp_prop_ptr tcpprop;
@@ -16,6 +19,10 @@ extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 extern uint16_t local_port;
+extern unsigned char server_buffer[BUFFER_SIZE];
+extern int server_buffer_sz;
+extern unsigned char client_buffer[BUFFER_SIZE];
+extern int client_buffer_sz ;
 //#include "mbedtls.h"
 //-----------------------------------------------
 void w5500_writeReg(uint8_t op, uint16_t addres, uint8_t data)
@@ -207,7 +214,7 @@ void SetWritePointer(uint8_t sock_num, uint16_t point)
 //-----------------------------------------------
 void w5500_ini(void)
 {
-	uint8_t i;
+//	uint8_t i;
   uint8_t dtt=0;
   uint8_t opcode=0;
   //Hard Reset
@@ -264,6 +271,7 @@ UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
 //-----------------------------------------------
 extern void tcp_send_http_middle(void);
 extern void tcp_send_http_last(void);
+
 void w5500_packetReceive(uint8_t sn)
 {
   uint16_t point;
@@ -287,17 +295,15 @@ void w5500_packetReceive(uint8_t sn)
                 httpsockprop[sn].prt_tp = PRT_TCP_HTTP;
                 http_request();
             }
-            char HandShake[30] = {0x16,             //Content Type: Handshake (22)
-                                  0x03, 0x01,       //Version: TLS 1.0 (0x0301)
-                                  0x02, 0x00,       //Length: 512
-                                  0x01,             //Handshake Type: Client Hello (1)
-                                  0x00, 0x01, 0xfc, //Length: 508
-                                  0x03, 0x03        //Version: TLS 1.2 (0x0303)
-                                 };
-            if (strncmp(tmpbuf, HandShake, 1) == 0) // Остальное может измениться
+
+            if (
+                (tmpbuf[0] == 0x16)                           //Content Type: Handshake (22)
+               && (tmpbuf[1] == 0x03) && (tmpbuf[2] == 0x01)  //Version: TLS 1.0 (0x0301)
+               && (tmpbuf[3] == 0x02) && (tmpbuf[4] == 0x00)  //Length: 512
+//               && (tmpbuf[5] == 0x01)                         //Handshake Type: Client Hello (1)
+               )
             {
-//                MX_MBEDTLS_HandShake();
-//                HAL_UART_Transmit(&huart6,(uint8_t*)"Client Hello",strlen("Client Hello"),0x1000);
+                Printf("Handshake... \n");
             }
 
 
@@ -318,8 +324,7 @@ void w5500_packetReceive(uint8_t sn)
         tcp_send_http_last();
         DisconnectSocket(sn); //Разъединяемся
         SocketClosedWait(sn);
-        sprintf(str1,"S%d (one) closed\r\n",sn);
-        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+        printf("socket %d (one) closed\r\n",sn);
 delayUS_ASM(100000);
         OpenSocket(sn,Mode_TCP);
 delayUS_ASM(100000);
@@ -331,7 +336,6 @@ delayUS_ASM(100000);
       }
     }
     }
-	
-	
+
 }
 //-----------------------------------------------

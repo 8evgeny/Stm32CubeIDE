@@ -741,7 +741,7 @@ int main(void)
     prepearUDP_PLIS();
 
 //    tls_client_serverTest(); // работает
-    tls_server_sizeTest(); //Web сервер WolfSSL
+//    tls_server_sizeTest(); //Web сервер WolfSSL
 
 //web serverWIZ - РАБОТАЕТ
 //    uint8_t i;

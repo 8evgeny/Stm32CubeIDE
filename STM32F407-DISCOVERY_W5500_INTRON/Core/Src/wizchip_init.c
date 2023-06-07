@@ -8,6 +8,14 @@
 #include "wizchip_init.h"
 extern void Printf(const char* fmt, ...);
 
+uint8_t gDATABUF[DATA_BUF_SIZE];
+wiz_NetInfo defaultNetInfo = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
+                            .ip = {192, 168, 1, 222},
+                            .sn = {255,255,255,0},
+                            .gw = {192, 168, 1, 1},
+                            .dns = {0,0,0,0},
+                            .dhcp = NETINFO_STATIC };
+
 void WIZCHIPInitialize(){
     wizchip_cs_deselect();
     reg_wizchip_cs_cbfunc(wizchip_cs_select, wizchip_cs_deselect);
@@ -36,29 +44,6 @@ void WIZCHIPInitialize(){
 		}
 	} while (tmp == PHY_LINK_OFF);
 }
-
-//void csEnable(void)
-//{
-//	HAL_GPIO_WritePin(WIZCHIP_CS_PORT, WIZCHIP_CS_PIN, GPIO_PIN_RESET);
-//}
-
-//void csDisable(void)
-//{
-//	HAL_GPIO_WritePin(WIZCHIP_CS_PORT, WIZCHIP_CS_PIN, GPIO_PIN_SET);
-//}
-
-//void spiWriteByte(uint8_t tx)
-//{
-//	uint8_t rx;
-//	HAL_SPI_TransmitReceive(&WIZCHIP_SPI, &tx, &rx, 1, 10);
-//}
-
-//uint8_t spiReadByte(void)
-//{
-//	uint8_t rx = 0, tx = 0xFF;
-//	HAL_SPI_TransmitReceive(&WIZCHIP_SPI, &tx, &rx, 1, 10);
-//	return rx;
-//}
 
 void wizchip_spi_readburst(uint8_t* pBuf, uint16_t len)
 {
@@ -98,4 +83,14 @@ void wizchip_cris_enter(void)
 
 void wizchip_cris_exit(void)
 {
+}
+
+void print_network_information(void)
+{
+    wizchip_getnetinfo(&defaultNetInfo);
+    printf("Mac addr:\t%02x:%02x:%02x:%02x:%02x:%02x\n\r",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
+    printf("IP address:\t%d.%d.%d.%d\n\r",defaultNetInfo.ip[0],defaultNetInfo.ip[1],defaultNetInfo.ip[2],defaultNetInfo.ip[3]);
+    printf("SM Mask:\t%d.%d.%d.%d\n\r",defaultNetInfo.sn[0],defaultNetInfo.sn[1],defaultNetInfo.sn[2],defaultNetInfo.sn[3]);
+    printf("Gate way:\t%d.%d.%d.%d\n\r",defaultNetInfo.gw[0],defaultNetInfo.gw[1],defaultNetInfo.gw[2],defaultNetInfo.gw[3]);
+    printf("DNS serv:\t%d.%d.%d.%d\n\r",defaultNetInfo.dns[0],defaultNetInfo.dns[1],defaultNetInfo.dns[2],defaultNetInfo.dns[3]);
 }

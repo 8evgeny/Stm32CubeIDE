@@ -102,7 +102,9 @@ file (GLOB wolfssl_src ${wolfssl}/src/*.c
     )
 add_library(wolfssl_LIB ${wolfssl_src})
 
-file (GLOB polarssl_src ${polarssl}/*.c ${tls}/mbedtls/library/*.c)
+file (GLOB polarssl_src ${polarssl}/*.c
+    ${tls}/mbedtls/library/*.c
+    )
 add_library(polarssl_LIB ${polarssl_src})
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s)

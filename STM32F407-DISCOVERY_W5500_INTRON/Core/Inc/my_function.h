@@ -65,9 +65,6 @@ void wizchip_initialize(void);
 /* Private defines -----------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
-#define DATA_BUF_SIZE   2048
-#define SOCK_TCPS        0
-#define SOCK_UDPS        1
 
 /* USER CODE END Private defines */
 

@@ -41,8 +41,7 @@ void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
 extern int tls_client_serverTest();
 extern int tls_server_sizeTest();
-extern int tls_sock_serverTest();
-extern void tlsProcess();
+extern void polarSSLTest();
 
 /* USER CODE END PD */
 
@@ -742,6 +741,7 @@ int main(void)
 
 //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL
+    polarSSLTest();
 
 //web serverWIZ - РАБОТАЕТ
 //    uint8_t i;

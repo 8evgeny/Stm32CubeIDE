@@ -99,7 +99,7 @@ unsigned int wiz_tls_init(wiz_tls_context* tlsContext, int* socket_fd)
 	printf(" Loading the CA root certificate \r\n");
 #endif
 	mbedtls_ssl_config_defaults((tlsContext->conf),
-								MBEDTLS_SSL_IS_CLIENT,
+                                MBEDTLS_SSL_IS_SERVER,
 								MBEDTLS_SSL_TRANSPORT_STREAM,
 								MBEDTLS_SSL_PRESET_DEFAULT);
 	ret=mbedtls_ssl_setup(tlsContext->ssl, tlsContext->conf);

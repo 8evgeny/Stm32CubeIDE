@@ -4,12 +4,12 @@
 #define HEAP_HINT_SERVER NULL
 /* I/O buffer size - wolfSSL buffers messages internally as well. */
 #include "w5500.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include "my_function.h"
+#include "wizchip_init.h"
 
 extern UART_HandleTypeDef huart6;
 
@@ -45,7 +45,16 @@ int _write(int fd, char *str, int len)
 
 void polarSSLTest()
 {
-
+    //Отображает входящее подключение
+    while(getSn_SR(HTTP_SOCKET) == SOCK_LISTEN)
+    {
+            HAL_Delay(2);
+    }
+    printf("Input connection\r\n");
+    if(getSn_SR(HTTP_SOCKET) != SOCK_ESTABLISHED) printf("Error socket status\r\n");
+    uint8_t rIP[4];
+    getSn_DIPR(HTTP_SOCKET,  rIP);
+    printf("IP:  %d.%d.%d.%d\r\n", rIP[0], rIP[1], rIP[2], rIP[3]);
 
 }
 

@@ -26,6 +26,7 @@
 #include <wolfssl/ssl.h>
 
 #include "certs.h"
+#include "HexTrans.h"
 
 extern void Printf(const char* fmt, ...);
 
@@ -111,6 +112,7 @@ static int send_client(WOLFSSL* ssl, char* buff, int sz, void* ctx)
             sz = BUFFER_SIZE - server_buffer_sz;
         XMEMCPY(server_buffer + server_buffer_sz, buff, sz);
         server_buffer_sz += sz;
+        string_print_Hex((unsigned char *)buff, sz);
     }
     else
         sz = WOLFSSL_CBIO_ERR_WANT_WRITE;
@@ -133,7 +135,7 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
     }
     else
         sz = WOLFSSL_CBIO_ERR_WANT_READ;
-
+    string_print_Hex((unsigned char *)buff, sz);
     return sz;
 }
 
@@ -316,7 +318,7 @@ static int wolfssl_send(WOLFSSL* ssl, const char* msg)
     Printf("\n-- wolfssl_send --\n");
     int ret;
 
-    Printf("%s", msg);
+//    Printf("\n%s\n", msg);
     ret = wolfSSL_write(ssl, msg, XSTRLEN(msg));
     if (ret < XSTRLEN(msg))
         ret = -1;
@@ -331,12 +333,12 @@ static int wolfssl_recv(WOLFSSL* ssl)
 {
     Printf("\n-- wolfssl_recv --\n");
     int ret;
-    byte reply[256];
+    byte reply[2048];
 
     ret = wolfSSL_read(ssl, reply, sizeof(reply)-1);
     if (ret > 0) {
         reply[ret] = '\0';
-        Printf("%s", reply);
+//        Printf("\n%s\n", reply);
         ret = 0;
     }
 
@@ -450,28 +452,21 @@ int tls_client_serverTest()
 
     if (ret == 0)
     {
-        Printf("Handshake complete\n");
+        printf("Handshake complete\n");
     }
+
     /* Send and receive HTTP messages. */
-    if (ret == 0)
-    {
-        Printf("\nClient Sending:\n");
+//    if (ret == 0)
+//    {
+        printf("\nClient Sending:\n");
         ret = wolfssl_send(client_ssl, msgHTTPGet);
-    }
-    if (ret == 0)
-    {
-        Printf("\nServer Received:\n");
+//    }
+//    if (ret == 0)
+//    {
+        printf("\nServer Received:\n");
         ret = wolfssl_recv(server_ssl);
-    }
-    if (ret == 0)
-    {
-        Printf("\nServer Sending:\n");
-        ret = wolfssl_send(server_ssl, msgHTTPIndex);
-    }
-    if (ret == 0) {
-        Printf("\nClient Received:\n");
-        ret = wolfssl_recv(client_ssl);
-    }
+//    }
+
 
     /* Display memory statistics. */
     wolfssl_client_memstats(client_ssl);

@@ -30,6 +30,7 @@ extern void Printf(const char* fmt, ...);
 #include <wolfssl/ssl.h>
 
 #include "certs.h"
+#include "HexTrans.h"
 
 #if !defined(NO_WOLFSSL_SERVER) && !defined(WOLFSSL_NO_TLS12)
 
@@ -165,7 +166,7 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 /* Server attempts to write data to client. */
 static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
-    Printf("-- send_server %d byte --\n", sz);
+    printf("-- send_server %d byte --\n", sz);
     if (client_buffer_sz < BUFFER_SIZE)
     {
         if (sz > BUFFER_SIZE - client_buffer_sz)
@@ -178,7 +179,7 @@ static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 
      if (client_buffer_sz > 0)
          w5500_packetSend_forTLS(0);
-
+string_print_Hex((unsigned char *)buff, sz);
     return sz;
 }
 
@@ -268,10 +269,10 @@ static int wolfssl_server_accept(WOLFSSL* server_ssl)
 /* Send application data. */
 static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 {
-    Printf("wolfssl_send\n");
+    printf("-- wolfssl_send --\n");
     int ret;
 
-    Printf("%s", msg);
+    printf("\nfrom server:\n%s\n", msg);
     ret = wolfSSL_write(ssl, msg, XSTRLEN(msg));
     if (ret < XSTRLEN(msg))
         ret = -1;
@@ -284,17 +285,18 @@ static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 /* Receive application data. */
 static int wolfssl_recv(WOLFSSL* ssl)
 {
-//Printf("-- wolfssl_recv --\n");
+Printf("-- wolfssl_recv --\n");
+
     int ret;
-    byte reply[256];
+    byte reply[2048];
 
     ret = wolfSSL_read(ssl, reply, sizeof(reply)-1);
     if (ret > 0) {
         reply[ret] = '\0';
-//Printf("from client: %s", reply);
+printf("\nfrom client:\n%s\n", reply);
         ret = 0;
     }
-//printf("buf: %s\n",reply);
+
     return ret;
 }
 

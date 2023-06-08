@@ -51,7 +51,7 @@ extern void polarSSLTest();
 #define I2C_REQUEST_READ                        0x01
 #define SLAVE_OWN_ADDRESS                       0xA0
 uint32_t count = 0;
-uint8_t sdCartOn = 0;
+uint8_t sdCartOn = 1;
 char *pindex;
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -554,9 +554,12 @@ void workEEPROM()
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
     {
-        sdCartOn = 1;
         UART_Printf("SD_READ\n");
         delayUS_ASM(10000);
+    }
+    else
+    {
+        sdCartOn = 0; //включается SPI eeprom
     }
 
     if (result != 0)
@@ -564,7 +567,7 @@ void workEEPROM()
         delayUS_ASM(10000);
     f_close(&fil);
 
-    if (sdCartOn == 1)
+    if (sdCartOn == 1) //из i2c eeprom
     {
         setParametersFromSD();
 //        copyParametersToEEPROM();
@@ -728,7 +731,7 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-    workEEPROM(); // i2c
+    workEEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 

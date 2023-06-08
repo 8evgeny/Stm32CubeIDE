@@ -728,7 +728,7 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-    workEEPROM();
+    workEEPROM(); // i2c
 //    net_ini();
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
@@ -741,7 +741,7 @@ int main(void)
 
 //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL
-    polarSSLTest();
+//    polarSSLTest();
 
 //web serverWIZ - РАБОТАЕТ
 //    uint8_t i;
@@ -757,7 +757,7 @@ int main(void)
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
 //      httpServer_run(0);
 
-//      net_poll(); //Старый код http сервер
+      net_poll(); //Старый код http сервер
 
 
       sendReceiveUDP();

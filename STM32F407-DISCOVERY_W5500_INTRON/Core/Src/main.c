@@ -565,6 +565,7 @@ void workEEPROM()
     else
     {
         sdCartOn = 0;//Режим SPI для EEPROM
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
     }
 
     if (result != 0)
@@ -694,6 +695,25 @@ void sendReceiveUDP()
 //        );
 }
 
+void testSPI_EEPROM()
+{
+    Printf("-- testSPI_EEPROM --\n");
+
+//    uint8_t byte = 0x55;
+//    sEE_WriteEnable();
+//    uint8_t res = EEPROM_SendByte(byte);
+//    Printf("res =%X\n",res);
+
+    Printf("TX Buffer: %s\n", TxBuffer);
+    Printf("RX Buffer: %s\n", RxBuffer);
+    uint8_t res = EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x01, (uint16_t)256);
+    Printf("EEPROM_SPI_WriteBuffer result: %d\n", res);
+    res = EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x01, (uint16_t)256);
+    Printf("EEPROM_SPI_ReadBuffer result: %d\n", res);
+    Printf("RX Buffer: %s\n", RxBuffer);
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -745,26 +765,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-//    prepearUDP_PLIS();
-    Printf("1\n");
-    uint8_t byte = 0x55;
-    sEE_WriteEnable();
-    uint8_t res = EEPROM_SendByte(byte);
-    Printf("res =%X\n",res);
+    prepearUDP_PLIS();
 
+if (sdCartOn == 0)
+{
+    testSPI_EEPROM();
+}
 
-    EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x01, (uint16_t)32);
-    Printf("3\n");
-    for (;;) {
-        EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x01, (uint16_t)32);
-        printf("%s\n", RxBuffer);
-//        EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x00FF, (uint16_t)32);
-//        printf("%s\n", RxBuffer);
-        HAL_Delay(5000);
-    }
-
-
-//    tls_client_serverTest(); // работает
+ //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL
 //    polarSSLTest();
 

@@ -2,7 +2,7 @@
 extern SPI_HandleTypeDef hspi3;
 
 uint8_t EEPROM_StatusByte;
-uint8_t RxBuffer[EEPROM_BUFFER_SIZE] = {0x00};
+uint8_t RxBuffer[EEPROM_BUFFER_SIZE] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C};
 
 /**
  * @brief Init EEPROM SPI

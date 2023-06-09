@@ -99,6 +99,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define CS_EEPROM_Pin GPIO_PIN_2
+#define CS_EEPROM_GPIO_Port GPIOE
+#define WP_EEPROM_Pin GPIO_PIN_3
+#define WP_EEPROM_GPIO_Port GPIOE
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15
@@ -125,6 +129,8 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
+#define HOLD_EEPROM_Pin GPIO_PIN_1
+#define HOLD_EEPROM_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

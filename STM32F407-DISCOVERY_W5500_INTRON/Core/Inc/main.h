@@ -39,6 +39,13 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #define MAC_ADDR {0x00,0x15,0x42,0xBF,0xF0,0x52}
 #endif
 
+#define EEPROM_CS_Pin GPIO_PIN_2
+#define EEPROM_CS_GPIO_Port GPIOE
+#define EEPROM_WP_Pin GPIO_PIN_1
+#define EEPROM_WP_GPIO_Port GPIOB
+#define EEPROM_HOLD_Pin GPIO_PIN_10
+#define EEPROM_HOLD_GPIO_Port GPIOB
+
 #include "types.h"
 
 /* USER CODE END Header */

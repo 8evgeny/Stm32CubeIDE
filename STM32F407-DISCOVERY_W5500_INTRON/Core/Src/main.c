@@ -118,13 +118,12 @@ TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
+
+/* USER CODE BEGIN PV */
 extern uint8_t RxBuffer[EEPROM_BUFFER_SIZE];
 extern uint8_t EEPROM_StatusByte;
 
 uint8_t TxBuffer[EEPROM_BUFFER_SIZE] = "TEST THIS COOL EEPROM STM SPI ++";
-
-/* USER CODE BEGIN PV */
-
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -709,6 +708,9 @@ void testSPI_EEPROM()
 //    uint8_t res = EEPROM_SendByte(byte);
 //    Printf("res =%X\n",res);
 
+    HAL_GPIO_WritePin(EEPROM_WP_GPIO_Port, EEPROM_WP_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(EEPROM_HOLD_GPIO_Port, EEPROM_HOLD_Pin, GPIO_PIN_SET);
+
     Printf("TX Buffer: %s\n", TxBuffer);
     Printf("RX Buffer: %s\n", RxBuffer);
     uint8_t res = EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x01, (uint16_t)256);
@@ -1073,7 +1075,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -1389,40 +1391,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-#if(0)
-    SPI1 - обмен в режиме мастер с W5500
-            SYN -  PA5
-            MISO - PA6
-            MOSI - PA7
 
-    W5500   SCLK - PA5
-            SCS  - PD11 выбор
-            INT  - PD8 вход INT
-            MOSI - PA7
-            RST  - PC9
-            MISO - PA6
-
-    SPI3 - обмен в режиме слейв с INTRON
-            SYN -  PC10
-            MISO - PC11
-            MOSI - PC12
-
-    SPI2 - обмен с ПЛИС
-            SYN  -  PB10 - 99
-            MISO -  PC2 - 101
-            MOSI -  PC3 - 103
-            CLK_EN - PC4 - 100
-            RESET  - PC5 - 104
-            TE_SEL - PC8 - 94 выбор тактирования (1 - внешнее)
-            FPGA_EN- PA8 - 96 (1 - разрешение работы общее)
-            CPU_INT- PB15 - 97  (Сигнал ПЛИС о готовности данных)
-            F0 -           135
-            C4 -           134
-
-F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
-
-Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
-Контроллер воспринимает как 64 байта (в два раза чаще)
-Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
-
-#endif

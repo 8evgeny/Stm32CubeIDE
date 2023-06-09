@@ -537,6 +537,10 @@ void wep_define_func(void)
 
 void net_ini_WIZNET()
 {
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+    HAL_Delay(70);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    HAL_Delay(70);
     uint8_t sn_TCP = 0; // Сокет 0
     WIZCHIPInitialize();
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
@@ -566,6 +570,7 @@ void workEEPROM()
     {
         sdCartOn = 0;//Режим SPI для EEPROM
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
     }
 
     if (result != 0)

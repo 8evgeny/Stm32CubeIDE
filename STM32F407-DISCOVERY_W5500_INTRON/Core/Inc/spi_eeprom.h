@@ -40,7 +40,7 @@ typedef enum {
 } EepromOperations;
 
 EepromOperations EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite);
-EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite);
+void EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint8_t NumByteToWrite);
 EepromOperations EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead);
 uint8_t EEPROM_SPI_WaitStandbyState(void);
 

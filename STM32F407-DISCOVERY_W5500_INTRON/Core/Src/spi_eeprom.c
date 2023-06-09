@@ -22,10 +22,13 @@ uint8_t RxBuffer[EEPROM_BUFFER_SIZE] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37
   *         or less than "EEPROM_PAGESIZE" value.
   * @retval EepromOperations value: EEPROM_STATUS_COMPLETE or EEPROM_STATUS_ERROR
   */
-EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite) {
-    while (hspi3.State != HAL_SPI_STATE_READY) {
+void EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint8_t NumByteToWrite)
+{
+    while (hspi3.State != HAL_SPI_STATE_READY)
+    {
         HAL_Delay(1);
     }
+    uint8_t buf[260];
 
     HAL_StatusTypeDef spiTransmitStatus;
 
@@ -39,19 +42,19 @@ EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint
     header[1] = WriteAddr >> 16; // Send 24-bit address
     header[2] = WriteAddr >> 8;
     header[3] = WriteAddr;
+
+
+
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
 
-    EEPROM_SPI_SendInstruction((uint8_t*)header, 4);
+//    EEPROM_SPI_SendInstruction((uint8_t*)header, 4);
 
-    // Make 5 attemtps to write the data
-    for (uint8_t i = 0; i < 5; i++) {
-        spiTransmitStatus = HAL_SPI_Transmit(&hspi3, pBuffer, NumByteToWrite, 100);
+    spiTransmitStatus = HAL_SPI_Transmit(&hspi3, buf, NumByteToWrite + 4, 10000);
 
-        if (spiTransmitStatus == HAL_BUSY) {
-            HAL_Delay(5);
-        } else {
-            break;
+        while (spiTransmitStatus == HAL_BUSY)
+        {
+            HAL_Delay(1);
         }
     }
 
@@ -273,7 +276,7 @@ void sEE_WriteEnable(void) {
     uint8_t command[1] = { EEPROM_WREN };
     /* Send "Write Enable" instruction */
     EEPROM_SPI_SendInstruction((uint8_t*)command, 1);
-
+printf("Send \"Write Enable\" instruction\n");
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
 }
@@ -292,7 +295,7 @@ void sEE_WriteDisable(void) {
 
     /* Send "Write Disable" instruction */
     EEPROM_SPI_SendInstruction((uint8_t*)command, 1);
-
+printf("Send \"Write Disable\" instruction\n");
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
 }
@@ -346,7 +349,7 @@ uint8_t EEPROM_SPI_WaitStandbyState(void) {
     // Loop as long as the memory is busy with a write cycle
     do {
 
-        while (HAL_SPI_Receive(&hspi3, (uint8_t*)sEEstatus, 1, 200) == HAL_BUSY) {
+        while (HAL_SPI_Receive(&hspi3, (uint8_t*)sEEstatus, 1, 10000) == HAL_BUSY) {
             HAL_Delay(1);
         };
 
@@ -371,7 +374,7 @@ void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size) {
         HAL_Delay(1);
     }
 
-    if (HAL_SPI_Transmit(&hspi3, (uint8_t*)instruction, (uint16_t)size, 200) != HAL_OK) {
+    if (HAL_SPI_Transmit(&hspi3, (uint8_t*)instruction, (uint16_t)size, 10000) != HAL_OK) {
         Error_Handler();
     }
 }

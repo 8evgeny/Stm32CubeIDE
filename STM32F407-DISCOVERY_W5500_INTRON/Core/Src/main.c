@@ -711,10 +711,10 @@ void testSPI_EEPROM()
 
     Printf("TX Buffer: %s\n", TxBuffer);
     Printf("RX Buffer: %s\n", RxBuffer);
-    uint8_t res = EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x01, (uint16_t)256);
-    Printf("EEPROM_SPI_WriteBuffer result: %d\n", res);
-    res = EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x01, (uint16_t)256);
-    Printf("EEPROM_SPI_ReadBuffer result: %d\n", res);
+    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000000, (uint16_t)256);
+    Printf("EEPROM_SPI_WritePage\n");
+    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
+    Printf("EEPROM_SPI_ReadBuffer\n");
     Printf("RX Buffer: %s\n", RxBuffer);
 
 }

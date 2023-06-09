@@ -22,7 +22,7 @@ uint8_t RxBuffer[EEPROM_BUFFER_SIZE] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37
   *         or less than "EEPROM_PAGESIZE" value.
   * @retval EepromOperations value: EEPROM_STATUS_COMPLETE or EEPROM_STATUS_ERROR
   */
-EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite) {
+EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite) {
     while (hspi3.State != HAL_SPI_STATE_READY) {
         HAL_Delay(1);
     }
@@ -32,18 +32,17 @@ EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint
     sEE_WriteEnable();
 
     /*
-        We gonna send commands in one packet of 3 bytes
+        We gonna send commands in one packet of 4 bytes
      */
-    uint8_t header[3];
-
+    uint8_t header[4];
     header[0] = EEPROM_WRITE;   // Send "Write to Memory" instruction
-    header[1] = WriteAddr >> 8; // Send 16-bit address
-    header[2] = WriteAddr;
-
+    header[1] = WriteAddr >> 16; // Send 24-bit address
+    header[2] = WriteAddr >> 8;
+    header[3] = WriteAddr;
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
 
-    EEPROM_SPI_SendInstruction((uint8_t*)header, 3);
+    EEPROM_SPI_SendInstruction((uint8_t*)header, 4);
 
     // Make 5 attemtps to write the data
     for (uint8_t i = 0; i < 5; i++) {
@@ -82,7 +81,7 @@ EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint
   * @param  NumByteToWrite: number of bytes to write to the EEPROM.
   * @retval EepromOperations value: EEPROM_STATUS_COMPLETE or EEPROM_STATUS_ERROR
   */
-EepromOperations EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite) {
+EepromOperations EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite) {
     uint16_t NumOfPage = 0, NumOfSingle = 0, Addr = 0, count = 0, temp = 0;
     uint16_t sEE_DataNum = 0;
 
@@ -198,26 +197,26 @@ EepromOperations EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint16_t WriteAddr, ui
   * @param  NumByteToRead: number of bytes to read from the EEPROM.
   * @retval None
   */
-EepromOperations EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint16_t ReadAddr, uint16_t NumByteToRead) {
+EepromOperations EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead) {
     while (hspi3.State != HAL_SPI_STATE_READY) {
         HAL_Delay(1);
     }
 
     /*
-        We gonna send all commands in one packet of 3 bytes
+        We gonna send all commands in one packet of 4 bytes
      */
 
-    uint8_t header[3];
-
-    header[0] = EEPROM_READ;    // Send "Read from Memory" instruction
-    header[1] = ReadAddr >> 8;  // Send 16-bit address
-    header[2] = ReadAddr;
+    uint8_t header[4];
+    header[0] = EEPROM_WRITE;   // Send "Write to Memory" instruction
+    header[1] = ReadAddr >> 16; // Send 24-bit address
+    header[2] = ReadAddr >> 8;
+    header[3] = ReadAddr;
 
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
 
     /* Send WriteAddr address byte to read from */
-    EEPROM_SPI_SendInstruction(header, 3);
+    EEPROM_SPI_SendInstruction(header, 4);
 
     while (HAL_SPI_Receive(&hspi3, (uint8_t*)pBuffer, NumByteToRead, 200) == HAL_BUSY) {
         HAL_Delay(1);

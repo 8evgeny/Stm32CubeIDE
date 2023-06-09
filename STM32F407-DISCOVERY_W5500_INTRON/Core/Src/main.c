@@ -121,7 +121,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 extern uint8_t RxBuffer[256];
 extern uint8_t EEPROM_StatusByte;
 
-uint8_t TxBuffer[256] = "TEST THIS COOL EEPROM STM SPI ++";
+uint8_t TxBuffer[256] = "_____TEST THIS COOL EEPROM STM SPI ++";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -700,7 +700,7 @@ void sendReceiveUDP()
 void testSPI_EEPROM()
 {
     Printf("-- testSPI_EEPROM --\n");
-
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
 //    uint8_t byte = 0x55;
 //    sEE_WriteEnable();
 //    uint8_t res = EEPROM_SendByte(byte);
@@ -710,12 +710,13 @@ void testSPI_EEPROM()
     Printf("TX Buffer: %s\n", TxBuffer);
     Printf("RX Buffer: %s\n", RxBuffer);
     EEPROM_SPI_INIT(&hspi3);
-    EEPROM_SPI_WriteBuffer(TxBuffer, (uint32_t)0x00000000, (uint16_t)256);
-    Printf("EEPROM_SPI_WriteBuffer\n");
-    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
-    Printf("EEPROM_SPI_ReadBuffer\n");
+//    EEPROM_PAGE_ERASE(0);
+    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000600, (uint16_t)256);
+    HAL_Delay(1000);
+    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000600, (uint16_t)256);
     Printf("RX Buffer: %s\n", RxBuffer);
-
+    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
+    Printf("RX Buffer: %s\n", RxBuffer);
 }
 
 /* USER CODE END 0 */

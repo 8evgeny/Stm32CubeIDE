@@ -1,15 +1,8 @@
 #include "spi_eeprom.h"
 
-extern SPI_HandleTypeDef hspi3;
 uint8_t bufRead[5];
 uint8_t EEPROM_StatusByte;
-uint8_t RxBuffer[256] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C};
-
-/* Private typedef -----------------------------------------------------------*/
-
-//#define * EEPROM_SPI = hspi3
-
-/* Private variables ---------------------------------------------------------*/
+uint8_t RxBuffer[256] = {0x00};
 
 SPI_HandleTypeDef * EEPROM_SPI;// Define 25LC1024 SPI pointer handle
 
@@ -45,9 +38,9 @@ EEPROMStatus EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t
 
     header[0] = EEPROM_READ;           // Send "Read from Memory" instruction
     // send 24-bit Address (maximum address 1fffh)
-    header[1] = (ReadAddr >> 16)&0XFF; // Send high 8-bit address
-    header[2] = (ReadAddr >> 8 )&0XFF; // Send midlle 8-bit address
-    header[3] =  ReadAddr       &0XFF; // Send low 8-bit address
+    header[1] = (ReadAddr >> 16)&0xFF; // Send high 8-bit address
+    header[2] = (ReadAddr >> 8 )&0xFF; // Send midlle 8-bit address
+    header[3] =  ReadAddr       &0xFF; // Send low 8-bit address
 
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
@@ -215,9 +208,9 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
 
     header[0] = EEPROM_WRITE;    // Send "Write to Memory" instruction
     // send 24-bit Address (maximum address 1fffh)
-    header[1] = (WriteAddr >> 16)&0XFF;
-    header[2] = (WriteAddr >> 8 )&0XFF;
-    header[3] =  WriteAddr       &0XFF;
+    header[1] = (WriteAddr >> 16)&0xFF;
+    header[2] = (WriteAddr >> 8 )&0xFF;
+    header[3] =  WriteAddr       &0xFF;
 
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();

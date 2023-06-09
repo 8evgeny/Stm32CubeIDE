@@ -24,11 +24,6 @@ static void SELECT(void)
     {
         HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_RESET);
     }
-    else
-    {
-        HAL_GPIO_WritePin(SD_CS_PORT_EEPROM, SD_CS_PIN_EEPROM, GPIO_PIN_RESET);
-    }
-
 	HAL_Delay(1);
 }
 
@@ -38,10 +33,6 @@ static void DESELECT(void)
     if (sdCartOn == 1)
     {
         HAL_GPIO_WritePin(SD_CS_PORT, SD_CS_PIN, GPIO_PIN_SET);
-    }
-    else
-    {
-        HAL_GPIO_WritePin(SD_CS_PORT_EEPROM, SD_CS_PIN_EEPROM, GPIO_PIN_SET);
     }
 	HAL_Delay(1);
 }

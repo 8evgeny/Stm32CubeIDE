@@ -559,7 +559,7 @@ void workEEPROM()
     }
     else
     {
-        sdCartOn = 0; //включается SPI eeprom
+        sdCartOn = 0;//Режим SPI для EEPROM
     }
 
     if (result != 0)
@@ -567,7 +567,7 @@ void workEEPROM()
         delayUS_ASM(10000);
     f_close(&fil);
 
-    if (sdCartOn == 1) //из i2c eeprom
+    if (sdCartOn == 1)
     {
         setParametersFromSD();
 //        copyParametersToEEPROM();
@@ -576,7 +576,7 @@ void workEEPROM()
 
     } else
     {
-        SetParaametersFromEEPROM();
+        SetParaametersFromEEPROM();  //из i2c eeprom
 //        testReadFile("index.html");
 //        testReadFile("main.html");
 //        printFileFromEEPROM("index.html");

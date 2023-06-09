@@ -18,8 +18,8 @@ extern "C" {
 
 #define EEPROM_WIP_FLAG        0x01  /*!< Write In Progress (WIP) flag */
 
-#define EEPROM_PAGESIZE        32    /*!< Pagesize according to documentation */
-#define EEPROM_BUFFER_SIZE     32    /*!< EEPROM Buffer size. Setup to your needs */
+#define EEPROM_PAGESIZE        256    /*!< Pagesize according to documentation */
+#define EEPROM_BUFFER_SIZE     256    /*!< EEPROM Buffer size. Setup to your needs */
 
 #define EEPROM_CS_HIGH()    HAL_GPIO_WritePin(EEPROM_CS_GPIO_Port, EEPROM_CS_Pin, GPIO_PIN_SET)
 #define EEPROM_CS_LOW()     HAL_GPIO_WritePin(EEPROM_CS_GPIO_Port, EEPROM_CS_Pin, GPIO_PIN_RESET)
@@ -33,7 +33,6 @@ typedef enum {
     EEPROM_STATUS_ERROR
 } EepromOperations;
 
-void EEPROM_SPI_INIT(SPI_HandleTypeDef * hspi);
 EepromOperations EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite);
 EepromOperations EEPROM_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite);
 EepromOperations EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint16_t ReadAddr, uint16_t NumByteToRead);

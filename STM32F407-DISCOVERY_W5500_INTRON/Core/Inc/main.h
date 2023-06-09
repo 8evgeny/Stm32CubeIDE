@@ -73,7 +73,7 @@ void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_cris_enter(void);
 void 	wizchip_cris_exit(void);
 #include "stdio.h"
-
+#include "my_function.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

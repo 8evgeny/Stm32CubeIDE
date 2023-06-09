@@ -118,6 +118,10 @@ TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
+extern uint8_t RxBuffer[EEPROM_BUFFER_SIZE];
+extern uint8_t EEPROM_StatusByte;
+
+uint8_t TxBuffer[EEPROM_BUFFER_SIZE] = "TEST THIS COOL EEPROM STM SPI ++";
 
 /* USER CODE BEGIN PV */
 
@@ -741,9 +745,18 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-    prepearUDP_PLIS();
-
-    EEPROM_SPI_INIT(&hspi3);
+//    prepearUDP_PLIS();
+    Printf("1\n");
+    EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x01, (uint16_t)EEPROM_BUFFER_SIZE);
+    Printf("2\n");
+//    EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x00FF, (uint16_t)32);
+    for (;;) {
+        EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x01, (uint16_t)EEPROM_BUFFER_SIZE);
+        printf("%s\n", RxBuffer);
+//        EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x00FF, (uint16_t)32);
+//        printf("%s\n", RxBuffer);
+        HAL_Delay(5000);
+    }
 
 
 //    tls_client_serverTest(); // работает

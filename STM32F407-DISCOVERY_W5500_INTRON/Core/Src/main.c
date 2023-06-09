@@ -121,7 +121,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 extern uint8_t RxBuffer[256];
 extern uint8_t EEPROM_StatusByte;
 
-uint8_t TxBuffer[256] = "123451234512345qwertasdfgzxcvbasdfg";
+uint8_t TxBuffer[256] = "COOL!!!!!!!!";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -708,10 +708,11 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
 
 
     EEPROM_SPI_INIT(&hspi3);
-    EEPROM_SPI_WriteBuffer(TxBuffer, (uint32_t)0x00010001, (uint16_t)256);
+    EEPROM_PAGE_ERASE(0);
+    EEPROM_SPI_WriteBuffer(TxBuffer, (uint32_t)0x00000001, (uint16_t)256);
     Printf("TX Buffer: %s\n", TxBuffer);
     HAL_Delay(1000);
-    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00010001, (uint16_t)256);
+    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000001, (uint16_t)256);
     Printf("RX Buffer: %s\n", RxBuffer);
 }
 

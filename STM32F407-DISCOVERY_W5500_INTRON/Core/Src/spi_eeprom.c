@@ -525,3 +525,30 @@ uint8_t EEPROM_ReadID(uint32_t WriteAddr)
     return temp;
 
 }
+
+void EEPROM_PAGE_ERASE  (uint32_t WriteAddr)
+{
+    while (EEPROM_SPI->State != HAL_SPI_STATE_READY) {// Wait for SPI initialization
+        HAL_Delay(1);
+    }
+    /*
+        We gonna send all commands in one packet of 4 bytes
+     */
+    uint8_t header[4];
+
+    header[0] = EEPROM_PE;           // Send "Page erase" instruction
+    // send 24-bit Address (maximum address 1fffh)
+    header[1] = (WriteAddr >> 16)&0xFF; // Send high 8-bit address
+    header[2] = (WriteAddr >> 8 )&0xFF; // Send midlle 8-bit address
+    header[3] =  WriteAddr       &0xFF; // Send low 8-bit address
+
+    // Select the EEPROM: Chip Select low
+    EEPROM_CS_LOW();
+
+    /* Send WriteAddr address byte to read from */
+    EEPROM_SPI_SendInstruction(header, 4);
+HAL_Delay(500);
+    // Deselect the EEPROM: Chip Select high
+    EEPROM_CS_HIGH();
+
+}

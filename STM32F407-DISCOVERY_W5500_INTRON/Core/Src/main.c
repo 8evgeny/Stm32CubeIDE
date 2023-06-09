@@ -61,7 +61,7 @@ uint8_t num_block_main = 8;
 char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port = LOCAL_PORT;
-
+extern uint8_t bufRead[5];
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -707,17 +707,19 @@ void testSPI_EEPROM()
 //    Printf("res =%X\n",res);
 
 
-    Printf("TX Buffer: %s\n", TxBuffer);
-    Printf("RX Buffer: %s\n", RxBuffer);
+//    Printf("TX Buffer: %s\n", TxBuffer);
+//    Printf("RX Buffer: %s\n", RxBuffer);
 
     sEE_WriteEnable();
     EEPROM_SPI_WriteByte('g',0);
-
+    HAL_Delay(1000);
+    EEPROM_SPI_ReadByte(0);
+    Printf("read bytes: %s\n", bufRead);
 //    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000000, (uint16_t)256);
 //    Printf("EEPROM_SPI_WritePage\n");
-    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
-    Printf("EEPROM_SPI_ReadBuffer\n");
-    Printf("RX Buffer: %s\n", RxBuffer);
+//    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
+//    Printf("EEPROM_SPI_ReadBuffer\n");
+//    Printf("RX Buffer: %s\n", RxBuffer);
 
 }
 

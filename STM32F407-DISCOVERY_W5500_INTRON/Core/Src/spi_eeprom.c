@@ -1,6 +1,6 @@
 #include "spi_eeprom.h"
 extern SPI_HandleTypeDef hspi3;
-
+uint8_t bufRead[5];
 uint8_t EEPROM_StatusByte;
 uint8_t RxBuffer[EEPROM_BUFFER_SIZE] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C};
 
@@ -388,8 +388,6 @@ void EEPROM_SPI_WriteByte(uint8_t byte, uint32_t WriteAddr)
     }
     uint8_t buf[5];
 
-    HAL_StatusTypeDef spiTransmitStatus;
-
 //    sEE_WriteEnable();
 
     buf[0] = EEPROM_WRITE;   // Send "Write to Memory" instruction
@@ -412,16 +410,14 @@ void EEPROM_SPI_WriteByte(uint8_t byte, uint32_t WriteAddr)
 //    sEE_WriteDisable();
 }
 
-uint8_t EEPROM_SPI_ReadByte(uint32_t ReadAddr)
+void EEPROM_SPI_ReadByte(uint32_t ReadAddr)
 {
-    printf("-- EEPROM_SPI_WriteByte --\n");
+    printf("-- EEPROM_SPI_ReadByte --\n");
     while (hspi3.State != HAL_SPI_STATE_READY)
     {
         HAL_Delay(1);
     }
-    uint8_t buf[4];
-
-    HAL_StatusTypeDef spiTransmitStatus;
+    uint8_t buf[10];
 
 //    sEE_WriteEnable();
 
@@ -429,12 +425,12 @@ uint8_t EEPROM_SPI_ReadByte(uint32_t ReadAddr)
     buf[1] = ReadAddr >> 16; // Send 24-bit address
     buf[2] = ReadAddr >> 8;
     buf[3] = ReadAddr;
-
+    buf[4] = 0x00;
 
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
 
-    HAL_SPI_Transmit(&hspi3, buf, 4, 10000);
+    HAL_SPI_TransmitReceive(&hspi3, buf, bufRead, 10, 10000);
 
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();

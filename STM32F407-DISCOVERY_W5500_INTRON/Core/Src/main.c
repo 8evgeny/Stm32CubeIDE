@@ -121,7 +121,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 extern uint8_t RxBuffer[256];
 extern uint8_t EEPROM_StatusByte;
 
-uint8_t TxBuffer[256] = "_____TEST THIS COOL EEPROM STM SPI ++";
+uint8_t TxBuffer[256] = "123451234512345qwertasdfgzxcvbasdfg";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -707,15 +707,11 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
 //    Printf("res =%X\n",res);
 
 
-    Printf("TX Buffer: %s\n", TxBuffer);
-    Printf("RX Buffer: %s\n", RxBuffer);
     EEPROM_SPI_INIT(&hspi3);
-//    EEPROM_PAGE_ERASE(0);
-    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000600, (uint16_t)256);
+    EEPROM_SPI_WriteBuffer(TxBuffer, (uint32_t)0x00010001, (uint16_t)256);
+    Printf("TX Buffer: %s\n", TxBuffer);
     HAL_Delay(1000);
-    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000600, (uint16_t)256);
-    Printf("RX Buffer: %s\n", RxBuffer);
-    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
+    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00010001, (uint16_t)256);
     Printf("RX Buffer: %s\n", RxBuffer);
 }
 
@@ -1073,7 +1069,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

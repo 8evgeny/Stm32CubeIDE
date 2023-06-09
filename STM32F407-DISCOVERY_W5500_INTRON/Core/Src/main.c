@@ -118,10 +118,10 @@ UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
-extern uint8_t RxBuffer[EEPROM_BUFFER_SIZE];
+extern uint8_t RxBuffer[256];
 extern uint8_t EEPROM_StatusByte;
 
-uint8_t TxBuffer[EEPROM_BUFFER_SIZE] = "TEST THIS COOL EEPROM STM SPI ++";
+uint8_t TxBuffer[256] = "TEST THIS COOL EEPROM STM SPI ++";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -707,19 +707,14 @@ void testSPI_EEPROM()
 //    Printf("res =%X\n",res);
 
 
-//    Printf("TX Buffer: %s\n", TxBuffer);
-//    Printf("RX Buffer: %s\n", RxBuffer);
-
-    sEE_WriteEnable();
-    EEPROM_SPI_WriteByte('g',0);
-    HAL_Delay(1000);
-    EEPROM_SPI_ReadByte(0);
-    Printf("read bytes: %s\n", bufRead);
-//    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000000, (uint16_t)256);
-//    Printf("EEPROM_SPI_WritePage\n");
-//    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
-//    Printf("EEPROM_SPI_ReadBuffer\n");
-//    Printf("RX Buffer: %s\n", RxBuffer);
+    Printf("TX Buffer: %s\n", TxBuffer);
+    Printf("RX Buffer: %s\n", RxBuffer);
+    EEPROM_SPI_INIT(&hspi3);
+    EEPROM_SPI_WriteBuffer(TxBuffer, (uint32_t)0x00000000, (uint16_t)256);
+    Printf("EEPROM_SPI_WriteBuffer\n");
+    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
+    Printf("EEPROM_SPI_ReadBuffer\n");
+    Printf("RX Buffer: %s\n", RxBuffer);
 
 }
 

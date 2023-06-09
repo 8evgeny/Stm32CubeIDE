@@ -1,31 +1,57 @@
-#ifndef _STM32_EEPROM_SPI_H
-#define _STM32_EEPROM_SPI_H
-
-/* C++ detection */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+#ifndef EEPROM_SPI_H
+#define EEPROM_SPI_H
 #include "main.h"
 
-/* 25AA1024 SPI EEPROM defines */
-#define EEPROM_READ  0x03  /* Read data from memory array beginning at selected address */
-#define EEPROM_WRITE 0x02  /* Write data to memory array beginning at selected address */
-#define EEPROM_WREN  0x06  /* Write Enable */
-#define EEPROM_WRDI  0x04  /* Write Disable */
-#define EEPROM_RDSR  0x05  /* Read Status Register */
-#define EEPROM_WRSR  0x01  /* Write Status Register */
-//Я добавил
-#define EEPROM_PE    0x42  /* Page Erase – erase one page in memory array */
-#define EEPROM_SE    0xD8  /* Sector Erase – erase one sector in memory array */
-#define EEPROM_CE    0xC7  /* Chip Erase – erase all sectors in memory array */
-#define EEPROM_RDIR  0xAB  /* Release from Deep Power-down and Read Electronic Signature */
-#define EEPROM_DPD   0xB9  /* Deep Power-Down mode */
+/* Includes ------------------------------------------------------------------*/
+//#include "stm32f1xx_hal.h"
+//#include "cmsis_os.h"
 
-#define EEPROM_WIP_FLAG        0x01  /*!< Write In Progress (WIP) flag */
 
-#define EEPROM_PAGESIZE        256    /*!< Pagesize according to documentation */
-#define EEPROM_BUFFER_SIZE     256    /*!< EEPROM Buffer size. Setup to your needs */
+/* 25LC1024 SPI EEPROM defines */
+/* SPI EEPROM supports the following table 6 command, ie Read (read memory), WRITE (write memory), WREN (write enable), WRDI (write prohibition), RDSR (read status register), WRSR (write status register) */
+#define EEPROM_READ  0x03  /*!<Receive data from the specified address of the storage array */
+#define EEPROM_WRITE 0x02  /*!<The specified address of the storage array begins to write data */
+#define EEPROM_WREN  0x06  /*!<Setup write enable lockout (enable write) */
+#define EEPROM_WRDI  0x04  /*!<Reset write enable lock storage (failback operation) */
+#define EEPROM_RDSR  0x05  /*!<Read status register */
+#define EEPROM_WRSR  0x01  /*!<Write status register */
+
+/* Large capacity EEPROM, in order to improve the EEPROM operational efficiency, Microchip adds this EEPROM Page / Sector / CHIP ERASE command */
+#define EEPROM_PE    0x42  /*!<Page erase - erase one page in the storage array */
+#define EEPROM_SE    0xD8  /*!<Sector erase - erase a sector in the storage array */
+#define EEPROM_CE    0xC7  /*!<Chip Erase - Erase all sectors in the storage array */
+#define EEPROM_RDID  0xAB  /*!<Restore and read electronic signature from deep sleep */
+#define EEPROM_DPD   0xB9  /*!<Enter deep sleep mode */
+
+/* RDSR (Read Status Register 8bits) */
+#define EEPROM_WIP_RDY         0x00  /*!<no write is in progress read-only */
+#define EEPROM_WIP_BUSY        0x01  /*!<busy with a write operation read-only */
+#define EEPROM_WEL_EN          0x02  /*!<The latch allows writes to the array read-only */
+#define EEPROM_WEL_DIS         0x00  /*!<The latch prohibits Writes to the array read only */
+#define EEPROM_BP00            0x00  /* No protected array */
+#define EEPROM_BP01            0x04  /* Protected array high 1/4 address (sector 3) */
+#define EEPROM_BP10            0x08  /* Protected array high 1/2 address (sector 2, 3) */
+#define EEPROM_BP11            0x0C  /* Protected array all sectors (sectors 0, 1, 2, 3) */
+#define EEPROM_WPEN            0x80  /* Write protection */
+
+
+#define EEPROM_PAGESIZE        256   /* !< Pagesize according to documentation :256Byte*/
+/*25LC1024：1Mbit= 1024Kbit =128KB  = 512*256B = 131072 X 8bit
+ Page 1 Address: 00000-000FF   length 256b
+                  0-255
+ Page 2 Address: 00100-001FF length 256b
+                  256-511
+ Page 3 Address: 00200-002FF length 256b
+                  512-1278
+ Page 4 Address: 00300-003FF length 256b
+`
+`
+`
+ Page 510 Address: 1FD00-1FDFF length 256b
+ Page 511 Address: 1FE00-1FEFF length 256b
+ Page 512 Address: 1F000-1FFFF length 256b
+*/
+
 
 #define EEPROM_CS_HIGH()    HAL_GPIO_WritePin(EEPROM_CS_GPIO_Port, EEPROM_CS_Pin, GPIO_PIN_SET)
 #define EEPROM_CS_LOW()     HAL_GPIO_WritePin(EEPROM_CS_GPIO_Port, EEPROM_CS_Pin, GPIO_PIN_RESET)
@@ -37,27 +63,53 @@ typedef enum {
     EEPROM_STATUS_PENDING,
     EEPROM_STATUS_COMPLETE,
     EEPROM_STATUS_ERROR
-} EepromOperations;
+} EEPROMStatus;
 
-EepromOperations EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite);
-EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint8_t NumByteToWrite);
-EepromOperations EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t NumByteToRead);
-uint8_t EEPROM_SPI_WaitStandbyState(void);
-void EEPROM_SPI_WriteByte(uint8_t byte, uint32_t WriteAddr);
-void EEPROM_SPI_ReadByte(uint32_t ReadAddr);
+void EEPROM_SPI_INIT(SPI_HandleTypeDef * hspi);// Initialization function
+uint8_t EEPROM_SPI_WaitStandbyState(void);// Waiting for the operation completion function
+// Start reading data of the specified length at the specified address
+EEPROMStatus EEPROM_SPI_ReadBuffer (uint8_t* pBuffer, uint32_t ReadAddr,  uint16_t NumByteToRead);
 
-/* Low layer functions */
-uint8_t EEPROM_SendByte(uint8_t byte);
-void sEE_WriteEnable(void);
-void sEE_WriteDisable(void);
-void sEE_WriteStatusRegister(uint8_t regval);
-uint8_t sEE_ReadStatusRegister(void);
+// Write a byte data and do not implement similar EEPROM_SENDBYTE ()
+EEPROMStatus EEPROM_SPI_WriteByte  (uint8_t* pBuffer, uint32_t WriteAddr);
+// Start writing a specified length of data at the specified address
+EEPROMStatus EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite);
+// Start writing not greater than the entire page data at the specified address
+EEPROMStatus EEPROM_SPI_WritePage  (uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite);
 
-void  EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size);
-void  EEPROM_SPI_ReadStatusByte(SPI_HandleTypeDef SPIe, uint8_t *statusByte );
+
+
+/* Low Layer Functions underlayer function */
+uint8_t EEPROM_SendByte(uint8_t byte);// Send a byte, return a byte
+
+void EEPROM_WriteEnable(void);// write enable
+void EEPROM_WriteDisable(void);// Writing
+
+void    EEPROM_WriteStatusRegister(uint8_t regval);// Write status register
+uint8_t EEPROM_ReadStatusRegister (void);          // Read status register
+
+void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size);// Send an operation command and data address
+
+
+// Personalization function
+void EEPROM_PAGE_ERASE  (uint32_t WriteAddr);// Specify the address page erase, not implemented
+void EEPROM_SECTOR_ERASE(uint32_t WriteAddr);// Specify address sector erase, not implemented
+/*25LC1024：1Mbit= 1024Kbit=128KB =4*32KB（32K Byte/sector）
+ 0 sector address: 00000H-07FFFH
+ 1st sector address: 08000H-0FFFH
+ 2nd sector address: 10000H-17FFFH
+ Section 3 Address: 18000H-1FFFFH
+
+*/
+
+void EEPROM_CHIP_ERASE(void);// All-piece erasure
+void EEPROM_PowerDown(void);// Enter the power-down mode
+uint8_t EEPROM_ReadID(uint32_t WriteAddr);// Read the virtual address of the electronic signature ID, 24BITS, return 0x29h
+void EEPROM_WakeUP(void);// Wake-up instruction
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // _STM32_EEPROM_SPI_H
+#endif

@@ -1,5 +1,5 @@
 #include "spi_eeprom.h"
-
+//extern SPI_HandleTypeDef hspi3;
 SPI_HandleTypeDef * EEPROM_SPI;
 uint8_t EEPROM_StatusByte;
 uint8_t RxBuffer[EEPROM_BUFFER_SIZE] = {0x00};
@@ -27,7 +27,7 @@ void EEPROM_SPI_INIT(SPI_HandleTypeDef * hspi) {
   */
 EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite) {
     while (EEPROM_SPI->State != HAL_SPI_STATE_READY) {
-        osDelay(1);
+        HAL_Delay(1);
     }
 
     HAL_StatusTypeDef spiTransmitStatus;
@@ -53,7 +53,7 @@ EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint
         spiTransmitStatus = HAL_SPI_Transmit(EEPROM_SPI, pBuffer, NumByteToWrite, 100);
 
         if (spiTransmitStatus == HAL_BUSY) {
-            osDelay(5);
+            HAL_Delay(5);
         } else {
             break;
         }
@@ -203,7 +203,7 @@ EepromOperations EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint16_t WriteAddr, ui
   */
 EepromOperations EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint16_t ReadAddr, uint16_t NumByteToRead) {
     while (EEPROM_SPI->State != HAL_SPI_STATE_READY) {
-        osDelay(1);
+        HAL_Delay(1);
     }
 
     /*
@@ -223,7 +223,7 @@ EepromOperations EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint16_t ReadAddr, uint
     EEPROM_SPI_SendInstruction(header, 3);
 
     while (HAL_SPI_Receive(EEPROM_SPI, (uint8_t*)pBuffer, NumByteToRead, 200) == HAL_BUSY) {
-        osDelay(1);
+        HAL_Delay(1);
     };
 
     // Deselect the EEPROM: Chip Select high
@@ -244,7 +244,7 @@ uint8_t EEPROM_SendByte(uint8_t byte) {
 
     /* Loop while DR register in not empty */
     while (EEPROM_SPI->State == HAL_SPI_STATE_RESET) {
-        osDelay(1);
+        HAL_Delay(1);
     }
 
     /* Send byte through the SPI peripheral */
@@ -254,7 +254,7 @@ uint8_t EEPROM_SendByte(uint8_t byte) {
 
     /* Wait to receive a byte */
     while (EEPROM_SPI->State == HAL_SPI_STATE_RESET) {
-        osDelay(1);
+        HAL_Delay(1);
     }
 
     /* Return the byte read from the SPI bus */
@@ -351,10 +351,10 @@ uint8_t EEPROM_SPI_WaitStandbyState(void) {
     do {
 
         while (HAL_SPI_Receive(EEPROM_SPI, (uint8_t*)sEEstatus, 1, 200) == HAL_BUSY) {
-            osDelay(1);
+            HAL_Delay(1);
         };
 
-        osDelay(1);
+        HAL_Delay(1);
 
     } while ((sEEstatus[0] & EEPROM_WIP_FLAG) == SET); // Write in progress
 
@@ -372,7 +372,7 @@ uint8_t EEPROM_SPI_WaitStandbyState(void) {
  */
 void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size) {
     while (EEPROM_SPI->State == HAL_SPI_STATE_RESET) {
-        osDelay(1);
+        HAL_Delay(1);
     }
 
     if (HAL_SPI_Transmit(EEPROM_SPI, (uint8_t*)instruction, (uint16_t)size, 200) != HAL_OK) {

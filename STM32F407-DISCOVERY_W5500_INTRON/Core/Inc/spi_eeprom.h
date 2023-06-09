@@ -7,7 +7,6 @@ extern "C" {
 #endif
 
 #include "main.h"
-//#include "cmsis_os.h"
 
 /* M95040 SPI EEPROM defines */
 #define EEPROM_WREN  0x06  /*!< Write Enable */

@@ -10,6 +10,7 @@
 #include "SSLInterface.h"
 #include "httpServer.h"
 #include "webpage.h"
+#include "spi_eeprom.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -741,6 +742,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
     prepearUDP_PLIS();
+
+    EEPROM_SPI_INIT(&hspi3);
+
 
 //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL

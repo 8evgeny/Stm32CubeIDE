@@ -706,13 +706,15 @@ void testSPI_EEPROM()
 //    uint8_t res = EEPROM_SendByte(byte);
 //    Printf("res =%X\n",res);
 
-    HAL_GPIO_WritePin(EEPROM_WP_GPIO_Port, EEPROM_WP_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(EEPROM_HOLD_GPIO_Port, EEPROM_HOLD_Pin, GPIO_PIN_SET);
 
     Printf("TX Buffer: %s\n", TxBuffer);
     Printf("RX Buffer: %s\n", RxBuffer);
-    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000000, (uint16_t)256);
-    Printf("EEPROM_SPI_WritePage\n");
+
+    sEE_WriteEnable();
+    EEPROM_SPI_WriteByte('g',0);
+
+//    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000000, (uint16_t)256);
+//    Printf("EEPROM_SPI_WritePage\n");
     EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)256);
     Printf("EEPROM_SPI_ReadBuffer\n");
     Printf("RX Buffer: %s\n", RxBuffer);

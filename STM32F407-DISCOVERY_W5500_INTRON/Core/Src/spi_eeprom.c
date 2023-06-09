@@ -22,7 +22,7 @@ uint8_t RxBuffer[EEPROM_BUFFER_SIZE] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37
   *         or less than "EEPROM_PAGESIZE" value.
   * @retval EepromOperations value: EEPROM_STATUS_COMPLETE or EEPROM_STATUS_ERROR
   */
-void EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint8_t NumByteToWrite)
+EepromOperations EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint8_t NumByteToWrite)
 {
     while (hspi3.State != HAL_SPI_STATE_READY)
     {
@@ -56,7 +56,6 @@ void EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint8_t NumByteT
         {
             HAL_Delay(1);
         }
-    }
 
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
@@ -377,4 +376,71 @@ void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size) {
     if (HAL_SPI_Transmit(&hspi3, (uint8_t*)instruction, (uint16_t)size, 10000) != HAL_OK) {
         Error_Handler();
     }
+    HAL_Delay(100);
+}
+
+void EEPROM_SPI_WriteByte(uint8_t byte, uint32_t WriteAddr)
+{
+    printf("-- EEPROM_SPI_WriteByte --\n");
+    while (hspi3.State != HAL_SPI_STATE_READY)
+    {
+        HAL_Delay(1);
+    }
+    uint8_t buf[5];
+
+    HAL_StatusTypeDef spiTransmitStatus;
+
+//    sEE_WriteEnable();
+
+    buf[0] = EEPROM_WRITE;   // Send "Write to Memory" instruction
+    buf[1] = WriteAddr >> 16; // Send 24-bit address
+    buf[2] = WriteAddr >> 8;
+    buf[3] = WriteAddr;
+    buf[4] = byte;
+
+    // Select the EEPROM: Chip Select low
+    EEPROM_CS_LOW();
+
+    HAL_SPI_Transmit(&hspi3, buf, 5, 10000);
+
+    // Deselect the EEPROM: Chip Select high
+    EEPROM_CS_HIGH();
+
+    // Wait the end of EEPROM writing
+    HAL_Delay(100);
+    // Disable the write access to the EEPROM
+//    sEE_WriteDisable();
+}
+
+uint8_t EEPROM_SPI_ReadByte(uint32_t ReadAddr)
+{
+    printf("-- EEPROM_SPI_WriteByte --\n");
+    while (hspi3.State != HAL_SPI_STATE_READY)
+    {
+        HAL_Delay(1);
+    }
+    uint8_t buf[4];
+
+    HAL_StatusTypeDef spiTransmitStatus;
+
+//    sEE_WriteEnable();
+
+    buf[0] = EEPROM_READ;   // Send "Read from Memory" instruction
+    buf[1] = ReadAddr >> 16; // Send 24-bit address
+    buf[2] = ReadAddr >> 8;
+    buf[3] = ReadAddr;
+
+
+    // Select the EEPROM: Chip Select low
+    EEPROM_CS_LOW();
+
+    HAL_SPI_Transmit(&hspi3, buf, 4, 10000);
+
+    // Deselect the EEPROM: Chip Select high
+    EEPROM_CS_HIGH();
+
+    // Wait the end of EEPROM writing
+    HAL_Delay(100);
+    // Disable the write access to the EEPROM
+//    sEE_WriteDisable();
 }

@@ -747,11 +747,16 @@ int main(void)
 
 //    prepearUDP_PLIS();
     Printf("1\n");
-    EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x01, (uint16_t)EEPROM_BUFFER_SIZE);
-    Printf("2\n");
-//    EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x00FF, (uint16_t)32);
+    uint8_t byte = 0x55;
+    sEE_WriteEnable();
+    uint8_t res = EEPROM_SendByte(byte);
+    Printf("res =%X\n",res);
+
+
+    EEPROM_SPI_WriteBuffer(TxBuffer, (uint16_t)0x01, (uint16_t)32);
+    Printf("3\n");
     for (;;) {
-        EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x01, (uint16_t)EEPROM_BUFFER_SIZE);
+        EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x01, (uint16_t)32);
         printf("%s\n", RxBuffer);
 //        EEPROM_SPI_ReadBuffer(RxBuffer, (uint16_t)0x00FF, (uint16_t)32);
 //        printf("%s\n", RxBuffer);

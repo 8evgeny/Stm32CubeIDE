@@ -8,13 +8,19 @@ extern "C" {
 
 #include "main.h"
 
-/* M95040 SPI EEPROM defines */
-#define EEPROM_WREN  0x06  /*!< Write Enable */
-#define EEPROM_WRDI  0x04  /*!< Write Disable */
-#define EEPROM_RDSR  0x05  /*!< Read Status Register */
-#define EEPROM_WRSR  0x01  /*!< Write Status Register */
-#define EEPROM_READ  0x03  /*!< Read from Memory Array */
-#define EEPROM_WRITE 0x02  /*!< Write to Memory Array */
+/* 25AA1024 SPI EEPROM defines */
+#define EEPROM_READ  0x03  /* Read data from memory array beginning at selected address */
+#define EEPROM_WRITE 0x02  /* Write data to memory array beginning at selected address */
+#define EEPROM_WREN  0x06  /* Write Enable */
+#define EEPROM_WRDI  0x04  /* Write Disable */
+#define EEPROM_RDSR  0x05  /* Read Status Register */
+#define EEPROM_WRSR  0x01  /* Write Status Register */
+//Я добавил
+#define EEPROM_PE    0x42  /* Page Erase – erase one page in memory array */
+#define EEPROM_SE    0xD8  /* Sector Erase – erase one sector in memory array */
+#define EEPROM_CE    0xC7  /* Chip Erase – erase all sectors in memory array */
+#define EEPROM_RDIR  0xAB  /* Release from Deep Power-down and Read Electronic Signature */
+#define EEPROM_DPD   0xB9  /* Deep Power-Down mode */
 
 #define EEPROM_WIP_FLAG        0x01  /*!< Write In Progress (WIP) flag */
 

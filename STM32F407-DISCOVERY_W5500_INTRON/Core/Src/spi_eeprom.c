@@ -239,7 +239,7 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     EEPROM_SPI_WaitStandbyState();// Waiting for write to complete
 
     // Disable the write access to the EEPROM
-//    EEPROM_WriteDisable();
+    EEPROM_WriteDisable();
 
     if (spiTransmitStatus == HAL_ERROR) {
         return EEPROM_STATUS_ERROR;

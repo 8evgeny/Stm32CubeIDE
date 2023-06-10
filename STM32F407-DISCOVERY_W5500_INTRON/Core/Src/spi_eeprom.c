@@ -198,8 +198,12 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     }
 
     HAL_StatusTypeDef spiTransmitStatus;// SPI transmission status
-
+    uint8_t status = EEPROM_ReadStatusRegister();
+    printf ("status: %X\n",status);
     EEPROM_WriteEnable();// write enable
+//    HAL_Delay(100);
+    status = EEPROM_ReadStatusRegister();
+    printf ("status: %X\n",status);
 
     /*
         We gonna send commands in one packet of 4 bytes
@@ -219,7 +223,7 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
 
     // Make 5 attemtps to write the data
     for (uint8_t i = 0; i < 5; i++) {
-        spiTransmitStatus = HAL_SPI_Transmit(EEPROM_SPI, pBuffer, NumByteToWrite, 100);
+        spiTransmitStatus = HAL_SPI_Transmit(EEPROM_SPI, pBuffer, NumByteToWrite, 1000);
 
         if (spiTransmitStatus == HAL_BUSY) {
             HAL_Delay(5);
@@ -235,7 +239,7 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     EEPROM_SPI_WaitStandbyState();// Waiting for write to complete
 
     // Disable the write access to the EEPROM
-    EEPROM_WriteDisable();
+//    EEPROM_WriteDisable();
 
     if (spiTransmitStatus == HAL_ERROR) {
         return EEPROM_STATUS_ERROR;
@@ -261,7 +265,7 @@ uint8_t EEPROM_SendByte(uint8_t byte)
     }
 
     /* Send byte through the SPI peripheral */
-    if (HAL_SPI_Transmit(EEPROM_SPI, &byte, 1, 200) != HAL_OK) {
+    if (HAL_SPI_Transmit(EEPROM_SPI, &byte, 1, 10000) != HAL_OK) {
         Error_Handler();
     }
 
@@ -330,7 +334,7 @@ void EEPROM_WriteStatusRegister(uint8_t regval)
     command[1] = regval;
 
     // Enable the write access to the EEPROM
-    EEPROM_WriteEnable();
+//    EEPROM_WriteEnable();
 
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
@@ -342,7 +346,7 @@ void EEPROM_WriteStatusRegister(uint8_t regval)
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
 
-    EEPROM_WriteDisable();
+//    EEPROM_WriteDisable();
 
     EEPROM_SPI_WaitStandbyState();// Waiting for the operation to complete
 }
@@ -417,7 +421,7 @@ void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size)
         HAL_Delay(1);
     }
 
-    if (HAL_SPI_Transmit(EEPROM_SPI, (uint8_t*)instruction, (uint16_t)size, 200) != HAL_OK) {//send command
+    if (HAL_SPI_Transmit(EEPROM_SPI, (uint8_t*)instruction, (uint16_t)size, 10000) != HAL_OK) {//send command
         Error_Handler();
     }
 }
@@ -431,7 +435,7 @@ void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size)
 void EEPROM_CHIP_ERASE(void)
 {
     // Enable the write access to the EEPROM
-    EEPROM_WriteEnable();
+//    EEPROM_WriteEnable();
 
     EEPROM_SPI_WaitStandbyState();
 
@@ -547,7 +551,7 @@ void EEPROM_PAGE_ERASE  (uint32_t WriteAddr)
 
     /* Send WriteAddr address byte to read from */
     EEPROM_SPI_SendInstruction(header, 4);
-    HAL_Delay(1000);
+    HAL_Delay(2000);
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
 

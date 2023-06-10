@@ -121,7 +121,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 extern uint8_t RxBuffer[256];
 extern uint8_t EEPROM_StatusByte;
 
-uint8_t TxBuffer[256] = "--COOL!!!!!!!!";
+uint8_t TxBuffer[256] = "1234512345qwertasdfgh";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -709,15 +709,20 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
     EEPROM_WriteEnable();
     status = EEPROM_ReadStatusRegister();
     printf ("status: %X\n",status);
-
-    EEPROM_PAGE_ERASE(0x00000000);
 //    EEPROM_CHIP_ERASE();
 //    HAL_Delay(3000);
-    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000000, (uint16_t)128);
-    Printf("TX Buffer: %s\n", TxBuffer);
+//    EEPROM_PAGE_ERASE(0x00000100);
+uint8_t TxByte[1] = "-";
+    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000101, (uint16_t)128);
+    Printf("RX Buffer: %s\n", RxBuffer);
     HAL_Delay(1000);
-    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000000, (uint16_t)128);
-    HAL_Delay(300);
+
+    EEPROM_SPI_WriteByte(TxByte, (uint32_t)0x00000111);
+
+//    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000101, (uint16_t)128);
+//    Printf("TX Buffer: %s\n", TxBuffer);
+    HAL_Delay(1000);
+    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000101, (uint16_t)128);
     Printf("RX Buffer: %s\n", RxBuffer);
 }
 

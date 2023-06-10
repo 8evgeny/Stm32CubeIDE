@@ -201,7 +201,7 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     uint8_t status = EEPROM_ReadStatusRegister();
     printf ("status: %X\n",status);
     EEPROM_WriteEnable();// write enable
-//    HAL_Delay(100);
+    HAL_Delay(100);
     status = EEPROM_ReadStatusRegister();
     printf ("status: %X\n",status);
 
@@ -554,5 +554,61 @@ void EEPROM_PAGE_ERASE  (uint32_t WriteAddr)
     HAL_Delay(2000);
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
+}
 
+EEPROMStatus EEPROM_SPI_WriteByte  (uint8_t* pBuffer, uint32_t WriteAddr)
+{
+    while (EEPROM_SPI->State != HAL_SPI_STATE_READY) {
+        HAL_Delay(1);
+    }
+
+    HAL_StatusTypeDef spiTransmitStatus;// SPI transmission status
+//    uint8_t status = EEPROM_ReadStatusRegister();
+//    printf ("status: %X\n",status);
+//    EEPROM_WriteEnable();// write enable
+//    HAL_Delay(100);
+//    status = EEPROM_ReadStatusRegister();
+//    printf ("status: %X\n",status);
+
+    /*
+        We gonna send commands in one packet of 4 bytes
+     */
+    uint8_t header[4];
+
+    header[0] = EEPROM_WRITE;    // Send "Write to Memory" instruction
+    // send 24-bit Address (maximum address 1fffh)
+    header[1] = (WriteAddr >> 16)&0xFF;
+    header[2] = (WriteAddr >> 8 )&0xFF;
+    header[3] =  WriteAddr       &0xFF;
+
+    // Select the EEPROM: Chip Select low
+    EEPROM_CS_LOW();
+
+    EEPROM_SPI_SendInstruction((uint8_t*)header, 4);
+
+    // Make 5 attemtps to write the data
+    for (uint8_t i = 0; i < 5; i++) {
+        spiTransmitStatus = HAL_SPI_Transmit(EEPROM_SPI, pBuffer, 1, 1000);
+
+        if (spiTransmitStatus == HAL_BUSY) {
+            HAL_Delay(5);
+        } else {
+            break;
+        }
+    }
+
+    // Deselect the EEPROM: Chip Select high
+    EEPROM_CS_HIGH();
+
+    // Wait the end of EEPROM writing
+    EEPROM_SPI_WaitStandbyState();// Waiting for write to complete
+
+    // Disable the write access to the EEPROM
+    EEPROM_WriteDisable();
+
+    if (spiTransmitStatus == HAL_ERROR) {
+        return EEPROM_STATUS_ERROR;
+    } else {
+        return EEPROM_STATUS_COMPLETE;
+    }
 }

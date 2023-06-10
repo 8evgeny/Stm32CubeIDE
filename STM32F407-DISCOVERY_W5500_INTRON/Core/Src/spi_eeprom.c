@@ -547,7 +547,7 @@ void EEPROM_PAGE_ERASE  (uint32_t WriteAddr)
 
     /* Send WriteAddr address byte to read from */
     EEPROM_SPI_SendInstruction(header, 4);
-HAL_Delay(500);
+    HAL_Delay(1000);
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
 

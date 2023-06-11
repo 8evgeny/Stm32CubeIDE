@@ -10,6 +10,7 @@
 #include "SSLInterface.h"
 #include "httpServer.h"
 #include "webpage.h"
+#include "spi_eeprom.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -51,7 +52,7 @@ extern void polarSSLTest();
 #define I2C_REQUEST_READ                        0x01
 #define SLAVE_OWN_ADDRESS                       0xA0
 uint32_t count = 0;
-uint8_t sdCartOn = 0;
+uint8_t sdCartOn = 1;
 char *pindex;
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -60,7 +61,7 @@ uint8_t num_block_main = 8;
 char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port = LOCAL_PORT;
-
+extern uint8_t bufRead[5];
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -110,8 +111,6 @@ RTC_HandleTypeDef hrtc;
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
-DMA_HandleTypeDef hdma_spi3_rx;
-DMA_HandleTypeDef hdma_spi3_tx;
 
 TIM_HandleTypeDef htim1;
 
@@ -119,7 +118,10 @@ UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
+extern uint8_t RxBuffer[256];
+extern uint8_t EEPROM_StatusByte;
 
+uint8_t TxBuffer[256] = "---COOL!!!1234512345qwertasdfgh";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -207,6 +209,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 FATFS fs;
 FIL fil;
 void printFileFromEEPROM(const char* nameFile_onEEPROM);
+
 void testEEPROM()
 {
     uint8_t rd_value[36] = {0};
@@ -532,6 +535,10 @@ void wep_define_func(void)
 
 void net_ini_WIZNET()
 {
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+    HAL_Delay(70);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    HAL_Delay(70);
     uint8_t sn_TCP = 0; // Сокет 0
     WIZCHIPInitialize();
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
@@ -554,9 +561,14 @@ void workEEPROM()
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
     {
-        sdCartOn = 1;
         UART_Printf("SD_READ\n");
         delayUS_ASM(10000);
+    }
+    else
+    {
+        sdCartOn = 0;//Режим SPI для EEPROM
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
     }
 
     if (result != 0)
@@ -573,7 +585,7 @@ void workEEPROM()
 
     } else
     {
-        SetParaametersFromEEPROM();
+        SetParaametersFromEEPROM();  //из i2c eeprom
 //        testReadFile("index.html");
 //        testReadFile("main.html");
 //        printFileFromEEPROM("index.html");
@@ -686,6 +698,68 @@ void sendReceiveUDP()
 //        );
 }
 
+void testSpiEepromWritePage(uint32_t adr)
+{
+    uint8_t RxBuffer[256] = {0x00};
+    HAL_Delay(1000);
+    Printf("\nTest EEPROM_SPI_WritePage\n");
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+    Printf("eeprom before write: %s\n", RxBuffer);
+    Printf("Data to write: %s\n", TxBuffer);
+    EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
+    HAL_Delay(2000);
+//    EEPROM_PowerDown();
+//    HAL_Delay(1000);
+//    EEPROM_WakeUP();
+//    HAL_Delay(1000);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+    Printf("eeprom after write: %s\n", RxBuffer);
+
+}
+
+void testSpiEepromReadPage(uint32_t adr)
+{
+    uint8_t RxBuffer[256] = {0x00};
+    HAL_Delay(1000);
+    Printf("\nTest EEPROM_SPI_ReadPage\n");
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+//    HAL_Delay(2000);
+    Printf("RX Buffer after read: %s\n", RxBuffer);
+}
+
+void testSpiEepromWriteByte(uint32_t adr)
+{
+    uint8_t RxBuffer[256] = {0x00};
+    HAL_Delay(1000);
+    Printf("RX Buffer before write byte: %s\n", RxBuffer);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)128);
+    uint8_t byte[1] = "I";
+    EEPROM_SPI_WriteByte(byte, adr);
+    HAL_Delay(100);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)128);
+    Printf("RX Buffer awter write byte: %s\n", RxBuffer);
+}
+
+void testSPI_EEPROM()
+{
+    Printf("\n-- Tests_SPI_EEPROM --\n");
+
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+    EEPROM_SPI_INIT(&hspi3);
+    printEepromSpiStatus();
+
+//    EEPROM_CHIP_ERASE();
+//    HAL_Delay(10000);
+
+//    EEPROM_PAGE_ERASE(0x00000100);
+
+    testSpiEepromWritePage(0x00000000);
+
+//    testSpiEepromReadPage(0x00000000);
+//    testSpiEepromWriteByte(0x00000005);
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -728,9 +802,9 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-    workEEPROM();
+    workEEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
-    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+//    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
   /* USER CODE END 2 */
 
@@ -739,9 +813,14 @@ int main(void)
 
     prepearUDP_PLIS();
 
-//    tls_client_serverTest(); // работает
+if (sdCartOn == 0)
+{
+    testSPI_EEPROM();
+}
+
+ //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL
-    polarSSLTest();
+//    polarSSLTest();
 
 //web serverWIZ - РАБОТАЕТ
 //    uint8_t i;
@@ -757,7 +836,7 @@ int main(void)
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
 //      httpServer_run(0);
 
-//      net_poll(); //Старый код http сервер
+      net_poll(); //Старый код http сервер
 
 
       sendReceiveUDP();
@@ -1159,15 +1238,8 @@ static void MX_DMA_Init(void)
 
   /* DMA controller clock enable */
   __HAL_RCC_DMA2_CLK_ENABLE();
-  __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA1_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
-  /* DMA1_Stream5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
   /* DMA2_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
@@ -1184,12 +1256,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(CS_EEPROM_GPIO_Port, CS_EEPROM_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOE, WP_EEPROM_Pin|HOLD_EEPROM_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);
@@ -1206,6 +1284,13 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : CS_EEPROM_Pin WP_EEPROM_Pin HOLD_EEPROM_Pin */
+  GPIO_InitStruct.Pin = CS_EEPROM_Pin|WP_EEPROM_Pin|HOLD_EEPROM_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : OTG_FS_PowerSwitchOn_Pin PC4 PC5 */
   GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_4|GPIO_PIN_5;
@@ -1341,40 +1426,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-#if(0)
-    SPI1 - обмен в режиме мастер с W5500
-            SYN -  PA5
-            MISO - PA6
-            MOSI - PA7
 
-    W5500   SCLK - PA5
-            SCS  - PD11 выбор
-            INT  - PD8 вход INT
-            MOSI - PA7
-            RST  - PC9
-            MISO - PA6
-
-    SPI3 - обмен в режиме слейв с INTRON
-            SYN -  PC10
-            MISO - PC11
-            MOSI - PC12
-
-    SPI2 - обмен с ПЛИС
-            SYN  -  PB10 - 99
-            MISO -  PC2 - 101
-            MOSI -  PC3 - 103
-            CLK_EN - PC4 - 100
-            RESET  - PC5 - 104
-            TE_SEL - PC8 - 94 выбор тактирования (1 - внешнее)
-            FPGA_EN- PA8 - 96 (1 - разрешение работы общее)
-            CPU_INT- PB15 - 97  (Сигнал ПЛИС о готовности данных)
-            F0 -           135
-            C4 -           134
-
-F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
-
-Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
-Контроллер воспринимает как 64 байта (в два раза чаще)
-Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
-
-#endif

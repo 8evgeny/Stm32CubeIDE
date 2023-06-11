@@ -701,11 +701,14 @@ void sendReceiveUDP()
 void testSpiEepromWritePage(uint32_t adr)
 {
     HAL_Delay(1000);
-    Printf("Test EEPROM_SPI_WritePage\n");
-    Printf("RX Buffer: %s\n", RxBuffer);
+    Printf("\nTest EEPROM_SPI_WritePage\n");
+    Printf("RX Buffer before write: %s\n", RxBuffer);
+    Printf("Data to write: %s\n", TxBuffer);
     EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
-    HAL_Delay(1000);
-    Printf("TX Buffer: %s\n", TxBuffer);
+    HAL_Delay(2000);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+    Printf("RX Buffer after write and read: %s\n", RxBuffer);
+
 }
 
 void testSpiEepromReadPage(uint32_t adr)
@@ -738,11 +741,15 @@ void testSPI_EEPROM()
     EEPROM_SPI_INIT(&hspi3);
     printEepromSpiStatus();
 
-//    EEPROM_CHIP_ERASE();
+    EEPROM_CHIP_ERASE();
+    HAL_Delay(10000);
+
 //    EEPROM_PAGE_ERASE(0x00000100);
 
     testSpiEepromReadPage(0x00000000);
-//    testSpiEepromWritePage(0x00000000);
+
+    testSpiEepromWritePage(0x00000000);
+
 //    testSpiEepromWriteByte(0x00000005);
 
 }
@@ -1101,7 +1108,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

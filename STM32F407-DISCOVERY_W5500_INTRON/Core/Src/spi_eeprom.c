@@ -434,9 +434,10 @@ void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size)
  */
 void EEPROM_CHIP_ERASE(void)
 {
+    Printf("\nEEPROM_CHIP_ERASE\n");
     // Enable the write access to the EEPROM
     EEPROM_WriteEnable();
-
+    printEepromSpiStatus();
     EEPROM_SPI_WaitStandbyState();
 
     // Select the EEPROM: Chip Select low

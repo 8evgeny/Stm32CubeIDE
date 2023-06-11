@@ -47,7 +47,7 @@ EEPROMStatus EEPROM_SPI_ReadBuffer(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t
     /* Send WriteAddr address byte to read from */
     EEPROM_SPI_SendInstruction(header, 4);
 
-    while (HAL_SPI_Receive(EEPROM_SPI, (uint8_t*)pBuffer, NumByteToRead, 200) == HAL_BUSY) {
+    while (HAL_SPI_Receive(EEPROM_SPI, (uint8_t*)pBuffer, NumByteToRead, 1000) == HAL_BUSY) {
         HAL_Delay(1);
     };
 

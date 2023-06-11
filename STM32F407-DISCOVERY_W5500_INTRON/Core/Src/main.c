@@ -724,7 +724,7 @@ void testSpiEepromReadPage(uint32_t adr)
     Printf("\nTest EEPROM_SPI_ReadPage\n");
     Printf("RX Buffer before read: %s\n", RxBuffer);
     EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
-    HAL_Delay(2000);
+//    HAL_Delay(2000);
     Printf("RX Buffer after read: %s\n", RxBuffer);
 }
 
@@ -754,8 +754,8 @@ void testSPI_EEPROM()
 
 //    EEPROM_PAGE_ERASE(0x00000100);
 
-//    testSpiEepromWritePage(0x00000100);
-    testSpiEepromReadPage(0x00000100);
+//    testSpiEepromWritePage(0x00000000);
+    testSpiEepromReadPage(0x00000000);
 //    testSpiEepromWriteByte(0x00000005);
 
 }
@@ -804,7 +804,7 @@ int main(void)
 
     workEEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
-    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+//    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
   /* USER CODE END 2 */
 
@@ -1114,7 +1114,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

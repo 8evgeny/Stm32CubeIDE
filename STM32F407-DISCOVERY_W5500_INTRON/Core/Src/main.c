@@ -721,8 +721,13 @@ void testSpiEepromReadPage(uint32_t adr)
 void testSpiEepromWriteByte(uint32_t adr)
 {
     HAL_Delay(1000);
+    Printf("RX Buffer before write byte: %s\n", RxBuffer);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)128);
     uint8_t byte[1] = "I";
     EEPROM_SPI_WriteByte(byte, adr);
+    HAL_Delay(100);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)128);
+    Printf("RX Buffer awter write byte: %s\n", RxBuffer);
 }
 
 void testSPI_EEPROM()
@@ -736,11 +741,8 @@ void testSPI_EEPROM()
 //    EEPROM_CHIP_ERASE();
 //    EEPROM_PAGE_ERASE(0x00000100);
 
-    uint8_t TxByte[1] = "-";
-
     testSpiEepromReadPage(0x00000000);
 //    testSpiEepromWritePage(0x00000000);
-
 //    testSpiEepromWriteByte(0x00000005);
 
 }

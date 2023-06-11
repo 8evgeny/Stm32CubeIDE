@@ -2,7 +2,6 @@
 
 uint8_t bufRead[5];
 uint8_t EEPROM_StatusByte;
-uint8_t RxBuffer[256] = {0x00};
 
 SPI_HandleTypeDef * EEPROM_SPI;// Define 25LC1024 SPI pointer handle
 
@@ -198,13 +197,9 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     }
 
     HAL_StatusTypeDef spiTransmitStatus;// SPI transmission status
-    uint8_t status = EEPROM_ReadStatusRegister();
-    printf ("status: %X\n",status);
-    EEPROM_WriteEnable();// write enable
-    HAL_Delay(100);
-    status = EEPROM_ReadStatusRegister();
-    printf ("status: %X\n",status);
 
+    EEPROM_WriteEnable();// write enable
+    HAL_Delay(10);
     /*
         We gonna send commands in one packet of 4 bytes
      */
@@ -216,9 +211,11 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     header[2] = (WriteAddr >> 8 )&0xFF;
     header[3] =  WriteAddr       &0xFF;
 
+    EEPROM_WriteEnable();// write enable
+    HAL_Delay(10);
+
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
-
     EEPROM_SPI_SendInstruction((uint8_t*)header, 4);
 
     // Make 5 attemtps to write the data

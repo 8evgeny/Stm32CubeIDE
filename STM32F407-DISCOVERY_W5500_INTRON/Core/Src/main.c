@@ -121,7 +121,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 extern uint8_t RxBuffer[256];
 extern uint8_t EEPROM_StatusByte;
 
-uint8_t TxBuffer[256] = "1234512345qwertasdfgh";
+uint8_t TxBuffer[256] = "COOL!!!1234512345qwertasdfgh";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -700,19 +700,26 @@ void sendReceiveUDP()
 
 void testSpiEepromWritePage(uint32_t adr)
 {
+    uint8_t RxBuffer[256] = {0x00};
     HAL_Delay(1000);
     Printf("\nTest EEPROM_SPI_WritePage\n");
-    Printf("RX Buffer before write: %s\n", RxBuffer);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+    Printf("eeprom before write: %s\n", RxBuffer);
     Printf("Data to write: %s\n", TxBuffer);
     EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
     HAL_Delay(2000);
+//    EEPROM_PowerDown();
+//    HAL_Delay(1000);
+//    EEPROM_WakeUP();
+//    HAL_Delay(1000);
     EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
-    Printf("RX Buffer after write and read: %s\n", RxBuffer);
+    Printf("eeprom after write: %s\n", RxBuffer);
 
 }
 
 void testSpiEepromReadPage(uint32_t adr)
 {
+    uint8_t RxBuffer[256] = {0x00};
     HAL_Delay(1000);
     Printf("\nTest EEPROM_SPI_ReadPage\n");
     Printf("RX Buffer before read: %s\n", RxBuffer);
@@ -723,6 +730,7 @@ void testSpiEepromReadPage(uint32_t adr)
 
 void testSpiEepromWriteByte(uint32_t adr)
 {
+    uint8_t RxBuffer[256] = {0x00};
     HAL_Delay(1000);
     Printf("RX Buffer before write byte: %s\n", RxBuffer);
     EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)128);
@@ -741,15 +749,13 @@ void testSPI_EEPROM()
     EEPROM_SPI_INIT(&hspi3);
     printEepromSpiStatus();
 
-    EEPROM_CHIP_ERASE();
-    HAL_Delay(10000);
+//    EEPROM_CHIP_ERASE();
+//    HAL_Delay(10000);
 
 //    EEPROM_PAGE_ERASE(0x00000100);
 
-    testSpiEepromReadPage(0x00000000);
-
-    testSpiEepromWritePage(0x00000000);
-
+//    testSpiEepromWritePage(0x00000100);
+    testSpiEepromReadPage(0x00000100);
 //    testSpiEepromWriteByte(0x00000005);
 
 }
@@ -1108,7 +1114,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

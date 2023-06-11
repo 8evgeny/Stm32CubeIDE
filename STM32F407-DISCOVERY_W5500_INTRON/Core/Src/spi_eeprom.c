@@ -532,6 +532,7 @@ uint8_t EEPROM_ReadID(uint32_t WriteAddr)
 
 void EEPROM_PAGE_ERASE  (uint32_t WriteAddr)
 {
+    Printf("\nEEPROM_PAGE_ERASE\n");
     while (EEPROM_SPI->State != HAL_SPI_STATE_READY) {// Wait for SPI initialization
         HAL_Delay(1);
     }

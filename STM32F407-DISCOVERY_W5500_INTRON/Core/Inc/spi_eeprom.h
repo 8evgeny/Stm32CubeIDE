@@ -106,7 +106,7 @@ void EEPROM_CHIP_ERASE(void);// All-piece erasure
 void EEPROM_PowerDown(void);// Enter the power-down mode
 uint8_t EEPROM_ReadID(uint32_t WriteAddr);// Read the virtual address of the electronic signature ID, 24BITS, return 0x29h
 void EEPROM_WakeUP(void);// Wake-up instruction
-
+void printEepromSpiStatus();
 
 #ifdef __cplusplus
 }

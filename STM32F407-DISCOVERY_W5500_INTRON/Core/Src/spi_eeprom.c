@@ -334,7 +334,7 @@ void EEPROM_WriteStatusRegister(uint8_t regval)
     command[1] = regval;
 
     // Enable the write access to the EEPROM
-//    EEPROM_WriteEnable();
+    EEPROM_WriteEnable();
 
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
@@ -346,7 +346,7 @@ void EEPROM_WriteStatusRegister(uint8_t regval)
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
 
-//    EEPROM_WriteDisable();
+    EEPROM_WriteDisable();
 
     EEPROM_SPI_WaitStandbyState();// Waiting for the operation to complete
 }
@@ -435,7 +435,7 @@ void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size)
 void EEPROM_CHIP_ERASE(void)
 {
     // Enable the write access to the EEPROM
-//    EEPROM_WriteEnable();
+    EEPROM_WriteEnable();
 
     EEPROM_SPI_WaitStandbyState();
 
@@ -444,13 +444,15 @@ void EEPROM_CHIP_ERASE(void)
 
     uint8_t command[1] = { EEPROM_CE };//11000111
 
-    /* Send "Write Disable" instruction */
     EEPROM_SPI_SendInstruction((uint8_t*)command, 1);
 
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
 
     EEPROM_SPI_WaitStandbyState();// Waiting for the operation to complete
+
+    // Disable the write access to the EEPROM
+    EEPROM_WriteDisable();
 }
 
 /**
@@ -563,12 +565,8 @@ EEPROMStatus EEPROM_SPI_WriteByte  (uint8_t* pBuffer, uint32_t WriteAddr)
     }
 
     HAL_StatusTypeDef spiTransmitStatus;// SPI transmission status
-//    uint8_t status = EEPROM_ReadStatusRegister();
-//    printf ("status: %X\n",status);
-//    EEPROM_WriteEnable();// write enable
-//    HAL_Delay(100);
-//    status = EEPROM_ReadStatusRegister();
-//    printf ("status: %X\n",status);
+
+    EEPROM_WriteEnable();// write enable
 
     /*
         We gonna send commands in one packet of 4 bytes
@@ -611,4 +609,10 @@ EEPROMStatus EEPROM_SPI_WriteByte  (uint8_t* pBuffer, uint32_t WriteAddr)
     } else {
         return EEPROM_STATUS_COMPLETE;
     }
+}
+
+void printEepromSpiStatus()
+{
+    uint8_t status = EEPROM_ReadStatusRegister();
+    printf ("status Spi EEPROM: %X\n",status);
 }

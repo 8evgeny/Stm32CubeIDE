@@ -209,6 +209,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 FATFS fs;
 FIL fil;
 void printFileFromEEPROM(const char* nameFile_onEEPROM);
+
 void testEEPROM()
 {
     uint8_t rd_value[36] = {0};
@@ -697,33 +698,51 @@ void sendReceiveUDP()
 //        );
 }
 
+void testSpiEepromWritePage(uint32_t adr)
+{
+    HAL_Delay(1000);
+    Printf("Test EEPROM_SPI_WritePage\n");
+    Printf("RX Buffer: %s\n", RxBuffer);
+    EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
+    HAL_Delay(1000);
+    Printf("TX Buffer: %s\n", TxBuffer);
+}
+
+void testSpiEepromReadPage(uint32_t adr)
+{
+    HAL_Delay(1000);
+    Printf("\nTest EEPROM_SPI_ReadPage\n");
+    Printf("RX Buffer before read: %s\n", RxBuffer);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+    HAL_Delay(2000);
+    Printf("RX Buffer after read: %s\n", RxBuffer);
+}
+
+void testSpiEepromWriteByte(uint32_t adr)
+{
+    HAL_Delay(1000);
+    uint8_t byte[1] = "I";
+    EEPROM_SPI_WriteByte(byte, adr);
+}
+
 void testSPI_EEPROM()
 {
-    Printf("-- testSPI_EEPROM --\n");
+    Printf("\n-- Tests_SPI_EEPROM --\n");
 
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
     EEPROM_SPI_INIT(&hspi3);
+    printEepromSpiStatus();
 
-    uint8_t status = EEPROM_ReadStatusRegister();
-    printf ("status: %X\n",status);
-    EEPROM_WriteEnable();
-    status = EEPROM_ReadStatusRegister();
-    printf ("status: %X\n",status);
 //    EEPROM_CHIP_ERASE();
-//    HAL_Delay(3000);
 //    EEPROM_PAGE_ERASE(0x00000100);
-uint8_t TxByte[1] = "-";
-    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000101, (uint16_t)128);
-    Printf("RX Buffer: %s\n", RxBuffer);
-    HAL_Delay(1000);
 
-    EEPROM_SPI_WriteByte(TxByte, (uint32_t)0x00000111);
+    uint8_t TxByte[1] = "-";
 
-//    EEPROM_SPI_WritePage(TxBuffer, (uint32_t)0x00000101, (uint16_t)128);
-//    Printf("TX Buffer: %s\n", TxBuffer);
-    HAL_Delay(1000);
-    EEPROM_SPI_ReadBuffer(RxBuffer, (uint32_t)0x00000101, (uint16_t)128);
-    Printf("RX Buffer: %s\n", RxBuffer);
+    testSpiEepromReadPage(0x00000000);
+//    testSpiEepromWritePage(0x00000000);
+
+//    testSpiEepromWriteByte(0x00000005);
+
 }
 
 /* USER CODE END 0 */

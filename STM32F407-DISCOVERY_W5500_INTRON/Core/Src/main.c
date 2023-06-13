@@ -1005,7 +1005,7 @@ int main(void)
 
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
-//    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
   /* USER CODE END 2 */
 

@@ -569,8 +569,8 @@ void workEEPROM()
       Printf("\nI2C EEPROM\n");
 //      testEEPROM();
 
-      littleFsInit();
-      printf("LittleFsInit\n");
+//      littleFsInit();
+//      printf("LittleFsInit\n");
 
 //      UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
 //      FsForEeprom_test();
@@ -823,7 +823,7 @@ int main(void)
 
     workEEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
-    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+//    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
   /* USER CODE END 2 */
 

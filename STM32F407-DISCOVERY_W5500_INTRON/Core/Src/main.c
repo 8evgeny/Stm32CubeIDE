@@ -212,7 +212,7 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
 void simpleTestI2C_EEPROM(uint16_t addr)
 {
-    printf("\nsimpleTestI2C_EEPROM\n");
+    printf("\nSimple test I2C_EEPROM\n");
     uint8_t rd_value[36] = {0};
     uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
                             'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
@@ -318,7 +318,7 @@ void testReadFile(const char* nameFile_onEEPROM)
 
 void copyParametersToEEPROM()
 {
-    UART_Printf("copy parameters to eeprom\n"); delayUS_ASM(10000);
+    Printf("\nCopy IP settings from SD to eeprom\n");
     char tmp[100];
     char tmp1[5];
     char tmp2[5];
@@ -383,6 +383,7 @@ void copyParametersToEEPROM()
 
 void setParametersFromSD()
 {
+    Printf("\nSet IP Parameters from SD\n");
     char tmp[100];
     char tmp1[5];
     char tmp2[5];
@@ -398,7 +399,7 @@ void setParametersFromSD()
     f_gets(tmp4, 5, &fil);
     ipaddr[3] = atoi(tmp4);
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     f_close(&fil);
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
 
@@ -413,7 +414,7 @@ void setParametersFromSD()
     f_gets(tmp4, 100, &fil);
     destip[3] = atoi(tmp4);
     sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     f_close(&fil);
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
 
@@ -428,7 +429,7 @@ void setParametersFromSD()
     f_gets(tmp4, 100, &fil);
     ipgate[3] = atoi(tmp4);
     sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     f_close(&fil);
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
 
@@ -443,7 +444,7 @@ void setParametersFromSD()
     f_gets(tmp4, 100, &fil);
     ipmask[3] = atoi(tmp4);
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     f_close(&fil);
     sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
 
@@ -451,10 +452,10 @@ void setParametersFromSD()
     f_gets(tmp, 100, &fil);
     strncpy(MD5, tmp, 32);
     f_close(&fil);
-    UART_Printf("md5: %s\n",MD5); delayUS_ASM(10000);
+    Printf("md5: %s\n",MD5);
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
 }
 
 void SetParaametersFromEEPROM()
@@ -567,9 +568,15 @@ void net_ini_WIZNET()
 
 void workI2C_EEPROM()
 {
-//EEPROM I2C : ATMEL 24C256
-//32768 byte 0000 - 7FFF
-      simpleTestI2C_EEPROM(0x7000);
+/*
+EEPROM I2C : ATMEL 24C256
+32768 byte 0000 - 7FFF
+1MHz (2.5V, 2.7V, 5.0V) compatibility
+
+
+*/
+
+//      simpleTestI2C_EEPROM(0x7000);
       littleFsInit();
 
 //      UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
@@ -579,8 +586,7 @@ void workI2C_EEPROM()
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
     {
-        UART_Printf("SD_READ\n");
-        delayUS_ASM(10000);
+        Printf("SD active\n");
     }
     else
     {
@@ -590,14 +596,13 @@ void workI2C_EEPROM()
     }
 
     if (result != 0)
-        UART_Printf("SD_NOT_OPEN\n");
-        delayUS_ASM(10000);
+        UART_Printf("\nnot found SD\n\n");
     f_close(&fil);
 
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-//        copyParametersToEEPROM();
+        copyParametersToEEPROM();
 //        copyFileToEEPROM("index.html");
 //        copyFileToEEPROM("main.html");
 

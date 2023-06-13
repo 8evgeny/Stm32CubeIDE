@@ -248,18 +248,19 @@ void simpleTestI2C_EEPROM(uint16_t addr)
 
 void copyFileToAdressEEPROM(const char* nameFile_onSD, uint16_t WriteAddr)
 {
+    printf("\n\nCopy file %s to adress 0x%.4X i2c eeprom \n",nameFile_onSD, WriteAddr);
     f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
     uint32_t numByteFile = fil.obj.objsize;
+    printf("num byte: %d\n",numByteFile);
     UINT rc;
     pindex = malloc(numByteFile);
-    f_read(&fil, pindex, numByteFile, &rc);
+    FRESULT res = f_read(&fil, pindex, numByteFile, &rc);
+    printf("file %s read: %d\n", nameFile_onSD, res);
+//    printf("copy %s to eeprpm (adress 0x%.4X)\n", nameFile_onSD, WriteAddr);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t*)pindex, WriteAddr, numByteFile);
+    printf("file %s write to adress 0x%.4X on eprom: %d\n", nameFile_onSD, WriteAddr, result);
     f_close(&fil);
-    printf("copy %s to adress %X ... ", nameFile_onSD, WriteAddr);
-
-
-
-
-
+    free (pindex);
 }
 
 void copyFileToEEPROM(const char* nameFile_onSD)
@@ -280,8 +281,26 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     free (pindex);
     char tmp[30];
     sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
-    UART_Printf(tmp); delayUS_ASM(5000);
+    Printf(tmp);
 //    printFileFromEEPROM(nameFile_onSD);
+}
+
+void printFileFromAdressEEPROM(uint16_t ReadAddr, uint16_t numByteFile)
+{
+    printf("Print %d byte from 0x%.4X adress i2c eeprom\n",numByteFile, ReadAddr);
+    uint16_t * numByte = &numByteFile;
+//    *numByte = numByteFile;
+    pindex = malloc(numByteFile);
+    memset(pindex, 0x00, numByteFile);
+    int result = BSP_EEPROM_ReadBuffer((uint8_t*)pindex, ReadAddr, numByte);
+    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFile, ReadAddr, result);
+    Printf("print reading file\n");
+    for (int i = 0; i < numByteFile; ++i)
+    {
+        Printf("%c", pindex[i]);
+    }
+    Printf("\n");
+    free (pindex);
 }
 
 void printFileFromEEPROM(const char* nameFile_onEEPROM)
@@ -292,12 +311,12 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM)
     lfs_file_read(&lfs, &file, pindex, numByteFile);
     lfs_file_close(&lfs, &file);
 
-    UART_Printf("print %s\n", nameFile_onEEPROM); delayUS_ASM(5000);
+    Printf("print %s\n", nameFile_onEEPROM);
     for (int i = 0; i < numByteFile; ++i)
     {
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+        Printf("%c", pindex[i]);
     }
-    UART_Printf("\n"); delayUS_ASM(100);
+    Printf("\n");
     free (pindex);
 }
 
@@ -316,6 +335,35 @@ void testReadFile(const char* nameFile_onEEPROM)
     UART_Printf(tmp); delayUS_ASM(5000);
 }
 
+void copyParametersToAdressEEPROM(uint16_t Addr)
+{
+    printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\n",Addr);
+    char tmp[80];
+    f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    UINT rc;
+    f_read(&fil, tmp, 20, &rc);
+    f_close(&fil);
+    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+20, 20, &rc);
+    f_close(&fil);
+    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+60, 20, &rc);
+    f_close(&fil);
+    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+40, 18, &rc);
+    f_close(&fil);
+    printf("IP:\n%s\n",tmp);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 78);
+    printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
+}
+
+void SetParaametersFromAdressEEPROM(uint16_t Addr)
+{
+
+
+}
+
+
 void copyParametersToEEPROM()
 {
     Printf("\nCopy IP settings from SD to eeprom\n");
@@ -331,7 +379,7 @@ void copyParametersToEEPROM()
     f_gets(tmp4, 5, &fil);
     f_close(&fil);
     sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    UART_Printf("host_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    Printf("host_IP:\n%s\n", tmp);
     lfs_file_open(&lfs, &file, "host_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -343,7 +391,7 @@ void copyParametersToEEPROM()
     f_gets(tmp4, 100, &fil);
     f_close(&fil);
     sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    UART_Printf("dest_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    Printf("dest_IP:\n%s\n", tmp);
     lfs_file_open(&lfs, &file, "dest_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -355,7 +403,7 @@ void copyParametersToEEPROM()
     f_gets(tmp4, 100, &fil);
     f_close(&fil);
     sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    UART_Printf("gate_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    Printf("gate_IP:\n%s\n", tmp);
     lfs_file_open(&lfs, &file, "gate_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -367,7 +415,7 @@ void copyParametersToEEPROM()
     f_gets(tmp4, 100, &fil);
     f_close(&fil);
     sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    UART_Printf("mask_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    Printf("mask_IP:\n%s\n", tmp);
     lfs_file_open(&lfs, &file, "mask_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -572,12 +620,15 @@ void workI2C_EEPROM()
 EEPROM I2C : ATMEL 24C256
 32768 byte 0000 - 7FFF
 1MHz (2.5V, 2.7V, 5.0V) compatibility
-
+512 pages of 64-bytes each
 
 */
 
-      simpleTestI2C_EEPROM(0x6000);
-      littleFsInit();
+//      simpleTestI2C_EEPROM(0x7000);
+
+//Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
+//      littleFsInit();
+
 
 //      UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
 //      FsForEeprom_test();
@@ -596,19 +647,26 @@ EEPROM I2C : ATMEL 24C256
     }
 
     if (result != 0)
-        UART_Printf("\nnot found SD\n\n");
+        printf("\nnot found SD\n\n");
     f_close(&fil);
 
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-        copyParametersToEEPROM();
+        copyParametersToAdressEEPROM(0x7F00);
+        copyFileToAdressEEPROM("index.html", 0x0000);
+
+
+//        copyParametersToEEPROM();
 //        copyFileToEEPROM("index.html");
 //        copyFileToEEPROM("main.html");
 
     } else
     {
-        SetParaametersFromEEPROM();  //из i2c eeprom
+        SetParaametersFromAdressEEPROM(0x7F00);
+//        printFileFromAdressEEPROM(0x0000, 7706); //index.html
+
+//        SetParaametersFromEEPROM();
 //        testReadFile("index.html");
 //        testReadFile("main.html");
 //        printFileFromEEPROM("index.html");

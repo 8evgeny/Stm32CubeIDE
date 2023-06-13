@@ -46,6 +46,12 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #define EEPROM_HOLD_Pin GPIO_PIN_1
 #define EEPROM_HOLD_GPIO_Port GPIOE
 
+#define  ipSettingAdressInEEPROM 0x0000
+#define  indexAdressInEEPROM 0x0400
+#define  indexLenInEEPROM 7705
+#define  mainAdressInEEPROM 0x2800
+#define  mainLenInEEPROM 13993
+
 #include "types.h"
 
 /* USER CODE END Header */

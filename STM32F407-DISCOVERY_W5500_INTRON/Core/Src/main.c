@@ -366,7 +366,7 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
     printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
-    printf("IP:\n%s\n",tmp);
+//    printf("IP:\n%s\n",tmp);
     strncpy(tmp2,tmp,3);
     ipaddr[0] = atoi(tmp2);
     strncpy(tmp2,tmp+5,3);
@@ -376,6 +376,15 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     strncpy(tmp2,tmp+15,3);
     ipaddr[3] = atoi(tmp2);
     printf("host_IP: %d.%d.%d.%d\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    strncpy(tmp2,tmp+20,3);
+    destip[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+25,3);
+    destip[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+30,3);
+    destip[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+35,3);
+    destip[3] = atoi(tmp2);
+    printf("dest_IP: %d.%d.%d.%d\n",destip[0],destip[1],destip[2],destip[3]);
 }
 
 

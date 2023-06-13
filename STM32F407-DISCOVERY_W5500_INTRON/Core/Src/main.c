@@ -121,7 +121,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 extern uint8_t RxBuffer[256];
 extern uint8_t EEPROM_StatusByte;
 
-uint8_t TxBuffer[256] = "---COOL!!!1234512345qwertasdfgh";
+uint8_t TxBuffer[256] = "__---COOL!!!1234512345qwertasdfgh";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
@@ -771,9 +771,10 @@ void testSPI_EEPROM()
 
 //    EEPROM_PAGE_ERASE(0x00000100);
 
-    testSpiEepromWritePage(0x00000000);
+//    testSpiEepromWritePage(0x00000000);
 
-//    testSpiEepromReadPage(0x00000000);
+    testSpiEepromReadPage(0x00000000);
+
 //    testSpiEepromWriteByte(0x00000005);
 
 }

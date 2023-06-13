@@ -367,6 +367,7 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
     printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
 //    printf("IP:\n%s\n",tmp);
+
     strncpy(tmp2,tmp,3);
     ipaddr[0] = atoi(tmp2);
     strncpy(tmp2,tmp+5,3);
@@ -375,7 +376,7 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     ipaddr[2] = atoi(tmp2);
     strncpy(tmp2,tmp+15,3);
     ipaddr[3] = atoi(tmp2);
-    printf("host_IP: %d.%d.%d.%d\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+
     strncpy(tmp2,tmp+20,3);
     destip[0] = atoi(tmp2);
     strncpy(tmp2,tmp+25,3);
@@ -384,7 +385,29 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     destip[2] = atoi(tmp2);
     strncpy(tmp2,tmp+35,3);
     destip[3] = atoi(tmp2);
+
+    strncpy(tmp2,tmp+40,3);
+    ipgate[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+45,3);
+    ipgate[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+50,3);
+    ipgate[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+55,3);
+    ipgate[3] = atoi(tmp2);
+
+    strncpy(tmp2,tmp+60,3);
+    ipmask[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+65,3);
+    ipmask[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+70,3);
+    ipmask[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+75,3);
+    ipmask[3] = atoi(tmp2);
+
+    printf("host_IP: %d.%d.%d.%d\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     printf("dest_IP: %d.%d.%d.%d\n",destip[0],destip[1],destip[2],destip[3]);
+    printf("gate_IP: %d.%d.%d.%d\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    printf("mask_IP: %d.%d.%d.%d\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
 }
 
 

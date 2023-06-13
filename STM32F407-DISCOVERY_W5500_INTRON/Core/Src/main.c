@@ -363,10 +363,19 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     uint16_t numByte = 78;
     uint16_t * pnumByte = &numByte;
     char tmp[80];
+    char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
     printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
     printf("IP:\n%s\n",tmp);
-
+    strncpy(tmp2,tmp,3);
+    ipaddr[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+5,3);
+    ipaddr[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+10,3);
+    ipaddr[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+15,3);
+    ipaddr[3] = atoi(tmp2);
+    printf("host_IP: %d.%d.%d.%d\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
 }
 
 
@@ -572,18 +581,18 @@ void SetParaametersFromEEPROM()
     strcpy(MD5, tmp);
 
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     sprintf(tmp,"md5: %s", MD5);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
 }
 
 void wep_define_func(void)

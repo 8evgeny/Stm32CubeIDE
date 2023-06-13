@@ -210,8 +210,9 @@ FATFS fs;
 FIL fil;
 void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
-void testEEPROM()
+void simpleTestI2C_EEPROM(uint16_t addr)
 {
+    printf("\nsimpleTestI2C_EEPROM\n");
     uint8_t rd_value[36] = {0};
     uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
                             'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
@@ -219,29 +220,29 @@ void testEEPROM()
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
     uint16_t num = 36;
-    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
+    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
 
     printf("EEPROM write:");
     printf("%s\r\n",erase_value);
-    BSP_EEPROM_WriteBuffer(erase_value, 0x004A, 36);
+    BSP_EEPROM_WriteBuffer(erase_value, addr, 36);
 //    AT24C_WriteBytes (0x004A, erase_value, 36);
 
     delayUS_ASM(100000);
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
-    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
+    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
 
     printf("EEPROM write:");
     printf("%s\r\n",wr_value);
-    BSP_EEPROM_WriteBuffer(wr_value, 0x004A, 36);
+    BSP_EEPROM_WriteBuffer(wr_value, addr, 36);
 //    AT24C_WriteBytes (0x004A, wr_value, 36);
 
     delayUS_ASM(100000);
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
-    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
+    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
 }
 
@@ -564,13 +565,12 @@ void net_ini_WIZNET()
         printf("socket %d listening\n", sn_TCP);
 }
 
-void workEEPROM()
+void workI2C_EEPROM()
 {
-      Printf("\nI2C EEPROM\n");
-//      testEEPROM();
-
-//      littleFsInit();
-//      printf("LittleFsInit\n");
+//EEPROM I2C : ATMEL 24C256
+//32768 byte 0000 - 7FFF
+      simpleTestI2C_EEPROM(0x7000);
+      littleFsInit();
 
 //      UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
 //      FsForEeprom_test();
@@ -821,7 +821,7 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-    workEEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
+    workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
 //    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 

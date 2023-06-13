@@ -66,7 +66,7 @@ int user_provided_block_device_sync(const struct lfs_config *c)
 
 void littleFsInit()
 {
-
+    printf("LittleFsInit\n");
 // release any resources we were using
     lfs_unmount(&lfs);
 // example littlefs

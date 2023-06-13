@@ -54,6 +54,7 @@ extern void polarSSLTest();
 uint32_t count = 0;
 uint8_t sdCartOn = 1;
 char *pindex;
+char *pmain;
 extern lfs_t lfs;
 extern lfs_file_t file;
 uint8_t num_block_index = 1;
@@ -285,11 +286,39 @@ void copyFileToEEPROM(const char* nameFile_onSD)
 //    printFileFromEEPROM(nameFile_onSD);
 }
 
+void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileIndex, uint16_t ReadAddrMain, uint16_t numByteFileMain)
+{
+    uint16_t * numByteIndex = &numByteFileIndex;
+    pindex = malloc(numByteFileIndex);
+    int result = BSP_EEPROM_ReadBuffer((uint8_t*)pindex, ReadAddrIndex, numByteIndex);
+    printf("\nread %d byte from adress 0x%.4X on eprom: %d\n", numByteFileIndex, ReadAddrIndex, result);
+
+    uint16_t * numByteMain = &numByteFileMain;
+    pmain = malloc(numByteFileMain);
+    result = BSP_EEPROM_ReadBuffer((uint8_t*)pmain, ReadAddrMain, numByteMain);
+    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileMain, ReadAddrMain, result);
+}
+
+void printFilesFromMemory(uint16_t numByteFileIndex,  uint16_t numByteFileMain)
+{
+    Printf("\nprintFilesFromMemory\n\n");
+        for (int i = 0; i < numByteFileIndex; ++i)
+        {
+            Printf("%c", pindex[i]);
+        }
+        Printf("\n\n\n");
+
+        for (int i = 0; i < numByteFileMain; ++i)
+        {
+            Printf("%c", pmain[i]);
+        }
+        Printf("\n");
+}
+
 void printFileFromAdressEEPROM(uint16_t ReadAddr, uint16_t numByteFile)
 {
     printf("Print %d byte from 0x%.4X adress i2c eeprom\n",numByteFile, ReadAddr);
     uint16_t * numByte = &numByteFile;
-//    *numByte = numByteFile;
     pindex = malloc(numByteFile);
     memset(pindex, 0x00, numByteFile);
     int result = BSP_EEPROM_ReadBuffer((uint8_t*)pindex, ReadAddr, numByte);
@@ -736,9 +765,9 @@ EEPROM I2C : ATMEL 24C256
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-        copyParametersToAdressEEPROM(0x0000);
-        copyFileToAdressEEPROM("index.html", 0x0400);
-        copyFileToAdressEEPROM("main.html", 0x2800);
+        copyParametersToAdressEEPROM(ipSettingAdressInEEPROM);
+        copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);
+        copyFileToAdressEEPROM("main.html", mainAdressInEEPROM);
 
 //lfs не использую
 //        copyParametersToEEPROM();
@@ -747,9 +776,13 @@ EEPROM I2C : ATMEL 24C256
 
     } else
     {
-        SetParaametersFromAdressEEPROM(0x0000);
-//        printFileFromAdressEEPROM(0x0400, 7705); //index.html
-//        printFileFromAdressEEPROM(0x2800, 13993); //main.html
+        SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
+        loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLenInEEPROM, mainAdressInEEPROM, mainLenInEEPROM);
+
+//        printFilesFromMemory(indexLenInEEPROM, mainLenInEEPROM);
+//        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLenInEEPROM); //index.html
+//        printf("\n\n");
+//        printFileFromAdressEEPROM(mainAdressInEEPROM, mainLenInEEPROM); //main.html
 
 //lfs не использую
 //        SetParaametersFromEEPROM();

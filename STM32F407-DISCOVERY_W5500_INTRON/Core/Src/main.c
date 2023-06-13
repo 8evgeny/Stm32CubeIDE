@@ -702,7 +702,10 @@ EEPROM I2C : ATMEL 24C256
 32768 byte 0000 - 7FFF
 1MHz (2.5V, 2.7V, 5.0V) compatibility
 512 pages of 64-bytes each
-0000 - 03FF   1K   IP settings
+0000 - 00FF   256b   IP settings
+0100 - 010F   16b    длина index.html
+0110 - 011F   16b    длина main.html
+0120 - 03FF   резерв
 0400 - 07FF   2k   index.html
 0800 - 0BFF   3k
 0C00 - 0FFF   4k
@@ -728,7 +731,7 @@ EEPROM I2C : ATMEL 24C256
 5C00 - 5FFF   24k
 6000 - 63FF   25K
 6400 - 67FF   26k   main.html
-6800 - 6BFF   27k
+6800 - 6BFF   27k   резерв
 6C00 - 6FFF   28k
 7000 - 73FF   29K
 7400 - 77FF   30k

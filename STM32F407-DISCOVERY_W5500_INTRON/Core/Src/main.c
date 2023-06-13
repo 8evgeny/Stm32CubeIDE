@@ -338,7 +338,7 @@ void testReadFile(const char* nameFile_onEEPROM)
 void copyParametersToAdressEEPROM(uint16_t Addr)
 {
     printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\n",Addr);
-    char tmp[80];
+    char tmp[114];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     UINT rc;
     f_read(&fil, tmp, 20, &rc);
@@ -347,22 +347,25 @@ void copyParametersToAdressEEPROM(uint16_t Addr)
     f_read(&fil, tmp+20, 20, &rc);
     f_close(&fil);
     f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_read(&fil, tmp+60, 20, &rc);
+    f_read(&fil, tmp+40, 20, &rc);
     f_close(&fil);
     f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_read(&fil, tmp+40, 18, &rc);
+    f_read(&fil, tmp+60, 20, &rc);
     f_close(&fil);
-    printf("IP:\n%s\n",tmp);
-    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 78);
-    printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
+    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp+80, 33, &fil);
+    f_close(&fil);
+//    printf("IP:\n%s\n",tmp);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 113);
+    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
 }
 
 void SetParaametersFromAdressEEPROM(uint16_t Addr)
 {
     printf("Set IP paraameters from adress eeprom 0x%.4X \n", Addr);
-    uint16_t numByte = 78;
+    uint16_t numByte = 113;
     uint16_t * pnumByte = &numByte;
-    char tmp[80];
+    char tmp[114];
     char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
     printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
@@ -404,10 +407,13 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     strncpy(tmp2,tmp+75,3);
     ipmask[3] = atoi(tmp2);
 
+    strncpy(MD5, tmp+80, 32);
+
     printf("host_IP: %d.%d.%d.%d\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     printf("dest_IP: %d.%d.%d.%d\n",destip[0],destip[1],destip[2],destip[3]);
     printf("gate_IP: %d.%d.%d.%d\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     printf("mask_IP: %d.%d.%d.%d\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    printf("md5: %s\n", MD5);
 }
 
 
@@ -701,7 +707,7 @@ EEPROM I2C : ATMEL 24C256
     {
         setParametersFromSD();
         copyParametersToAdressEEPROM(0x7F00);
-        copyFileToAdressEEPROM("index.html", 0x0000);
+//        copyFileToAdressEEPROM("index.html", 0x0000);
 
 
 //        copyParametersToEEPROM();

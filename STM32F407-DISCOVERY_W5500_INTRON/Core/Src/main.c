@@ -567,11 +567,13 @@ void net_ini_WIZNET()
 void workEEPROM()
 {
       Printf("\nI2C EEPROM\n");
-      testEEPROM();
-      UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
+//      testEEPROM();
+
       littleFsInit();
-      UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-      FsForEeprom_test();
+      printf("LittleFsInit\n");
+
+//      UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+//      FsForEeprom_test();
 
     f_mount(&fs, "", 0);
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
@@ -820,7 +822,7 @@ int main(void)
 
     workEEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
-//    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
   /* USER CODE END 2 */
 

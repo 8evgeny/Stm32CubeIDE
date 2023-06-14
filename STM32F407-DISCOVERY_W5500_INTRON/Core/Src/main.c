@@ -385,6 +385,19 @@ void testReadFile(const char* nameFile_onEEPROM)
     UART_Printf(tmp); delayUS_ASM(5000);
 }
 
+void copyMacToAdressEEPROM(uint16_t Addr)
+{
+    printf("\nCopy MAC adress from SD to adress 0x%.4X eeprom\n",Addr);
+    char tmp[24];
+    f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
+    UINT rc;
+    f_read(&fil, tmp, 24, &rc);
+    f_close(&fil);
+    printf("MAC:\n%s\n",tmp);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 24);
+    Printf("MAC write to adress 0x%.4X on eprom: %d", Addr, result);
+}
+
 void copyParametersToAdressEEPROM(uint16_t Addr)
 {
     printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\n",Addr);
@@ -408,6 +421,31 @@ void copyParametersToAdressEEPROM(uint16_t Addr)
 //    printf("IP:\n%s\n",tmp);
     int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 113);
     Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
+}
+
+void SetMacFromAdressEEPROM(uint16_t Addr)
+{
+    printf("Set MAC adress from adress eeprom 0x%.4X \n", Addr);
+    uint16_t numByte = 24;
+    uint16_t * pnumByte = &numByte;
+    char tmp[24];
+    char tmp2[3];
+    int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
+    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
+    printf("MAC:\n%s\n",tmp);
+    strncpy(tmp2, tmp, 4);
+    macaddr[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4, 4);
+    macaddr[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+8, 4);
+    macaddr[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12, 4);
+    macaddr[3] = atoi(tmp2);
+    strncpy(tmp2,tmp+16, 4);
+    macaddr[4] = atoi(tmp2);
+    strncpy(tmp2,tmp+20, 4);
+    macaddr[5] = atoi(tmp2);
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
 }
 
 void SetParaametersFromAdressEEPROM(uint16_t Addr)
@@ -767,6 +805,7 @@ void workI2C_EEPROM()
     {
         setParametersFromSD();
         copyParametersToAdressEEPROM(ipSettingAdressInEEPROM);
+        copyMacToAdressEEPROM(macAdressInEEPROM);
         copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);
         copyFileToAdressEEPROM("main.html", mainAdressInEEPROM);
 
@@ -789,6 +828,7 @@ void workI2C_EEPROM()
         printf("main.html len - %d\n", mainLen);
 
         SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
+        SetMacFromAdressEEPROM(macAdressInEEPROM);
         loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLen, mainAdressInEEPROM, mainLen);
 
 //        printFilesFromMemory(indexLen, mainLen);

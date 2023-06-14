@@ -20,6 +20,13 @@ extern uint32_t mainLen;
 uint32_t f_size;
 extern char *pindex;
 extern char *pmain;
+
+extern char *phost_IP;
+extern char *pdest_IP;
+extern char *pmask_IP;
+extern char *pgate_IP;
+extern char *pMD;
+
 char * pfile;
 extern void UART_Printf(const char* fmt, ...);
 extern lfs_t lfs;
@@ -418,7 +425,7 @@ void http_request(void)
 
             if ((temp[0] == ipaddr[0])&&(temp[1] == ipaddr[1])&&(temp[2] == ipaddr[2])&&(temp[3] == ipaddr[3]))
             {
-                 UART_Printf("*****  hostIP not changed  *****\r\n"); delayUS_ASM(10000);
+                 Printf("*****  hostIP not changed  *****\r\n");
             }
             else
             {
@@ -427,13 +434,13 @@ void http_request(void)
                 ipaddr[2] = temp[2];
                 ipaddr[3] = temp[3];
                 sprintf(tmp,"new host IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-                UART_Printf(tmp);    delayUS_ASM(10000);
+                Printf(tmp);
                 if (sdCartOn == 1)
                 {
                     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
-                        UART_Printf("*****  write new host IP to SD  *****\r\n"); delayUS_ASM(10000);
+                        Printf("*****  write new host IP to SD  *****\r\n");
                         f_lseek(&fil, 0);
                         f_puts(host_IP_1, &fil);
                         f_puts(host_IP_2, &fil);
@@ -487,7 +494,7 @@ void http_request(void)
 
             if ((temp[0] == ipmask[0])&&(temp[1] == ipmask[1])&&(temp[2] == ipmask[2])&&(temp[3] == ipmask[3]))
             {
-                 UART_Printf("*****  maskIP not changed  *****\r\n"); delayUS_ASM(10000);
+                 Printf("*****  maskIP not changed  *****\r\n");
             }
             else
             {
@@ -557,7 +564,7 @@ void http_request(void)
 
             if ((temp[0] == ipgate[0])&&(temp[1] == ipgate[1])&&(temp[2] == ipgate[2])&&(temp[3] == ipgate[3]))
             {
-                 UART_Printf("*****  gateIP not changed  *****\r\n"); delayUS_ASM(10000);
+                 Printf("*****  gateIP not changed  *****\r\n");
             }
             else
             {
@@ -567,7 +574,7 @@ void http_request(void)
                 ipgate[3] = temp[3];
 
                 sprintf(tmp,"new gate IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-                UART_Printf(tmp);    delayUS_ASM(10000);
+                Printf(tmp);
                 if (sdCartOn == 1)
                 {
                     FRESULT result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_WRITE );
@@ -628,7 +635,7 @@ void http_request(void)
 
             if ((temp[0] == destip[0])&&(temp[1] == destip[1])&&(temp[2] == destip[2])&&(temp[3] == destip[3]))
             {
-                 UART_Printf("*****  destIP not changed  *****\r\n"); delayUS_ASM(10000);
+                 Printf("*****  destIP not changed  *****\r\n");
             }
             else
             {
@@ -667,17 +674,17 @@ void http_request(void)
 
         if (tmpbuf[0] == '5') //Перезагрузка
         {
-            UART_Printf("*****  REBOOT  *****\r\n");delayUS_ASM(10000);
+            Printf("*****  REBOOT  *****\r\n");
 
             HAL_NVIC_SystemReset();
         }
 
         if (tmpbuf[0] == '6') //Смена пароля
         {
-            UART_Printf("*****  SET NEW PASSWORD  *****\r\n");delayUS_ASM(10000);
-            UART_Printf("new pasword hash: ");delayUS_ASM(10000);
-            UART_Printf(tmpbuf+1);delayUS_ASM(10000);
-            UART_Printf("\r\n");delayUS_ASM(10000);
+            Printf("*****  SET NEW PASSWORD  *****\r\n");
+            Printf("new pasword hash: ");
+            Printf(tmpbuf+1);
+            Printf("\r\n");
             if (sdCartOn == 1)
             {
                 FRESULT result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_WRITE );
@@ -702,7 +709,7 @@ void http_request(void)
 
         if (tmpbuf[0] == 'l')
         {
-            UART_Printf("*****  LOGIN  *****\r\n");delayUS_ASM(10000);
+            Printf("*****  LOGIN  *****\r\n");
             char login1[10] = {'l','a','d','m','i','n','\0'}; //первый символ всегда l
             char login2[10] = {'l','u','s','e','r','\0'};
             char login3[10] = {'l','1','2','3','\0'};
@@ -716,21 +723,21 @@ void http_request(void)
 
         if (tmpbuf[0] == 'p')
         {
-            UART_Printf("*****  PASSWORD  *****\r\n");delayUS_ASM(10000);
+            Printf("*****  PASSWORD  *****\r\n");
             //первый символ всегда p  (qwe12345@)
 //            char md5[34] = {'p','5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b',
 //                            '3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
 
             if (strncmp(tmpbuf + 1, MD5 , 32) == 0)
             {
-                UART_Printf("password OK\r\n"); delayUS_ASM(10000);
+                Printf("password OK\r\n");
                 passwordOK = 1;
                 // MD5 hash:  5f3fb0124f2bfceb31cf5305194de14d
                 // SHA1 Hash: d5a5a5ea0c15c37a7fd6d1b1452bdad545051546
             }
             else
             {
-                UART_Printf("password not OK\r\n"); delayUS_ASM(10000);
+                Printf("password not OK\r\n");
             }
         }
 	}
@@ -757,6 +764,12 @@ void http_request(void)
             f_size = mainLen;
             printf("main.html request - %d byte\n", f_size);
             pfile = pmain;
+        }
+        if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"host_IP", 7) == 0)
+        {
+            f_size = 20;
+            printf("host_IP request - %d byte\n", f_size);
+            pfile = phost_IP;
         }
     }
     if (result==FR_OK)
@@ -833,9 +846,9 @@ void http_request(void)
         OpenSocket(tcpprop.cur_sock,Mode_TCP);
         delayUS_ASM(100000);
         //Ждём инициализации сокета (статус SOCK_INIT)
-        UART_Printf("SocketInitWait\r\n"); delayUS_ASM(10000);
+        Printf("SocketInitWait\r\n");
         SocketInitWait(tcpprop.cur_sock);
-        UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
+        Printf("SocketInitWait_OK\r\n");
         //Продолжаем слушать сокет
         ListenSocket(tcpprop.cur_sock);
         SocketListenWait(tcpprop.cur_sock);

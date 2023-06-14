@@ -55,6 +55,12 @@ uint32_t count = 0;
 uint8_t sdCartOn = 1;
 char *pindex;
 char *pmain;
+char *phost_IP;
+char *pdest_IP;
+char *pmask_IP;
+char *pgate_IP;
+char *pMD;
+
 extern lfs_t lfs;
 extern lfs_file_t file;
 //uint8_t num_block_index = 1;

@@ -18,6 +18,9 @@ uint8_t loginOK = 0;
 extern uint32_t indexLen;
 extern uint32_t mainLen;
 uint32_t f_size;
+extern char *pindex;
+extern char *pmain;
+char * pfile;
 extern void UART_Printf(const char* fmt, ...);
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -85,8 +88,12 @@ void tcp_send_http_one(void)
 				break;
 		}
 		header_len = strlen(header);
-//        data_len = (uint16_t)MyFile.fsize;
-        data_len = (uint16_t)f_size(&MyFile);
+
+        if (sdCartOn == 1)
+            data_len = (uint16_t)f_size(&MyFile);
+        if (sdCartOn == 0)
+            data_len = f_size;
+
 		end_point = GetWritePointer(tcpprop.cur_sock);
 		end_point+=header_len+data_len;
 		//Заполним данными буфер для отправки пакета
@@ -103,13 +110,13 @@ void tcp_send_http_one(void)
 			else len_sect=data_len;
             if (sdCartOn == 1)
             {
-                result=f_lseek(&MyFile,i*512); //Установим курсор чтения в файле
+                result=f_lseek(&MyFile, i*512); //Установим курсор чтения в файле
                 result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
             }
             else
             {
-                lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_SET);
-                bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
+                pfile += i*512;
+                strncpy((char*)sect+3, pfile, len_sect);
             }
 			w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 			end_point+=len_sect;
@@ -188,8 +195,8 @@ void tcp_send_http_first(void)
         }
         else
         {
-            lfs_file_seek(&lfs, &file, i*512, LFS_SEEK_SET);
-            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
+            pfile += i*512;
+            strncpy((char*)sect+3, pfile, len_sect);
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -254,8 +261,8 @@ void tcp_send_http_middle(void)
         }
         else
         {
-            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + count_bytes, LFS_SEEK_SET);
-            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
+            pfile += (DWORD)(i*512) + count_bytes;
+            strncpy((char*)sect+3, pfile, len_sect);
         }
 //HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
 //HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n** block **\r\n", 15, 0x1000);
@@ -314,8 +321,9 @@ void tcp_send_http_last(void)
         }
         else //EEPROM
         {
-            lfs_file_seek(&lfs, &file, (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes, LFS_SEEK_SET);
-            bytesread = lfs_file_read(&lfs, &file, sect+3, len_sect);
+            pfile += (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes;
+            strncpy((char*)sect+3, pfile, len_sect);
+
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -745,13 +753,13 @@ void http_request(void)
         {
             f_size = indexLen;
             printf("index.html request - %d byte\n", f_size);
-
+            pfile = pindex;
         }
         if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"main.html", 9) == 0)
         {
             f_size = mainLen;
             printf("main.html request - %d byte\n", f_size);
-
+            pfile = pmain;
         }
     }
     if (result==FR_OK)
@@ -784,7 +792,7 @@ void http_request(void)
        }
        else
        {
-           httpsockprop[tcpprop.cur_sock].data_size += lfs_file_size(&lfs, &file);
+           httpsockprop[tcpprop.cur_sock].data_size += f_size;
        }
 
     }

@@ -1055,8 +1055,13 @@ int main(void)
 
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
-
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+
+    //Работа с SPI EEPROM
+    if (sdCartOn == 0)
+    {
+    //    testSPI_EEPROM();
+    }
 
   /* USER CODE END 2 */
 
@@ -1065,10 +1070,8 @@ int main(void)
 
     prepearUDP_PLIS();
 
-if (sdCartOn == 0)
-{
-    testSPI_EEPROM();
-}
+
+
 
  //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL

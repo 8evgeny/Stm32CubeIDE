@@ -15,6 +15,9 @@ extern char MD5[32];
 uint8_t temp[4];
 uint8_t passwordOK = 0;
 uint8_t loginOK = 0;
+extern uint32_t indexLen;
+extern uint32_t mainLen;
+uint32_t f_size;
 extern void UART_Printf(const char* fmt, ...);
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -738,13 +741,18 @@ void http_request(void)
     }
     else //eeprom
     {
-        lfs_file_close(&lfs, &file);
-        result = lfs_file_open(&lfs, &file, httpsockprop[tcpprop.cur_sock].fname, LFS_O_RDONLY );
-        sprintf(str1,"f_open: %d\r\n", result);
-        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
-        uint32_t sz = lfs_file_size(&lfs, &file);
-        sprintf(str1,"f_size: %lu\r\n",sz);
-        HAL_UART_Transmit(&huart6,(uint8_t*)str1,strlen(str1),0x1000);
+        if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"index.html", 10) == 0)
+        {
+            f_size = indexLen;
+            printf("index.html request - %d byte\n", f_size);
+
+        }
+        if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"main.html", 9) == 0)
+        {
+            f_size = mainLen;
+            printf("main.html request - %d byte\n", f_size);
+
+        }
     }
     if (result==FR_OK)
     {

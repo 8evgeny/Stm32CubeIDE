@@ -313,7 +313,9 @@ void copyFileToEEPROM(const char* nameFile_onSD)
 //    printFileFromEEPROM(nameFile_onSD);
 }
 
-void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileIndex, uint16_t ReadAddrMain, uint16_t numByteFileMain)
+void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileIndex,
+                                 uint16_t ReadAddrMain, uint16_t numByteFileMain,
+                                 uint16_t ReadAddrSettings)
 {
     uint16_t * numByteIndex = &numByteFileIndex;
     pindex = malloc(numByteFileIndex);
@@ -324,6 +326,13 @@ void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileInd
     pmain = malloc(numByteFileMain);
     result = BSP_EEPROM_ReadBuffer((uint8_t*)pmain, ReadAddrMain, numByteMain);
     printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileMain, ReadAddrMain, result);
+
+    //Тут гружу в память настройки
+
+
+
+
+
 }
 
 void printFilesFromMemory()
@@ -835,7 +844,9 @@ void workI2C_EEPROM()
 
         SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
         SetMacFromAdressEEPROM(macAdressInEEPROM);
-        loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLen, mainAdressInEEPROM, mainLen);
+        loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLen,
+                                    mainAdressInEEPROM, mainLen,
+                                    ipSettingAdressInEEPROM);
 
 //        printFilesFromMemory(indexLen, mainLen);
 //        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLen); //index.html

@@ -539,6 +539,8 @@ void setParametersFromSD()
     char tmp2[5];
     char tmp3[5];
     char tmp4[5];
+    char tmp5[5];
+    char tmp6[5];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp1, 5, &fil);
     ipaddr[0] = atoi(tmp1);
@@ -604,8 +606,22 @@ void setParametersFromSD()
     f_close(&fil);
     Printf("md5: %s\n",MD5);
 
-    sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
-    Printf(tmp);
+    f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp1, 100, &fil);
+    macaddr[0] = atoi(tmp1);
+    f_gets(tmp2, 100, &fil);
+    macaddr[1] = atoi(tmp2);
+    f_gets(tmp3, 100, &fil);
+    macaddr[2] = atoi(tmp3);
+    f_gets(tmp4, 100, &fil);
+    macaddr[3] = atoi(tmp4);
+    f_gets(tmp5, 100, &fil);
+    macaddr[4] = atoi(tmp5);
+    f_gets(tmp6, 100, &fil);
+    macaddr[5] = atoi(tmp6);
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    f_close(&fil);
 }
 
 void SetParaametersFromEEPROM()

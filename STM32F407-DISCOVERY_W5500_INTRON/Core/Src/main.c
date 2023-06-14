@@ -59,7 +59,7 @@ char *phost_IP;
 char *pdest_IP;
 char *pmask_IP;
 char *pgate_IP;
-char *pMD;
+char *pmd5;
 
 extern lfs_t lfs;
 extern lfs_file_t file;

@@ -25,7 +25,7 @@ extern char *phost_IP;
 extern char *pdest_IP;
 extern char *pmask_IP;
 extern char *pgate_IP;
-extern char *pMD;
+extern char *pmd5;
 
 char * pfile;
 extern void UART_Printf(const char* fmt, ...);
@@ -770,6 +770,30 @@ void http_request(void)
             f_size = 20;
             printf("host_IP request - %d byte\n", f_size);
             pfile = phost_IP;
+        }
+        if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"dest_IP", 7) == 0)
+        {
+            f_size = 20;
+            printf("dest_IP request - %d byte\n", f_size);
+            pfile = pdest_IP;
+        }
+        if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"mask_IP", 7) == 0)
+        {
+            f_size = 20;
+            printf("mask_IP request - %d byte\n", f_size);
+            pfile = pmask_IP;
+        }
+        if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"gate_IP", 7) == 0)
+        {
+            f_size = 20;
+            printf("gate_IP request - %d byte\n", f_size);
+            pfile = pgate_IP;
+        }
+        if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"md5", 3) == 0)
+        {
+            f_size = 33;
+            printf("md5 request - %d byte\n", f_size);
+            pfile = pmd5;
         }
     }
     if (result==FR_OK)

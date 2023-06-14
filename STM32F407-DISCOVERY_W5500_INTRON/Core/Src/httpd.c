@@ -108,16 +108,17 @@ void tcp_send_http_one(void)
 			//не последний сектор
 			if(i<(num_sect-1)) len_sect=512;
 			else len_sect=data_len;
+
             if (sdCartOn == 1)
             {
                 result=f_lseek(&MyFile, i*512); //Установим курсор чтения в файле
-                result=f_read(&MyFile,sect+3,len_sect,(UINT *)&bytesread);
+                result=f_read(&MyFile,sect+3, len_sect,(UINT *)&bytesread);
             }
             else
             {
-                pfile += i*512;
-                strncpy((char*)sect+3, pfile, len_sect);
+                strncpy((char*)sect+3, pfile + i*512, len_sect);
             }
+
 			w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 			end_point+=len_sect;
 			data_len -= len_sect;
@@ -179,11 +180,11 @@ void tcp_send_http_first(void)
 	last_part_size = httpsockprop[tcpprop.cur_sock].last_data_part_size;
 	prt = httpsockprop[tcpprop.cur_sock].prt_tp;
 	//Заполним данными буфер для отправки пакета
-	memcpy(sect+3,header,header_len);
+    memcpy(sect+3, header, header_len);
 	w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, header_len);
 	end_point+=header_len;
 	num_sect = data_len / 512;
-	for(i=0;i<=num_sect;i++)
+    for(i=0;i <= num_sect; i++)
 	{
 		//не последний сектор
 		if(i<(num_sect-1)) len_sect=512;
@@ -195,8 +196,7 @@ void tcp_send_http_first(void)
         }
         else
         {
-            pfile += i*512;
-            strncpy((char*)sect+3, pfile, len_sect);
+            strncpy((char*)sect+3, pfile + i*512, len_sect);
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
@@ -222,7 +222,7 @@ void tcp_send_http_first(void)
 	//Количество переданных байтов
   httpsockprop[tcpprop.cur_sock].total_count_bytes = tcp_size_wnd - header_len;
 
-//  UART_Printf("tcp_send_http_first"); delayUS_ASM(10000);
+//  Printf("tcp_send_http_first");
 }
 //-----------------------------------------------
 void tcp_send_http_middle(void)
@@ -249,7 +249,7 @@ void tcp_send_http_middle(void)
 	num_sect = data_len / 512;
 	//борьба с неправильным расчётом, когда размер данных делится на размер сектора без остатка
 	if(data_len%512==0) num_sect--;
-	for(i=0;i<=num_sect;i++)
+    for(i=0; i <= num_sect; i++)
 	{
 		//не последний сектор
 		if(i<(num_sect-1)) len_sect=512;
@@ -261,8 +261,7 @@ void tcp_send_http_middle(void)
         }
         else
         {
-            pfile += (DWORD)(i*512) + count_bytes;
-            strncpy((char*)sect+3, pfile, len_sect);
+            strncpy((char*)sect+3, pfile + ((DWORD)(i*512) + count_bytes), len_sect);
         }
 //HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
 //HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n** block **\r\n", 15, 0x1000);
@@ -321,9 +320,7 @@ void tcp_send_http_last(void)
         }
         else //EEPROM
         {
-            pfile += (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes;
-            strncpy((char*)sect+3, pfile, len_sect);
-
+            strncpy((char*)sect+3, pfile + (DWORD)(i*512) + httpsockprop[tcpprop.cur_sock].total_count_bytes, len_sect);
         }
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;

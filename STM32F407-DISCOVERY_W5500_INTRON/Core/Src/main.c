@@ -57,9 +57,9 @@ char *pindex;
 char *pmain;
 extern lfs_t lfs;
 extern lfs_file_t file;
-uint8_t num_block_index = 1;
-uint8_t num_block_main = 8;
-char indexLen[8];
+//uint8_t num_block_index = 1;
+//uint8_t num_block_main = 8;
+//char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port = LOCAL_PORT;
 extern uint8_t bufRead[5];
@@ -128,6 +128,9 @@ extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 char MD5[32];
+uint32_t indexLen;
+uint32_t mainLen;
+
 uint8_t destip[4];
 extern uint8_t macaddr[6];
 extern wiz_NetInfo defaultNetInfo;
@@ -247,11 +250,29 @@ void simpleTestI2C_EEPROM(uint16_t addr)
     printf("EEPROM read: %s\r\n",rd_value);
 }
 
+void saveLenFileToEeprom(const char* nameFile_onSD, uint32_t numByteFile)
+{
+    printf("save len file %s to eeprom\n", nameFile_onSD);
+    const char* index = "index.html";
+    const char* main = "main.html";
+    char tmp[6];
+    sprintf(tmp,"%.5d", numByteFile);
+    if (nameFile_onSD == index)
+    {
+        BSP_EEPROM_WriteBuffer((uint8_t*)tmp, indexLenAdressInEEPROM, 6);
+    }
+    if (nameFile_onSD == main)
+    {
+        BSP_EEPROM_WriteBuffer((uint8_t*)tmp, mainLenAdressInEEPROM, 6);
+    }
+}
+
 void copyFileToAdressEEPROM(const char* nameFile_onSD, uint16_t WriteAddr)
 {
     printf("\n\nCopy file %s to adress 0x%.4X i2c eeprom \n",nameFile_onSD, WriteAddr);
     f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
     uint32_t numByteFile = fil.obj.objsize;
+    saveLenFileToEeprom(nameFile_onSD, numByteFile);
     printf("num byte: %d\n",numByteFile);
     UINT rc;
     pindex = malloc(numByteFile);
@@ -299,16 +320,16 @@ void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileInd
     printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileMain, ReadAddrMain, result);
 }
 
-void printFilesFromMemory(uint16_t numByteFileIndex,  uint16_t numByteFileMain)
+void printFilesFromMemory()
 {
     Printf("\nprintFilesFromMemory\n\n");
-        for (int i = 0; i < numByteFileIndex; ++i)
+        for (int i = 0; i < indexLen; ++i)
         {
             Printf("%c", pindex[i]);
         }
         Printf("\n\n\n");
 
-        for (int i = 0; i < numByteFileMain; ++i)
+        for (int i = 0; i < mainLen; ++i)
         {
             Printf("%c", pmain[i]);
         }
@@ -697,55 +718,11 @@ void net_ini_WIZNET()
 
 void workI2C_EEPROM()
 {
-/*
-EEPROM I2C : ATMEL 24C256
-32768 byte 0000 - 7FFF
-1MHz (2.5V, 2.7V, 5.0V) compatibility
-512 pages of 64-bytes each
-0000 - 00FF   256b   IP settings
-0100 - 010F   16b    длина index.html
-0110 - 011F   16b    длина main.html
-0120 - 03FF   резерв
-0400 - 07FF   2k   index.html
-0800 - 0BFF   3k
-0C00 - 0FFF   4k
-1000 - 13FF   5K
-1400 - 17FF   6k
-1800 - 1BFF   7k
-1C00 - 1FFF   8k
-2000 - 23FF   9K
-2400 - 27FF   10k   index.html
-2800 - 2BFF   11k   main.html
-2C00 - 2FFF   12k
-3000 - 33FF   13K
-3400 - 37FF   14k
-3800 - 3BFF   15k
-3C00 - 3FFF   16k
-4000 - 43FF   17K
-4400 - 47FF   18k
-4800 - 4BFF   19k
-4C00 - 4FFF   20k
-5000 - 53FF   21K
-5400 - 57FF   22k
-5800 - 5BFF   23k
-5C00 - 5FFF   24k
-6000 - 63FF   25K
-6400 - 67FF   26k   main.html
-6800 - 6BFF   27k   резерв
-6C00 - 6FFF   28k
-7000 - 73FF   29K
-7400 - 77FF   30k
-7800 - 7BFF   31k
-7C00 - 7FFF   32k
-*/
-
 //      simpleTestI2C_EEPROM(0x7F80);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();
-
-
-//      UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
+//      Printf("FsEeprom TEST ... ");
 //      FsForEeprom_test();
 
     f_mount(&fs, "", 0);
@@ -756,9 +733,10 @@ EEPROM I2C : ATMEL 24C256
     }
     else
     {
-        sdCartOn = 0;//Режим SPI для EEPROM
+        sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
+
     }
 
     if (result != 0)
@@ -777,15 +755,25 @@ EEPROM I2C : ATMEL 24C256
 //        copyFileToEEPROM("index.html");
 //        copyFileToEEPROM("main.html");
 
-    } else
+    } else //Работа с i2c eeprom
     {
-        SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
-        loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLenInEEPROM, mainAdressInEEPROM, mainLenInEEPROM);
+        //Загружаем длины файлов
+        char tmp[5];
+        uint16_t numByteLen = 5;
+        uint16_t * len = &numByteLen;
+        BSP_EEPROM_ReadBuffer((uint8_t*)tmp, indexLenAdressInEEPROM, len);
+        indexLen = atoi(tmp);
+        printf("index.html len - %d\n", indexLen);
+        BSP_EEPROM_ReadBuffer((uint8_t*)tmp, mainLenAdressInEEPROM, len);
+        mainLen = atoi(tmp);
+        printf("main.html len - %d\n", mainLen);
 
-//        printFilesFromMemory(indexLenInEEPROM, mainLenInEEPROM);
-//        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLenInEEPROM); //index.html
-//        printf("\n\n");
-//        printFileFromAdressEEPROM(mainAdressInEEPROM, mainLenInEEPROM); //main.html
+        SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
+        loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLen, mainAdressInEEPROM, mainLen);
+
+//        printFilesFromMemory(indexLen, mainLen);
+//        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLen); //index.html
+//        printFileFromAdressEEPROM(mainAdressInEEPROM, mainLen); //main.html
 
 //lfs не использую
 //        SetParaametersFromEEPROM();
@@ -793,7 +781,6 @@ EEPROM I2C : ATMEL 24C256
 //        testReadFile("main.html");
 //        printFileFromEEPROM("index.html");
 //        printFileFromEEPROM("main.html");
-
     }
 }
 

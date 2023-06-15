@@ -313,21 +313,22 @@ void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileInd
                                  uint16_t ReadAddrMain, uint16_t numByteFileMain,
                                  uint16_t ReadAddrSettings, uint16_t numByteFileSettings )
 {
+    printf("load to memory index.html main.html ip_settings\n");
     uint16_t * numByteIndex = &numByteFileIndex;
     pindex = malloc(numByteFileIndex);
     int result = BSP_EEPROM_ReadBuffer((uint8_t*)pindex, ReadAddrIndex, numByteIndex);
-    printf("\nread %d byte from adress 0x%.4X on eprom: %d\n", numByteFileIndex, ReadAddrIndex, result);
+//    printf("\nread %d byte from adress 0x%.4X on eprom: %d\n", numByteFileIndex, ReadAddrIndex, result);
 
     uint16_t * numByteMain = &numByteFileMain;
     pmain = malloc(numByteFileMain);
     result = BSP_EEPROM_ReadBuffer((uint8_t*)pmain, ReadAddrMain, numByteMain);
-    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileMain, ReadAddrMain, result);
+//    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileMain, ReadAddrMain, result);
 
     //Тут гружу в память настройки
     uint16_t * numByteSettings = &numByteFileSettings;
     psettingsIP = malloc(numByteFileSettings);
     result = BSP_EEPROM_ReadBuffer((uint8_t*)psettingsIP, ReadAddrSettings, numByteSettings);
-    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileSettings, ReadAddrSettings, result);
+//    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileSettings, ReadAddrSettings, result);
 }
 
 void printFilesFromMemory()
@@ -441,8 +442,8 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
     char tmp[24];
     char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
-    printf("MAC:\n%s\n",tmp);
+//    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
+//    printf("MAC:\n%s\n",tmp);
     strncpy(tmp2, tmp, 4);
     macaddr[0] = atoi(tmp2);
     strncpy(tmp2,tmp+4, 4);
@@ -466,8 +467,8 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     char tmp[settingsLen];
     char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
-    printf("settings:\n%s\n",tmp);
+//    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
+//    printf("settings:\n%s\n",tmp);
 
     strncpy(tmp2,tmp,3);
     ipaddr[0] = atoi(tmp2);
@@ -805,7 +806,7 @@ void workI2C_EEPROM()
     }
 
     if (result != 0)
-        printf("\nnot found SD\n\n");
+        printf("not found SD\n");
     f_close(&fil);
 
     if (sdCartOn == 1)

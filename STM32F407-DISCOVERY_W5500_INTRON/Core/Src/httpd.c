@@ -223,8 +223,6 @@ void tcp_send_http_first(void)
 	}
 	//Количество переданных байтов
   httpsockprop[tcpprop.cur_sock].total_count_bytes = tcp_size_wnd - header_len;
-
-//  Printf("tcp_send_http_first");
 }
 
 void tcp_send_http_middle(void)
@@ -265,8 +263,7 @@ void tcp_send_http_middle(void)
         {
             strncpy((char*)sect+3, pfile + ((DWORD)(i*512) + count_bytes), len_sect);
         }
-//HAL_UART_Transmit(&huart6,(uint8_t*)sect+3,len_sect,0x1000);
-//HAL_UART_Transmit(&huart6,(uint8_t*)"\r\n** block **\r\n", 15, 0x1000);
+
 		w5500_writeSockBuf(tcpprop.cur_sock, end_point, (uint8_t*)sect, len_sect);
 		end_point+=len_sect;
 		data_len -= len_sect;
@@ -291,7 +288,6 @@ void tcp_send_http_middle(void)
 	//Количество переданных байтов
 	httpsockprop[tcpprop.cur_sock].total_count_bytes += (uint32_t) tcp_size_wnd;
 
-//    UART_Printf("tcp_send_http_middle"); delayUS_ASM(10000);
 }
 
 void tcp_send_http_last(void)
@@ -332,8 +328,6 @@ void tcp_send_http_last(void)
 	RecvSocket(tcpprop.cur_sock);
 	SendSocket(tcpprop.cur_sock);
 	httpsockprop[tcpprop.cur_sock].data_stat = DATA_COMPLETED;
-
-//    UART_Printf("tcp_send_http_last"); delayUS_ASM(10000);
 }
 
 void http_request(void)
@@ -450,9 +444,11 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
-printf("*****  write new host IP to eeprom  *****\n");
-int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM, 20);
-printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM, result);
+                    printf("*****  write new host IP to eeprom  *****\n");
+                    BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_1, ipSettingAdressInEEPROM, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_2, ipSettingAdressInEEPROM + 4, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_3, ipSettingAdressInEEPROM + 8, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_4, ipSettingAdressInEEPROM + 12, 3);
                 }
             }
         }
@@ -523,9 +519,11 @@ printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPR
                 }
                 else //EEPROM
                 {
-printf("*****  write new mask IP to eeprom  *****\n");
-int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 60, 20);
-printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 60, result);
+                    printf("*****  write new mask IP to eeprom  *****\n");
+                    BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_1, ipSettingAdressInEEPROM + 45, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_2, ipSettingAdressInEEPROM + 49, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_3, ipSettingAdressInEEPROM + 54, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_4, ipSettingAdressInEEPROM + 58, 3);
                 }
             }
         }
@@ -596,9 +594,11 @@ printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPR
                 }
                 else //EEPROM
                 {
-printf("*****  write new gate IP to eeprom  *****\n");
-int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 40, 20);
-printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 40, result);
+                    printf("*****  write new gate IP to eeprom  *****\n");
+                    BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_1, ipSettingAdressInEEPROM + 30, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_2, ipSettingAdressInEEPROM + 34, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_3, ipSettingAdressInEEPROM + 38, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_4, ipSettingAdressInEEPROM + 42, 3);
                 }
             }
         }
@@ -669,9 +669,11 @@ printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPR
                 }
                 else //EEPROM
                 {
-printf("*****  write new dest IP to eeprom  *****\n");
-int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 20, 20);
-printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 20, result);
+                    printf("*****  write new dest IP to eeprom  *****\n");
+                    BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_1, ipSettingAdressInEEPROM + 15, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_2, ipSettingAdressInEEPROM + 19, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_3, ipSettingAdressInEEPROM + 23, 3);
+                    BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_4, ipSettingAdressInEEPROM + 27, 3);
                 }
             }
         }
@@ -685,10 +687,10 @@ printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPR
 
         if (tmpbuf[0] == '6') //Смена пароля
         {
-            Printf("*****  SET NEW PASSWORD  *****\r\n");
-            Printf("new pasword hash: ");
-            Printf(tmpbuf+1);
-            Printf("\r\n");
+            printf("*****  SET NEW PASSWORD  *****\r\n");
+            printf("new pasword hash: ");
+            printf(tmpbuf+1);
+            printf("\r\n");
             if (sdCartOn == 1)
             {
                 FRESULT result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_WRITE );
@@ -703,9 +705,9 @@ printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPR
             }
             else //EEPROM
             {
-printf("*****  write new md5 to eeprom  *****\n");
-int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 80, 33);
-printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 80, result);
+                printf("*****  write new md5 to eeprom  *****\n");
+                BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 60, 33);
+
             }
         }
 

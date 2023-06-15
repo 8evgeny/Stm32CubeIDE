@@ -461,13 +461,13 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
 void SetParaametersFromAdressEEPROM(uint16_t Addr)
 {
     printf("Set IP paraameters from adress eeprom 0x%.4X \n", Addr);
-    uint16_t numByte = 113;
+    uint16_t numByte = settingsLen;
     uint16_t * pnumByte = &numByte;
-    char tmp[114];
+    char tmp[settingsLen];
     char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
     printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
-//    printf("IP:\n%s\n",tmp);
+    printf("IP:\n%s\n",tmp);
 
     strncpy(tmp2,tmp,3);
     ipaddr[0] = atoi(tmp2);

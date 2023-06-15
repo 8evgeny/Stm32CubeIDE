@@ -1,5 +1,6 @@
 #include "httpd.h"
 #include "lfs.h"
+#include "eeprom.h"
 //-----------------------------------------------
 extern UART_HandleTypeDef huart6;
 //-----------------------------------------------
@@ -435,7 +436,7 @@ void http_request(void)
                     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
-                        Printf("*****  write new host IP to SD  *****\r\n");
+                        printf("*****  write new host IP to SD  *****\n");
                         f_lseek(&fil, 0);
                         f_puts(host_IP_1, &fil);
                         f_puts(host_IP_2, &fil);
@@ -447,9 +448,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
-// !!!!!!!!!!!!!
-
-
+                    printf("*****  write new host IP to eeprom  *****\n");
+                    int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM, 20);
+                    printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM, result);
                 }
             }
         }
@@ -505,21 +506,21 @@ void http_request(void)
                     FRESULT result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
-                        UART_Printf("*****  write new mask IP to SD  *****\r\n"); delayUS_ASM(10000);
-                        f_lseek(&fil, 0); delayUS_ASM(10000);
-                        f_puts(mask_IP_1, &fil); delayUS_ASM(10000);
-                        f_puts(mask_IP_2, &fil); delayUS_ASM(10000);
-                        f_puts(mask_IP_3, &fil); delayUS_ASM(10000);
-                        f_puts(mask_IP_4, &fil); delayUS_ASM(10000);
-                        f_sync(&fil); delayUS_ASM(10000);
-                        f_close(&fil); delayUS_ASM(10000);
+                        printf("*****  write new mask IP to SD  *****\r\n");
+                        f_lseek(&fil, 0);
+                        f_puts(mask_IP_1, &fil);
+                        f_puts(mask_IP_2, &fil);
+                        f_puts(mask_IP_3, &fil);
+                        f_puts(mask_IP_4, &fil);
+                        f_sync(&fil);
+                        f_close(&fil);
                     }
                 }
                 else //EEPROM
                 {
-// !!!!!!!!!!!!!
-
-
+                    printf("*****  write new mask IP to eeprom  *****\n");
+                    int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 60, 20);
+                    printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 60, result);
                 }
             }
         }
@@ -575,8 +576,7 @@ void http_request(void)
                     FRESULT result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
-                        UART_Printf("*****  write new gate IP to SD  *****\r\n");
-                        delayUS_ASM(10000);
+                        printf("*****  write new gate IP to SD  *****\n");
                         f_lseek(&fil, 0);
                         f_puts(gate_IP_1, &fil);
                         f_puts(gate_IP_2, &fil);
@@ -588,9 +588,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
-// !!!!!!!!!!!!!
-
-
+                    printf("*****  write new gate IP to eeprom  *****\n");
+                    int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 40, 20);
+                    printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 40, result);
                 }
             }
         }
@@ -646,8 +646,7 @@ void http_request(void)
                     FRESULT result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
-                        UART_Printf("*****  write new dest IP to SD  *****\r\n");
-                        delayUS_ASM(10000);
+                        printf("*****  write new dest IP to SD  *****\n");
                         f_lseek(&fil, 0);
                         f_puts(dest_IP_1, &fil);
                         f_puts(dest_IP_2, &fil);
@@ -659,10 +658,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
-// !!!!!!!!!!!!!
-
-
-
+                    printf("*****  write new dest IP to eeprom  *****\n");
+                    int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 20, 20);
+                    printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 20, result);
                 }
             }
         }
@@ -685,8 +683,7 @@ void http_request(void)
                 FRESULT result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_WRITE );
                 if (result == 0)
                 {
-                    UART_Printf("*****  write new md5 IP to SD  *****\r\n");
-                    delayUS_ASM(10000);
+                    printf("*****  write new md5 to SD  *****\n");
                     f_lseek(&fil, 0);
                     f_puts(tmpbuf+1, &fil);
                     f_sync(&fil);
@@ -695,10 +692,9 @@ void http_request(void)
             }
             else //EEPROM
             {
-
-// !!!!!!!!!!!!!
-
-
+                printf("*****  write new md5 to eeprom  *****\n");
+                int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 80, 33);
+                printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 80, result);
             }
         }
 
@@ -719,16 +715,16 @@ void http_request(void)
         if (tmpbuf[0] == 'p')
         {
             Printf("*****  PASSWORD  *****\r\n");
-            //первый символ всегда p  (qwe12345@)
-//            char md5[34] = {'p','5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b',
-//                            '3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
-
+/*
+первый символ всегда p  (qwe12345@)
+char md5[34] =
+{'p','5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b','3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
+MD5 hash:  d41d8cd98f00b204e9800998ecf8427e  (пустой пароль)
+*/
             if (strncmp(tmpbuf + 1, MD5 , 32) == 0)
             {
                 Printf("password OK\r\n");
                 passwordOK = 1;
-                // MD5 hash:  5f3fb0124f2bfceb31cf5305194de14d
-                // SHA1 Hash: d5a5a5ea0c15c37a7fd6d1b1452bdad545051546
             }
             else
             {

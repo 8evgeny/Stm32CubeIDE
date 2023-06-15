@@ -773,13 +773,18 @@ void net_ini_WIZNET()
     HAL_Delay(70);
     uint8_t sn_TCP = 0; // Сокет 0
     WIZCHIPInitialize();
-    for (int i =0;i<6;++i)
+
+    for (int i =0; i < 6; ++i)
+    {
+        defaultNetInfo.mac[i] = macaddr[i];
+    }
+    for (int i =0; i < 4; ++i)
     {
         defaultNetInfo.ip[i] = ipaddr[i];
         defaultNetInfo.gw[i] = ipgate[i];
         defaultNetInfo.sn[i] = ipmask[i];
-        defaultNetInfo.mac[i] = macaddr[i];
     }
+
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
     print_network_information();
     socket(sn_TCP, Sn_MR_TCP, local_port, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага

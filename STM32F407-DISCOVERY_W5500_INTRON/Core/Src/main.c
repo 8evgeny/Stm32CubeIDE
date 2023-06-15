@@ -411,24 +411,24 @@ void copyMacToAdressEEPROM(uint16_t Addr)
 void copyParametersToAdressEEPROM(uint16_t Addr)
 {
     printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\n",Addr);
-    char tmp[114];
+    char tmp[settingsLen];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     UINT rc;
-    f_read(&fil, tmp, 20, &rc);
+    f_read(&fil, tmp, 15, &rc);
     f_close(&fil);
     f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_read(&fil, tmp+20, 20, &rc);
+    f_read(&fil, tmp+15, 15, &rc);
     f_close(&fil);
     f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_read(&fil, tmp+40, 20, &rc);
+    f_read(&fil, tmp+30, 15, &rc);
     f_close(&fil);
     f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_read(&fil, tmp+60, 20, &rc);
+    f_read(&fil, tmp+45, 15, &rc);
     f_close(&fil);
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
-    f_gets(tmp+80, 33, &fil);
+    f_gets(tmp+60, 33, &fil);
     f_close(&fil);
-//    printf("IP:\n%s\n",tmp);
+    printf("settings:\n%s\n",tmp);
     int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
     Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
 }

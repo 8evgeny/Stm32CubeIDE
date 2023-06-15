@@ -1,9 +1,8 @@
 #include "httpd.h"
 #include "lfs.h"
 #include "eeprom.h"
-//-----------------------------------------------
+
 extern UART_HandleTypeDef huart6;
-//-----------------------------------------------
 extern char str1[60];
 extern char tmpbuf[30];
 extern uint8_t sect[515];
@@ -16,18 +15,18 @@ extern char MD5[32];
 uint8_t temp[4];
 uint8_t passwordOK = 0;
 uint8_t loginOK = 0;
+
 extern uint32_t indexLen;
 extern uint32_t mainLen;
 uint32_t f_size;
 extern char *pindex;
 extern char *pmain;
 extern char *psettingsIP;
-
 char * pfile;
+
 extern void UART_Printf(const char* fmt, ...);
 extern lfs_t lfs;
 extern lfs_file_t file;
-//-----------------------------------------------
 http_sock_prop_ptr httpsockprop[2];
 tcp_prop_ptr tcpprop;
 extern void Printf(const char* fmt, ...);
@@ -35,16 +34,16 @@ extern void Printf(const char* fmt, ...);
 extern FIL fil;
 FIL MyFile;
 
-FRESULT result; //результат выполнения
+FRESULT result;
 uint32_t bytesread;
 volatile uint16_t tcp_size_wnd = 512; //было 2048  - были ошибки передачи случайный байт
-//-----------------------------------------------
+
 const char http_header[] = { "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"};
 const char jpg_header[] = {"HTTP/1.0 200 OK\r\nServer: nginx\r\nContent-Type: image/jpeg\r\nConnection: close\r\n\r\n"};
 const char icon_header[] = { "HTTP/1.1 200 OK\r\nContent-Type: image/x-icon\r\n\r\n"};
 const char error_header[] = {"HTTP/1.0 404 File not found\r\nServer: nginx\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n"};
 char *header;
-//-----------------------------------------------
+
 const uint8_t e404_htm[] = {
 0x3c,0x68,0x74,0x6d,0x6c,0x3e,0x0a,0x20,0x20,0x3c,0x68,0x65,0x61,0x64,0x3e,0x0a,
 0x20,0x20,0x20,0x20,0x3c,0x74,0x69,0x74,0x6c,0x65,0x3e,0x34,0x30,0x34,0x20,0x4e,
@@ -65,7 +64,7 @@ const uint8_t e404_htm[] = {
 0x72,0x69,0x6c,0x79,0x20,0x75,0x6e,0x61,0x76,0x61,0x69,0x6c,0x61,0x62,0x6c,0x65,
 0x2e,0x3c,0x2f,0x68,0x32,0x3e,0x0a,0x3c,0x2f,0x62,0x6f,0x64,0x79,0x3e,0x3c,0x2f,
 0x68,0x74,0x6d,0x6c,0x3e};
-//-----------------------------------------------
+
 void tcp_send_http_one(void)
 {
   uint16_t i=0;
@@ -148,7 +147,7 @@ void tcp_send_http_one(void)
   SendSocket(tcpprop.cur_sock);
   httpsockprop[tcpprop.cur_sock].data_stat = DATA_COMPLETED;
 }
-//-----------------------------------------------
+
 void tcp_send_http_first(void)
 {
   uint8_t prt;
@@ -227,7 +226,7 @@ void tcp_send_http_first(void)
 
 //  Printf("tcp_send_http_first");
 }
-//-----------------------------------------------
+
 void tcp_send_http_middle(void)
 {
   uint16_t i=0;
@@ -294,7 +293,7 @@ void tcp_send_http_middle(void)
 
 //    UART_Printf("tcp_send_http_middle"); delayUS_ASM(10000);
 }
-//-----------------------------------------------
+
 void tcp_send_http_last(void)
 {
   uint16_t i=0;
@@ -336,7 +335,7 @@ void tcp_send_http_last(void)
 
 //    UART_Printf("tcp_send_http_last"); delayUS_ASM(10000);
 }
-//-----------------------------------------------
+
 void http_request(void)
 {
   uint16_t point;
@@ -874,4 +873,4 @@ MD5 hash:  d41d8cd98f00b204e9800998ecf8427e  (пустой пароль)
         tcp_send_http_first();
     }
 }
-//-----------------------------------------------
+

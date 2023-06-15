@@ -707,7 +707,6 @@ void http_request(void)
             {
                 printf("*****  write new md5 to eeprom  *****\n");
                 BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 60, 33);
-
             }
         }
 

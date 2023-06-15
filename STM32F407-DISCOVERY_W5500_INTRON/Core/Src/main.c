@@ -10,6 +10,7 @@
 #include "SSLInterface.h"
 #include "httpServer.h"
 #include "webpage.h"
+#include "spi_eeprom.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -41,8 +42,7 @@ void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
 extern int tls_client_serverTest();
 extern int tls_server_sizeTest();
-extern int tls_sock_serverTest();
-extern void tlsProcess();
+extern void polarSSLTest();
 
 /* USER CODE END PD */
 
@@ -52,16 +52,19 @@ extern void tlsProcess();
 #define I2C_REQUEST_READ                        0x01
 #define SLAVE_OWN_ADDRESS                       0xA0
 uint32_t count = 0;
-uint8_t sdCartOn = 0;
+uint8_t sdCartOn = 1;
 char *pindex;
+char *pmain;
+char *psettingsIP;
+
 extern lfs_t lfs;
 extern lfs_file_t file;
-uint8_t num_block_index = 1;
-uint8_t num_block_main = 8;
-char indexLen[8];
+//uint8_t num_block_index = 1;
+//uint8_t num_block_main = 8;
+//char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port = LOCAL_PORT;
-
+extern uint8_t bufRead[5];
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -111,8 +114,6 @@ RTC_HandleTypeDef hrtc;
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
-DMA_HandleTypeDef hdma_spi3_rx;
-DMA_HandleTypeDef hdma_spi3_tx;
 
 TIM_HandleTypeDef htim1;
 
@@ -120,12 +121,18 @@ UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
 
 /* USER CODE BEGIN PV */
+extern uint8_t RxBuffer[256];
+extern uint8_t EEPROM_StatusByte;
 
+uint8_t TxBuffer[256] = "__---COOL!!!1234512345qwertasdfgh";
 uint8_t capture = 0;
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 char MD5[32];
+uint32_t indexLen;
+uint32_t mainLen;
+
 uint8_t destip[4];
 extern uint8_t macaddr[6];
 extern wiz_NetInfo defaultNetInfo;
@@ -208,8 +215,10 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 FATFS fs;
 FIL fil;
 void printFileFromEEPROM(const char* nameFile_onEEPROM);
-void testEEPROM()
+
+void simpleTestI2C_EEPROM(uint16_t addr)
 {
+    printf("\nSimple test I2C_EEPROM\n");
     uint8_t rd_value[36] = {0};
     uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
                             'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
@@ -217,30 +226,65 @@ void testEEPROM()
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
     uint16_t num = 36;
-    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
-    UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(20000);
+    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
+    printf("EEPROM read: %s\r\n",rd_value);
 
-    UART_Printf("EEPROM write:"); delayUS_ASM(20000);
-    UART_Printf("%s\r\n",erase_value); delayUS_ASM(20000);
-    BSP_EEPROM_WriteBuffer(erase_value, 0x004A, 36);
+    printf("EEPROM write:");
+    printf("%s\r\n",erase_value);
+    BSP_EEPROM_WriteBuffer(erase_value, addr, 36);
 //    AT24C_WriteBytes (0x004A, erase_value, 36);
 
     delayUS_ASM(100000);
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
-    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
+    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
 
-    UART_Printf("EEPROM write:"); delayUS_ASM(10000);
-    UART_Printf("%s\r\n",wr_value); delayUS_ASM(10000);
-    BSP_EEPROM_WriteBuffer(wr_value, 0x004A, 36);
+    printf("EEPROM write:");
+    printf("%s\r\n",wr_value);
+    BSP_EEPROM_WriteBuffer(wr_value, addr, 36);
 //    AT24C_WriteBytes (0x004A, wr_value, 36);
 
     delayUS_ASM(100000);
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
-    BSP_EEPROM_ReadBuffer(rd_value, 0x004A, &num);
-    UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
+    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
+    printf("EEPROM read: %s\r\n",rd_value);
+}
+
+void saveLenFileToEeprom(const char* nameFile_onSD, uint32_t numByteFile)
+{
+    printf("save len file %s to eeprom\n", nameFile_onSD);
+    const char* index = "index.html";
+    const char* main = "main.html";
+    char tmp[6];
+    sprintf(tmp,"%.5d", numByteFile);
+    if (nameFile_onSD == index)
+    {
+        BSP_EEPROM_WriteBuffer((uint8_t*)tmp, indexLenAdressInEEPROM, 6);
+    }
+    if (nameFile_onSD == main)
+    {
+        BSP_EEPROM_WriteBuffer((uint8_t*)tmp, mainLenAdressInEEPROM, 6);
+    }
+}
+
+void copyFileToAdressEEPROM(const char* nameFile_onSD, uint16_t WriteAddr)
+{
+    printf("\n\nCopy file %s to adress 0x%.4X i2c eeprom \n",nameFile_onSD, WriteAddr);
+    f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
+    uint32_t numByteFile = fil.obj.objsize;
+    saveLenFileToEeprom(nameFile_onSD, numByteFile);
+    printf("num byte: %d\n",numByteFile);
+    UINT rc;
+    pindex = malloc(numByteFile);
+    FRESULT res = f_read(&fil, pindex, numByteFile, &rc);
+    printf("file %s read: %d\n", nameFile_onSD, res);
+//    printf("copy %s to eeprpm (adress 0x%.4X)\n", nameFile_onSD, WriteAddr);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t*)pindex, WriteAddr, numByteFile);
+    printf("file %s write to adress 0x%.4X on eprom: %d\n", nameFile_onSD, WriteAddr, result);
+    f_close(&fil);
+    free (pindex);
 }
 
 void copyFileToEEPROM(const char* nameFile_onSD)
@@ -253,7 +297,7 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     f_read(&fil, pindex, numByteFile, &rc);
     f_close(&fil);
 
-    UART_Printf("copy %s ... ", nameFile_onSD); delayUS_ASM(5000);
+    printf("copy %s ... ", nameFile_onSD);
     lfs_file_open(&lfs, &file, nameFile_onSD, LFS_O_WRONLY | LFS_O_CREAT );
     lfs_file_write(&lfs, &file, pindex, numByteFile);
     lfs_file_close(&lfs, &file);
@@ -261,8 +305,62 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     free (pindex);
     char tmp[30];
     sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
-    UART_Printf(tmp); delayUS_ASM(5000);
+    Printf(tmp);
 //    printFileFromEEPROM(nameFile_onSD);
+}
+
+void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileIndex,
+                                 uint16_t ReadAddrMain, uint16_t numByteFileMain,
+                                 uint16_t ReadAddrSettings, uint16_t numByteFileSettings )
+{
+    uint16_t * numByteIndex = &numByteFileIndex;
+    pindex = malloc(numByteFileIndex);
+    int result = BSP_EEPROM_ReadBuffer((uint8_t*)pindex, ReadAddrIndex, numByteIndex);
+    printf("\nread %d byte from adress 0x%.4X on eprom: %d\n", numByteFileIndex, ReadAddrIndex, result);
+
+    uint16_t * numByteMain = &numByteFileMain;
+    pmain = malloc(numByteFileMain);
+    result = BSP_EEPROM_ReadBuffer((uint8_t*)pmain, ReadAddrMain, numByteMain);
+    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileMain, ReadAddrMain, result);
+
+    //Тут гружу в память настройки
+    uint16_t * numByteSettings = &numByteFileSettings;
+    psettingsIP = malloc(numByteFileSettings);
+    result = BSP_EEPROM_ReadBuffer((uint8_t*)psettingsIP, ReadAddrSettings, numByteSettings);
+    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileSettings, ReadAddrSettings, result);
+}
+
+void printFilesFromMemory()
+{
+    Printf("\nprintFilesFromMemory\n\n");
+        for (int i = 0; i < indexLen; ++i)
+        {
+            Printf("%c", pindex[i]);
+        }
+        Printf("\n\n\n");
+
+        for (int i = 0; i < mainLen; ++i)
+        {
+            Printf("%c", pmain[i]);
+        }
+        Printf("\n");
+}
+
+void printFileFromAdressEEPROM(uint16_t ReadAddr, uint16_t numByteFile)
+{
+    printf("Print %d byte from 0x%.4X adress i2c eeprom\n",numByteFile, ReadAddr);
+    uint16_t * numByte = &numByteFile;
+    pindex = malloc(numByteFile);
+    memset(pindex, 0x00, numByteFile);
+    int result = BSP_EEPROM_ReadBuffer((uint8_t*)pindex, ReadAddr, numByte);
+    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFile, ReadAddr, result);
+    Printf("print reading file\n");
+    for (int i = 0; i < numByteFile; ++i)
+    {
+        Printf("%c", pindex[i]);
+    }
+    Printf("\n");
+    free (pindex);
 }
 
 void printFileFromEEPROM(const char* nameFile_onEEPROM)
@@ -273,12 +371,12 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM)
     lfs_file_read(&lfs, &file, pindex, numByteFile);
     lfs_file_close(&lfs, &file);
 
-    UART_Printf("print %s\n", nameFile_onEEPROM); delayUS_ASM(5000);
+    Printf("print %s\n", nameFile_onEEPROM);
     for (int i = 0; i < numByteFile; ++i)
     {
-        UART_Printf("%c", pindex[i]); delayUS_ASM(100);
+        Printf("%c", pindex[i]);
     }
-    UART_Printf("\n"); delayUS_ASM(100);
+    Printf("\n");
     free (pindex);
 }
 
@@ -297,9 +395,128 @@ void testReadFile(const char* nameFile_onEEPROM)
     UART_Printf(tmp); delayUS_ASM(5000);
 }
 
+void copyMacToAdressEEPROM(uint16_t Addr)
+{
+    printf("\nCopy MAC adress from SD to adress 0x%.4X eeprom\n",Addr);
+    char tmp[24];
+    f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
+    UINT rc;
+    f_read(&fil, tmp, 24, &rc);
+    f_close(&fil);
+    printf("MAC:\n%s\n",tmp);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 24);
+    Printf("MAC write to adress 0x%.4X on eprom: %d", Addr, result);
+}
+
+void copyParametersToAdressEEPROM(uint16_t Addr)
+{
+    printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\n",Addr);
+    char tmp[settingsLen];
+    f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    UINT rc;
+    f_read(&fil, tmp, 15, &rc);
+    f_close(&fil);
+    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+15, 15, &rc);
+    f_close(&fil);
+    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+30, 15, &rc);
+    f_close(&fil);
+    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+45, 15, &rc);
+    f_close(&fil);
+    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp+60, 33, &fil);
+    f_close(&fil);
+    printf("settings:\n%s\n",tmp);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
+    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
+}
+
+void SetMacFromAdressEEPROM(uint16_t Addr)
+{
+    printf("Set MAC adress from adress eeprom 0x%.4X \n", Addr);
+    uint16_t numByte = 24;
+    uint16_t * pnumByte = &numByte;
+    char tmp[24];
+    char tmp2[3];
+    int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
+    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
+    printf("MAC:\n%s\n",tmp);
+    strncpy(tmp2, tmp, 4);
+    macaddr[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4, 4);
+    macaddr[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+8, 4);
+    macaddr[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12, 4);
+    macaddr[3] = atoi(tmp2);
+    strncpy(tmp2,tmp+16, 4);
+    macaddr[4] = atoi(tmp2);
+    strncpy(tmp2,tmp+20, 4);
+    macaddr[5] = atoi(tmp2);
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+}
+
+void SetParaametersFromAdressEEPROM(uint16_t Addr)
+{
+    printf("Set IP paraameters from adress eeprom 0x%.4X \n", Addr);
+    uint16_t numByte = settingsLen;
+    uint16_t * pnumByte = &numByte;
+    char tmp[settingsLen];
+    char tmp2[3];
+    int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
+    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
+    printf("settings:\n%s\n",tmp);
+
+    strncpy(tmp2,tmp,3);
+    ipaddr[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4,3);
+    ipaddr[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+8,3);
+    ipaddr[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12,3);
+    ipaddr[3] = atoi(tmp2);
+
+    strncpy(tmp2,tmp+15,3);
+    destip[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+19,3);
+    destip[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+23,3);
+    destip[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+27,3);
+    destip[3] = atoi(tmp2);
+
+    strncpy(tmp2,tmp+30,3);
+    ipgate[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+34,3);
+    ipgate[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+38,3);
+    ipgate[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+42,3);
+    ipgate[3] = atoi(tmp2);
+
+    strncpy(tmp2,tmp+45,3);
+    ipmask[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+49,3);
+    ipmask[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+53,3);
+    ipmask[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+57,3);
+    ipmask[3] = atoi(tmp2);
+
+    strncpy(MD5, tmp+60, 32);
+
+    printf("host_IP: %d.%d.%d.%d\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    printf("dest_IP: %d.%d.%d.%d\n",destip[0],destip[1],destip[2],destip[3]);
+    printf("gate_IP: %d.%d.%d.%d\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    printf("mask_IP: %d.%d.%d.%d\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    printf("md5: %s\n", MD5);
+}
+
 void copyParametersToEEPROM()
 {
-    UART_Printf("copy parameters to eeprom\n"); delayUS_ASM(10000);
+    Printf("\nCopy IP settings from SD to eeprom\n");
     char tmp[100];
     char tmp1[5];
     char tmp2[5];
@@ -312,7 +529,7 @@ void copyParametersToEEPROM()
     f_gets(tmp4, 5, &fil);
     f_close(&fil);
     sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    UART_Printf("host_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    Printf("host_IP:\n%s\n", tmp);
     lfs_file_open(&lfs, &file, "host_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -324,7 +541,7 @@ void copyParametersToEEPROM()
     f_gets(tmp4, 100, &fil);
     f_close(&fil);
     sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    UART_Printf("dest_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    Printf("dest_IP:\n%s\n", tmp);
     lfs_file_open(&lfs, &file, "dest_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -336,7 +553,7 @@ void copyParametersToEEPROM()
     f_gets(tmp4, 100, &fil);
     f_close(&fil);
     sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    UART_Printf("gate_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    Printf("gate_IP:\n%s\n", tmp);
     lfs_file_open(&lfs, &file, "gate_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -348,7 +565,7 @@ void copyParametersToEEPROM()
     f_gets(tmp4, 100, &fil);
     f_close(&fil);
     sprintf(tmp,"%.3s\r\n%.3s\r\n%.3s\r\n%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
-    UART_Printf("mask_IP:\n%s\n", tmp); delayUS_ASM(5000);
+    Printf("mask_IP:\n%s\n", tmp);
     lfs_file_open(&lfs, &file, "mask_IP", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
@@ -364,78 +581,84 @@ void copyParametersToEEPROM()
 
 void setParametersFromSD()
 {
-    char tmp[100];
-    char tmp1[5];
-    char tmp2[5];
-    char tmp3[5];
-    char tmp4[5];
+    Printf("\nSet IP Parameters from SD\n");
+    char tmp[33];
+    char tmp2[3];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_gets(tmp1, 5, &fil);
-    ipaddr[0] = atoi(tmp1);
-    f_gets(tmp2, 5, &fil);
+    f_gets(tmp, 16, &fil);
+    strncpy(tmp2,tmp,3);
+    ipaddr[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4,3);
     ipaddr[1] = atoi(tmp2);
-    f_gets(tmp3, 5, &fil);
-    ipaddr[2] = atoi(tmp3);
-    f_gets(tmp4, 5, &fil);
-    ipaddr[3] = atoi(tmp4);
-    sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    strncpy(tmp2,tmp+8,3);
+    ipaddr[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12,3);
+    ipaddr[3] = atoi(tmp2);
+    printf("host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
     f_close(&fil);
-    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
 
     f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_gets(tmp1, 100, &fil);
-    destip[0] = atoi(tmp1);
-    f_gets(tmp2, 100, &fil);
+    f_gets(tmp, 16, &fil);
+    strncpy(tmp2,tmp,3);
+    destip[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4,3);
     destip[1] = atoi(tmp2);
-    f_gets(tmp3, 100, &fil);
-    destip[2] = atoi(tmp3);
-    f_gets(tmp4, 100, &fil);
-    destip[3] = atoi(tmp4);
-    sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    strncpy(tmp2,tmp+8,3);
+    destip[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12,3);
+    destip[3] = atoi(tmp2);
+    printf("dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
     f_close(&fil);
-    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
 
     f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_gets(tmp1, 100, &fil);
-    ipgate[0] = atoi(tmp1);
-    f_gets(tmp2, 100, &fil);
+    f_gets(tmp, 16, &fil);
+    strncpy(tmp2,tmp,3);
+    ipgate[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4,3);
     ipgate[1] = atoi(tmp2);
-    f_gets(tmp3, 100, &fil);
-    ipgate[2] = atoi(tmp3);
-    f_gets(tmp4, 100, &fil);
-    ipgate[3] = atoi(tmp4);
-    sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    strncpy(tmp2,tmp+8,3);
+    ipgate[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12,3);
+    ipgate[3] = atoi(tmp2);
+    printf("gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     f_close(&fil);
-    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
 
     f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_gets(tmp1, 100, &fil);
-    ipmask[0] = atoi(tmp1);
-    f_gets(tmp2, 100, &fil);
+    f_gets(tmp, 16, &fil);
+    strncpy(tmp2,tmp,3);
+    ipmask[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4,3);
     ipmask[1] = atoi(tmp2);
-    f_gets(tmp3, 100, &fil);
-    ipmask[2] = atoi(tmp3);
-    f_gets(tmp4, 100, &fil);
-    ipmask[3] = atoi(tmp4);
-    sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    strncpy(tmp2,tmp+8,3);
+    ipmask[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12,3);
+    ipmask[3] = atoi(tmp2);
+    printf("mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
     f_close(&fil);
-    sprintf(tmp,"%.3s%.3s%.3s%.3s\r\n",tmp1,tmp2,tmp3,tmp4);
 
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
-    f_gets(tmp, 100, &fil);
+    f_gets(tmp, 33, &fil);
     strncpy(MD5, tmp, 32);
     f_close(&fil);
-    UART_Printf("md5: %s\n",MD5); delayUS_ASM(10000);
+    printf("md5: %s\n",MD5);
 
-    sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp, 24, &fil);
+    strncpy(tmp2,tmp,3);
+    macaddr[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4,3);
+    macaddr[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+8,3);
+    macaddr[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12,3);
+    macaddr[3] = atoi(tmp2);
+    strncpy(tmp2,tmp+16,3);
+    macaddr[4] = atoi(tmp2);
+    strncpy(tmp2,tmp+20,3);
+    macaddr[5] = atoi(tmp2);
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    f_close(&fil);
 }
 
 void SetParaametersFromEEPROM()
@@ -498,18 +721,18 @@ void SetParaametersFromEEPROM()
     strcpy(MD5, tmp);
 
     sprintf(tmp,"host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     sprintf(tmp,"dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     sprintf(tmp,"gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     sprintf(tmp,"mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
     sprintf(tmp,"md5: %s", MD5);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
-    UART_Printf(tmp); delayUS_ASM(10000);
+    Printf(tmp);
 }
 
 void wep_define_func(void)
@@ -533,8 +756,24 @@ void wep_define_func(void)
 
 void net_ini_WIZNET()
 {
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+    HAL_Delay(70);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    HAL_Delay(70);
     uint8_t sn_TCP = 0; // Сокет 0
     WIZCHIPInitialize();
+
+    for (int i =0; i < 6; ++i)
+    {
+        defaultNetInfo.mac[i] = macaddr[i];
+    }
+    for (int i =0; i < 4; ++i)
+    {
+        defaultNetInfo.ip[i] = ipaddr[i];
+        defaultNetInfo.gw[i] = ipgate[i];
+        defaultNetInfo.sn[i] = ipmask[i];
+    }
+
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
     print_network_information();
     socket(sn_TCP, Sn_MR_TCP, local_port, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
@@ -542,44 +781,75 @@ void net_ini_WIZNET()
         printf("socket %d listening\n", sn_TCP);
 }
 
-void workEEPROM()
+void workI2C_EEPROM()
 {
-    //  UART_Printf("Simple eeprom TEST\n"); delayUS_ASM(10000);
-    //  testEEPROM();
-      UART_Printf("LittleFsInit\n"); delayUS_ASM(10000);
-      littleFsInit();
-    //  UART_Printf("FsEeprom TEST ... "); delayUS_ASM(10000);
-    //  FsForEeprom_test();
+//      simpleTestI2C_EEPROM(0x7F80);
+
+//Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
+//      littleFsInit();
+//      Printf("FsEeprom TEST ... ");
+//      FsForEeprom_test();
 
     f_mount(&fs, "", 0);
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
     {
-        sdCartOn = 1;
-        UART_Printf("SD_READ\n");
-        delayUS_ASM(10000);
+        Printf("SD active\n");
+    }
+    else
+    {
+        sdCartOn = 0;
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
+
     }
 
     if (result != 0)
-        UART_Printf("SD_NOT_OPEN\n");
-        delayUS_ASM(10000);
+        printf("\nnot found SD\n\n");
     f_close(&fil);
 
     if (sdCartOn == 1)
     {
         setParametersFromSD();
+        copyParametersToAdressEEPROM(ipSettingAdressInEEPROM);
+        copyMacToAdressEEPROM(macAdressInEEPROM);
+        copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);
+        copyFileToAdressEEPROM("main.html", mainAdressInEEPROM);
+
+//lfs не использую
 //        copyParametersToEEPROM();
 //        copyFileToEEPROM("index.html");
 //        copyFileToEEPROM("main.html");
 
-    } else
+    } else //Работа с i2c eeprom
     {
-        SetParaametersFromEEPROM();
+        //Загружаем длины файлов
+        char tmp[5];
+        uint16_t numByteLen = 5;
+        uint16_t * len = &numByteLen;
+        BSP_EEPROM_ReadBuffer((uint8_t*)tmp, indexLenAdressInEEPROM, len);
+        indexLen = atoi(tmp);
+        printf("index.html len - %d\n", indexLen);
+        BSP_EEPROM_ReadBuffer((uint8_t*)tmp, mainLenAdressInEEPROM, len);
+        mainLen = atoi(tmp);
+        printf("main.html len - %d\n", mainLen);
+
+        SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
+        SetMacFromAdressEEPROM(macAdressInEEPROM);
+        loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLen,
+                                    mainAdressInEEPROM, mainLen,
+                                    ipSettingAdressInEEPROM, settingsLen);
+
+//        printFilesFromMemory(indexLen, mainLen);
+//        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLen); //index.html
+//        printFileFromAdressEEPROM(mainAdressInEEPROM, mainLen); //main.html
+
+//lfs не использую
+//        SetParaametersFromEEPROM();
 //        testReadFile("index.html");
 //        testReadFile("main.html");
 //        printFileFromEEPROM("index.html");
 //        printFileFromEEPROM("main.html");
-
     }
 }
 
@@ -687,6 +957,69 @@ void sendReceiveUDP()
 //        );
 }
 
+void testSpiEepromWritePage(uint32_t adr)
+{
+    uint8_t RxBuffer[256] = {0x00};
+    HAL_Delay(1000);
+    Printf("\nTest EEPROM_SPI_WritePage\n");
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+    Printf("eeprom before write: %s\n", RxBuffer);
+    Printf("Data to write: %s\n", TxBuffer);
+    EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
+    HAL_Delay(2000);
+//    EEPROM_PowerDown();
+//    HAL_Delay(1000);
+//    EEPROM_WakeUP();
+//    HAL_Delay(1000);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+    Printf("eeprom after write: %s\n", RxBuffer);
+
+}
+
+void testSpiEepromReadPage(uint32_t adr)
+{
+    uint8_t RxBuffer[256] = {0x00};
+    HAL_Delay(1000);
+    Printf("\nTest EEPROM_SPI_ReadPage\n");
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+//    HAL_Delay(2000);
+    Printf("RX Buffer after read: %s\n", RxBuffer);
+}
+
+void testSpiEepromWriteByte(uint32_t adr)
+{
+    uint8_t RxBuffer[256] = {0x00};
+    HAL_Delay(1000);
+    Printf("RX Buffer before write byte: %s\n", RxBuffer);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)128);
+    uint8_t byte[1] = "I";
+    EEPROM_SPI_WriteByte(byte, adr);
+    HAL_Delay(100);
+    EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)128);
+    Printf("RX Buffer awter write byte: %s\n", RxBuffer);
+}
+
+void testSPI_EEPROM()
+{
+    Printf("\n-- Tests_SPI_EEPROM --\n");
+
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+    EEPROM_SPI_INIT(&hspi3);
+    printEepromSpiStatus();
+
+//    EEPROM_CHIP_ERASE();
+//    HAL_Delay(10000);
+
+//    EEPROM_PAGE_ERASE(0x00000100);
+
+//    testSpiEepromWritePage(0x00000000);
+
+    testSpiEepromReadPage(0x00000000);
+
+//    testSpiEepromWriteByte(0x00000005);
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -729,9 +1062,15 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-    workEEPROM();
+    workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+
+    //Работа с SPI EEPROM
+    if (sdCartOn == 0)
+    {
+    //    testSPI_EEPROM();
+    }
 
   /* USER CODE END 2 */
 
@@ -740,8 +1079,12 @@ int main(void)
 
     prepearUDP_PLIS();
 
-//    tls_client_serverTest(); // работает
-    tls_server_sizeTest(); //Web сервер WolfSSL
+
+
+
+ //    tls_client_serverTest(); // работает
+//    tls_server_sizeTest(); //Web сервер WolfSSL
+//    polarSSLTest();
 
 //web serverWIZ - РАБОТАЕТ
 //    uint8_t i;
@@ -757,7 +1100,7 @@ int main(void)
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
 //      httpServer_run(0);
 
-//      net_poll(); //Старый код http сервер
+      net_poll(); //Старый код http сервер
 
 
       sendReceiveUDP();
@@ -830,7 +1173,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.ClockSpeed = 1000000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -1159,15 +1502,8 @@ static void MX_DMA_Init(void)
 
   /* DMA controller clock enable */
   __HAL_RCC_DMA2_CLK_ENABLE();
-  __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA1_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
-  /* DMA1_Stream5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
   /* DMA2_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
@@ -1184,12 +1520,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(CS_EEPROM_GPIO_Port, CS_EEPROM_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOE, WP_EEPROM_Pin|HOLD_EEPROM_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);
@@ -1206,6 +1548,13 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : CS_EEPROM_Pin WP_EEPROM_Pin HOLD_EEPROM_Pin */
+  GPIO_InitStruct.Pin = CS_EEPROM_Pin|WP_EEPROM_Pin|HOLD_EEPROM_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : OTG_FS_PowerSwitchOn_Pin PC4 PC5 */
   GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_4|GPIO_PIN_5;
@@ -1341,40 +1690,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-#if(0)
-    SPI1 - обмен в режиме мастер с W5500
-            SYN -  PA5
-            MISO - PA6
-            MOSI - PA7
 
-    W5500   SCLK - PA5
-            SCS  - PD11 выбор
-            INT  - PD8 вход INT
-            MOSI - PA7
-            RST  - PC9
-            MISO - PA6
-
-    SPI3 - обмен в режиме слейв с INTRON
-            SYN -  PC10
-            MISO - PC11
-            MOSI - PC12
-
-    SPI2 - обмен с ПЛИС
-            SYN  -  PB10 - 99
-            MISO -  PC2 - 101
-            MOSI -  PC3 - 103
-            CLK_EN - PC4 - 100
-            RESET  - PC5 - 104
-            TE_SEL - PC8 - 94 выбор тактирования (1 - внешнее)
-            FPGA_EN- PA8 - 96 (1 - разрешение работы общее)
-            CPU_INT- PB15 - 97  (Сигнал ПЛИС о готовности данных)
-            F0 -           135
-            C4 -           134
-
-F0 подаем на вход таймера TIM1 (PE9) и по переднему входу захват и переход в обработчик
-
-Между F0 - 125 мкс - 32 канала по 8 бит  - 256 бит
-Контроллер воспринимает как 64 байта (в два раза чаще)
-Считываем 16 байт (в реальности это 8 байт - 8 каналов) используется у нас только 4 или 5 каналов
-
-#endif

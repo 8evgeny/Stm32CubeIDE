@@ -40,5 +40,7 @@ extern SPI_HandleTypeDef 	hspi3;
 #define HSPI_SDCARD		 	&hspi3
 #define	SD_CS_PORT			GPIOD
 #define SD_CS_PIN			GPIO_PIN_2
+#define	SD_CS_PORT_EEPROM	GPIOE
+#define SD_CS_PIN_EEPROM	GPIO_PIN_2
 
 #endif

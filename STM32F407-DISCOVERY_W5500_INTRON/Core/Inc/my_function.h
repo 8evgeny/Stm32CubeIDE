@@ -52,7 +52,8 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 /* USER CODE BEGIN EFP */
-extern void UART_Printf(const char* fmt, ...);
+void UART_Printf(const char* fmt, ...);
+void Printf(const char* fmt, ...);
 void network_init(void);
 void  wizchip_select(void);
 void  wizchip_deselect(void);
@@ -65,9 +66,6 @@ void wizchip_initialize(void);
 /* Private defines -----------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
-#define DATA_BUF_SIZE   2048
-#define SOCK_TCPS        0
-#define SOCK_UDPS        1
 
 /* USER CODE END Private defines */
 

@@ -10,9 +10,9 @@ extern void Printf(const char* fmt, ...);
 
 uint8_t gDATABUF[DATA_BUF_SIZE];
 wiz_NetInfo defaultNetInfo = { .mac = {0x00, 0x00, 0x00,0x00, 0x00, 0x00},
-                            .ip = {192, 168, 1, 222},
-                            .sn = {255,255,255,0},
-                            .gw = {192, 168, 1, 1},
+                            .ip = {0, 0, 0, 0},
+                            .sn = {0,0,0,0},
+                            .gw = {0, 0, 0, 0},
                             .dns = {0,0,0,0},
                             .dhcp = NETINFO_STATIC };
 

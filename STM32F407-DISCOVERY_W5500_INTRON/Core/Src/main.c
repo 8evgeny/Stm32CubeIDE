@@ -775,6 +775,9 @@ void net_ini_WIZNET()
     WIZCHIPInitialize();
     for (int i =0;i<6;++i)
     {
+        defaultNetInfo.ip[i] = ipaddr[i];
+        defaultNetInfo.gw[i] = ipgate[i];
+        defaultNetInfo.sn[i] = ipmask[i];
         defaultNetInfo.mac[i] = macaddr[i];
     }
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);

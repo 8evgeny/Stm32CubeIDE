@@ -450,9 +450,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
-                    printf("*****  write new host IP to eeprom  *****\n");
-                    int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM, 20);
-                    printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM, result);
+printf("*****  write new host IP to eeprom  *****\n");
+int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM, 20);
+printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM, result);
                 }
             }
         }
@@ -523,9 +523,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
-                    printf("*****  write new mask IP to eeprom  *****\n");
-                    int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 60, 20);
-                    printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 60, result);
+printf("*****  write new mask IP to eeprom  *****\n");
+int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 60, 20);
+printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 60, result);
                 }
             }
         }
@@ -596,9 +596,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
-                    printf("*****  write new gate IP to eeprom  *****\n");
-                    int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 40, 20);
-                    printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 40, result);
+printf("*****  write new gate IP to eeprom  *****\n");
+int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 40, 20);
+printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 40, result);
                 }
             }
         }
@@ -669,9 +669,9 @@ void http_request(void)
                 }
                 else //EEPROM
                 {
-                    printf("*****  write new dest IP to eeprom  *****\n");
-                    int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 20, 20);
-                    printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 20, result);
+printf("*****  write new dest IP to eeprom  *****\n");
+int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 20, 20);
+printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 20, result);
                 }
             }
         }
@@ -703,9 +703,9 @@ void http_request(void)
             }
             else //EEPROM
             {
-                printf("*****  write new md5 to eeprom  *****\n");
-                int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 80, 33);
-                printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 80, result);
+printf("*****  write new md5 to eeprom  *****\n");
+int result = BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 80, 33);
+printf("Settings md5 write to adress 0x%.4X on eprom: %d", ipSettingAdressInEEPROM + 80, result);
             }
         }
 
@@ -769,33 +769,33 @@ MD5 hash:  d41d8cd98f00b204e9800998ecf8427e  (пустой пароль)
         }
         if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"host_IP", 7) == 0)
         {
-            f_size = 20;
+            f_size = 15;
             printf("host_IP request - %d byte\n", f_size);
             pfile = psettingsIP;
         }
         if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"dest_IP", 7) == 0)
         {
-            f_size = 20;
+            f_size = 15;
             printf("dest_IP request - %d byte\n", f_size);
-            pfile = psettingsIP + 20;
+            pfile = psettingsIP + 15;
         }
         if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"mask_IP", 7) == 0)
         {
-            f_size = 20;
+            f_size = 15;
             printf("mask_IP request - %d byte\n", f_size);
-            pfile = psettingsIP + 40;
+            pfile = psettingsIP + 30;
         }
         if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"gate_IP", 7) == 0)
         {
-            f_size = 20;
+            f_size = 15;
             printf("gate_IP request - %d byte\n", f_size);
-            pfile = psettingsIP + 60;
+            pfile = psettingsIP + 45;
         }
         if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"md5", 3) == 0)
         {
             f_size = 33;
             printf("md5 request - %d byte\n", f_size);
-            pfile = psettingsIP + 80;
+            pfile = psettingsIP + 60;
         }
     }
     if (result==FR_OK)

@@ -12,7 +12,7 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #add_definitions(-DINTRON)
 
 #Режим http / https
-#add_definitions(-DTLS_ON)
+add_definitions(-DTLS_ON)
 add_definitions(-UWOLFSSL_TLS13)
 add_definitions(-UMBEDTLS_SSL_CLI_C)
 add_definitions(-DMBEDTLS_SSL_SRV_C)

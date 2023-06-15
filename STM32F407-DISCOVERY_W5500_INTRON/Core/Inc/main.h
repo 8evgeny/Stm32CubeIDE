@@ -46,11 +46,56 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #define EEPROM_HOLD_Pin GPIO_PIN_1
 #define EEPROM_HOLD_GPIO_Port GPIOE
 
+/*
+EEPROM I2C : ATMEL 24C256
+32768 byte 0000 - 7FFF
+1MHz (2.5V, 2.7V, 5.0V) compatibility
+512 pages of 64-bytes each
+0000 - 00FF   256b   IP settings
+0100 - 010F   16b    длина index.html
+0110 - 011F   16b    длина main.html
+0120 - 019F   128b   mac
+01A0 - 03FF   резерв
+0400 - 07FF   2k   index.html
+0800 - 0BFF   3k
+0C00 - 0FFF   4k
+1000 - 13FF   5K
+1400 - 17FF   6k
+1800 - 1BFF   7k
+1C00 - 1FFF   8k
+2000 - 23FF   9K
+2400 - 27FF   10k   index.html
+2800 - 2BFF   11k   main.html
+2C00 - 2FFF   12k
+3000 - 33FF   13K
+3400 - 37FF   14k
+3800 - 3BFF   15k
+3C00 - 3FFF   16k
+4000 - 43FF   17K
+4400 - 47FF   18k
+4800 - 4BFF   19k
+4C00 - 4FFF   20k
+5000 - 53FF   21K
+5400 - 57FF   22k
+5800 - 5BFF   23k
+5C00 - 5FFF   24k
+6000 - 63FF   25K
+6400 - 67FF   26k   main.html
+6800 - 6BFF   27k   резерв
+6C00 - 6FFF   28k
+7000 - 73FF   29K
+7400 - 77FF   30k
+7800 - 7BFF   31k
+7C00 - 7FFF   32k
+*/
+
 #define  ipSettingAdressInEEPROM 0x0000
+#define  settingsLen 93
+#define  indexLenAdressInEEPROM 0x0100
+#define  mainLenAdressInEEPROM 0x0110
 #define  indexAdressInEEPROM 0x0400
-#define  indexLenInEEPROM 7705
 #define  mainAdressInEEPROM 0x2800
-#define  mainLenInEEPROM 13993
+#define  macAdressInEEPROM 0x0120
 
 #include "types.h"
 

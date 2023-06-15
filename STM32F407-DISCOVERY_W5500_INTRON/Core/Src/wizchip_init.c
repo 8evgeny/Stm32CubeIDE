@@ -9,10 +9,10 @@
 extern void Printf(const char* fmt, ...);
 
 uint8_t gDATABUF[DATA_BUF_SIZE];
-wiz_NetInfo defaultNetInfo = { .mac = {0x00, 0x08, 0xdc,0x00, 0xab, 0xcd},
-                            .ip = {192, 168, 1, 222},
-                            .sn = {255,255,255,0},
-                            .gw = {192, 168, 1, 1},
+wiz_NetInfo defaultNetInfo = { .mac = {0x00, 0x00, 0x00,0x00, 0x00, 0x00},
+                            .ip = {0, 0, 0, 0},
+                            .sn = {0,0,0,0},
+                            .gw = {0, 0, 0, 0},
                             .dns = {0,0,0,0},
                             .dhcp = NETINFO_STATIC };
 
@@ -88,7 +88,7 @@ void wizchip_cris_exit(void)
 void print_network_information(void)
 {
     wizchip_getnetinfo(&defaultNetInfo);
-    printf("Mac addr:\t%02x:%02x:%02x:%02x:%02x:%02x\n\r",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
+    printf("Mac addr:\t%02X:%02X:%02X:%02X:%02X:%02X\n\r",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
     printf("IP address:\t%d.%d.%d.%d\n\r",defaultNetInfo.ip[0],defaultNetInfo.ip[1],defaultNetInfo.ip[2],defaultNetInfo.ip[3]);
     printf("SM Mask:\t%d.%d.%d.%d\n\r",defaultNetInfo.sn[0],defaultNetInfo.sn[1],defaultNetInfo.sn[2],defaultNetInfo.sn[3]);
     printf("Gate way:\t%d.%d.%d.%d\n\r",defaultNetInfo.gw[0],defaultNetInfo.gw[1],defaultNetInfo.gw[2],defaultNetInfo.gw[3]);

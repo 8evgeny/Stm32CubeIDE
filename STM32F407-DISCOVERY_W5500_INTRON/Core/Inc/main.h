@@ -90,6 +90,7 @@ EEPROM I2C : ATMEL 24C256
 */
 
 #define  ipSettingAdressInEEPROM 0x0000
+#define  settingsLen 113
 #define  indexLenAdressInEEPROM 0x0100
 #define  mainLenAdressInEEPROM 0x0110
 #define  indexAdressInEEPROM 0x0400

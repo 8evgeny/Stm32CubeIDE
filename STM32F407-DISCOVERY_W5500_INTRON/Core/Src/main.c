@@ -55,11 +55,7 @@ uint32_t count = 0;
 uint8_t sdCartOn = 1;
 char *pindex;
 char *pmain;
-char *phost_IP;
-char *pdest_IP;
-char *pmask_IP;
-char *pgate_IP;
-char *pmd5;
+char *psettingsIP;
 
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -315,7 +311,7 @@ void copyFileToEEPROM(const char* nameFile_onSD)
 
 void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileIndex,
                                  uint16_t ReadAddrMain, uint16_t numByteFileMain,
-                                 uint16_t ReadAddrSettings)
+                                 uint16_t ReadAddrSettings, uint16_t numByteFileSettings )
 {
     uint16_t * numByteIndex = &numByteFileIndex;
     pindex = malloc(numByteFileIndex);
@@ -328,11 +324,10 @@ void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileInd
     printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileMain, ReadAddrMain, result);
 
     //Тут гружу в память настройки
-
-
-
-
-
+    uint16_t * numByteSettings = &numByteFileSettings;
+    psettingsIP = malloc(numByteFileSettings);
+    result = BSP_EEPROM_ReadBuffer((uint8_t*)psettingsIP, ReadAddrSettings, numByteSettings);
+    printf("read %d byte from adress 0x%.4X on eprom: %d\n", numByteFileSettings, ReadAddrSettings, result);
 }
 
 void printFilesFromMemory()
@@ -434,7 +429,7 @@ void copyParametersToAdressEEPROM(uint16_t Addr)
     f_gets(tmp+80, 33, &fil);
     f_close(&fil);
 //    printf("IP:\n%s\n",tmp);
-    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 113);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
     Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
 }
 
@@ -846,7 +841,7 @@ void workI2C_EEPROM()
         SetMacFromAdressEEPROM(macAdressInEEPROM);
         loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLen,
                                     mainAdressInEEPROM, mainLen,
-                                    ipSettingAdressInEEPROM);
+                                    ipSettingAdressInEEPROM, settingsLen);
 
 //        printFilesFromMemory(indexLen, mainLen);
 //        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLen); //index.html

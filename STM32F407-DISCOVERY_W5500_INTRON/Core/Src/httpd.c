@@ -418,7 +418,7 @@ void http_request(void)
 
             if ((temp[0] == ipaddr[0])&&(temp[1] == ipaddr[1])&&(temp[2] == ipaddr[2])&&(temp[3] == ipaddr[3]))
             {
-                 Printf("*****  hostIP not changed  *****\r\n");
+                 printf("*****  hostIP not changed  *****\r\n");
             }
             else
             {
@@ -432,9 +432,9 @@ void http_request(void)
                     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
+                        printf("*****  write new host IP to SD  *****\n");
                         UINT bw;
                         char lf[1] = {'\n'};
-                        printf("*****  write new host IP to SD  *****\n");
                         char tmp[16];
                         strncpy(tmp,host_IP_1,3);
                         strncpy(tmp+3,".",1);
@@ -459,40 +459,38 @@ void http_request(void)
 
         if (tmpbuf[0] == '2')
         {
-            char mask_IP_1[5];char mask_IP_2[5];char mask_IP_3[5];char mask_IP_4[5];
-            char tmp[100];
-    //        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_HOST CHANGE\r\n",strlen("IP_HOST CHANGE\r\n"),0x1000);
+            char mask_IP_1[3];char mask_IP_2[3];char mask_IP_3[3];char mask_IP_4[3];
             i=1;
             uint8_t j = 0;
             char oktet[3];
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
             //i указывает на '.'  j - колл скопированных символов
-            if (j == 3) {mask_IP_1[0] = oktet[0]; mask_IP_1[1] = oktet[1]; mask_IP_1[2] = oktet[2]; mask_IP_1[3] = '\n'; mask_IP_1[4] = 0x00;}
-            if (j == 2) {mask_IP_1[0] = '0'; mask_IP_1[1] = oktet[0]; mask_IP_1[2] = oktet[1]; mask_IP_1[3] = '\n'; mask_IP_1[4] = 0x00;}
-            if (j == 1) {mask_IP_1[0] = '0'; mask_IP_1[1] = '0'; mask_IP_1[2] = oktet[0]; mask_IP_1[3] = '\n'; mask_IP_1[4] = 0x00;}
+            if (j == 3) {mask_IP_1[0] = oktet[0]; mask_IP_1[1] = oktet[1]; mask_IP_1[2] = oktet[2]; }
+            if (j == 2) {mask_IP_1[0] = '0'; mask_IP_1[1] = oktet[0]; mask_IP_1[2] = oktet[1];}
+            if (j == 1) {mask_IP_1[0] = '0'; mask_IP_1[1] = '0'; mask_IP_1[2] = oktet[0];}
             temp[0] = atoi(mask_IP_1);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {mask_IP_2[0] = oktet[0]; mask_IP_2[1] = oktet[1]; mask_IP_2[2] = oktet[2]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
-            if (j == 2) {mask_IP_2[0] = '0'; mask_IP_2[1] = oktet[0]; mask_IP_2[2] = oktet[1]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
-            if (j == 1) {mask_IP_2[0] = '0'; mask_IP_2[1] = '0'; mask_IP_2[2] = oktet[0]; mask_IP_2[3] = '\n'; mask_IP_2[4] = 0x00;}
+            if (j == 3) {mask_IP_2[0] = oktet[0]; mask_IP_2[1] = oktet[1]; mask_IP_2[2] = oktet[2];}
+            if (j == 2) {mask_IP_2[0] = '0'; mask_IP_2[1] = oktet[0]; mask_IP_2[2] = oktet[1];}
+            if (j == 1) {mask_IP_2[0] = '0'; mask_IP_2[1] = '0'; mask_IP_2[2] = oktet[0]; }
             temp[1] = atoi(mask_IP_2);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {mask_IP_3[0] = oktet[0]; mask_IP_3[1] = oktet[1]; mask_IP_3[2] = oktet[2]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
-            if (j == 2) {mask_IP_3[0] = '0'; mask_IP_3[1] = oktet[0]; mask_IP_3[2] = oktet[1]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
-            if (j == 1) {mask_IP_3[0] = '0'; mask_IP_3[1] = '0'; mask_IP_3[2] = oktet[0]; mask_IP_3[3] = '\n'; mask_IP_3[4] = 0x00;}
+            if (j == 3) {mask_IP_3[0] = oktet[0]; mask_IP_3[1] = oktet[1]; mask_IP_3[2] = oktet[2];}
+            if (j == 2) {mask_IP_3[0] = '0'; mask_IP_3[1] = oktet[0]; mask_IP_3[2] = oktet[1];}
+            if (j == 1) {mask_IP_3[0] = '0'; mask_IP_3[1] = '0'; mask_IP_3[2] = oktet[0];}
             temp[2] = atoi(mask_IP_3);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'\0') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {mask_IP_4[0] = oktet[0]; mask_IP_4[1] = oktet[1]; mask_IP_4[2] = oktet[2]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
-            if (j == 2) {mask_IP_4[0] = '0'; mask_IP_4[1] = oktet[0]; mask_IP_4[2] = oktet[1]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
-            if (j == 1) {mask_IP_4[0] = '0'; mask_IP_4[1] = '0'; mask_IP_4[2] = oktet[0]; mask_IP_4[3] = '\n'; mask_IP_4[4] = 0x00;}
+            if (j == 3) {mask_IP_4[0] = oktet[0]; mask_IP_4[1] = oktet[1]; mask_IP_4[2] = oktet[2];}
+            if (j == 2) {mask_IP_4[0] = '0'; mask_IP_4[1] = oktet[0]; mask_IP_4[2] = oktet[1];}
+            if (j == 1) {mask_IP_4[0] = '0'; mask_IP_4[1] = '0'; mask_IP_4[2] = oktet[0];}
             temp[3] = atoi(mask_IP_4);
 
             if ((temp[0] == ipmask[0])&&(temp[1] == ipmask[1])&&(temp[2] == ipmask[2])&&(temp[3] == ipmask[3]))
             {
-                 Printf("*****  maskIP not changed  *****\r\n");
+                 printf("*****  maskIP not changed  *****\n");
             }
             else
             {
@@ -501,20 +499,25 @@ void http_request(void)
                 ipmask[2] = temp[2];
                 ipmask[3] = temp[3];
 
-                sprintf(tmp,"new mask IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-                UART_Printf(tmp);    delayUS_ASM(10000);
+                printf("new mask IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
                 if (sdCartOn == 1)
                 {
                     FRESULT result = f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
-                        printf("*****  write new mask IP to SD  *****\r\n");
-                        f_lseek(&fil, 0);
-                        f_puts(mask_IP_1, &fil);
-                        f_puts(mask_IP_2, &fil);
-                        f_puts(mask_IP_3, &fil);
-                        f_puts(mask_IP_4, &fil);
-                        f_sync(&fil);
+                        printf("*****  write new mask IP to SD  *****\n");
+                        UINT bw;
+                        char lf[1] = {'\n'};
+                        char tmp[16];
+                        strncpy(tmp,mask_IP_1,3);
+                        strncpy(tmp+3,".",1);
+                        strncpy(tmp+4,mask_IP_2,3);
+                        strncpy(tmp+7,".",1);
+                        strncpy(tmp+8,mask_IP_3,3);
+                        strncpy(tmp+11,".",1);
+                        strncpy(tmp+12,mask_IP_4,3);
+                        strncpy(tmp+15,lf, 1);
+                        f_write(&fil, tmp, 16, &bw);
                         f_close(&fil);
                     }
                 }
@@ -529,35 +532,33 @@ void http_request(void)
 
         if (tmpbuf[0] == '3')
         {
-            char gate_IP_1[5];char gate_IP_2[5];char gate_IP_3[5];char gate_IP_4[5];
-            char tmp[100];
-    //        HAL_UART_Transmit(&huart6,(uint8_t*)"IP_GATE CHANGE\r\n",strlen("IP_GATE CHANGE\r\n"),0x1000);
+            char gate_IP_1[3];char gate_IP_2[3];char gate_IP_3[3];char gate_IP_4[3];
             i=1;
             uint8_t j = 0;
             char oktet[3];
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
             //i указывает на '.'  j - колл скопированных символов
-            if (j == 3) {gate_IP_1[0] = oktet[0]; gate_IP_1[1] = oktet[1]; gate_IP_1[2] = oktet[2]; gate_IP_1[3] = '\n'; gate_IP_1[4] = 0x00;}
-            if (j == 2) {gate_IP_1[0] = '0'; gate_IP_1[1] = oktet[0]; gate_IP_1[2] = oktet[1]; gate_IP_1[3] = '\n'; gate_IP_1[4] = 0x00;}
-            if (j == 1) {gate_IP_1[0] = '0'; gate_IP_1[1] = '0'; gate_IP_1[2] = oktet[0]; gate_IP_1[3] = '\n'; gate_IP_1[4] = 0x00;}
+            if (j == 3) {gate_IP_1[0] = oktet[0]; gate_IP_1[1] = oktet[1]; gate_IP_1[2] = oktet[2];}
+            if (j == 2) {gate_IP_1[0] = '0'; gate_IP_1[1] = oktet[0]; gate_IP_1[2] = oktet[1];}
+            if (j == 1) {gate_IP_1[0] = '0'; gate_IP_1[1] = '0'; gate_IP_1[2] = oktet[0];}
             temp[0] = atoi(gate_IP_1);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {gate_IP_2[0] = oktet[0]; gate_IP_2[1] = oktet[1]; gate_IP_2[2] = oktet[2]; gate_IP_2[3] = '\n'; gate_IP_2[4] = 0x00;}
-            if (j == 2) {gate_IP_2[0] = '0'; gate_IP_2[1] = oktet[0]; gate_IP_2[2] = oktet[1]; gate_IP_2[3] = '\n'; gate_IP_2[4] = 0x00;}
-            if (j == 1) {gate_IP_2[0] = '0'; gate_IP_2[1] = '0'; gate_IP_2[2] = oktet[0]; gate_IP_2[3] = '\n'; gate_IP_2[4] = 0x00;}
+            if (j == 3) {gate_IP_2[0] = oktet[0]; gate_IP_2[1] = oktet[1]; gate_IP_2[2] = oktet[2];}
+            if (j == 2) {gate_IP_2[0] = '0'; gate_IP_2[1] = oktet[0]; gate_IP_2[2] = oktet[1];}
+            if (j == 1) {gate_IP_2[0] = '0'; gate_IP_2[1] = '0'; gate_IP_2[2] = oktet[0];}
             temp[1] = atoi(gate_IP_2);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {gate_IP_3[0] = oktet[0]; gate_IP_3[1] = oktet[1]; gate_IP_3[2] = oktet[2]; gate_IP_3[3] = '\n'; gate_IP_3[4] = 0x00;}
-            if (j == 2) {gate_IP_3[0] = '0'; gate_IP_3[1] = oktet[0]; gate_IP_3[2] = oktet[1]; gate_IP_3[3] = '\n'; gate_IP_3[4] = 0x00;}
-            if (j == 1) {gate_IP_3[0] = '0'; gate_IP_3[1] = '0'; gate_IP_3[2] = oktet[0]; gate_IP_3[3] = '\n'; gate_IP_3[4] = 0x00;}
+            if (j == 3) {gate_IP_3[0] = oktet[0]; gate_IP_3[1] = oktet[1]; gate_IP_3[2] = oktet[2];}
+            if (j == 2) {gate_IP_3[0] = '0'; gate_IP_3[1] = oktet[0]; gate_IP_3[2] = oktet[1];}
+            if (j == 1) {gate_IP_3[0] = '0'; gate_IP_3[1] = '0'; gate_IP_3[2] = oktet[0];}
             temp[2] = atoi(gate_IP_3);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'\0') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {gate_IP_4[0] = oktet[0]; gate_IP_4[1] = oktet[1]; gate_IP_4[2] = oktet[2]; gate_IP_4[3] = '\n'; gate_IP_4[4] = 0x00;}
-            if (j == 2) {gate_IP_4[0] = '0'; gate_IP_4[1] = oktet[0]; gate_IP_4[2] = oktet[1]; gate_IP_4[3] = '\n'; gate_IP_4[4] = 0x00;}
-            if (j == 1) {gate_IP_4[0] = '0'; gate_IP_4[1] = '0'; gate_IP_4[2] = oktet[0]; gate_IP_4[3] = '\n'; gate_IP_4[4] = 0x00;}
+            if (j == 3) {gate_IP_4[0] = oktet[0]; gate_IP_4[1] = oktet[1]; gate_IP_4[2] = oktet[2];}
+            if (j == 2) {gate_IP_4[0] = '0'; gate_IP_4[1] = oktet[0]; gate_IP_4[2] = oktet[1];}
+            if (j == 1) {gate_IP_4[0] = '0'; gate_IP_4[1] = '0'; gate_IP_4[2] = oktet[0];}
             temp[3] = atoi(gate_IP_4);
 
             if ((temp[0] == ipgate[0])&&(temp[1] == ipgate[1])&&(temp[2] == ipgate[2])&&(temp[3] == ipgate[3]))
@@ -571,20 +572,25 @@ void http_request(void)
                 ipgate[2] = temp[2];
                 ipgate[3] = temp[3];
 
-                sprintf(tmp,"new gate IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-                Printf(tmp);
+                printf("new gate IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
                 if (sdCartOn == 1)
                 {
                     FRESULT result = f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
                         printf("*****  write new gate IP to SD  *****\n");
-                        f_lseek(&fil, 0);
-                        f_puts(gate_IP_1, &fil);
-                        f_puts(gate_IP_2, &fil);
-                        f_puts(gate_IP_3, &fil);
-                        f_puts(gate_IP_4, &fil);
-                        f_sync(&fil);
+                        UINT bw;
+                        char lf[1] = {'\n'};
+                        char tmp[16];
+                        strncpy(tmp,gate_IP_1,3);
+                        strncpy(tmp+3,".",1);
+                        strncpy(tmp+4,gate_IP_2,3);
+                        strncpy(tmp+7,".",1);
+                        strncpy(tmp+8,gate_IP_3,3);
+                        strncpy(tmp+11,".",1);
+                        strncpy(tmp+12,gate_IP_4,3);
+                        strncpy(tmp+15,lf, 1);
+                        f_write(&fil, tmp, 16, &bw);
                         f_close(&fil);
                     }
                 }
@@ -599,35 +605,33 @@ void http_request(void)
 
         if (tmpbuf[0] == '4')
         {
-            char dest_IP_1[5];char dest_IP_2[5];char dest_IP_3[5];char dest_IP_4[5];
-            char tmp[100];
-//            HAL_UART_Transmit(&huart6,(uint8_t*)"IP_DEST CHANGE\r\n",strlen("IP_DEST CHANGE\r\n"),0x1000);
+            char dest_IP_1[3];char dest_IP_2[3];char dest_IP_3[3];char dest_IP_4[3];
             i=1;
             uint8_t j = 0;
             char oktet[3];
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
             //i указывает на '.'  j - колл скопированных символов
-            if (j == 3) {dest_IP_1[0] = oktet[0]; dest_IP_1[1] = oktet[1]; dest_IP_1[2] = oktet[2]; dest_IP_1[3] = '\n'; dest_IP_1[4] = 0x00;}
-            if (j == 2) {dest_IP_1[0] = '0'; dest_IP_1[1] = oktet[0]; dest_IP_1[2] = oktet[1]; dest_IP_1[3] = '\n'; dest_IP_1[4] = 0x00;}
-            if (j == 1) {dest_IP_1[0] = '0'; dest_IP_1[1] = '0'; dest_IP_1[2] = oktet[0]; dest_IP_1[3] = '\n'; dest_IP_1[4] = 0x00;}
+            if (j == 3) {dest_IP_1[0] = oktet[0]; dest_IP_1[1] = oktet[1]; dest_IP_1[2] = oktet[2];}
+            if (j == 2) {dest_IP_1[0] = '0'; dest_IP_1[1] = oktet[0]; dest_IP_1[2] = oktet[1];}
+            if (j == 1) {dest_IP_1[0] = '0'; dest_IP_1[1] = '0'; dest_IP_1[2] = oktet[0];}
             temp[0] = atoi(dest_IP_1);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {dest_IP_2[0] = oktet[0]; dest_IP_2[1] = oktet[1]; dest_IP_2[2] = oktet[2]; dest_IP_2[3] = '\n'; dest_IP_2[4] = 0x00;}
-            if (j == 2) {dest_IP_2[0] = '0'; dest_IP_2[1] = oktet[0]; dest_IP_2[2] = oktet[1]; dest_IP_2[3] = '\n'; dest_IP_2[4] = 0x00;}
-            if (j == 1) {dest_IP_2[0] = '0'; dest_IP_2[1] = '0'; dest_IP_2[2] = oktet[0]; dest_IP_2[3] = '\n'; dest_IP_2[4] = 0x00;}
+            if (j == 3) {dest_IP_2[0] = oktet[0]; dest_IP_2[1] = oktet[1]; dest_IP_2[2] = oktet[2];}
+            if (j == 2) {dest_IP_2[0] = '0'; dest_IP_2[1] = oktet[0]; dest_IP_2[2] = oktet[1];}
+            if (j == 1) {dest_IP_2[0] = '0'; dest_IP_2[1] = '0'; dest_IP_2[2] = oktet[0];}
             temp[1] = atoi(dest_IP_2);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {dest_IP_3[0] = oktet[0]; dest_IP_3[1] = oktet[1]; dest_IP_3[2] = oktet[2]; dest_IP_3[3] = '\n'; dest_IP_3[4] = 0x00;}
-            if (j == 2) {dest_IP_3[0] = '0'; dest_IP_3[1] = oktet[0]; dest_IP_3[2] = oktet[1]; dest_IP_3[3] = '\n'; dest_IP_3[4] = 0x00;}
-            if (j == 1) {dest_IP_3[0] = '0'; dest_IP_3[1] = '0'; dest_IP_3[2] = oktet[0]; dest_IP_3[3] = '\n'; dest_IP_3[4] = 0x00;}
+            if (j == 3) {dest_IP_3[0] = oktet[0]; dest_IP_3[1] = oktet[1]; dest_IP_3[2] = oktet[2];}
+            if (j == 2) {dest_IP_3[0] = '0'; dest_IP_3[1] = oktet[0]; dest_IP_3[2] = oktet[1];}
+            if (j == 1) {dest_IP_3[0] = '0'; dest_IP_3[1] = '0'; dest_IP_3[2] = oktet[0];}
             temp[2] = atoi(dest_IP_3);
             i++; j=0;
             while (1) {if(tmpbuf[i] == (uint8_t)'\0') break; oktet[j] = tmpbuf[i]; i++; j++; }
-            if (j == 3) {dest_IP_4[0] = oktet[0]; dest_IP_4[1] = oktet[1]; dest_IP_4[2] = oktet[2]; dest_IP_4[3] = '\n'; dest_IP_4[4] = 0x00;}
-            if (j == 2) {dest_IP_4[0] = '0'; dest_IP_4[1] = oktet[0]; dest_IP_4[2] = oktet[1]; dest_IP_4[3] = '\n'; dest_IP_4[4] = 0x00;}
-            if (j == 1) {dest_IP_4[0] = '0'; dest_IP_4[1] = '0'; dest_IP_4[2] = oktet[0]; dest_IP_4[3] = '\n'; dest_IP_4[4] = 0x00;}
+            if (j == 3) {dest_IP_4[0] = oktet[0]; dest_IP_4[1] = oktet[1]; dest_IP_4[2] = oktet[2];}
+            if (j == 2) {dest_IP_4[0] = '0'; dest_IP_4[1] = oktet[0]; dest_IP_4[2] = oktet[1];}
+            if (j == 1) {dest_IP_4[0] = '0'; dest_IP_4[1] = '0'; dest_IP_4[2] = oktet[0];}
             temp[3] = atoi(dest_IP_4);
 
             if ((temp[0] == destip[0])&&(temp[1] == destip[1])&&(temp[2] == destip[2])&&(temp[3] == destip[3]))
@@ -641,20 +645,25 @@ void http_request(void)
                 destip[2] = temp[2];
                 destip[3] = temp[3];
 
-                sprintf(tmp,"new dest IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
-                UART_Printf(tmp);    delayUS_ASM(10000);
+                printf("new dest IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
                 if (sdCartOn == 1)
                 {
                     FRESULT result = f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_WRITE );
                     if (result == 0)
                     {
                         printf("*****  write new dest IP to SD  *****\n");
-                        f_lseek(&fil, 0);
-                        f_puts(dest_IP_1, &fil);
-                        f_puts(dest_IP_2, &fil);
-                        f_puts(dest_IP_3, &fil);
-                        f_puts(dest_IP_4, &fil);
-                        f_sync(&fil);
+                        UINT bw;
+                        char lf[1] = {'\n'};
+                        char tmp[16];
+                        strncpy(tmp,dest_IP_1,3);
+                        strncpy(tmp+3,".",1);
+                        strncpy(tmp+4,dest_IP_2,3);
+                        strncpy(tmp+7,".",1);
+                        strncpy(tmp+8,dest_IP_3,3);
+                        strncpy(tmp+11,".",1);
+                        strncpy(tmp+12,dest_IP_4,3);
+                        strncpy(tmp+15,lf, 1);
+                        f_write(&fil, tmp, 16, &bw);
                         f_close(&fil);
                     }
                 }

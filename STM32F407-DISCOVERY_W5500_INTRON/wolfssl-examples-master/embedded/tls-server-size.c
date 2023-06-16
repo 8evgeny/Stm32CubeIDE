@@ -357,8 +357,9 @@ int tls_server_sizeTest()
 
 while(1)
 {
+    while (wolfSSL_want_read(server_ssl));
 //    wolfSSL_read(server_ssl, void* data, int sz)
-    wolfssl_recv(server_ssl);
+//    wolfssl_recv(server_ssl);
 
 }
 

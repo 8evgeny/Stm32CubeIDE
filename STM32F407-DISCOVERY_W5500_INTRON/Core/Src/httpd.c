@@ -784,13 +784,13 @@ MD5 hash:  d41d8cd98f00b204e9800998ecf8427e  (пустой пароль)
         {
             f_size = 15;
             printf("mask_IP request - %d byte\n", f_size);
-            pfile = psettingsIP + 30;
+            pfile = psettingsIP + 45;
         }
         if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"gate_IP", 7) == 0)
         {
             f_size = 15;
             printf("gate_IP request - %d byte\n", f_size);
-            pfile = psettingsIP + 45;
+            pfile = psettingsIP + 30;
         }
         if (strncmp(httpsockprop[tcpprop.cur_sock].fname,"md5", 3) == 0)
         {

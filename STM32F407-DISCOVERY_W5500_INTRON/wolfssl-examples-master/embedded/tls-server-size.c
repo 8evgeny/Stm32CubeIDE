@@ -129,11 +129,6 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
     if (server_buffer_sz <= 0)
         w5500_packetReceive_forTLS(0);
 
-    if (Handshake == 1)
-    {
-//        printf("server_buffer_sz = %d\n", server_buffer_sz);
-//        printf("sz = %d\n", sz);
-    }
     if (server_buffer_sz > 0)
     {
         if (sz > server_buffer_sz)

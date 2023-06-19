@@ -12,7 +12,7 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #add_definitions(-DINTRON)
 
 #Режим http / https
-#add_definitions(-DTLS_ON)
+add_definitions(-DTLS_ON)
 add_definitions(-UWOLFSSL_TLS13)
 add_definitions(-UMBEDTLS_SSL_CLI_C)
 add_definitions(-DMBEDTLS_SSL_SRV_C)
@@ -33,6 +33,7 @@ set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
 set (polarssl ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
+set (bearssl ${CMAKE_HOME_DIRECTORY}/bearSSL)
 
 #SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') //для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
@@ -78,7 +79,13 @@ include_directories(
     ${polarssl}
     ${polarssl}/mbedtls/include
     ${polarssl}/mbedtls/include/mbedtls
+    ${bearssl}/inc
+    ${bearssl}/samples
+    ${bearssl}/src
     )
+
+file (GLOB_RECURSE bear_src ${bearssl}/src/*.c)
+add_library(bearSSL_LIB ${bear_src})
 
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
 add_library(hal_LIB ${hal_src})
@@ -134,12 +141,15 @@ set(LINKER_FLAGS "SHELL: \
 target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
 target_link_libraries(${PROJECT_NAME}.elf PUBLIC
+#    -L${bearssl}/build/libbearssl.a
+#    -L${bearssl}/build/libbearssl.so
     hal_LIB
     ioLibrary_Driver_LIB
     fatfs_LIB
     littlefs_LIB
     wolfssl_LIB
     polarssl_LIB
+    bearSSL_LIB
     )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)

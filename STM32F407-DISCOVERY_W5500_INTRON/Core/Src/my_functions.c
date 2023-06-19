@@ -94,6 +94,11 @@ printf( " OK ..." );
 
 }
 
+void bearSSLTest()
+{
+
+
+}
 
 
 

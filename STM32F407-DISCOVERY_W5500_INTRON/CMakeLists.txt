@@ -84,9 +84,6 @@ include_directories(
     ${bearssl}/src
     )
 
-file (GLOB_RECURSE bear_src ${bearssl}/src/*.c)
-add_library(bearSSL_LIB ${bear_src})
-
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
 add_library(hal_LIB ${hal_src})
 
@@ -96,6 +93,9 @@ file (GLOB ioLibrary_Driver_src
     ${ioLibrary_Int}/*.c
     )
 add_library(ioLibrary_Driver_LIB ${ioLibrary_Driver_src})
+
+file (GLOB_RECURSE bear_src ${bearssl}/src/*.c  ioLibrary_Driver/Internet/httpServer/*.c)
+add_library(bearSSL_LIB ${bear_src} )
 
 file (GLOB fatfs_src FATFS/App/*.c FATFS/Target/*.c ${fatfs}/*.c ${fatfs}/option/*.c)
 add_library(fatfs_LIB ${fatfs_src})
@@ -141,8 +141,6 @@ set(LINKER_FLAGS "SHELL: \
 target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
 
 target_link_libraries(${PROJECT_NAME}.elf PUBLIC
-#    -L${bearssl}/build/libbearssl.a
-#    -L${bearssl}/build/libbearssl.so
     hal_LIB
     ioLibrary_Driver_LIB
     fatfs_LIB

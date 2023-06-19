@@ -11,6 +11,11 @@
 #include "my_function.h"
 #include "wizchip_init.h"
 #include "SSLInterface.h"
+
+#include "socket.h"
+#include "net.h"
+#include "httpServer.h"
+
 extern UART_HandleTypeDef huart6;
 
 void UART_Printf(const char* fmt, ...) {
@@ -94,19 +99,19 @@ printf( " OK ..." );
 
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <errno.h>
-#include <signal.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <stdint.h>
+//#include <errno.h>
+//#include <signal.h>
 
-#include <sys/types.h>
+//#include <sys/types.h>
 //#include <sys/socket.h>
 //#include <netdb.h>
 //#include <netinet/in.h>
 //#include <arpa/inet.h>
-#include <unistd.h>
+//#include <unistd.h>
 
 #include "bearssl.h"
 
@@ -167,6 +172,7 @@ printf( " OK ..." );
 static int
 host_bind(const char *host, const char *port)
 {
+    return 0;
 //    struct addrinfo hints, *si, *p;
 //    int fd;
 //    int err;
@@ -249,6 +255,8 @@ host_bind(const char *host, const char *port)
 //    return fd;
 }
 
+
+extern uint8_t getHTTPSocketNum(uint8_t seqnum);
 /*
  * Accept a single client on the provided server socket. This is blocking.
  * On error, this returns -1.
@@ -256,37 +264,45 @@ host_bind(const char *host, const char *port)
 static int
 accept_client(int server_fd)
 {
-//    int fd;
-//    struct sockaddr sa;
-//    socklen_t sa_len;
-//    char tmp[INET6_ADDRSTRLEN + 50];
-//    const char *name;
+    httpServer_run(0);
+    return 0;
 
-//    sa_len = sizeof sa;
-//    fd = accept(server_fd, &sa, &sa_len);
-//    if (fd < 0) {
-//        perror("accept()");
-//        return -1;
-//    }
-//    name = NULL;
-//    switch (sa.sa_family) {
-//    case AF_INET:
-//        name = inet_ntop(AF_INET,
-//            &((struct sockaddr_in *)&sa)->sin_addr,
-//            tmp, sizeof tmp);
-//        break;
-//    case AF_INET6:
-//        name = inet_ntop(AF_INET6,
-//            &((struct sockaddr_in6 *)&sa)->sin6_addr,
-//            tmp, sizeof tmp);
-//        break;
-//    }
-//    if (name == NULL) {
-//        sprintf(tmp, "<unknown: %lu>", (unsigned long)sa.sa_family);
-//        name = tmp;
-//    }
-//    fprintf(stderr, "accepting connection from: %s\n", name);
-//    return fd;
+
+//  uint8_t  s = getHTTPSocketNum(0);
+//  switch(getSn_SR(s))
+//  {
+//      case SOCK_ESTABLISHED:
+//          // Interrupt clear
+//          if(getSn_IR(s) & Sn_IR_CON)
+//          {
+//              setSn_IR(s, Sn_IR_CON);
+//          }
+
+//      case SOCK_CLOSE_WAIT:
+//          printf("> HTTPSocket[%d] : ClOSE_WAIT\r\n", s);	// if a peer requests to close the current connection
+//          disconnect(s);
+//          break;
+
+//      case SOCK_CLOSED:
+//          printf("> HTTPSocket[%d] : CLOSED\r\n", s);
+//          if(socket(s, Sn_MR_TCP, LOCAL_PORT, 0x00) == s)    /* Reinitialize the socket */
+//          {
+//              printf("> HTTPSocket[%d] : OPEN\r\n", s);
+//          }
+//          break;
+
+//      case SOCK_INIT:
+//          listen(s);
+//          break;
+
+//      case SOCK_LISTEN:
+//          break;
+
+//      default :
+//          break;
+//  }
+
+//  return s;
 }
 
 /*
@@ -295,6 +311,8 @@ accept_client(int server_fd)
 static int
 sock_read(void *ctx, unsigned char *buf, size_t len)
 {
+    return recv(0, (uint8_t *) buf, (uint16_t) len);
+
 //    for (;;) {
 //        ssize_t rlen;
 
@@ -315,6 +333,7 @@ sock_read(void *ctx, unsigned char *buf, size_t len)
 static int
 sock_write(void *ctx, const unsigned char *buf, size_t len)
 {
+    return send(0, (uint8_t *) buf, (uint16_t) len);
 //    for (;;) {
 //        ssize_t wlen;
 

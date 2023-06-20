@@ -14,7 +14,7 @@
 #endif
 
 #ifndef DATA_BUF_SIZE
-	#define DATA_BUF_SIZE		2048
+    #define DATA_BUF_SIZE		2048
 #endif
 
 /*****************************************************************************
@@ -41,7 +41,11 @@ st_http_socket HTTPSock_Status[_WIZCHIP_SOCK_NUM_] = { {STATE_HTTP_IDLE, }, };
 httpServer_webContent web_content[MAX_CONTENT_CALLBACK];
 
 #ifdef	_USE_SDCARD_
-FIL fs;		// FatFs: File object
+
+extern FATFS fs;
+extern FIL fil;
+
+//FIL fs;		// FatFs: File object
 FRESULT fr;	// FatFs: File function return code
 #endif
 
@@ -120,10 +124,8 @@ void httpServer_run(uint8_t seqnum)
 	uint16_t len;
 	uint32_t gettime = 0;
 
-#ifdef _HTTPSERVER_DEBUG_
 	uint8_t destip[4] = {0, };
 	uint16_t destport = 0;
-#endif
 
 	http_request = (st_http_request *)pHTTP_RX;		// Structure of HTTP Request
 	parsed_http_request = (st_http_request *)pHTTP_TX;
@@ -154,16 +156,12 @@ void httpServer_run(uint8_t seqnum)
 						*(((uint8_t *)http_request) + len) = '\0';
 
 						parse_http_request(parsed_http_request, (uint8_t *)http_request);
-#ifdef _HTTPSERVER_DEBUG_
 						getSn_DIPR(s, destip);
 						destport = getSn_DPORT(s);
 						printf("\r\n");
 						printf("> HTTPSocket[%d] : HTTP Request received ", s);
 						printf("from %d.%d.%d.%d : %d\r\n", destip[0], destip[1], destip[2], destip[3], destport);
-#endif
-#ifdef _HTTPSERVER_DEBUG_
 						printf("> HTTPSocket[%d] : [State] STATE_HTTP_REQ_DONE\r\n", s);
-#endif
 						// HTTP 'response' handler; includes send_http_response_header / body function
 						http_process_handler(s, parsed_http_request);
 
@@ -173,9 +171,7 @@ void httpServer_run(uint8_t seqnum)
 						{
 							if((get_httpServer_timecount() - gettime) > 3)
 							{
-#ifdef _HTTPSERVER_DEBUG_
 								printf("> HTTPSocket[%d] : [State] STATE_HTTP_REQ_DONE: TX Buffer clear timeout\r\n", s);
-#endif
 								break;
 							}
 						}
@@ -187,9 +183,7 @@ void httpServer_run(uint8_t seqnum)
 
 				case STATE_HTTP_RES_INPROC :
 					/* Repeat: Send the remain parts of HTTP responses */
-#ifdef _HTTPSERVER_DEBUG_
 					printf("> HTTPSocket[%d] : [State] STATE_HTTP_RES_INPROC\r\n", s);
-#endif
 					// Repeatedly send remaining data to client
 					send_http_response_body(s, 0, http_response, 0, 0);
 
@@ -197,9 +191,7 @@ void httpServer_run(uint8_t seqnum)
 					break;
 
 				case STATE_HTTP_RES_DONE :
-#ifdef _HTTPSERVER_DEBUG_
 					printf("> HTTPSocket[%d] : [State] STATE_HTTP_RES_DONE\r\n", s);
-#endif
 					// Socket file info structure re-initialize
 					HTTPSock_Status[seqnum].file_len = 0;
 					HTTPSock_Status[seqnum].file_offset = 0;
@@ -221,21 +213,15 @@ void httpServer_run(uint8_t seqnum)
 			break;
 
 		case SOCK_CLOSE_WAIT:
-#ifdef _HTTPSERVER_DEBUG_
-		printf("> HTTPSocket[%d] : ClOSE_WAIT\r\n", s);	// if a peer requests to close the current connection
-#endif
+            printf("> HTTPSocket[%d] : ClOSE_WAIT\r\n", s);	// if a peer requests to close the current connection
 			disconnect(s);
 			break;
 
 		case SOCK_CLOSED:
-#ifdef _HTTPSERVER_DEBUG_
 			printf("> HTTPSocket[%d] : CLOSED\r\n", s);
-#endif
 			if(socket(s, Sn_MR_TCP, HTTP_SERVER_PORT, 0x00) == s)    /* Reinitialize the socket */
 			{
-#ifdef _HTTPSERVER_DEBUG_
 				printf("> HTTPSocket[%d] : OPEN\r\n", s);
-#endif
 			}
 			break;
 
@@ -266,30 +252,22 @@ static void send_http_response_header(uint8_t s, uint8_t content_type, uint32_t 
 		case STATUS_OK: 		// HTTP/1.1 200 OK
 			if((content_type != PTYPE_CGI) && (content_type != PTYPE_XML)) // CGI/XML type request does not respond HTTP header
 			{
-#ifdef _HTTPSERVER_DEBUG_
-			printf("> HTTPSocket[%d] : HTTP Response Header - STATUS_OK\r\n", s);
-#endif
+                printf("> HTTPSocket[%d] : HTTP Response Header - STATUS_OK\r\n", s);
 				make_http_response_head((char*)http_response, content_type, body_len);
 			}
 			else
 			{
-#ifdef _HTTPSERVER_DEBUG_
-			printf("> HTTPSocket[%d] : HTTP Response Header - NONE / CGI or XML\r\n", s);
-#endif
+                printf("> HTTPSocket[%d] : HTTP Response Header - NONE / CGI or XML\r\n", s);
 				// CGI/XML type request does not respond HTTP header to client
 				http_status = 0;
 			}
 			break;
 		case STATUS_BAD_REQ: 	// HTTP/1.1 400 OK
-#ifdef _HTTPSERVER_DEBUG_
 			printf("> HTTPSocket[%d] : HTTP Response Header - STATUS_BAD_REQ\r\n", s);
-#endif
 			memcpy(http_response, ERROR_REQUEST_PAGE, sizeof(ERROR_REQUEST_PAGE));
 			break;
 		case STATUS_NOT_FOUND:	// HTTP/1.1 404 Not Found
-#ifdef _HTTPSERVER_DEBUG_
 			printf("> HTTPSocket[%d] : HTTP Response Header - STATUS_NOT_FOUND\r\n", s);
-#endif
 			memcpy(http_response, ERROR_HTML_PAGE, sizeof(ERROR_HTML_PAGE));
 			break;
 		default:
@@ -299,9 +277,7 @@ static void send_http_response_header(uint8_t s, uint8_t content_type, uint32_t 
 	// Send the HTTP Response 'header'
 	if(http_status)
 	{
-#ifdef _HTTPSERVER_DEBUG_
 		printf("> HTTPSocket[%d] : [Send] HTTP Response Header [ %d ]byte\r\n", s, (uint16_t)strlen((char *)http_response));
-#endif
 		send(s, http_response, strlen((char *)http_response));
 	}
 }
@@ -335,23 +311,16 @@ static void send_http_response_body(uint8_t s, uint8_t * uri_name, uint8_t * buf
 // ## 20141219 Eric added, for 'File object structure' (fs) allocation reduced (8 -> 1)
 			memset(HTTPSock_Status[get_seqnum].file_name, 0x00, MAX_CONTENT_NAME_LEN);
 			strcpy((char *)HTTPSock_Status[get_seqnum].file_name, (char *)uri_name);
-#ifdef _HTTPSERVER_DEBUG_
 			printf("> HTTPSocket[%d] : HTTP Response body - file name [ %s ]\r\n", s, HTTPSock_Status[get_seqnum].file_name);
-#endif
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef _HTTPSERVER_DEBUG_
 			printf("> HTTPSocket[%d] : HTTP Response body - file len [ %ld ]byte\r\n", s, file_len);
-#endif
 		}
 		else
 		{
 			// Send process end
 			send_len = file_len;
-
-#ifdef _HTTPSERVER_DEBUG_
 			printf("> HTTPSocket[%d] : HTTP Response end - file len [ %ld ]byte\r\n", s, send_len);
-#endif
 		}
 #ifdef _USE_FLASH_
 		if(HTTPSock_Status[get_seqnum]->storage_type == DATAFLASH) addr = start_addr;
@@ -374,15 +343,11 @@ static void send_http_response_body(uint8_t s, uint8_t * uri_name, uint8_t * buf
 		}
 		else
 		{
-#ifdef _HTTPSERVER_DEBUG_
 			printf("> HTTPSocket[%d] : HTTP Response end - file len [ %ld ]byte\r\n", s, HTTPSock_Status[get_seqnum].file_len);
-#endif
 			// Send process end
 			flag_datasend_end = 1;
 		}
-#ifdef _HTTPSERVER_DEBUG_
 			printf("> HTTPSocket[%d] : HTTP Response body - send len [ %ld ]byte\r\n", s, send_len);
-#endif
 	}
 
 /*****************************************************/
@@ -401,13 +366,11 @@ static void send_http_response_body(uint8_t s, uint8_t * uri_name, uint8_t * buf
 	else if(HTTPSock_Status[get_seqnum].storage_type == SDCARD)
 	{
 		// Data read from SD Card
-		fr = f_read(&fs, &buf[0], send_len, (void *)&blocklen);
+        fr = f_read(&fil, &buf[0], send_len, (void *)&blocklen);
 		if(fr != FR_OK)
 		{
 			send_len = 0;
-#ifdef _HTTPSERVER_DEBUG_
-		printf("> HTTPSocket[%d] : [FatFs] Error code return: %d (File Read) / HTTP Send Failed - %s\r\n", s, fr, HTTPSock_Status[get_seqnum].file_name);
-#endif
+            printf("> HTTPSocket[%d] : [FatFs] Error code return: %d (File Read) / HTTP Send Failed - %s\r\n", s, fr, HTTPSock_Status[get_seqnum].file_name);
 		}
 		else
 		{
@@ -429,9 +392,7 @@ static void send_http_response_body(uint8_t s, uint8_t * uri_name, uint8_t * buf
 		send_len = 0;
 	}
 	// Requested content send to HTTP client
-#ifdef _HTTPSERVER_DEBUG_
 	printf("> HTTPSocket[%d] : [Send] HTTP Response body [ %ld ]byte\r\n", s, send_len);
-#endif
 
 	if(send_len) send(s, buf, send_len);
 	else flag_datasend_end = 1;
@@ -446,14 +407,12 @@ static void send_http_response_body(uint8_t s, uint8_t * uri_name, uint8_t * buf
 	else
 	{
 		HTTPSock_Status[get_seqnum].file_offset += send_len;
-#ifdef _HTTPSERVER_DEBUG_
 		printf("> HTTPSocket[%d] : HTTP Response body - offset [ %ld ]\r\n", s, HTTPSock_Status[get_seqnum].file_offset);
-#endif
 	}
 
 // ## 20141219 Eric added, for 'File object structure' (fs) allocation reduced (8 -> 1)
 #ifdef _USE_SDCARD_
-	f_close(&fs);
+    f_close(&fil);
 #endif
 // ## 20141219 added end
 }
@@ -462,13 +421,9 @@ static void send_http_response_cgi(uint8_t s, uint8_t * buf, uint8_t * http_body
 {
 	uint16_t send_len = 0;
 
-#ifdef _HTTPSERVER_DEBUG_
 	printf("> HTTPSocket[%d] : HTTP Response Header + Body - CGI\r\n", s);
-#endif
 	send_len = sprintf((char *)buf, "%s%d\r\n\r\n%s", RES_CGIHEAD_OK, file_len, http_body);
-#ifdef _HTTPSERVER_DEBUG_
 	printf("> HTTPSocket[%d] : HTTP Response Header + Body - send len [ %d ]byte\r\n", s, send_len);
-#endif
 
 	send(s, buf, send_len);
 }
@@ -521,11 +476,9 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 			if (!strcmp((char *)uri_name, "mobile")) strcpy((char *)uri_name, MOBILE_INITIAL_WEBPAGE);
 			find_http_uri_type(&p_http_request->TYPE, uri_name);	// Checking requested file types (HTML, TEXT, GIF, JPEG and Etc. are included)
 
-#ifdef _HTTPSERVER_DEBUG_
 			printf("\r\n> HTTPSocket[%d] : HTTP Method GET\r\n", s);
 			printf("> HTTPSocket[%d] : Request Type = %d\r\n", s, p_http_request->TYPE);
 			printf("> HTTPSocket[%d] : Request URI = %s\r\n", s, uri_name);
-#endif
 
 			if(p_http_request->TYPE == PTYPE_CGI)
 			{
@@ -550,15 +503,16 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 				}
 				// Not CGI request, Web content in 'SD card' or 'Data flash' requested
 #ifdef _USE_SDCARD_
-#ifdef _HTTPSERVER_DEBUG_
 				printf("\r\n> HTTPSocket[%d] : Searching the requested content\r\n", s);
-#endif
-				if((fr = f_open(&fs, (const char *)uri_name, FA_READ)) == 0)
+                if((fr = f_open(&fil, (const char *)uri_name, FA_READ)) == 0)
 				{
 					content_found = 1; // file open succeed
 
-					file_len = fs.fsize;
-					content_addr = fs.sclust;
+                    file_len = fil.obj.objsize;
+
+            printf("len file %s: %d\n",(const char *)uri_name, file_len);
+
+                    content_addr = fil.obj.sclust;
 					HTTPSock_Status[get_seqnum].storage_type = SDCARD;
 				}
 #elif _USE_FLASH_
@@ -576,25 +530,19 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 
 				if(!content_found)
 				{
-#ifdef _HTTPSERVER_DEBUG_
 					printf("> HTTPSocket[%d] : Unknown Page Request\r\n", s);
-#endif
 					http_status = STATUS_NOT_FOUND;
 				}
 				else
 				{
-#ifdef _HTTPSERVER_DEBUG_
 					printf("> HTTPSocket[%d] : Find Content [%s] ok - Start [%ld] len [ %ld ]byte\r\n", s, uri_name, content_addr, file_len);
-#endif
 					http_status = STATUS_OK;
 				}
 
 				// Send HTTP header
 				if(http_status)
 				{
-#ifdef _HTTPSERVER_DEBUG_
 					printf("> HTTPSocket[%d] : Requested content len = [ %ld ]byte\r\n", s, file_len);
-#endif
 					send_http_response_header(s, p_http_request->TYPE, file_len, http_status);
 				}
 
@@ -611,18 +559,14 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 			uri_name = uri_buf;
 			find_http_uri_type(&p_http_request->TYPE, uri_name);	// Check file type (HTML, TEXT, GIF, JPEG are included)
 
-#ifdef _HTTPSERVER_DEBUG_
 			printf("\r\n> HTTPSocket[%d] : HTTP Method POST\r\n", s);
 			printf("> HTTPSocket[%d] : Request URI = %s ", s, uri_name);
 			printf("Type = %d\r\n", p_http_request->TYPE);
-#endif
 
 			if(p_http_request->TYPE == PTYPE_CGI)	// HTTP POST Method; CGI Process
 			{
 				content_found = http_post_cgi_handler(uri_name, p_http_request, http_response, &file_len);
-#ifdef _HTTPSERVER_DEBUG_
 				printf("> HTTPSocket[%d] : [CGI: %s] / Response len [ %ld ]byte\r\n", s, content_found?"Content found":"Content not found", file_len);
-#endif
 				if(content_found && (file_len <= (DATA_BUF_SIZE-(strlen(RES_CGIHEAD_OK)+8))))
 				{
 					send_http_response_cgi(s, pHTTP_TX, http_response, (uint16_t)file_len);

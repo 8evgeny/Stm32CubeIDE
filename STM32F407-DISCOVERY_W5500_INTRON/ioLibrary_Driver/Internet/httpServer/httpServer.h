@@ -12,15 +12,12 @@
 extern "C" {
 #endif
 
-// HTTP Server debug message enable
-#define _HTTPSERVER_DEBUG_
-
 #define INITIAL_WEBPAGE				"index.html"
 #define M_INITIAL_WEBPAGE			"m/index.html"
 #define MOBILE_INITIAL_WEBPAGE		"mobile/index.html"
 
 /* Web Server Content Storage Select */
-//#define _USE_SDCARD_
+#define _USE_SDCARD_
 #ifndef _USE_SDCARD_
 //#define _USE_FLASH_
 #endif

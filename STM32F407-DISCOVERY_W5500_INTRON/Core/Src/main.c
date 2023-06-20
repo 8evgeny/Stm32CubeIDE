@@ -812,10 +812,10 @@ void workI2C_EEPROM()
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-        copyParametersToAdressEEPROM(ipSettingAdressInEEPROM);
-        copyMacToAdressEEPROM(macAdressInEEPROM);
-        copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);
-        copyFileToAdressEEPROM("main.html", mainAdressInEEPROM);
+//        copyParametersToAdressEEPROM(ipSettingAdressInEEPROM);
+//        copyMacToAdressEEPROM(macAdressInEEPROM);
+//        copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);
+//        copyFileToAdressEEPROM("main.html", mainAdressInEEPROM);
 
 //lfs не использую
 //        copyParametersToEEPROM();
@@ -1081,25 +1081,24 @@ int main(void)
     prepearUDP_PLIS();
 
 //    tls_client_serverTest(); // работает
-    tls_server_sizeTest(); //Web сервер WolfSSL
+//    tls_server_sizeTest(); //Web сервер WolfSSL
 //    polarSSLTest();
 
 //web serverWIZ - РАБОТАЕТ
-//    uint8_t i;
-//    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
-//    wep_define_func();
-//    display_reg_webContent_list();
+    uint8_t i;
+    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
+    wep_define_func();
+    display_reg_webContent_list();
 
 //uint8_t firstSend = 1;
   while (1)
   {
 
 //web serverWIZ - РАБОТАЕТ
-//    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
 //      httpServer_run(0);
 
-      net_poll(); //Старый код http сервер
-
+//      net_poll(); //Старый код http сервер
 
       sendReceiveUDP();
 

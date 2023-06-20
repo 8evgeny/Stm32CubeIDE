@@ -26,7 +26,7 @@ typedef enum
 	On 	= 1
 } IO_Status_Type;
 
-uint16_t LED_pin_arr[3]={GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14};
+uint16_t LED_pin_arr[4]={GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14, GPIO_PIN_15 };
 
 // Pre-defined Get CGI functions
 void make_json_netinfo(uint8_t * buf, uint16_t * len);

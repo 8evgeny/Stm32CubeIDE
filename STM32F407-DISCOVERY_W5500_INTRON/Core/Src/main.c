@@ -1081,7 +1081,7 @@ int main(void)
     prepearUDP_PLIS();
 
 //    tls_client_serverTest(); // работает
-//    tls_server_sizeTest(); //Web сервер WolfSSL
+//    tls_server_sizeTest(); //Web сервер WolfSSL - раскомментировать #add_definitions(-DTLS_ON)
 //    polarSSLTest();
 
 //web serverWIZ - РАБОТАЕТ

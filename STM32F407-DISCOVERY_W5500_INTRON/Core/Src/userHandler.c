@@ -35,54 +35,54 @@ void make_json_netinfo(uint8_t * buf, uint16_t * len);
 int8_t set_diodir(uint8_t * uri);
 int8_t set_diostate(uint8_t * uri);
 
-//uint8_t predefined_get_cgi_processor(uint8_t * uri_name, uint8_t * buf, uint16_t * len)
-//{
-//	uint8_t ret = 1;	// ret = 1 means 'uri_name' matched
-//	//uint8_t cgibuf[14] = {0, };
-//	int8_t cgi_dio = -1;
-//	int8_t cgi_ain = -1;
+uint8_t predefined_get_cgi_processor(uint8_t * uri_name, uint8_t * buf, uint16_t * len)
+{
+    uint8_t ret = 1;	// ret = 1 means 'uri_name' matched
+    //uint8_t cgibuf[14] = {0, };
+    int8_t cgi_dio = -1;
+    int8_t cgi_ain = -1;
 
-//	if(strcmp((const char *)uri_name, "todo.cgi") == 0)
-//	{
-//		// to do
-//		;//make_json_todo(buf, len);
-//	}
-//	else if(strcmp((const char *)uri_name, "get_netinfo.cgi") == 0)
-//	{
-//		make_json_netinfo(buf, len);
-//	}
-//	else
-//	{
-//		if((cgi_dio < 0) && (cgi_ain < 0)) ret = 0;
-//	}
+    if(strcmp((const char *)uri_name, "todo.cgi") == 0)
+    {
+        // to do
+        ;//make_json_todo(buf, len);
+    }
+    else if(strcmp((const char *)uri_name, "get_netinfo.cgi") == 0)
+    {
+        make_json_netinfo(buf, len);
+    }
+    else
+    {
+        if((cgi_dio < 0) && (cgi_ain < 0)) ret = 0;
+    }
 
-//	return ret;
-//}
+    return ret;
+}
 
 
-//uint8_t predefined_set_cgi_processor(uint8_t * uri_name, uint8_t * uri, uint8_t * buf, uint16_t * len)
-//{
-//	uint8_t ret = 1;	// ret = '1' means 'uri_name' matched
-//	uint8_t val = 0;
+uint8_t predefined_set_cgi_processor(uint8_t * uri_name, uint8_t * uri, uint8_t * buf, uint16_t * len)
+{
+    uint8_t ret = 1;	// ret = '1' means 'uri_name' matched
+    uint8_t val = 0;
 
-//	if(strcmp((const char *)uri_name, "todo.cgi") == 0)
-//	{
-//		// to do
-//		;//val = todo(uri);
-//		//*len = sprintf((char *)buf, "%d", val);
-//	}
-//	else if(strcmp((const char *)uri_name, "set_diostate.cgi") == 0)
-//	{
-//		val = set_diostate(uri);
-//		*len = sprintf((char *)buf, "%d", val);
-//	}
-//	else
-//	{
-//		ret = 0;
-//	}
+    if(strcmp((const char *)uri_name, "todo.cgi") == 0)
+    {
+        // to do
+        ;//val = todo(uri);
+        //*len = sprintf((char *)buf, "%d", val);
+    }
+    else if(strcmp((const char *)uri_name, "set_diostate.cgi") == 0)
+    {
+        val = set_diostate(uri);
+        *len = sprintf((char *)buf, "%d", val);
+    }
+    else
+    {
+        ret = 0;
+    }
 
-//	return ret;
-//}
+    return ret;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Pre-defined Get CGI functions

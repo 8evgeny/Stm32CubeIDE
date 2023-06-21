@@ -1080,10 +1080,10 @@ int main(void)
     prepearUDP_PLIS();
 
     //web serverWIZ - РАБОТАЕТ
-//    uint8_t i;
-//    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
-//    wep_define_func();
-//    display_reg_webContent_list();
+    uint8_t i;
+    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
+    wep_define_func();
+    display_reg_webContent_list();
 
 //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL - раскомментировать #add_definitions(-DTLS_ON)
@@ -1096,9 +1096,9 @@ int main(void)
 
 //web serverWIZ - РАБОТАЕТ
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
-//      httpServer_run(0);
+      httpServer_run(0);
 
-      net_poll(); //Старый код http сервер
+//      net_poll(); //Старый код http сервер
 
       sendReceiveUDP();
 

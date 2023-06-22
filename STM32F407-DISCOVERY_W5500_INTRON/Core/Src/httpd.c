@@ -382,7 +382,7 @@ void http_request(void)
         if (strncmp (tmpbuf, "SET_HOST_IP", 11) == 0)
         {
             char host_IP_1[3];char host_IP_2[3];char host_IP_3[3];char host_IP_4[3];
-            i=1;
+            i=11;
             uint8_t j = 0;
             char oktet[3];
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
@@ -456,7 +456,7 @@ void http_request(void)
         if (strncmp (tmpbuf, "SET_MASK_IP", 11) == 0)
         {
             char mask_IP_1[3];char mask_IP_2[3];char mask_IP_3[3];char mask_IP_4[3];
-            i=1;
+            i=11;
             uint8_t j = 0;
             char oktet[3];
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
@@ -531,7 +531,7 @@ void http_request(void)
         if (strncmp (tmpbuf, "SET_GATE_IP", 11) == 0)
         {
             char gate_IP_1[3];char gate_IP_2[3];char gate_IP_3[3];char gate_IP_4[3];
-            i=1;
+            i=11;
             uint8_t j = 0;
             char oktet[3];
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
@@ -606,7 +606,7 @@ void http_request(void)
         if (strncmp (tmpbuf, "SET_DEST_IP", 11) == 0)
         {
             char dest_IP_1[3];char dest_IP_2[3];char dest_IP_3[3];char dest_IP_4[3];
-            i=1;
+            i=11;
             uint8_t j = 0;
             char oktet[3];
             while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }

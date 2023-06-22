@@ -138,10 +138,10 @@ void httpServer_run(uint8_t seqnum)
 	{
 		case SOCK_ESTABLISHED:
 			// Interrupt clear
-			if(getSn_IR(s) & Sn_IR_CON)
-			{
-				setSn_IR(s, Sn_IR_CON);
-			}
+            if(getSn_IR(s) & Sn_IR_CON)
+            {
+                setSn_IR(s, Sn_IR_CON);
+            }
 
 			// HTTP Process states
 			switch(HTTPSock_Status[seqnum].sock_status)

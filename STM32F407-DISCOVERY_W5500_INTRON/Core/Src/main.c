@@ -752,7 +752,7 @@ void wep_define_func(void)
 
     // Index page and netinfo / base64 image demo
     reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
-//    reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);                // main.html
+    reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);                // main.html
     reg_httpServer_webContent((uint8_t *)"host_IP", (uint8_t *)host_IP);
     reg_httpServer_webContent((uint8_t *)"dest_IP", (uint8_t *)dest_IP);
     reg_httpServer_webContent((uint8_t *)"gate_IP", (uint8_t *)gate_IP);
@@ -1112,9 +1112,9 @@ int main(void)
 
 //web serverWIZ - РАБОТАЕТ
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
-//      httpServer_run(0);
+      httpServer_run(0);
 
-      net_poll(); //Старый код http сервер
+//      net_poll(); //Старый код http сервер
 
       sendReceiveUDP();
 

@@ -678,18 +678,17 @@ void http_request(void)
             }
         }
 
-        if (tmpbuf[0] == '5') //Перезагрузка
+        if (strncmp (tmpbuf, "REBOOT", 6) == 0) //Перезагрузка
         {
             Printf("*****  REBOOT  *****\r\n");
 
             HAL_NVIC_SystemReset();
         }
 
-        if (tmpbuf[0] == '6') //Смена пароля
+        if (strncmp (tmpbuf, "SET_PASSWORD", 12) == 0)//Смена пароля
         {
             printf("*****  SET NEW PASSWORD  *****\r\n");
-            printf("new pasword hash: ");
-            printf(tmpbuf+1);
+            printf("new pasword hash: %.32s",tmpbuf+12);
             printf("\r\n");
             if (sdCartOn == 1)
             {
@@ -698,7 +697,7 @@ void http_request(void)
                 {
                     printf("*****  write new md5 to SD  *****\n");
                     f_lseek(&fil, 0);
-                    f_puts(tmpbuf+1, &fil);
+                    f_puts(tmpbuf+12, &fil);
                     f_sync(&fil);
                     f_close(&fil);
                 }
@@ -706,34 +705,34 @@ void http_request(void)
             else //EEPROM
             {
                 printf("*****  write new md5 to eeprom  *****\n");
-                BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+1), ipSettingAdressInEEPROM + 60, 33);
+                BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+12), ipSettingAdressInEEPROM + 60, 33);
             }
         }
 
-        if (tmpbuf[0] == 'l')
+        if (strncmp (tmpbuf, "LOGIN", 5) == 0)
         {
             Printf("*****  LOGIN  *****\r\n");
-            char login1[10] = {'l','a','d','m','i','n','\0'}; //первый символ всегда l
-            char login2[10] = {'l','u','s','e','r','\0'};
-            char login3[10] = {'l','1','2','3','\0'};
-            if ((strcmp(tmpbuf,login1) == 0) ||
-                (strcmp(tmpbuf,login2) == 0) ||
-                (strcmp(tmpbuf,login3) == 0))
+            char login1[10] = {'a','d','m','i','n','\0'};
+            char login2[10] = {'u','s','e','r','\0'};
+            char login3[10] = {'1','2','3','\0'};
+            if ((strcmp(tmpbuf + 5 ,login1) == 0) ||
+                (strcmp(tmpbuf + 5,login2) == 0) ||
+                (strcmp(tmpbuf + 5,login3) == 0))
             {
                 loginOK = 1;
             }
         }
 
-        if (tmpbuf[0] == 'p')
+        if (strncmp (tmpbuf, "PASSWORD", 8) == 0)
         {
             Printf("*****  PASSWORD  *****\r\n");
 /*
-первый символ всегда p  (qwe12345@)
-char md5[34] =
-{'p','5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b','3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
+(qwe12345@)
+char md5[33] =
+{'5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b','3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
 MD5 hash:  d41d8cd98f00b204e9800998ecf8427e  (пустой пароль)
 */
-            if (strncmp(tmpbuf + 1, MD5 , 32) == 0)
+            if (strncmp(tmpbuf + 8, MD5 , 32) == 0)
             {
                 Printf("password OK\r\n");
                 passwordOK = 1;

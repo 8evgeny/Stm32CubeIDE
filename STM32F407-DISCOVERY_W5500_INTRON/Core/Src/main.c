@@ -737,9 +737,27 @@ void SetParaametersFromEEPROM()
 
 void wep_define_func(void)
 {
+//    char host_IP[20] = {0};
+//    char dest_IP[20] = {0};
+//    char gate_IP[20] = {0};
+//    char mask_IP[20] = {0};
+    UINT br;
+    if (sdCartOn == 1)
+    {
+//        f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );f_read(&fil,host_IP, 16, &br);f_close(&fil); printf("host_IP: %s\n",host_IP);
+//        f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );f_read(&fil,dest_IP, 16, &br);f_close(&fil); printf("dest_IP: %s\n",dest_IP);
+//        f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );f_read(&fil,gate_IP, 16, &br);f_close(&fil); printf("gate_IP: %s\n",gate_IP);
+//        f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );f_read(&fil,mask_IP, 16, &br);f_close(&fil); printf("mask_IP: %s\n",mask_IP);
+    }
+
     // Index page and netinfo / base64 image demo
     reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
-//    reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);
+//    reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);                // main.html
+    reg_httpServer_webContent((uint8_t *)"host_IP", (uint8_t *)host_IP);
+    reg_httpServer_webContent((uint8_t *)"dest_IP", (uint8_t *)dest_IP);
+    reg_httpServer_webContent((uint8_t *)"gate_IP", (uint8_t *)gate_IP);
+    reg_httpServer_webContent((uint8_t *)"mask_IP", (uint8_t *)mask_IP);
+
     reg_httpServer_webContent((uint8_t *)"netinfo.html", (uint8_t *)netinfo_page);			// netinfo.html 	: Network information example page
     reg_httpServer_webContent((uint8_t *)"netinfo.js", (uint8_t *)w5x00web_netinfo_js);     // netinfo.js 		: JavaScript for Read Network configuration 	(+ ajax.js)
     reg_httpServer_webContent((uint8_t *)"img.html", (uint8_t *)img_page);					// img.html 		: Base64 Image data example page
@@ -1094,9 +1112,9 @@ int main(void)
 
 //web serverWIZ - РАБОТАЕТ
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
-      httpServer_run(0);
+//      httpServer_run(0);
 
-//      net_poll(); //Старый код http сервер
+      net_poll(); //Старый код http сервер
 
       sendReceiveUDP();
 

@@ -354,8 +354,6 @@ const char index_page[] =
         "</script></body></html>"
 ;
 
-
-
 const char main_page[] =
         "<!DOCTYPE html> "
         "<html lang='ru'>"
@@ -739,15 +737,16 @@ const char main_page[] =
         "</html>"
 ;
 
-#define host_IP "192.168.001.222"\
-" "
-#define dest_IP "192.168.001.200"\
-" "
+//#define host_IP "192.168.001.222"
+//#define dest_IP "192.168.001.200"
+//#define gate_IP "192.168.001.001"
+//#define mask_IP "255.255.255.000"
+char host_IP[] = "192.168.001.222";
+char dest_IP[] = "192.168.001.200";
+char gate_IP[] = "192.168.001.001";
+char mask_IP[] = "255.255.255.000";
 
-#define gate_IP "192.168.001.001"\
-" "
-#define mask_IP "255.255.255.000"\
-" "
+
 
 //                              "<html>"\
 //								"<head>"\

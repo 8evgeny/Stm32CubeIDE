@@ -124,6 +124,7 @@ void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_cris_enter(void);
 void 	wizchip_cris_exit(void);
+void reboot();
 #include "stdio.h"
 #include "my_function.h"
 /* USER CODE END Includes */

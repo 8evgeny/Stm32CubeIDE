@@ -8,6 +8,8 @@
 #include "httpServer.h"
 #include "httpParser.h"
 #include "httpUtil.h"
+#include "stm32f4xx_hal.h"
+#include "main.h"
 
 #ifdef	_USE_SDCARD_
 #include "ff.h" 	// header file for FatFs library (FAT file system)
@@ -474,7 +476,28 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 			if (!strcmp((char *)uri_name, "/")) strcpy((char *)uri_name, INITIAL_WEBPAGE);	// If URI is "/", respond by index.html
 			if (!strcmp((char *)uri_name, "m")) strcpy((char *)uri_name, M_INITIAL_WEBPAGE);
 			if (!strcmp((char *)uri_name, "mobile")) strcpy((char *)uri_name, MOBILE_INITIAL_WEBPAGE);
-			find_http_uri_type(&p_http_request->TYPE, uri_name);	// Checking requested file types (HTML, TEXT, GIF, JPEG and Etc. are included)
+
+if (strncmp ((char *)uri_name, "SET_HOST_IP", 11) == 0)
+    printf("SET_HOST_IP\n");
+if (strncmp ((char *)uri_name, "SET_MASK_IP", 11) == 0)
+    printf("SET_MASK_IP\n");
+if (strncmp ((char *)uri_name, "SET_GATE_IP", 11) == 0)
+    printf("SET_GATE_IP\n");
+if (strncmp ((char *)uri_name, "SET_DEST_IP", 11) == 0)
+    printf("SET_DEST_IP\n");
+if (strncmp ((char *)uri_name, "SET_PASSWORD", 12) == 0)
+    printf("SET_PASSWORD\n");
+if (strncmp ((char *)uri_name, "REBOOT", 6) == 0) //Перезагрузка
+    reboot();
+
+if (strncmp ((char *)uri_name, "LOGIN", 5) == 0)
+    printf("LOGIN\n");
+if (strncmp ((char *)uri_name, "PASSWORD", 8) == 0)
+    printf("PASSWORD\n");
+
+
+
+            find_http_uri_type(&p_http_request->TYPE, uri_name);	// Checking requested file types (HTML, TEXT, GIF, JPEG and Etc. are included)
 
 			printf("\r\n> HTTPSocket[%d] : HTTP Method GET\r\n", s);
 			printf("> HTTPSocket[%d] : Request Type = %d\r\n", s, p_http_request->TYPE);

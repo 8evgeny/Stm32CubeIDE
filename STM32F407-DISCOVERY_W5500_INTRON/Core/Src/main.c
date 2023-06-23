@@ -1036,6 +1036,12 @@ void testSPI_EEPROM()
 
 }
 
+void reboot()
+{
+    printf("*****  REBOOT  *****\r\n");
+    HAL_NVIC_SystemReset();
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -1112,9 +1118,9 @@ int main(void)
 
 //web serverWIZ - РАБОТАЕТ
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
-//      httpServer_run(0);
 
-      net_poll(); //Старый код http сервер
+      httpServer_run(0);
+//      net_poll(); //Старый код http сервер
 
       sendReceiveUDP();
 

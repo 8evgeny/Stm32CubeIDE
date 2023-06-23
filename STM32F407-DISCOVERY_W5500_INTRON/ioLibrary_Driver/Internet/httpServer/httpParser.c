@@ -129,6 +129,7 @@ void parse_http_request(
 	uint8_t * buf				/**< pointer to be parsed */
 	)
 {
+  printf("-- parse_http_request --\n");
   char * nexttok;
   nexttok = strtok((char*)buf," ");
   if(!nexttok)

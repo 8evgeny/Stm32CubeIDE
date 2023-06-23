@@ -1112,9 +1112,9 @@ int main(void)
 
 //web serverWIZ - РАБОТАЕТ
 //    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
-      httpServer_run(0);
+//      httpServer_run(0);
 
-//      net_poll(); //Старый код http сервер
+      net_poll(); //Старый код http сервер
 
       sendReceiveUDP();
 

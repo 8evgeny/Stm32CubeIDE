@@ -100,7 +100,7 @@ void find_http_uri_type(
 	buf = (char *)buff;
 
 	if 	(strstr(buf, ".htm")	|| strstr(buf, ".html"))	*type = PTYPE_HTML;
-//    if 	(strstr(buf, "index_IP") || strstr(buf, "mask_IP") || strstr(buf, "dest_IP") || strstr(buf, "gate_IP")) *type = PTYPE_HTML;
+    else if 	(strstr(buf, "index_IP") || strstr(buf, "mask_IP") || strstr(buf, "dest_IP") || strstr(buf, "gate_IP")) *type = PTYPE_HTML;
 	else if (strstr(buf, ".gif"))							*type = PTYPE_GIF;
 	else if (strstr(buf, ".text") 	|| strstr(buf,".txt"))	*type = PTYPE_TEXT;
 	else if (strstr(buf, ".jpeg") 	|| strstr(buf,".jpg"))	*type = PTYPE_JPEG;

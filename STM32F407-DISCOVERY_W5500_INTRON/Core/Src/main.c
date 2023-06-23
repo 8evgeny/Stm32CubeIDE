@@ -1046,7 +1046,6 @@ void reboot()
 
 void checkLogin(char* buf)
 {
-    Printf("*****  LOGIN  *****\r\n");
     char login1[10] = {'a','d','m','i','n','\0'};
     char login2[10] = {'u','s','e','r','\0'};
     char login3[10] = {'1','2','3','\0'};

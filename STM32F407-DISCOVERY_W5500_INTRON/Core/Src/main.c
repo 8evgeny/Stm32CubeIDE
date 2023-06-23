@@ -1087,6 +1087,80 @@ void checkPassword(char* buf)
     }
 }
 
+void setNewHostIP(char * tmpbuf)
+{
+    uint8_t temp[4];
+    char host_IP_1[3];char host_IP_2[3];char host_IP_3[3];char host_IP_4[3];
+    int i=11;
+    uint8_t j = 0;
+    char oktet[3];
+    while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+    //i указывает на '.'  j - колл скопированных символов
+    if (j == 3) {host_IP_1[0] = oktet[0]; host_IP_1[1] = oktet[1]; host_IP_1[2] = oktet[2];}
+    if (j == 2) {host_IP_1[0] = '0'; host_IP_1[1] = oktet[0]; host_IP_1[2] = oktet[1];}
+    if (j == 1) {host_IP_1[0] = '0'; host_IP_1[1] = '0'; host_IP_1[2] = oktet[0];}
+    temp[0] = atoi(host_IP_1);
+    i++; j=0;
+    while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+    if (j == 3) {host_IP_2[0] = oktet[0]; host_IP_2[1] = oktet[1]; host_IP_2[2] = oktet[2];}
+    if (j == 2) {host_IP_2[0] = '0'; host_IP_2[1] = oktet[0]; host_IP_2[2] = oktet[1];}
+    if (j == 1) {host_IP_2[0] = '0'; host_IP_2[1] = '0'; host_IP_2[2] = oktet[0];}
+    temp[1] = atoi(host_IP_2);
+    i++; j=0;
+    while (1) {if(tmpbuf[i] == (uint8_t)'.') break; oktet[j] = tmpbuf[i]; i++; j++; }
+    if (j == 3) {host_IP_3[0] = oktet[0]; host_IP_3[1] = oktet[1]; host_IP_3[2] = oktet[2];}
+    if (j == 2) {host_IP_3[0] = '0'; host_IP_3[1] = oktet[0]; host_IP_3[2] = oktet[1];}
+    if (j == 1) {host_IP_3[0] = '0'; host_IP_3[1] = '0'; host_IP_3[2] = oktet[0];}
+    temp[2] = atoi(host_IP_3);
+    i++; j=0;
+    while (1) {if(tmpbuf[i] == (uint8_t)'\0') break; oktet[j] = tmpbuf[i]; i++; j++; }
+    if (j == 3) {host_IP_4[0] = oktet[0]; host_IP_4[1] = oktet[1]; host_IP_4[2] = oktet[2];}
+    if (j == 2) {host_IP_4[0] = '0'; host_IP_4[1] = oktet[0]; host_IP_4[2] = oktet[1];}
+    if (j == 1) {host_IP_4[0] = '0'; host_IP_4[1] = '0'; host_IP_4[2] = oktet[0];}
+    temp[3] = atoi(host_IP_4);
+
+    if ((temp[0] == ipaddr[0])&&(temp[1] == ipaddr[1])&&(temp[2] == ipaddr[2])&&(temp[3] == ipaddr[3]))
+    {
+         printf("*****  hostIP not changed  *****\r\n");
+    }
+    else
+    {
+        ipaddr[0] = temp[0];
+        ipaddr[1] = temp[1];
+        ipaddr[2] = temp[2];
+        ipaddr[3] = temp[3];
+        printf("new host IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+        if (sdCartOn == 1)
+        {
+            FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_WRITE );
+            if (result == 0)
+            {
+                printf("*****  write new host IP to SD  *****\n");
+                UINT bw;
+                char lf[1] = {'\n'};
+                char tmp[16];
+                strncpy(tmp,host_IP_1,3);
+                strncpy(tmp+3,".",1);
+                strncpy(tmp+4,host_IP_2,3);
+                strncpy(tmp+7,".",1);
+                strncpy(tmp+8,host_IP_3,3);
+                strncpy(tmp+11,".",1);
+                strncpy(tmp+12,host_IP_4,3);
+                strncpy(tmp+15,lf, 1);
+                f_write(&fil, tmp, 16, &bw);
+                f_close(&fil);
+            }
+        }
+        else //EEPROM
+        {
+            printf("*****  write new host IP to eeprom  *****\n");
+            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_1, ipSettingAdressInEEPROM, 3);
+            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_2, ipSettingAdressInEEPROM + 4, 3);
+            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_3, ipSettingAdressInEEPROM + 8, 3);
+            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_4, ipSettingAdressInEEPROM + 12, 3);
+        }
+    }
+}
 
 /* USER CODE END 0 */
 

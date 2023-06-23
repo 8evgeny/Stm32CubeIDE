@@ -493,6 +493,8 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
             {
                 printf("SET_HOST_IP\n");
                 strcpy((char *)uri_name, "SET_HOST_IP");
+                setNewHostIP((char *)(uri_name + 11));
+                printf("SET_HOST_IP %s\n",(char *)(uri_name + 11));
             }
             if (strncmp ((char *)uri_name, "SET_MASK_IP", 11) == 0)
             {

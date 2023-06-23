@@ -471,8 +471,13 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     char tmp[settingsLen];
     char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-//    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
-//    printf("settings:\n%s\n",tmp);
+    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
+    printf("settings:\n%s\n",tmp);
+
+    strncpy(host_IP,tmp,15);
+    strncpy(dest_IP,tmp+15,15);
+    strncpy(gate_IP,tmp+30,15);
+    strncpy(mask_IP,tmp+45,15);
 
     strncpy(tmp2,tmp,3);
     ipaddr[0] = atoi(tmp2);

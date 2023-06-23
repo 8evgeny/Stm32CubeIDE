@@ -407,13 +407,28 @@ void copyMacToAdressEEPROM(uint16_t Addr)
 {
     printf("\nCopy MAC adress from SD to adress 0x%.4X eeprom\n",Addr);
     char tmp[24];
-    f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
-    UINT rc;
-    f_read(&fil, tmp, 24, &rc);
-    f_close(&fil);
-    printf("MAC:\n%s\n",tmp);
-    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 24);
-    Printf("MAC write to adress 0x%.4X on eprom: %d", Addr, result);
+    FRESULT result = f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
+    if (result == FR_OK)
+    {
+        UINT rc;
+        f_read(&fil, tmp, 24, &rc);
+        f_close(&fil);
+        printf("MAC:\n%s\n",tmp);
+        int open = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 24);
+        printf("MAC write from SD to adress 0x%.4X on eprom: %d", Addr, open);
+    }
+    else
+    {
+        //стираем EEPROM (mac)
+
+
+        //Устанавливаем mac по умолчанию
+
+
+    }
+
+
+
 }
 
 void copyParametersToAdressEEPROM(uint16_t Addr)

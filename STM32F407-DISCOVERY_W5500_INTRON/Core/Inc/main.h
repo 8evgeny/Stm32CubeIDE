@@ -127,7 +127,10 @@ void 	wizchip_cris_exit(void);
 void reboot();
 void checkLogin(char* buf);
 void checkPassword(char* buf);
-void setNewHostIP();
+void setNewHostIP(char * buf);
+void setNewMaskIP(char * buf);
+void setNewGateIP(char * buf);
+void setNewDestIP(char * buf);
 #include "stdio.h"
 #include "my_function.h"
 /* USER CODE END Includes */

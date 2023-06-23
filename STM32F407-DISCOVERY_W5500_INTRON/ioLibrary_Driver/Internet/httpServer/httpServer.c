@@ -490,23 +490,17 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 
             }
             if (strncmp ((char *)uri_name, "SET_HOST_IP", 11) == 0)
-            {
-                printf("SET_HOST_IP\n");
                 setNewHostIP((char *)(uri_name) + 11);
-            }
+
             if (strncmp ((char *)uri_name, "SET_MASK_IP", 11) == 0)
-            {
-                printf("SET_MASK_IP\n");
-            }
+                setNewMaskIP((char *)(uri_name) + 11);
 
             if (strncmp ((char *)uri_name, "SET_GATE_IP", 11) == 0)
-            {
-                printf("SET_GATE_IP\n");
-            }
+                setNewGateIP((char *)(uri_name) + 11);
+
             if (strncmp ((char *)uri_name, "SET_DEST_IP", 11) == 0)
-            {
-                printf("SET_DEST_IP\n");
-            }
+                setNewDestIP((char *)(uri_name) + 11);
+
             if (strncmp ((char *)uri_name, "SET_PASSWORD", 12) == 0)
             {
                 printf("SET_PASSWORD\n");

@@ -10,7 +10,7 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
 #Закомментировать при прошивке DT
 #add_definitions(-DINTRON)
-add_definitions(-DNEW_HTTP_SERVER)
+#add_definitions(-DNEW_HTTP_SERVER)
 #Режим http / https
 #add_definitions(-DTLS_ON)
 add_definitions(-UWOLFSSL_TLS13)

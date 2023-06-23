@@ -489,9 +489,8 @@ if (strncmp ((char *)uri_name, "SET_PASSWORD", 12) == 0)
     printf("SET_PASSWORD\n");
 if (strncmp ((char *)uri_name, "REBOOT", 6) == 0) //Перезагрузка
     reboot();
-
 if (strncmp ((char *)uri_name, "LOGIN", 5) == 0)
-    printf("LOGIN\n");
+    checkLogin((char *)uri_name);
 if (strncmp ((char *)uri_name, "PASSWORD", 8) == 0)
     printf("PASSWORD\n");
 

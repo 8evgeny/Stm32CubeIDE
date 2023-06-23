@@ -707,16 +707,7 @@ void http_request(void)
 
         if (strncmp (tmpbuf, "LOGIN", 5) == 0)
         {
-            Printf("*****  LOGIN  *****\r\n");
-            char login1[10] = {'a','d','m','i','n','\0'};
-            char login2[10] = {'u','s','e','r','\0'};
-            char login3[10] = {'1','2','3','\0'};
-            if ((strcmp(tmpbuf + 5 ,login1) == 0) ||
-                (strcmp(tmpbuf + 5,login2) == 0) ||
-                (strcmp(tmpbuf + 5,login3) == 0))
-            {
-                loginOK = 1;
-            }
+            checkLogin(tmpbuf);
         }
 
         if (strncmp (tmpbuf, "PASSWORD", 8) == 0)

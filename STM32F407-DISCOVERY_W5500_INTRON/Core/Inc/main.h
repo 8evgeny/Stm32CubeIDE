@@ -125,6 +125,7 @@ void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_cris_enter(void);
 void 	wizchip_cris_exit(void);
 void reboot();
+void checkLogin(char* buf);
 #include "stdio.h"
 #include "my_function.h"
 /* USER CODE END Includes */

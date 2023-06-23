@@ -65,6 +65,7 @@ extern lfs_file_t file;
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port = LOCAL_PORT;
 extern uint8_t bufRead[5];
+extern uint8_t loginOK;
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -1041,6 +1042,26 @@ void reboot()
     printf("*****  REBOOT  *****\r\n");
     HAL_NVIC_SystemReset();
 }
+
+void checkLogin(char* buf)
+{
+    Printf("*****  LOGIN  *****\r\n");
+    char login1[10] = {'a','d','m','i','n','\0'};
+    char login2[10] = {'u','s','e','r','\0'};
+    char login3[10] = {'1','2','3','\0'};
+    if ((strcmp(buf + 5 ,login1) == 0) ||
+        (strcmp(buf + 5,login2) == 0) ||
+        (strcmp(buf + 5,login3) == 0))
+    {
+        printf("Login OK\n");
+        loginOK = 1;
+    }
+    else
+    {
+        printf("Login not found!!!\n");
+    }
+}
+
 
 /* USER CODE END 0 */
 

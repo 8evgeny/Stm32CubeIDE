@@ -132,9 +132,10 @@ extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
 char MD5[32];
+#ifndef   NEW_HTTP_SERVER
 uint32_t indexLen;
 uint32_t mainLen;
-
+#endif
 uint8_t destip[4];
 extern uint8_t macaddr[6];
 extern wiz_NetInfo defaultNetInfo;
@@ -337,6 +338,7 @@ void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileInd
 
 void printFilesFromMemory()
 {
+#ifndef   NEW_HTTP_SERVER
     Printf("\nprintFilesFromMemory\n\n");
         for (int i = 0; i < indexLen; ++i)
         {
@@ -349,6 +351,7 @@ void printFilesFromMemory()
             Printf("%c", pmain[i]);
         }
         Printf("\n");
+#endif
 }
 
 void printFileFromAdressEEPROM(uint16_t ReadAddr, uint16_t numByteFile)
@@ -751,19 +754,7 @@ void SetParaametersFromEEPROM()
 
 void wep_define_func(void)
 {
-//    char host_IP[20] = {0};
-//    char dest_IP[20] = {0};
-//    char gate_IP[20] = {0};
-//    char mask_IP[20] = {0};
-    UINT br;
-    if (sdCartOn == 1)
-    {
-//        f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );f_read(&fil,host_IP, 16, &br);f_close(&fil); printf("host_IP: %s\n",host_IP);
-//        f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );f_read(&fil,dest_IP, 16, &br);f_close(&fil); printf("dest_IP: %s\n",dest_IP);
-//        f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );f_read(&fil,gate_IP, 16, &br);f_close(&fil); printf("gate_IP: %s\n",gate_IP);
-//        f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );f_read(&fil,mask_IP, 16, &br);f_close(&fil); printf("mask_IP: %s\n",mask_IP);
-    }
-
+#ifdef   NEW_HTTP_SERVER
     // Index page and netinfo / base64 image demo
     reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
     reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);                // main.html
@@ -782,6 +773,7 @@ void wep_define_func(void)
 
     // AJAX JavaScript functions
     reg_httpServer_webContent((uint8_t *)"ajax.js", (uint8_t *)w5x00web_ajax_js);			// ajax.js			: JavaScript for AJAX request transfer
+#endif
 }
 
 void net_ini_WIZNET()
@@ -831,21 +823,20 @@ void workI2C_EEPROM()
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
-
     }
 
     if (result != 0)
         printf("not found SD\n");
     f_close(&fil);
-
     if (sdCartOn == 1)
     {
         setParametersFromSD();
         copyParametersToAdressEEPROM(ipSettingAdressInEEPROM);
         copyMacToAdressEEPROM(macAdressInEEPROM);
+#ifndef   NEW_HTTP_SERVER
         copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);
         copyFileToAdressEEPROM("main.html", mainAdressInEEPROM);
-
+#endif
 //lfs не использую
 //        copyParametersToEEPROM();
 //        copyFileToEEPROM("index.html");
@@ -853,6 +844,9 @@ void workI2C_EEPROM()
 
     } else //Работа с i2c eeprom
     {
+        SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
+        SetMacFromAdressEEPROM(macAdressInEEPROM);
+#ifndef   NEW_HTTP_SERVER
         //Загружаем длины файлов
         char tmp[5];
         uint16_t numByteLen = 5;
@@ -864,15 +858,13 @@ void workI2C_EEPROM()
         mainLen = atoi(tmp);
         printf("main.html len - %d\n", mainLen);
 
-        SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
-        SetMacFromAdressEEPROM(macAdressInEEPROM);
         loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLen,
                                     mainAdressInEEPROM, mainLen,
                                     ipSettingAdressInEEPROM, settingsLen);
-
 //        printFilesFromMemory(indexLen, mainLen);
 //        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLen); //index.html
 //        printFileFromAdressEEPROM(mainAdressInEEPROM, mainLen); //main.html
+#endif
 
 //lfs не использую
 //        SetParaametersFromEEPROM();
@@ -1473,11 +1465,12 @@ int main(void)
 
     prepearUDP_PLIS();
 
-    //web serverWIZ - РАБОТАЕТ
-//    uint8_t i;
+#ifdef   NEW_HTTP_SERVER //web serverWIZ
+    uint8_t i;
     httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
     wep_define_func();
     display_reg_webContent_list();
+#endif
 
 //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL - раскомментировать #add_definitions(-DTLS_ON)
@@ -1488,11 +1481,12 @@ int main(void)
   while (1)
   {
 
-//web serverWIZ - РАБОТАЕТ
-//    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
-
-      httpServer_run(0);
-//      net_poll(); //Старый код http сервер
+#ifdef   NEW_HTTP_SERVER
+    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+#endif
+#ifndef   NEW_HTTP_SERVER
+      net_poll();
+#endif
 
       sendReceiveUDP();
 
@@ -1501,6 +1495,8 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
   }
+
+
   /* USER CODE END 3 */
 }
 

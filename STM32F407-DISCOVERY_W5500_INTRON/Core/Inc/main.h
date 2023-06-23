@@ -31,7 +31,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #define SERVER_PORT			8883
 /* I/O buffer size - wolfSSL buffers messages internally as well. */
 #define BUFFER_SIZE         2048
-#define MAX_HTTPSOCK	4
+#define MAX_HTTPSOCK	1 //Для нового WEB-сервера
 #ifdef INTRON
 
 #define MAC_ADDR {0x00,0x15,0x42,0xBF,0xF0,0x51}

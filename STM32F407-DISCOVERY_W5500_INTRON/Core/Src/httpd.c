@@ -2,6 +2,9 @@
 #include "lfs.h"
 #include "eeprom.h"
 
+uint8_t loginOK = 0;
+uint8_t passwordOK = 0;
+#ifndef   NEW_HTTP_SERVER
 extern UART_HandleTypeDef huart6;
 extern char str1[60];
 extern char tmpbuf[30];
@@ -13,9 +16,6 @@ extern uint8_t destip[4];
 extern uint8_t sdCartOn;
 extern char MD5[32];
 uint8_t temp[4];
-uint8_t passwordOK = 0;
-uint8_t loginOK = 0;
-
 extern uint32_t indexLen;
 extern uint32_t mainLen;
 uint32_t f_size;
@@ -545,4 +545,4 @@ void http_request(void)
         tcp_send_http_first();
     }
 }
-
+#endif

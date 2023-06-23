@@ -1,6 +1,5 @@
 #ifndef HTTPD_H_
 #define HTTPD_H_
-//--------------------------------------------------
 #include "stm32f4xx_hal.h"
 #include <string.h>
 #include <stdlib.h>
@@ -27,5 +26,4 @@ typedef struct http_sock_prop {
 #define EXISTING_ICO 3
 //--------------------------------------------------
 void http_request(void);
-//--------------------------------------------------
 #endif /* HTTPD_H_ */

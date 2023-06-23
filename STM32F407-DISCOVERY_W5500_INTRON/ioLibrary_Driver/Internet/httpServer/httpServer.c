@@ -60,7 +60,7 @@ FRESULT fr;	// FatFs: File function return code
 void httpServer_Sockinit(uint8_t cnt, uint8_t * socklist);
 static uint8_t getHTTPSocketNum(uint8_t seqnum);
 static int8_t getHTTPSequenceNum(uint8_t socket);
-static int8_t http_disconnect(uint8_t sn);
+static int8_t http_disconnect(uint8_t sn); //отключил - иначе ошибки
 
 static void http_process_handler(uint8_t s, st_http_request * p_http_request);
 static void send_http_response_header(uint8_t s, uint8_t content_type, uint32_t body_len, uint16_t http_status);

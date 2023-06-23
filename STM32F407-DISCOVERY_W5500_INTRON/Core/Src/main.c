@@ -65,8 +65,8 @@ extern lfs_file_t file;
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port = LOCAL_PORT;
 extern uint8_t bufRead[5];
-extern uint8_t loginOK;
-extern uint8_t passwordOK;
+uint8_t loginOK = 0;
+uint8_t passwordOK = 0;
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 

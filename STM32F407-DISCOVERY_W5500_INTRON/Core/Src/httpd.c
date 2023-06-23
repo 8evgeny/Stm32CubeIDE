@@ -1,10 +1,9 @@
+#ifndef   NEW_HTTP_SERVER
 #include "httpd.h"
 #include "lfs.h"
 #include "eeprom.h"
-
-uint8_t loginOK = 0;
-uint8_t passwordOK = 0;
-#ifndef   NEW_HTTP_SERVER
+extern uint8_t loginOK;
+extern uint8_t passwordOK;
 extern UART_HandleTypeDef huart6;
 extern char str1[60];
 extern char tmpbuf[30];

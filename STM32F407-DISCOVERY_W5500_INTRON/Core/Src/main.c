@@ -141,7 +141,10 @@ extern wiz_NetInfo defaultNetInfo;
 uint8_t RX_BUF[DATA_BUF_SIZE];
 uint8_t TX_BUF[DATA_BUF_SIZE];
 uint8_t socknumlist[] = {0, 1, 2, 3};
-
+extern char host_IP[16]; //для http Сервера
+extern char dest_IP[16];
+extern char gate_IP[16];
+extern char mask_IP[16];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -588,6 +591,7 @@ void setParametersFromSD()
     char tmp2[3];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp, 16, &fil);
+    strcpy(host_IP, tmp);
     strncpy(tmp2,tmp,3);
     ipaddr[0] = atoi(tmp2);
     strncpy(tmp2,tmp+4,3);
@@ -601,6 +605,7 @@ void setParametersFromSD()
 
     f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp, 16, &fil);
+    strcpy(dest_IP, tmp);
     strncpy(tmp2,tmp,3);
     destip[0] = atoi(tmp2);
     strncpy(tmp2,tmp+4,3);
@@ -614,6 +619,7 @@ void setParametersFromSD()
 
     f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp, 16, &fil);
+    strcpy(gate_IP, tmp);
     strncpy(tmp2,tmp,3);
     ipgate[0] = atoi(tmp2);
     strncpy(tmp2,tmp+4,3);
@@ -627,6 +633,7 @@ void setParametersFromSD()
 
     f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp, 16, &fil);
+    strcpy(mask_IP, tmp);
     strncpy(tmp2,tmp,3);
     ipmask[0] = atoi(tmp2);
     strncpy(tmp2,tmp+4,3);

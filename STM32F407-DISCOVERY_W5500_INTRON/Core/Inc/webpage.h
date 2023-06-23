@@ -737,17 +737,13 @@ const char main_page[] =
         "</html>"
 ;
 
-//#define host_IP "192.168.001.222"
-//#define dest_IP "192.168.001.200"
-//#define gate_IP "192.168.001.001"
-//#define mask_IP "255.255.255.000"
-char host_IP[] = "192.168.001.222";
-char dest_IP[] = "192.168.001.200";
-char gate_IP[] = "192.168.001.001";
-char mask_IP[] = "255.255.255.000";
+//Перезаписываются при загрузке параметров с SD или EEPROM
+char host_IP[16] = "192.168.001.222";
+char dest_IP[16] = "192.168.001.200";
+char gate_IP[16] = "192.168.001.001";
+char mask_IP[16] = "255.255.255.000";
 
-
-
+//Код WIZNET
 //                              "<html>"\
 //								"<head>"\
 //								"<title>w5x00 Web Server</title>"\

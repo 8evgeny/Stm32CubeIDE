@@ -209,7 +209,7 @@ void httpServer_run(uint8_t seqnum)
 #ifdef _USE_WATCHDOG_
 					HTTPServer_WDT_Reset();
 #endif
-					http_disconnect(s);
+//					http_disconnect(s);
 					break;
 
 				default :

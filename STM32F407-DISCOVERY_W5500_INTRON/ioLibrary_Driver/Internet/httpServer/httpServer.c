@@ -433,15 +433,15 @@ static void send_http_response_cgi(uint8_t s, uint8_t * buf, uint8_t * http_body
 	send(s, buf, send_len);
 }
 
+//Если отсоединяться - теряются запросы
+//static int8_t http_disconnect(uint8_t sn)
+//{
+//	setSn_CR(sn,Sn_CR_DISCON);
+//	/* wait to process the command... */
+//	while(getSn_CR(sn));
 
-static int8_t http_disconnect(uint8_t sn)
-{
-	setSn_CR(sn,Sn_CR_DISCON);
-	/* wait to process the command... */
-	while(getSn_CR(sn));
-
-	return SOCK_OK;
-}
+//	return SOCK_OK;
+//}
 
 
 static void http_process_handler(uint8_t s, st_http_request * p_http_request)
@@ -492,26 +492,29 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
             if (strncmp ((char *)uri_name, "SET_HOST_IP", 11) == 0)
             {
                 printf("SET_HOST_IP\n");
-                strcpy((char *)uri_name, "host_IP");
+                strcpy((char *)uri_name, "SET_HOST_IP");
             }
             if (strncmp ((char *)uri_name, "SET_MASK_IP", 11) == 0)
             {
                 printf("SET_MASK_IP\n");
-                strcpy((char *)uri_name, "mask_IP");
+                strcpy((char *)uri_name, "SET_MASK_IP");
             }
 
             if (strncmp ((char *)uri_name, "SET_GATE_IP", 11) == 0)
             {
                 printf("SET_GATE_IP\n");
-                strcpy((char *)uri_name, "gate_IP");
+                strcpy((char *)uri_name, "SET_GATE_IP");
             }
             if (strncmp ((char *)uri_name, "SET_DEST_IP", 11) == 0)
             {
                 printf("SET_DEST_IP\n");
-                strcpy((char *)uri_name, "dest_IP");
+                strcpy((char *)uri_name, "SET_DEST_IP");
             }
             if (strncmp ((char *)uri_name, "SET_PASSWORD", 12) == 0)
+            {
                 printf("SET_PASSWORD\n");
+                strcpy((char *)uri_name, "SET_PASSWORD");
+            }
             if (strncmp ((char *)uri_name, "REBOOT", 6) == 0) //Перезагрузка
                 reboot();
             if (strncmp ((char *)uri_name, "LOGIN", 5) == 0)

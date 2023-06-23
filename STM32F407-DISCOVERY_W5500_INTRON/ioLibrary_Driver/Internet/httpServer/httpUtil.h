@@ -8,7 +8,7 @@
  * @author	
  * \n\n @par Copyright (C) 1998 - 2014 WIZnet. All rights reserved.
  */
-
+#ifdef NEW_HTTP_SERVER
 #ifndef	__HTTPUTIL_H__
 #define	__HTTPUTIL_H__
 
@@ -29,4 +29,5 @@ uint8_t predefined_set_cgi_processor(uint8_t * uri_name, uint8_t * uri, uint8_t 
 }
 #endif
 
+#endif
 #endif

@@ -1,8 +1,4 @@
-/**
- @file		httpd.h
- @brief 		Define Constants and fucntions associated with HTTP protocol.
- */
-
+#ifdef NEW_HTTP_SERVER
 #include <stdint.h>
 
 #ifndef	__HTTPPARSER_H__
@@ -156,3 +152,4 @@ void inet_addr_(uint8_t * addr, uint8_t * ip);
 #endif
 
 #endif	/* end of __HTTPPARSER_H__ */
+#endif

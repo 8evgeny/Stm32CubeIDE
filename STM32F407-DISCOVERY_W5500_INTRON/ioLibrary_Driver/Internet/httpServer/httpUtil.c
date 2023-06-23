@@ -8,7 +8,7 @@
  * @author	
  * \n\n @par Copyright (C) 1998 - 2014 WIZnet. All rights reserved.
  */
-
+#ifdef NEW_HTTP_SERVER
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -73,3 +73,4 @@ uint8_t http_post_cgi_handler(uint8_t * uri_name, st_http_request * p_http_reque
 //{
 //	;
 //}
+#endif

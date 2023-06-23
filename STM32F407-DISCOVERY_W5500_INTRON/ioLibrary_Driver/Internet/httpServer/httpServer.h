@@ -2,7 +2,7 @@
  @file		httpServer.h
  @brief 	Define constants and functions related HTTP Web server.
  */
-
+#ifdef NEW_HTTP_SERVER
 #include <stdint.h>
 
 #ifndef	__HTTPSERVER_H__
@@ -106,4 +106,5 @@ uint32_t get_httpServer_timecount(void);
 }
 #endif
 
+#endif
 #endif

@@ -1,7 +1,4 @@
-/**
- @file		httpd.c
- @brief 		functions associated http processing
- */
+#ifdef NEW_HTTP_SERVER
 
 #include <stdio.h>
 #include <string.h>
@@ -400,5 +397,5 @@ static uint8_t C2D(
 	return (char)c;
 }
 
-
+#endif
 

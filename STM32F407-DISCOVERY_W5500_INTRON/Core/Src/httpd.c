@@ -381,7 +381,7 @@ void http_request(void)
 
         if (strncmp (tmpbuf, "SET_HOST_IP", 11) == 0)
         {
-            setNewHostIP(tmpbuf);
+            setNewHostIP(tmpbuf + 11);
         }
 
         if (strncmp (tmpbuf, "SET_MASK_IP", 11) == 0)

@@ -131,6 +131,7 @@ void setNewHostIP(char * buf);
 void setNewMaskIP(char * buf);
 void setNewGateIP(char * buf);
 void setNewDestIP(char * buf);
+void setNewPassword(char * buf);
 #include "stdio.h"
 #include "my_function.h"
 /* USER CODE END Includes */

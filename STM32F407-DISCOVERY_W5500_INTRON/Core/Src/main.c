@@ -1391,6 +1391,29 @@ void setNewDestIP(char * tmpbuf)
     }
 }
 
+void setNewPassword(char * tmpbuf)
+{
+    printf("new pasword hash: %.32s",tmpbuf);
+    printf("\r\n");
+    if (sdCartOn == 1)
+    {
+        FRESULT result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_WRITE );
+        if (result == 0)
+        {
+            printf("*****  write new md5 to SD  *****\n");
+            f_lseek(&fil, 0);
+            f_puts(tmpbuf, &fil);
+            f_sync(&fil);
+            f_close(&fil);
+        }
+    }
+    else //EEPROM
+    {
+        printf("*****  write new md5 to eeprom  *****\n");
+        BSP_EEPROM_WriteBuffer((uint8_t *)tmpbuf, ipSettingAdressInEEPROM + 60, 33);
+    }
+}
+
 /* USER CODE END 0 */
 
 /**

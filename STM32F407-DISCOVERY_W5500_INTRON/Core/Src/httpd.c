@@ -395,46 +395,13 @@ void http_request(void)
             reboot();
 
         if (strncmp (tmpbuf, "SET_PASSWORD", 12) == 0)//Смена пароля
-        {
-            printf("*****  SET NEW PASSWORD  *****\r\n");
-            printf("new pasword hash: %.32s",tmpbuf+12);
-            printf("\r\n");
-            if (sdCartOn == 1)
-            {
-                FRESULT result = f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_WRITE );
-                if (result == 0)
-                {
-                    printf("*****  write new md5 to SD  *****\n");
-                    f_lseek(&fil, 0);
-                    f_puts(tmpbuf+12, &fil);
-                    f_sync(&fil);
-                    f_close(&fil);
-                }
-            }
-            else //EEPROM
-            {
-                printf("*****  write new md5 to eeprom  *****\n");
-                BSP_EEPROM_WriteBuffer((uint8_t *)(tmpbuf+12), ipSettingAdressInEEPROM + 60, 33);
-            }
-        }
+            setNewPassword(tmpbuf + 12);
 
         if (strncmp (tmpbuf, "LOGIN", 5) == 0)
-        {
             checkLogin(tmpbuf);
-        }
 
         if (strncmp (tmpbuf, "PASSWORD", 8) == 0)
-        {
-            Printf("*****  PASSWORD  *****\r\n");
-            checkPassword(tmpbuf);
-/*
-(qwe12345@)
-char md5[33] =
-{'5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b','3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
-MD5 hash:  d41d8cd98f00b204e9800998ecf8427e  (пустой пароль)
-*/
-
-        }
+            checkPassword(tmpbuf); //MD5 hash:  d41d8cd98f00b204e9800998ecf8427e  (пустой пароль)
 	}
 
     if (sdCartOn == 1)

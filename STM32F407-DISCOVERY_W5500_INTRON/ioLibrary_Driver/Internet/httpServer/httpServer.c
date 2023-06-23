@@ -502,17 +502,16 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
                 setNewDestIP((char *)(uri_name) + 11);
 
             if (strncmp ((char *)uri_name, "SET_PASSWORD", 12) == 0)
-            {
-                printf("SET_PASSWORD\n");
-            }
+                setNewPassword((char *)(uri_name) + 12);
+
             if (strncmp ((char *)uri_name, "REBOOT", 6) == 0) //Перезагрузка
                 reboot();
+
             if (strncmp ((char *)uri_name, "LOGIN", 5) == 0)
                 checkLogin((char *)uri_name);
+
             if (strncmp ((char *)uri_name, "PASSWORD", 8) == 0)
                 checkPassword((char *)uri_name);
-
-
 
             find_http_uri_type(&p_http_request->TYPE, uri_name);	// Checking requested file types (HTML, TEXT, GIF, JPEG and Etc. are included)
 

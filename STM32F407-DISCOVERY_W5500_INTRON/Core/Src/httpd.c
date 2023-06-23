@@ -679,10 +679,7 @@ void http_request(void)
         }
 
         if (strncmp (tmpbuf, "REBOOT", 6) == 0) //Перезагрузка
-        {
-            Printf("*****  REBOOT  *****\r\n");
-            HAL_NVIC_SystemReset();
-        }
+            reboot();
 
         if (strncmp (tmpbuf, "SET_PASSWORD", 12) == 0)//Смена пароля
         {

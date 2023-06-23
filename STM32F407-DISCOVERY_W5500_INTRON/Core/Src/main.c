@@ -1089,7 +1089,7 @@ void checkPassword(char* buf)
 
 void setNewHostIP(char * tmpbuf)
 {
-    printf("setNewHostIP - %s\n",tmpbuf);
+    printf("setNewHostIP: %s\n",tmpbuf);
     uint8_t temp[4];
     char host_IP_1[3];char host_IP_2[3];char host_IP_3[3];char host_IP_4[3];
     int i=0;

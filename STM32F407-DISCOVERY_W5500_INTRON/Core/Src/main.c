@@ -66,6 +66,7 @@ extern lfs_file_t file;
 uint16_t local_port = LOCAL_PORT;
 extern uint8_t bufRead[5];
 extern uint8_t loginOK;
+extern uint8_t passwordOK;
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -1059,6 +1060,19 @@ void checkLogin(char* buf)
     else
     {
         printf("Login not found!!!\n");
+    }
+}
+
+void checkPassword(char* buf)
+{
+    if (strncmp(buf + 8, MD5 , 32) == 0)
+    {
+        Printf("password OK\r\n");
+        passwordOK = 1;
+    }
+    else
+    {
+        Printf("password not OK\r\n");
     }
 }
 

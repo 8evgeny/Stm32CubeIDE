@@ -27,6 +27,8 @@ static st_http_request * http_request;				/**< Pointer to received HTTP request 
 static st_http_request * parsed_http_request;		/**< Pointer to parsed HTTP request */
 static uint8_t * http_response;						/**< Pointer to HTTP response */
 extern uint16_t local_port;
+extern uint8_t loginOK;
+extern uint8_t passwordOK;
 // ## For Debugging
 //static uint8_t uri_buf[128];
 
@@ -492,9 +494,12 @@ if (strncmp ((char *)uri_name, "REBOOT", 6) == 0) //Перезагрузка
 if (strncmp ((char *)uri_name, "LOGIN", 5) == 0)
     checkLogin((char *)uri_name);
 if (strncmp ((char *)uri_name, "PASSWORD", 8) == 0)
-    printf("PASSWORD\n");
+    checkPassword((char *)uri_name);
 
-
+if ((passwordOK == 1)&&(loginOK == 1))
+{
+    strcpy((char *)uri_name, MAIN_WEBPAGE);
+}
 
             find_http_uri_type(&p_http_request->TYPE, uri_name);	// Checking requested file types (HTML, TEXT, GIF, JPEG and Etc. are included)
 

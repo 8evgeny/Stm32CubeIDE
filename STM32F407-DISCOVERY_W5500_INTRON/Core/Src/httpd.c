@@ -713,21 +713,14 @@ void http_request(void)
         if (strncmp (tmpbuf, "PASSWORD", 8) == 0)
         {
             Printf("*****  PASSWORD  *****\r\n");
+            checkPassword(tmpbuf);
 /*
 (qwe12345@)
 char md5[33] =
 {'5','f','3','f','b','0','1','2','4','f','2','b','f','c','e','b','3','1','c','f','5','3','0','5','1','9','4','d','e','1','4','d','\0'};
 MD5 hash:  d41d8cd98f00b204e9800998ecf8427e  (пустой пароль)
 */
-            if (strncmp(tmpbuf + 8, MD5 , 32) == 0)
-            {
-                Printf("password OK\r\n");
-                passwordOK = 1;
-            }
-            else
-            {
-                Printf("password not OK\r\n");
-            }
+
         }
 	}
 

@@ -440,6 +440,14 @@ const char main_page[] =
         "  {"
         "    document.getElementById('frm2').elements[0].value=request4.responseText.toString().substring(0, 15);"
         "  };"
+        "  sleep(500);"
+        "  let request5 = new XMLHttpRequest();"
+        "  request5.open('GET', '/host_IP');"
+        "  request5.send();"
+        "  request5.onreadystatechange = function() "
+        "  {"
+        "    document.getElementById('frm1').elements[0].value=request1.responseText.toString().substring(0, 15);"
+        "  };"
         "  function ValidateIPaddress(ipaddress) "
         "  {  "
         "    if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) "
@@ -743,10 +751,15 @@ const char main_page[] =
         "</html>"
 ;
 
-#define host_IP "192.168.001.222"
-#define dest_IP "192.168.001.200"
-#define gate_IP "192.168.001.001"
-#define mask_IP "255.255.255.000"
+#define host_IP "192.168.001.222"\
+" "
+#define dest_IP "192.168.001.200"\
+" "
+
+#define gate_IP "192.168.001.001"\
+" "
+#define mask_IP "255.255.255.000"\
+" "
 
 //                              "<html>"\
 //								"<head>"\

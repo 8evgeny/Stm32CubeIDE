@@ -29,6 +29,7 @@ static uint8_t * http_response;						/**< Pointer to HTTP response */
 extern uint16_t local_port;
 extern uint8_t loginOK;
 extern uint8_t passwordOK;
+uint8_t mainIsLoad = 0;
 // ## For Debugging
 //static uint8_t uri_buf[128];
 
@@ -479,27 +480,46 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 			if (!strcmp((char *)uri_name, "m")) strcpy((char *)uri_name, M_INITIAL_WEBPAGE);
 			if (!strcmp((char *)uri_name, "mobile")) strcpy((char *)uri_name, MOBILE_INITIAL_WEBPAGE);
 
-if (strncmp ((char *)uri_name, "SET_HOST_IP", 11) == 0)
-    printf("SET_HOST_IP\n");
-if (strncmp ((char *)uri_name, "SET_MASK_IP", 11) == 0)
-    printf("SET_MASK_IP\n");
-if (strncmp ((char *)uri_name, "SET_GATE_IP", 11) == 0)
-    printf("SET_GATE_IP\n");
-if (strncmp ((char *)uri_name, "SET_DEST_IP", 11) == 0)
-    printf("SET_DEST_IP\n");
-if (strncmp ((char *)uri_name, "SET_PASSWORD", 12) == 0)
-    printf("SET_PASSWORD\n");
-if (strncmp ((char *)uri_name, "REBOOT", 6) == 0) //Перезагрузка
-    reboot();
-if (strncmp ((char *)uri_name, "LOGIN", 5) == 0)
-    checkLogin((char *)uri_name);
-if (strncmp ((char *)uri_name, "PASSWORD", 8) == 0)
-    checkPassword((char *)uri_name);
+            if ((passwordOK == 1)&&(loginOK == 1))
+            {
+                if (mainIsLoad == 0)
+                {
+                    strcpy((char *)uri_name, MAIN_WEBPAGE);
+                    mainIsLoad = 1;
+                }
 
-if ((passwordOK == 1)&&(loginOK == 1))
-{
-    strcpy((char *)uri_name, MAIN_WEBPAGE);
-}
+            }
+            if (strncmp ((char *)uri_name, "SET_HOST_IP", 11) == 0)
+            {
+                printf("SET_HOST_IP\n");
+                strcpy((char *)uri_name, "host_IP");
+            }
+            if (strncmp ((char *)uri_name, "SET_MASK_IP", 11) == 0)
+            {
+                printf("SET_MASK_IP\n");
+                strcpy((char *)uri_name, "mask_IP");
+            }
+
+            if (strncmp ((char *)uri_name, "SET_GATE_IP", 11) == 0)
+            {
+                printf("SET_GATE_IP\n");
+                strcpy((char *)uri_name, "gate_IP");
+            }
+            if (strncmp ((char *)uri_name, "SET_DEST_IP", 11) == 0)
+            {
+                printf("SET_DEST_IP\n");
+                strcpy((char *)uri_name, "dest_IP");
+            }
+            if (strncmp ((char *)uri_name, "SET_PASSWORD", 12) == 0)
+                printf("SET_PASSWORD\n");
+            if (strncmp ((char *)uri_name, "REBOOT", 6) == 0) //Перезагрузка
+                reboot();
+            if (strncmp ((char *)uri_name, "LOGIN", 5) == 0)
+                checkLogin((char *)uri_name);
+            if (strncmp ((char *)uri_name, "PASSWORD", 8) == 0)
+                checkPassword((char *)uri_name);
+
+
 
             find_http_uri_type(&p_http_request->TYPE, uri_name);	// Checking requested file types (HTML, TEXT, GIF, JPEG and Etc. are included)
 

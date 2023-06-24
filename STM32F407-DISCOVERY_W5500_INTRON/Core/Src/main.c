@@ -430,11 +430,11 @@ isEEPROMClear isEEPROMclear()
 
 void copyMacToAdressEEPROM(uint16_t Addr)
 {
-    printf("\nCopy MAC adress from SD to adress 0x%.4X eeprom\n",Addr);
     char tmp[24];
     FRESULT result = f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
     if (result == FR_OK)
     {
+        printf("\nCopy MAC adress from SD to adress 0x%.4X eeprom\n",Addr);
         UINT rc;
         f_read(&fil, tmp, 24, &rc);
         f_close(&fil);
@@ -444,12 +444,7 @@ void copyMacToAdressEEPROM(uint16_t Addr)
     }
     else
     {
-        //стираем EEPROM (mac)
-
-
-        //Устанавливаем mac по умолчанию
-
-
+        //Ничего с MAC не делаем
     }
 }
 
@@ -492,6 +487,15 @@ void copyDefaultParametersToAdressEEPROM(uint16_t Addr)
     Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
 }
 
+void copyDefaultMACToAdressEEPROM(uint16_t Addr)
+{
+    printf("Set default MAC adress to adress eeprom 0x%.4X \n", Addr);
+    char defaultMAC[24] =
+    {'0','0','0',':','0','2','1',':','0','6','6',':','1','9','1',':','2','4','0',':','0','8','2','\0'};
+    int result = BSP_EEPROM_WriteBuffer((uint8_t *)defaultMAC, Addr, 24);
+    printf("Set default MAC adress to adress eeprom 0x%.4X: %d\n", Addr, result);
+}
+
 void SetMacFromAdressEEPROM(uint16_t Addr)
 {
     printf("Set MAC adress from adress eeprom 0x%.4X \n", Addr);
@@ -500,7 +504,7 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
     char tmp[24];
     char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-//    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
+    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
 //    printf("MAC:\n%s\n",tmp);
     strncpy(tmp2, tmp, 4);
     macaddr[0] = atoi(tmp2);
@@ -879,6 +883,8 @@ void workI2C_EEPROM()
             printf("eeprom new\n");
 // Пишем на eeprom все параметры по умолчанию
             copyDefaultParametersToAdressEEPROM(ipSettingAdressInEEPROM);
+            copyDefaultMACToAdressEEPROM(macAdressInEEPROM);
+            SetMacFromAdressEEPROM(macAdressInEEPROM);
 // Снимаем признак новая EEPROM
             markEEPROMasOld();
             printf("eeprom mark as OLD\n");

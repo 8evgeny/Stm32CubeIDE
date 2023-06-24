@@ -89,13 +89,13 @@ void httpServer_Sockinit(uint8_t cnt, uint8_t * socklist)
 	}
 }
 
-static uint8_t getHTTPSocketNum(uint8_t seqnum)
+uint8_t getHTTPSocketNum(uint8_t seqnum)
 {
 	// Return the 'H/W socket number' corresponding to the index number
 	return HTTPSock_Num[seqnum];
 }
 
-static int8_t getHTTPSequenceNum(uint8_t socket)
+int8_t getHTTPSequenceNum(uint8_t socket)
 {
 	uint8_t i;
 

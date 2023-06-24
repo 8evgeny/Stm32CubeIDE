@@ -32,6 +32,7 @@ set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
 set (polarssl ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
+set (bearssl ${CMAKE_HOME_DIRECTORY}/bearSSL)
 
 #SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') #для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
@@ -77,6 +78,9 @@ include_directories(
     ${polarssl}
     ${polarssl}/mbedtls/include
     ${polarssl}/mbedtls/include/mbedtls
+    ${bearssl}/inc
+    ${bearssl}/samples
+    ${bearssl}/src
     )
 
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
@@ -88,6 +92,9 @@ file (GLOB ioLibrary_Driver_src
     ${ioLibrary_Int}/*.c
     )
 add_library(ioLibrary_Driver_LIB ${ioLibrary_Driver_src})
+
+file (GLOB_RECURSE bear_src ${bearssl}/src/*.c  ioLibrary_Driver/Internet/httpServer/*.c)
+add_library(bearSSL_LIB ${bear_src} )
 
 file (GLOB fatfs_src FATFS/App/*.c FATFS/Target/*.c ${fatfs}/*.c ${fatfs}/option/*.c)
 add_library(fatfs_LIB ${fatfs_src})
@@ -139,6 +146,7 @@ target_link_libraries(${PROJECT_NAME}.elf PUBLIC
     littlefs_LIB
     wolfssl_LIB
     polarssl_LIB
+    bearSSL_LIB
     )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)

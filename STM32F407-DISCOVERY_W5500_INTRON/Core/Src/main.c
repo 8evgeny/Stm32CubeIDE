@@ -43,7 +43,7 @@ void receivePackets(uint8_t, uint8_t* , uint16_t );
 extern int tls_client_serverTest();
 extern int tls_server_sizeTest();
 extern void polarSSLTest();
-
+extern void bearSSLTest();
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -1614,9 +1614,17 @@ int main(void)
     display_reg_webContent_list();
 #endif
 
+<<<<<<< HEAD
 //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL - раскомментировать #add_definitions(-DTLS_ON)
+=======
+
+
+//    tls_client_serverTest(); // работает
+//    tls_server_sizeTest(); //Web сервер WolfSSL
+>>>>>>> origin/devel_bearSSL
 //    polarSSLTest();
+    bearSSLTest();
 
 
 //uint8_t firstSend = 1;

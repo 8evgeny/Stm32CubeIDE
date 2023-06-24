@@ -1614,17 +1614,14 @@ int main(void)
     display_reg_webContent_list();
 #endif
 
-<<<<<<< HEAD
 //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL - раскомментировать #add_definitions(-DTLS_ON)
-=======
 
 
 //    tls_client_serverTest(); // работает
 //    tls_server_sizeTest(); //Web сервер WolfSSL
->>>>>>> origin/devel_bearSSL
 //    polarSSLTest();
-    bearSSLTest();
+//    bearSSLTest();
 
 
 //uint8_t firstSend = 1;

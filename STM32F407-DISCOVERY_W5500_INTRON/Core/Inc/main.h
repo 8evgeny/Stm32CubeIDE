@@ -87,8 +87,8 @@ EEPROM I2C : ATMEL 24C256
 6C00 - 6FFF   28k
 7000 - 73FF   29K
 7400 - 77FF   30k
-7800 - 7BFF   31k
-7C00 - 7FFF   32k
+7800 - 7BFF   31k   резерв
+7C00 - 7FFF   32k   simple test eeprom
 */
 
 #define  ipSettingAdressInEEPROM 0x0000
@@ -99,6 +99,7 @@ EEPROM I2C : ATMEL 24C256
 #define  mainAdressInEEPROM      0x2800
 #define  macAdressInEEPROM       0x0120
 #define  markEEPROMclear         0x01A0
+#define  simpleTestEEPROMadress  0x7C00
 
 #include "types.h"
 

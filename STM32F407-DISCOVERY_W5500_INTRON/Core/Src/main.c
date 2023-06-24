@@ -412,13 +412,14 @@ isEEPROMClear isEEPROMclear()
     uint16_t numByte = 16;
     uint16_t * pnumByte = &numByte;
     char tmp[16];
-    //Установка признака новая
-//    uint8_t clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
-//    printf("clear EEPROM: %s\n", clear);
-//    BSP_EEPROM_WriteBuffer(clear, markEEPROMclear, 16);
-
+    char clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
+    //Ручная Установка признака новая
+//    BSP_EEPROM_WriteBuffer((uint8_t*)clear, markEEPROMclear, 16);
     BSP_EEPROM_ReadBuffer((uint8_t *)tmp, markEEPROMclear, pnumByte);
-    printf("isEEPROMclear: %s\n", tmp);
+    if(strncmp(tmp, clear, 15) == 0)
+        return eepromCLEAR;
+    else
+        return eepromNotCLEAR;
 }
 
 void copyMacToAdressEEPROM(uint16_t Addr)
@@ -446,7 +447,7 @@ void copyMacToAdressEEPROM(uint16_t Addr)
     }
 }
 
-void copyParametersToAdressEEPROM(uint16_t Addr)
+void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 {
     printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\n",Addr);
     char tmp[settingsLen];
@@ -468,6 +469,20 @@ void copyParametersToAdressEEPROM(uint16_t Addr)
     f_close(&fil);
     printf("settings:\n%s\n",tmp);
     int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
+    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
+}
+
+void copyDefaultParametersToAdressEEPROM(uint16_t Addr)
+{
+    printf("\nSet default IP settings to adress 0x%.4X eeprom\n",Addr);
+    char defaultIP[settingsLen] =
+    {'1','9','2','.','1','6','8','.','0','0','1','.','2','2','2',
+     '1','9','2','.','1','6','8','.','0','0','1','.','2','0','0',
+     '1','9','2','.','1','6','8','.','0','0','1','.','0','0','1',
+     '2','5','5','.','2','5','5','.','2','5','5','.','0','0','0',
+     'd','4','1','d','8','c','d','9','8','f','0','0','b','2','0','4','e','9','8','0','0','9','9','8','e','c','f','8','4','2','7','e'};
+    printf("default settings:\n%s\n",defaultIP);
+    int result = BSP_EEPROM_WriteBuffer((uint8_t *)defaultIP, Addr, settingsLen);
     Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
 }
 
@@ -835,7 +850,7 @@ void net_ini_WIZNET()
 
 void workI2C_EEPROM()
 {
-//      simpleTestI2C_EEPROM(0x7F80);
+//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();
@@ -853,7 +868,19 @@ void workI2C_EEPROM()
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
-        isEEPROMclear(); //Проверяем EEPROM новая ли
+        if (eepromCLEAR == isEEPROMclear()) //Проверяем EEPROM новая ли
+        {
+            printf("eeprom new\n");
+// Пишем на eeprom все параметры по умолчанию
+            copyDefaultParametersToAdressEEPROM(ipSettingAdressInEEPROM);
+// Снимаем признак новая EEPROM
+
+        }
+        else
+        {
+            printf("eeprom old\n");
+        }
+
     }
 
     if (result != 0)
@@ -862,7 +889,7 @@ void workI2C_EEPROM()
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-        copyParametersToAdressEEPROM(ipSettingAdressInEEPROM);
+        copyParametersFromSDToAdressEEPROM(ipSettingAdressInEEPROM);
         copyMacToAdressEEPROM(macAdressInEEPROM);
 #ifndef   NEW_HTTP_SERVER
         copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);

@@ -8,11 +8,9 @@ set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 #set(CMAKE_CXX_LINKER_LAUNCHER ${TOOLS_PATH}/bin/arm-none-eabi-g++)
 set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
-#Закомментировать при прошивке DT
-#add_definitions(-DINTRON)
+#add_definitions(-DINTRON)         #Закомментировать при прошивке DT
 add_definitions(-DNEW_HTTP_SERVER)
-#Режим http / https
-#add_definitions(-DTLS_ON)
+#add_definitions(-DTLS_ON)         #Режим http / https
 add_definitions(-UWOLFSSL_TLS13)
 add_definitions(-UMBEDTLS_SSL_CLI_C)
 add_definitions(-DMBEDTLS_SSL_SRV_C)
@@ -21,8 +19,8 @@ add_definitions(-DATOMIC_USER)
 #add_definitions(-DMBEDTLS_ECDSA_C)
 #add_definitions(-DMBEDTLS_ECP_C)
 #add_definitions(-DMBEDTLS_SHA256_C)
-project(11_Converter_F407_INTRON_DT C CXX ASM)
 
+project(11_Converter_F407_INTRON_DT C CXX ASM)
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
 
@@ -34,7 +32,7 @@ set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
 set (polarssl ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
 
-#SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') //для mbedTLS
+SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') #для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
 add_definitions("-DUSE_FULL_LL_DRIVER")
 

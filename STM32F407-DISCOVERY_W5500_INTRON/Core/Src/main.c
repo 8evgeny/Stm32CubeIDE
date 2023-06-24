@@ -430,22 +430,36 @@ isEEPROMClear isEEPROMclear()
 
 void copyMacToAdressEEPROM(uint16_t Addr)
 {
+#ifndef  MAC_IN_DECIMAL
+    char tmp[18];
+    FRESULT result = f_open(&fil, "madr", FA_OPEN_ALWAYS | FA_READ );
+    if (result == FR_OK)
+    {
+        printf("\nCopy MAC adress from SD in Hex to adress 0x%.4X eeprom\n",Addr);
+        UINT rc;
+        f_read(&fil, tmp, 18, &rc);
+        f_close(&fil);
+        tmp[17]=0x00;
+        printf("MAC:\n%s\n",tmp);
+        int open = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 18);
+        printf("MAC write from SD in Hex to adress 0x%.4X on eprom: %d\n", Addr, open);
+    }
+#endif
+#ifdef  MAC_IN_DECIMAL
     char tmp[24];
     FRESULT result = f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
     if (result == FR_OK)
     {
-        printf("\nCopy MAC adress from SD to adress 0x%.4X eeprom\n",Addr);
+        printf("\nCopy MAC adress from SD in Decimal to adress 0x%.4X eeprom\n",Addr);
         UINT rc;
         f_read(&fil, tmp, 24, &rc);
         f_close(&fil);
+        tmp[23]=0x00;
         printf("MAC:\n%s\n",tmp);
         int open = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 24);
-        printf("MAC write from SD to adress 0x%.4X on eprom: %d", Addr, open);
+        printf("MAC write from SD in Decimal to adress 0x%.4X on eprom: %d\n", Addr, open);
     }
-    else
-    {
-        //Ничего с MAC не делаем
-    }
+#endif
 }
 
 void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
@@ -498,7 +512,31 @@ void copyDefaultMACToAdressEEPROM(uint16_t Addr)
 
 void SetMacFromAdressEEPROM(uint16_t Addr)
 {
-    printf("Set MAC adress from adress eeprom 0x%.4X \n", Addr);
+#ifndef MAC_IN_DECIMAL
+    printf("Set MAC adress in HEX from adress eeprom 0x%.4X \n", Addr);
+    uint16_t numByte = 18;
+    uint16_t * pnumByte = &numByte;
+    char tmp[18];
+    char tmp2[2];
+    int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
+    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
+    printf("MAC:\n%s\n",tmp);
+    strncpy(tmp2, tmp, 2);
+    macaddr[0] = atoi((const char *)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+3, 2);
+    macaddr[1] = atoi((const char *)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+6, 2);
+    macaddr[2] = atoi((const char *)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+9, 2);
+    macaddr[3] = atoi((const char *)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+12, 2);
+    macaddr[4] = atoi((const char *)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+15, 2);
+    macaddr[5] = atoi((const char *)convertHexToDecimal(tmp2));
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+#endif
+#ifdef MAC_IN_DECIMAL
+    printf("Set MAC adress in decimal from adress eeprom 0x%.4X \n", Addr);
     uint16_t numByte = 24;
     uint16_t * pnumByte = &numByte;
     char tmp[24];
@@ -519,6 +557,7 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
     strncpy(tmp2,tmp+20, 4);
     macaddr[5] = atoi(tmp2);
     printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+#endif
 }
 
 void SetParaametersFromAdressEEPROM(uint16_t Addr)
@@ -647,6 +686,52 @@ void copyParametersToEEPROM()
     lfs_file_close(&lfs, &file);
 }
 
+void setMacFromSD()
+{
+#ifndef  MAC_IN_DECIMAL
+    char tmp[18];
+    char tmp2[2];
+    f_open(&fil, "madr", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp, 18, &fil);
+    strncpy(tmp2,tmp,2);
+    macaddr[0] = atoi((const char*)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+3,2);
+    macaddr[1] = atoi((const char*)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+6,2);
+    macaddr[2] = atoi((const char*)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+9,2);
+    macaddr[3] = atoi((const char*)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+12,2);
+    macaddr[4] = atoi((const char*)convertHexToDecimal(tmp2));
+    strncpy(tmp2,tmp+15,2);
+    macaddr[5] = atoi((const char*)convertHexToDecimal(tmp2));
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    f_close(&fil);
+#endif
+#ifdef  MAC_IN_DECIMAL
+    char tmp[33];
+    char tmp2[3];
+    f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
+    f_lseek(&fil, 0);
+    f_gets(tmp, 24, &fil);
+    strncpy(tmp2,tmp,3);
+    macaddr[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4,3);
+    macaddr[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+8,3);
+    macaddr[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12,3);
+    macaddr[3] = atoi(tmp2);
+    strncpy(tmp2,tmp+16,3);
+    macaddr[4] = atoi(tmp2);
+    strncpy(tmp2,tmp+20,3);
+    macaddr[5] = atoi(tmp2);
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    f_close(&fil);
+#endif
+}
+
 void setParametersFromSD()
 {
     Printf("\nSet IP Parameters from SD\n");
@@ -713,24 +798,6 @@ void setParametersFromSD()
     strncpy(MD5, tmp, 32);
     f_close(&fil);
     printf("md5: %s\n",MD5);
-
-    f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
-    f_lseek(&fil, 0);
-    f_gets(tmp, 24, &fil);
-    strncpy(tmp2,tmp,3);
-    macaddr[0] = atoi(tmp2);
-    strncpy(tmp2,tmp+4,3);
-    macaddr[1] = atoi(tmp2);
-    strncpy(tmp2,tmp+8,3);
-    macaddr[2] = atoi(tmp2);
-    strncpy(tmp2,tmp+12,3);
-    macaddr[3] = atoi(tmp2);
-    strncpy(tmp2,tmp+16,3);
-    macaddr[4] = atoi(tmp2);
-    strncpy(tmp2,tmp+20,3);
-    macaddr[5] = atoi(tmp2);
-    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
-    f_close(&fil);
 }
 
 void SetParaametersFromEEPROM()
@@ -904,6 +971,7 @@ void workI2C_EEPROM()
         setParametersFromSD();
         copyParametersFromSDToAdressEEPROM(ipSettingAdressInEEPROM);
         copyMacToAdressEEPROM(macAdressInEEPROM);
+        setMacFromSD();
 #ifndef   NEW_HTTP_SERVER
         copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);
         copyFileToAdressEEPROM("main.html", mainAdressInEEPROM);
@@ -1479,6 +1547,7 @@ void setNewPassword(char * tmpbuf)
 
 /* USER CODE END 0 */
 
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -1522,6 +1591,8 @@ int main(void)
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 //    net_ini();
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+
+    convertHexToDecimal("1F");
 
     //Работа с SPI EEPROM
     if (sdCartOn == 0)
@@ -2113,6 +2184,24 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         num_rcvd = 0;
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
     }
+}
+
+int convertHexToDecimal(char hexadecimalnumber[2])
+{
+    int decimalNumber = 0;
+    char hexDigits[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+    for ( int j = 0; j < 16; j++)
+    {
+       if (hexadecimalnumber[0] == hexDigits[j])
+           decimalNumber += j * 16;
+    }
+    for (int j = 0; j < 16; j++)
+    {
+       if (hexadecimalnumber[1] == hexDigits[j])
+           decimalNumber += j;
+    }
+//    printf("Decimal Number : %d", decimalNumber);
+    return decimalNumber;
 }
 
 /* USER CODE END 4 */

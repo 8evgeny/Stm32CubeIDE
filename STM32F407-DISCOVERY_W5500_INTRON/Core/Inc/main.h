@@ -118,6 +118,9 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdio.h"
+#include "my_function.h"
+
 #define MAX_PACKET_LEN 48
 void 	wizchip_cs_select(void);
 void  wizchip_cs_deselect(void);
@@ -135,9 +138,9 @@ void setNewMaskIP(char * buf);
 void setNewGateIP(char * buf);
 void setNewDestIP(char * buf);
 void setNewPassword(char * buf);
+int convertHexToDecimal();
 
-#include "stdio.h"
-#include "my_function.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

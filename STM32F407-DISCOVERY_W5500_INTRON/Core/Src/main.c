@@ -926,7 +926,7 @@ void workI2C_EEPROM()
         loadFilesFromEepromToMemory(indexAdressInEEPROM, indexLen,
                                     mainAdressInEEPROM, mainLen,
                                     ipSettingAdressInEEPROM, settingsLen);
-//        printFilesFromMemory(indexLen, mainLen);
+//        printFilesFromMemory();
 //        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLen); //index.html
 //        printFileFromAdressEEPROM(mainAdressInEEPROM, mainLen); //main.html
 #endif

@@ -53,9 +53,10 @@ EEPROM I2C : ATMEL 24C256
 1MHz (2.5V, 2.7V, 5.0V) compatibility
 512 pages of 64-bytes each
 0000 - 00FF   256b   IP settings
-0100 - 010F   16b    длина index.html
-0110 - 011F   16b    длина main.html
+0100 - 010F   16b    длина index.html (при чтении с карты - старый web сервер)
+0110 - 011F   16b    длина main.html  (при чтении с карты - старый web сервер)
 0120 - 019F   128b   mac
+01A0 - 01AF   16b    Признак чистой EEPROM (если FF - пишем нули и пишем параметры и mac по умолчанию)
 01A0 - 03FF   резерв
 0400 - 07FF   2k   index.html
 0800 - 0BFF   3k
@@ -91,12 +92,13 @@ EEPROM I2C : ATMEL 24C256
 */
 
 #define  ipSettingAdressInEEPROM 0x0000
-#define  settingsLen 93
-#define  indexLenAdressInEEPROM 0x0100
-#define  mainLenAdressInEEPROM 0x0110
-#define  indexAdressInEEPROM 0x0400
-#define  mainAdressInEEPROM 0x2800
-#define  macAdressInEEPROM 0x0120
+#define  settingsLen             93
+#define  indexLenAdressInEEPROM  0x0100
+#define  mainLenAdressInEEPROM   0x0110
+#define  indexAdressInEEPROM     0x0400
+#define  mainAdressInEEPROM      0x2800
+#define  macAdressInEEPROM       0x0120
+#define  markEEPROMclear         0x01A0
 
 #include "types.h"
 
@@ -132,6 +134,7 @@ void setNewMaskIP(char * buf);
 void setNewGateIP(char * buf);
 void setNewDestIP(char * buf);
 void setNewPassword(char * buf);
+
 #include "stdio.h"
 #include "my_function.h"
 /* USER CODE END Includes */

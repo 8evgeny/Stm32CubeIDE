@@ -217,6 +217,11 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+typedef enum {
+    eepromCLEAR,
+    eepromNotCLEAR
+} isEEPROMClear;
+isEEPROMClear isEEPROMclear();
 
 void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
@@ -402,6 +407,20 @@ void testReadFile(const char* nameFile_onEEPROM)
     UART_Printf(tmp); delayUS_ASM(5000);
 }
 
+isEEPROMClear isEEPROMclear()
+{
+    uint16_t numByte = 16;
+    uint16_t * pnumByte = &numByte;
+    char tmp[16];
+    //Установка признака новая
+//    uint8_t clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
+//    printf("clear EEPROM: %s\n", clear);
+//    BSP_EEPROM_WriteBuffer(clear, markEEPROMclear, 16);
+
+    BSP_EEPROM_ReadBuffer((uint8_t *)tmp, markEEPROMclear, pnumByte);
+    printf("isEEPROMclear: %s\n", tmp);
+}
+
 void copyMacToAdressEEPROM(uint16_t Addr)
 {
     printf("\nCopy MAC adress from SD to adress 0x%.4X eeprom\n",Addr);
@@ -425,9 +444,6 @@ void copyMacToAdressEEPROM(uint16_t Addr)
 
 
     }
-
-
-
 }
 
 void copyParametersToAdressEEPROM(uint16_t Addr)
@@ -837,6 +853,7 @@ void workI2C_EEPROM()
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
+        isEEPROMclear(); //Проверяем EEPROM новая ли
     }
 
     if (result != 0)

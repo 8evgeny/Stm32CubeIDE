@@ -407,6 +407,12 @@ void testReadFile(const char* nameFile_onEEPROM)
     UART_Printf(tmp); delayUS_ASM(5000);
 }
 
+void setEEPROMold()
+{
+    char old[16] = {0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
+    BSP_EEPROM_WriteBuffer((uint8_t*)old, markEEPROMclear, 16);
+}
+
 isEEPROMClear isEEPROMclear()
 {
     uint16_t numByte = 16;
@@ -519,7 +525,7 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     char tmp[settingsLen];
     char tmp2[3];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
+//    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
     printf("settings:\n%s\n",tmp);
 
     strncpy(host_IP,tmp,15);
@@ -874,7 +880,8 @@ void workI2C_EEPROM()
 // Пишем на eeprom все параметры по умолчанию
             copyDefaultParametersToAdressEEPROM(ipSettingAdressInEEPROM);
 // Снимаем признак новая EEPROM
-
+            setEEPROMold();
+            printf("eeprom mark as OLD\n");
         }
         else
         {

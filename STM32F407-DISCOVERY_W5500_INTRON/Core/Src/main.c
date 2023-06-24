@@ -522,17 +522,17 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
     printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
     printf("MAC:\n%s\n",tmp);
     strncpy(tmp2, tmp, 2);
-    macaddr[0] = atoi((const char *)convertHexToDecimal(tmp2));
+    macaddr[0] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+3, 2);
-    macaddr[1] = atoi((const char *)convertHexToDecimal(tmp2));
+    macaddr[1] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+6, 2);
-    macaddr[2] = atoi((const char *)convertHexToDecimal(tmp2));
+    macaddr[2] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+9, 2);
-    macaddr[3] = atoi((const char *)convertHexToDecimal(tmp2));
+    macaddr[3] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+12, 2);
-    macaddr[4] = atoi((const char *)convertHexToDecimal(tmp2));
+    macaddr[4] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+15, 2);
-    macaddr[5] = atoi((const char *)convertHexToDecimal(tmp2));
+    macaddr[5] = convertHexToDecimal(tmp2);
     printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
 #endif
 #ifdef MAC_IN_DECIMAL
@@ -695,17 +695,17 @@ void setMacFromSD()
     f_lseek(&fil, 0);
     f_gets(tmp, 18, &fil);
     strncpy(tmp2,tmp,2);
-    macaddr[0] = atoi((const char*)convertHexToDecimal(tmp2));
+    macaddr[0] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+3,2);
-    macaddr[1] = atoi((const char*)convertHexToDecimal(tmp2));
+    macaddr[1] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+6,2);
-    macaddr[2] = atoi((const char*)convertHexToDecimal(tmp2));
+    macaddr[2] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+9,2);
-    macaddr[3] = atoi((const char*)convertHexToDecimal(tmp2));
+    macaddr[3] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+12,2);
-    macaddr[4] = atoi((const char*)convertHexToDecimal(tmp2));
+    macaddr[4] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+15,2);
-    macaddr[5] = atoi((const char*)convertHexToDecimal(tmp2));
+    macaddr[5] = convertHexToDecimal(tmp2);
     printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
     f_close(&fil);
 #endif

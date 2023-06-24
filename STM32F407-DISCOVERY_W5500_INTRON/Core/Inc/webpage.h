@@ -399,6 +399,7 @@ const char main_page[] =
         "      currentDate = Date.now();"
         "    } while (currentDate - date < milliseconds);"
         "  };"
+        "  sleep(300);"
         "  let request1 = new XMLHttpRequest();"
         "  request1.open('GET', '/host_IP');"
         "  request1.send();"

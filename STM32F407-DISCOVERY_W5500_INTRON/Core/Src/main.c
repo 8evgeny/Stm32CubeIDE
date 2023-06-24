@@ -407,7 +407,7 @@ void testReadFile(const char* nameFile_onEEPROM)
     UART_Printf(tmp); delayUS_ASM(5000);
 }
 
-void setEEPROMold()
+void markEEPROMasOld()
 {
     char old[16] = {0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
     BSP_EEPROM_WriteBuffer((uint8_t*)old, markEEPROMclear, 16);
@@ -880,7 +880,7 @@ void workI2C_EEPROM()
 // Пишем на eeprom все параметры по умолчанию
             copyDefaultParametersToAdressEEPROM(ipSettingAdressInEEPROM);
 // Снимаем признак новая EEPROM
-            setEEPROMold();
+            markEEPROMasOld();
             printf("eeprom mark as OLD\n");
         }
         else

@@ -32,7 +32,7 @@ set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
 set (polarssl ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
 
-SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') #для mbedTLS
+#SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') #для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
 add_definitions("-DUSE_FULL_LL_DRIVER")
 

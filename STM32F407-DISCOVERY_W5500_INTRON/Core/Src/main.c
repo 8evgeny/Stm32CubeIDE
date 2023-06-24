@@ -146,6 +146,8 @@ extern char host_IP[16]; //для http Сервера
 extern char dest_IP[16];
 extern char gate_IP[16];
 extern char mask_IP[16];
+FATFS fs;
+FIL fil;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -188,7 +190,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     }
 
 }
-
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     if(hspi->Instance == SPI3)
@@ -217,8 +218,6 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-FATFS fs;
-FIL fil;
 void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
 void simpleTestI2C_EEPROM(uint16_t addr)

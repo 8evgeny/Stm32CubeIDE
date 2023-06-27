@@ -170,7 +170,6 @@ void httpServer_run(uint8_t seqnum)
                         {
                             tls_server_Handshake();
                         }
-//                        wolfssl_recv(server_ssl);
                         wolfSSL_read(server_ssl, (uint8_t *)http_request, len);
 #endif
 #ifndef TLS_ON

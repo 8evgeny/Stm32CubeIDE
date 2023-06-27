@@ -307,7 +307,14 @@ static void send_http_response_header(uint8_t s, uint8_t content_type, uint32_t 
 	if(http_status)
 	{
 		printf("> HTTPSocket[%d] : [Send] HTTP Response Header [ %d ]byte\r\n", s, (uint16_t)strlen((char *)http_response));
-		send(s, http_response, strlen((char *)http_response));
+
+#ifndef TLS_ON
+        send(s, http_response, strlen((char *)http_response));
+#endif
+#ifdef TLS_ON
+        wolfSSL_write(server_ssl, (uint8_t *)http_response, strlen((char *)http_response));
+#endif
+
 	}
 }
 
@@ -423,7 +430,15 @@ static void send_http_response_body(uint8_t s, uint8_t * uri_name, uint8_t * buf
 	// Requested content send to HTTP client
 	printf("> HTTPSocket[%d] : [Send] HTTP Response body [ %ld ]byte\r\n", s, send_len);
 
-	if(send_len) send(s, buf, send_len);
+    if(send_len)
+    {
+#ifndef TLS_ON
+        send(s, buf, send_len);
+#endif
+#ifdef TLS_ON
+        wolfSSL_write(server_ssl, (uint8_t *)buf, send_len);
+#endif
+    }
 	else flag_datasend_end = 1;
 
 	if(flag_datasend_end)
@@ -454,7 +469,12 @@ static void send_http_response_cgi(uint8_t s, uint8_t * buf, uint8_t * http_body
 	send_len = sprintf((char *)buf, "%s%d\r\n\r\n%s", RES_CGIHEAD_OK, file_len, http_body);
 	printf("> HTTPSocket[%d] : HTTP Response Header + Body - send len [ %d ]byte\r\n", s, send_len);
 
-	send(s, buf, send_len);
+#ifndef TLS_ON
+        send(s, buf, send_len);
+#endif
+#ifdef TLS_ON
+        wolfSSL_write(server_ssl, (uint8_t *)buf, send_len);
+#endif
 }
 
 //Если отсоединяться - теряются запросы

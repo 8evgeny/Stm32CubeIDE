@@ -68,6 +68,9 @@ include_directories(
     Middlewares/Third_Party/LwIP/src/include/compat/sys
     Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl
     Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl
+    SSL_Server/Middlewares/Third_Party/mbedTLS/include/mbedtls
+    SSL_Server/Middlewares/Third_Party/mbedTLS/include
+    Middlewares/Third_Party/LwIP/src/include/lwip
     )
 
 file (GLOB SOURCES_C ${patchSRC}/*.c STM32H753IITX_FLASH.ld)
@@ -80,6 +83,9 @@ add_library(STARTUP ${STARTUP_SOURCES} )
 
 file (GLOB HAL_SRC Drivers/STM32F7xx_HAL_Driver/Src/*)
 add_library(HAL ${HAL_SRC})
+
+file (GLOB TLS_SRC SSL_Server/Src/net_sockets.c)
+add_library(TLS ${TLS_SRC})
 
 file (GLOB LWIP_SRC
     LWIP/App/*.c
@@ -136,6 +142,7 @@ target_link_libraries(${PROJECT_NAME}.elf PUBLIC
     STARTUP
     RTOS
     LWIP
+    TLS
     )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)

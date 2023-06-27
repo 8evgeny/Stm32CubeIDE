@@ -16,6 +16,10 @@
   *
   ******************************************************************************
   */
+
+#include "sockets.h"
+#include "arch.h"
+
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -31,6 +35,38 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#define HTTP_RESPONSE \
+    "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n" \
+    "<h2>mbed TLS Test Server</h2>\r\n" \
+    "<p>Successful connection using: %s</p>\r\n"
+
+#define IP_ADDR0  192
+#define IP_ADDR1  168
+#define IP_ADDR2  1
+#define IP_ADDR3  222
+
+#define GW_ADDR0  192
+#define GW_ADDR1  168
+#define GW_ADDR2  1
+#define GW_ADDR3  1
+
+#define MASK_ADDR0  255
+#define MASK_ADDR1  255
+#define MASK_ADDR2  255
+#define MASK_ADDR3  0
+typedef u32_t socklen_t;
+struct addrinfo {
+    int               ai_flags;      /* Input flags. */
+    int               ai_family;     /* Address family of socket. */
+    int               ai_socktype;   /* Socket type. */
+    int               ai_protocol;   /* Protocol of socket. */
+    socklen_t         ai_addrlen;    /* Length of socket address. */
+    struct sockaddr  *ai_addr;       /* Socket address of socket. */
+    char             *ai_canonname;  /* Canonical name of service location. */
+    struct addrinfo  *ai_next;       /* Pointer to next in list. */
+};
+
 
 /* USER CODE END Includes */
 

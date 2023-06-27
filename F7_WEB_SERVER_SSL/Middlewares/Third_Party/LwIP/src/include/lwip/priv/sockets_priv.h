@@ -38,7 +38,6 @@
 #define LWIP_HDR_SOCKETS_PRIV_H
 
 #include "lwip/opt.h"
-
 #if LWIP_SOCKET /* don't build if not configured for use in lwipopts.h */
 
 #include "lwip/err.h"
@@ -57,7 +56,7 @@ extern "C" {
 #ifndef SELWAIT_T
 #define SELWAIT_T u8_t
 #endif
-
+typedef unsigned int nfds_t;
 union lwip_sock_lastdata {
   struct netbuf *netbuf;
   struct pbuf *pbuf;

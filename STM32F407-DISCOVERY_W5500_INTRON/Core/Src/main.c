@@ -41,7 +41,7 @@ extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
 extern int tls_client_serverTest();
-extern int tls_server_sizeTest();
+extern void tls_server_Handshake();
 extern void polarSSLTest();
 extern void bearSSLTest();
 /* USER CODE END PD */
@@ -1613,11 +1613,6 @@ int main(void)
 #endif
 
 //    tls_client_serverTest(); // работает
-//    tls_server_sizeTest(); //Web сервер WolfSSL - раскомментировать #add_definitions(-DTLS_ON)
-
-
-//    tls_client_serverTest(); // работает
-//    tls_server_sizeTest(); //Web сервер WolfSSL
 //    polarSSLTest();
 //    bearSSLTest();
 

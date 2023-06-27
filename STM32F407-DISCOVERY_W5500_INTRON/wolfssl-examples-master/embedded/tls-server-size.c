@@ -25,6 +25,7 @@
 extern void Printf(const char* fmt, ...);
 extern void wep_define_func(void);
 extern uint8_t socknumlist[];
+
 #ifndef WOLFSSL_USER_SETTINGS
     #include <wolfssl/options.h>
 #endif
@@ -34,7 +35,8 @@ extern uint8_t socknumlist[];
 #include "certs.h"
 #include "HexTrans.h"
 #include "httpServer.h"
-
+WOLFSSL_CTX* server_ctx = NULL;
+WOLFSSL*     server_ssl = NULL;
 #if !defined(NO_WOLFSSL_SERVER) && !defined(WOLFSSL_NO_TLS12)
 
 /* Size of static buffer for dynamic memory allocation. */
@@ -370,7 +372,7 @@ void w5500_packetSend_forTLS(uint8_t sn)
 }
 
 /* Server attempts to read data from client. */
-static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
+int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
     if (server_buffer_sz <= 0)
         w5500_packetReceive_forTLS(0);
@@ -397,7 +399,7 @@ static int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 }
 
 /* Server attempts to write data to client. */
-static int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
+int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
     printf("-- send_server %d byte --\n", sz);
     if (client_buffer_sz < BUFFER_SIZE)
@@ -500,7 +502,7 @@ static int wolfssl_server_accept(WOLFSSL* server_ssl)
 
 
 /* Send application data. */
-static int wolfssl_send(WOLFSSL* ssl, const char* msg)
+int wolfssl_send(WOLFSSL* ssl, const char* msg)
 {
     printf("-- wolfssl_send --\n");
     int ret;
@@ -516,9 +518,9 @@ static int wolfssl_send(WOLFSSL* ssl, const char* msg)
 }
 
 /* Receive application data. */
-static int wolfssl_recv(WOLFSSL* ssl)
+int wolfssl_recv(WOLFSSL* ssl)
 {
-//Printf("-- wolfssl_recv --\n");
+printf("-- wolfssl_recv --\n");
 
     int ret;
     byte reply[2048];
@@ -546,12 +548,12 @@ static void wolfssl_free(WOLFSSL_CTX* ctx, WOLFSSL* ssl)
 
 
 /* Main entry point. */
-int tls_server_sizeTest()
+void tls_server_Handshake()
 {
-    Printf("tls_server_sizeTest\n");
+    Printf("tls_server_Handshake\n");
     int ret = 0;
-    WOLFSSL_CTX* server_ctx = NULL;
-    WOLFSSL*     server_ssl = NULL;
+//    WOLFSSL_CTX* server_ctx = NULL;
+//    WOLFSSL*     server_ssl = NULL;
 
 #if defined(DEBUG_WOLFSSL)
     wolfSSL_Debugging_ON();
@@ -598,19 +600,19 @@ int tls_server_sizeTest()
 
 
 
-    wolfssl_recv(server_ssl);
-    wolfssl_send(server_ssl, msgHTTPIndex2);
+//    wolfssl_recv(server_ssl);
+//    wolfssl_send(server_ssl, msgHTTPIndex2);
 
 
 
-while(1)
-{
+//while(1)
+//{
 //    httpServer_run(0);
-    while (wolfSSL_want_read(server_ssl));
+//    while (wolfSSL_want_read(server_ssl));
 //    wolfSSL_read(server_ssl, void* data, int sz)
 //    wolfssl_recv(server_ssl);
 
-}
+//}
 
 
 //    /* Dispose of SSL objects. */
@@ -619,15 +621,15 @@ while(1)
     /* Cleanup wolfSSL library. */
 //    wolfSSL_Cleanup();
 
-    if (ret == 0)
-        Printf("Done\n");
-    else
-    {
-        char buffer[80];
-        Printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
-    }
+//    if (ret == 0)
+//        Printf("Done\n");
+//    else
+//    {
+//        char buffer[80];
+//        Printf("Error: %d, %s\n", ret, wolfSSL_ERR_error_string(ret, buffer));
+//    }
 
-    return (ret == 0) ? 0 : 1;
+//    return (ret == 0) ? 0 : 1;
 }
 
 

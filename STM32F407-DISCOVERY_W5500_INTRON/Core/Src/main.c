@@ -1592,8 +1592,6 @@ int main(void)
 //    net_ini();
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
-    convertHexToDecimal("1F");
-
     //Работа с SPI EEPROM
     if (sdCartOn == 0)
     {

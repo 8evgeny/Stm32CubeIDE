@@ -37,7 +37,7 @@
 #ifdef HAVE_CONFIG_H
     #include <config.h>
 #endif
-
+extern char string_print_Hex(unsigned char *buf, unsigned int len);
 #include <wolfssl/wolfcrypt/settings.h>
 
 /*
@@ -14239,6 +14239,7 @@ int wc_GetPubX509(DecodedCert* cert, int verify, int* badDate)
  * @return  ASN_BITSTR_E when the expected BIT_STRING tag is not found.
  * @return  ASN_EXPECT_0_E when the INTEGER has the MSB set.
  */
+
 int DecodeToKey(DecodedCert* cert, int verify)
 {
 #ifndef WOLFSSL_ASN_TEMPLATE
@@ -14261,6 +14262,9 @@ int DecodeToKey(DecodedCert* cert, int verify)
     }
 
     ret = GetCertKey(cert, cert->source, &cert->srcIdx, cert->maxIdx);
+
+//string_print_Hex((unsigned char *)cert->source, sizeof (cert->source));
+
     if (ret != 0)
         return ret;
 

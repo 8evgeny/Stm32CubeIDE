@@ -288,7 +288,7 @@ void tls_server_Handshake()
     if (ret == 0)
     {
         Handshake = 1;
-        Printf("Handshake complete\n");
+        Printf("\nHANDSHAKE COMPLETE\n\n");
     }
 }
 

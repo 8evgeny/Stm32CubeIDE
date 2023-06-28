@@ -14,12 +14,13 @@ add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или 
 add_definitions(-DTLS_ON)         #Режим http / https
 #add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде
 add_definitions(-DPROD)  #Основной файл index.html или пример WIZNET
-
+add_definitions(-UWOLFSSL_TLS13)
 #Эти 4 параметра не используются
 #add_definitions(-DWOLFSSL_ALLOW_TLSV10)
 #add_definitions(-DMBEDTLS_ECDSA_C)
 #add_definitions(-DMBEDTLS_ECP_C)
 #add_definitions(-DMBEDTLS_SHA256_C)
+add_definitions(-UWOLFSSL_TLS13)
 
 project(11_Converter_F407_INTRON_DT C CXX ASM)
 #set(CMAKE_BUILD_TYPE debug)

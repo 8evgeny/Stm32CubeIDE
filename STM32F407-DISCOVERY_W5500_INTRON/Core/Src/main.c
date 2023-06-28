@@ -412,6 +412,15 @@ void markEEPROMasOld()
 {
     char old[16] = {0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
     BSP_EEPROM_WriteBuffer((uint8_t*)old, markEEPROMclear, 16);
+    printf("eeprom mark as OLD\n");
+}
+
+void markEEPROMasNew()
+{
+    char clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
+    //Ручная Установка признака новая
+    BSP_EEPROM_WriteBuffer((uint8_t*)clear, markEEPROMclear, 16);
+    printf("eeprom mark as NEW\n");
 }
 
 isEEPROMClear isEEPROMclear()
@@ -420,8 +429,6 @@ isEEPROMClear isEEPROMclear()
     uint16_t * pnumByte = &numByte;
     char tmp[16];
     char clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
-    //Ручная Установка признака новая
-//    BSP_EEPROM_WriteBuffer((uint8_t*)clear, markEEPROMclear, 16);
     BSP_EEPROM_ReadBuffer((uint8_t *)tmp, markEEPROMclear, pnumByte);
     if(strncmp(tmp, clear, 15) == 0)
         return eepromCLEAR;
@@ -433,7 +440,7 @@ void copyMacToAdressEEPROM(uint16_t Addr)
 {
 #ifndef  MAC_IN_DECIMAL
     char tmp[18];
-    FRESULT result = f_open(&fil, "madr", FA_OPEN_ALWAYS | FA_READ );
+    FRESULT result = f_open(&fil, "mac16", FA_OPEN_ALWAYS | FA_READ );
     if (result == FR_OK)
     {
         printf("\nCopy MAC adress from SD in Hex to adress 0x%.4X eeprom\n",Addr);
@@ -448,7 +455,7 @@ void copyMacToAdressEEPROM(uint16_t Addr)
 #endif
 #ifdef  MAC_IN_DECIMAL
     char tmp[24];
-    FRESULT result = f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
+    FRESULT result = f_open(&fil, "mac10", FA_OPEN_ALWAYS | FA_READ );
     if (result == FR_OK)
     {
         printf("\nCopy MAC adress from SD in Decimal to adress 0x%.4X eeprom\n",Addr);
@@ -692,7 +699,7 @@ void setMacFromSD()
 #ifndef  MAC_IN_DECIMAL
     char tmp[18];
     char tmp2[2];
-    f_open(&fil, "madr", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "mac16", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_gets(tmp, 18, &fil);
     strncpy(tmp2,tmp,2);
@@ -713,7 +720,7 @@ void setMacFromSD()
 #ifdef  MAC_IN_DECIMAL
     char tmp[33];
     char tmp2[3];
-    f_open(&fil, "mac", FA_OPEN_ALWAYS | FA_READ );
+    f_open(&fil, "mac10", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_gets(tmp, 24, &fil);
     strncpy(tmp2,tmp,3);
@@ -950,20 +957,19 @@ void workI2C_EEPROM()
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
+//        markEEPROMasNew(); //Ручная установка EEPROM как NEW
         if (eepromCLEAR == isEEPROMclear()) //Проверяем EEPROM новая ли
         {
-            printf("eeprom new\n");
-// Пишем на eeprom все параметры по умолчанию
+            printf("EEPROM: NEW\n");
+            // Пишем на eeprom все параметры по умолчанию
             copyDefaultParametersToAdressEEPROM(ipSettingAdressInEEPROM);
             copyDefaultMACToAdressEEPROM(macAdressInEEPROM);
             SetMacFromAdressEEPROM(macAdressInEEPROM);
-// Снимаем признак новая EEPROM
-            markEEPROMasOld();
-            printf("eeprom mark as OLD\n");
+            markEEPROMasOld(); // Снимаем признак новая EEPROM
         }
         else
         {
-            printf("eeprom old\n");
+            printf("EEPROM: OLD\n");
         }
 
     }

@@ -12,7 +12,12 @@
 #include "httpUtil.h"
 #include "stm32f4xx_hal.h"
 #include "main.h"
-
+#include <wolfssl/ssl.h>
+extern void tls_server_Handshake();
+extern WOLFSSL_CTX* server_ctx;
+extern WOLFSSL*     server_ssl ;
+extern unsigned char client_buffer[BUFFER_SIZE];
+extern unsigned char server_buffer[BUFFER_SIZE];
 #ifdef	_USE_SDCARD_
 #include "ff.h" 	// header file for FatFs library (FAT file system)
 #endif
@@ -20,7 +25,7 @@
 #ifndef DATA_BUF_SIZE
     #define DATA_BUF_SIZE		2048
 #endif
-
+extern int Handshake;
 /*****************************************************************************
  * Private types/enumerations/variables
  ****************************************************************************/
@@ -157,12 +162,27 @@ void httpServer_run(uint8_t seqnum)
 				case STATE_HTTP_IDLE :
 					if ((len = getSn_RX_RSR(s)) > 0)
 					{
+
 						if (len > DATA_BUF_SIZE) len = DATA_BUF_SIZE;
-						len = recv(s, (uint8_t *)http_request, len);
+#ifdef TLS_ON
+                        if (Handshake == 0)
+                        {
+                            tls_server_Handshake();
+                        }
+                        wolfSSL_read(server_ssl, (uint8_t *)http_request, len);
+#endif
+#ifndef TLS_ON
+                        len = recv(s, (uint8_t *)http_request, len);
+                        *(((uint8_t *)http_request) + len) = '\0';
+#endif
 
-						*(((uint8_t *)http_request) + len) = '\0';
-
+#ifdef TLS_ON
+                        parse_http_request(parsed_http_request, (uint8_t *)http_request);
+//                        *(((uint8_t *)server_buffer) + len) = '\0';
+#endif
+#ifndef TLS_ON
 						parse_http_request(parsed_http_request, (uint8_t *)http_request);
+#endif
 						getSn_DIPR(s, destip);
 						destport = getSn_DPORT(s);
 						printf("\r\n");
@@ -285,7 +305,14 @@ static void send_http_response_header(uint8_t s, uint8_t content_type, uint32_t 
 	if(http_status)
 	{
 		printf("> HTTPSocket[%d] : [Send] HTTP Response Header [ %d ]byte\r\n", s, (uint16_t)strlen((char *)http_response));
-		send(s, http_response, strlen((char *)http_response));
+
+#ifndef TLS_ON
+        send(s, http_response, strlen((char *)http_response));
+#endif
+#ifdef TLS_ON
+        wolfSSL_write(server_ssl, (uint8_t *)http_response, strlen((char *)http_response));
+#endif
+
 	}
 }
 
@@ -401,7 +428,15 @@ static void send_http_response_body(uint8_t s, uint8_t * uri_name, uint8_t * buf
 	// Requested content send to HTTP client
 	printf("> HTTPSocket[%d] : [Send] HTTP Response body [ %ld ]byte\r\n", s, send_len);
 
-	if(send_len) send(s, buf, send_len);
+    if(send_len)
+    {
+#ifndef TLS_ON
+        send(s, buf, send_len);
+#endif
+#ifdef TLS_ON
+        wolfSSL_write(server_ssl, (uint8_t *)buf, send_len);
+#endif
+    }
 	else flag_datasend_end = 1;
 
 	if(flag_datasend_end)
@@ -432,7 +467,12 @@ static void send_http_response_cgi(uint8_t s, uint8_t * buf, uint8_t * http_body
 	send_len = sprintf((char *)buf, "%s%d\r\n\r\n%s", RES_CGIHEAD_OK, file_len, http_body);
 	printf("> HTTPSocket[%d] : HTTP Response Header + Body - send len [ %d ]byte\r\n", s, send_len);
 
-	send(s, buf, send_len);
+#ifndef TLS_ON
+        send(s, buf, send_len);
+#endif
+#ifdef TLS_ON
+        wolfSSL_write(server_ssl, (uint8_t *)buf, send_len);
+#endif
 }
 
 //Если отсоединяться - теряются запросы

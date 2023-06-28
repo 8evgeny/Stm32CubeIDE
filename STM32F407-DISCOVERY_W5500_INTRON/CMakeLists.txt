@@ -11,7 +11,7 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 #add_definitions(-DINTRON)         #Закомментировать при прошивке DT
 add_definitions(-DNEW_HTTP_SERVER)
 #add_definitions(-DMAC_IN_DECIMAL)
-#add_definitions(-DTLS_ON)         #Режим http / https
+add_definitions(-DTLS_ON)         #Режим http / https
 add_definitions(-UWOLFSSL_TLS13)
 add_definitions(-UMBEDTLS_SSL_CLI_C)
 add_definitions(-DMBEDTLS_SSL_SRV_C)
@@ -104,10 +104,7 @@ add_library(littlefs_LIB ${littlefs_src})
 
 file (GLOB wolfssl_src ${wolfssl}/src/*.c
     ${wolfssl}/wolfcrypt/src/*.c
-    wolfSSL/wolfssl_example.c
-    wolfssl-examples-master/embedded/tls-client-server.c
-    wolfssl-examples-master/embedded/tls-server-size.c
-#    wolfssl-examples-master/embedded/tls-sock-server.c
+    wolfSSL/tls-server-size.c
     )
 add_library(wolfssl_LIB ${wolfssl_src})
 

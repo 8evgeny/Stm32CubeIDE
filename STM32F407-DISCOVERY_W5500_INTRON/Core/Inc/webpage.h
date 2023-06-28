@@ -745,23 +745,26 @@ char gate_IP[16] = "192.168.001.001";
 char mask_IP[16] = "255.255.255.000";
 
 //Код WIZNET
-//                              "<html>"\
-//								"<head>"\
-//								"<title>w5x00 Web Server</title>"\
-//								"<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"\
-//								"</head>"\
-//								"<body>"\
-//									"<div>"\
-//									"w5x00 Web Server Demopage"\
-//									"</div>"\
-//									"<br>"\
-//									"<a href='netinfo.html'>Network Information</a>"\
-//									"<br>"\
-//									"<a href='img.html'>Base64 Image Data</a>"\
-//									"<br>"\
-//									"<a href='dio.html'> Digital I/O RGB LED</a>"\
-//								"</body>"\
-//							"</html>"
+
+const char index_page_WIZNET[] =
+          "<html>"
+            "<head>"
+            "<title>w5x00 Web Server</title>"
+            "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
+            "</head>"
+            "<body>"
+                "<div>"
+                "w5x00 Web Server Demopage"
+                "</div>"
+                "<br>"
+                "<a href='netinfo.html'>Network Information</a>"
+                "<br>"
+                "<a href='img.html'>Base64 Image Data</a>"
+                "<br>"
+                "<a href='dio.html'> Digital I/O RGB LED</a>"
+            "</body>"
+        "</html>"
+;
 
 
 #define netinfo_page 		"<!DOCTYPE html>"\

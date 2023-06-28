@@ -9,9 +9,10 @@ set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET
-add_definitions(-DTLS_ON)         #Режим http / https
+#add_definitions(-DTLS_ON)         #Режим http / https
 #add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде
 
+#Эти 4 параметра не используются
 #add_definitions(-DWOLFSSL_ALLOW_TLSV10)
 #add_definitions(-DMBEDTLS_ECDSA_C)
 #add_definitions(-DMBEDTLS_ECP_C)

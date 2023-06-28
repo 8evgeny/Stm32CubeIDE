@@ -40,6 +40,12 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #define EEPROM_HOLD_Pin GPIO_PIN_1
 #define EEPROM_HOLD_GPIO_Port GPIOE
 
+#ifndef TLS_ON
+#define LOCAL_PORT 80
+#else
+#define LOCAL_PORT 443
+#endif
+
 /*
 EEPROM I2C : ATMEL 24C256
 32768 byte 0000 - 7FFF

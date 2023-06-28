@@ -129,9 +129,9 @@ extern uint8_t EEPROM_StatusByte;
 
 uint8_t TxBuffer[256] = "__---COOL!!!1234512345qwertasdfgh";
 uint8_t capture = 0;
-extern uint8_t ipaddr[4];
-extern uint8_t ipgate[4];
-extern uint8_t ipmask[4];
+uint8_t ipaddr[4];
+uint8_t ipgate[4];
+uint8_t ipmask[4];
 char MD5[32];
 #ifndef   NEW_HTTP_SERVER
 uint32_t indexLen;
@@ -879,8 +879,8 @@ void wep_define_func(void)
 {
 #ifdef   NEW_HTTP_SERVER
     // Index page and netinfo / base64 image demo
-    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
-//    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET
+//    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
+    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET
     reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);                // main.html
     reg_httpServer_webContent((uint8_t *)"host_IP", (uint8_t *)host_IP);
     reg_httpServer_webContent((uint8_t *)"dest_IP", (uint8_t *)dest_IP);
@@ -1159,7 +1159,9 @@ void testSPI_EEPROM()
 void reboot()
 {
     printf("*****  REBOOT  *****\r\n");
+#ifdef   NEW_HTTP_SERVER
     http_disconnect(0);
+#endif
     HAL_NVIC_SystemReset();
 }
 
@@ -1565,7 +1567,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
+#ifndef   NEW_HTTP_SERVER
 //    net_ini();
+#endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
     //Работа с SPI EEPROM

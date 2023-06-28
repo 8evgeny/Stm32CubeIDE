@@ -183,7 +183,7 @@ WOLFSSL_API void wolfSSL_Debugging_OFF(void);
     #define WOLFSSL_IS_DEBUG_ON() 0
 
     #define WOLFSSL_MSG_EX(...)    do{} while(0)
-    #define WOLFSSL_MSG(m)            do{Printf(m);Printf("\n");} while(0)
+    #define WOLFSSL_MSG(m)            do{printf(m);printf("\n");} while(0)
     #define WOLFSSL_BUFFER(b, l)      do{} while(0)
 
 #endif /* DEBUG_WOLFSSL && !WOLFSSL_DEBUG_ERRORS_ONLY */

@@ -18,7 +18,6 @@ extern WOLFSSL_CTX* server_ctx;
 extern WOLFSSL*     server_ssl ;
 extern unsigned char client_buffer[BUFFER_SIZE];
 extern unsigned char server_buffer[BUFFER_SIZE];
-extern int wolfssl_recv(WOLFSSL* ssl);
 #ifdef	_USE_SDCARD_
 #include "ff.h" 	// header file for FatFs library (FAT file system)
 #endif

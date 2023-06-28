@@ -879,14 +879,16 @@ void wep_define_func(void)
 {
 #ifdef   NEW_HTTP_SERVER
     // Index page and netinfo / base64 image demo
-//    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
-    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET
+#ifdef   PROD
+    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
     reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);                // main.html
     reg_httpServer_webContent((uint8_t *)"host_IP", (uint8_t *)host_IP);
     reg_httpServer_webContent((uint8_t *)"dest_IP", (uint8_t *)dest_IP);
     reg_httpServer_webContent((uint8_t *)"gate_IP", (uint8_t *)gate_IP);
     reg_httpServer_webContent((uint8_t *)"mask_IP", (uint8_t *)mask_IP);
-
+#endif
+#ifndef   PROD
+    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET
     reg_httpServer_webContent((uint8_t *)"netinfo.html", (uint8_t *)netinfo_page);			// netinfo.html 	: Network information example page
     reg_httpServer_webContent((uint8_t *)"netinfo.js", (uint8_t *)w5x00web_netinfo_js);     // netinfo.js 		: JavaScript for Read Network configuration 	(+ ajax.js)
     reg_httpServer_webContent((uint8_t *)"img.html", (uint8_t *)img_page);					// img.html 		: Base64 Image data example page
@@ -898,6 +900,7 @@ void wep_define_func(void)
     // AJAX JavaScript functions
     reg_httpServer_webContent((uint8_t *)"ajax.js", (uint8_t *)w5x00web_ajax_js);			// ajax.js			: JavaScript for AJAX request transfer
 #endif
+#endif //NEW_HTTP_SERVER
 }
 
 void net_ini_WIZNET()

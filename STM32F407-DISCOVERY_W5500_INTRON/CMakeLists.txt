@@ -8,9 +8,10 @@ set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 #set(CMAKE_CXX_LINKER_LAUNCHER ${TOOLS_PATH}/bin/arm-none-eabi-g++)
 set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
-add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET
+add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
 #add_definitions(-DTLS_ON)         #Режим http / https
 #add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде
+add_definitions(-DPROD)  #Основной файл index.html или пример WIZNET
 
 #Эти 4 параметра не используются
 #add_definitions(-DWOLFSSL_ALLOW_TLSV10)

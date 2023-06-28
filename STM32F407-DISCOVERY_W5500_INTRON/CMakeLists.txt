@@ -27,8 +27,8 @@ set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
 #set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs_new)
 set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
-set (polarssl ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
-set (bearssl ${CMAKE_HOME_DIRECTORY}/bearSSL)
+#set (polarssl ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
+#set (bearssl ${CMAKE_HOME_DIRECTORY}/bearSSL)
 
 #SET(MYCOMPILE_FLAGS '-DMBEDTLS_CONFIG_FILE="mbedtls_config.h"') #для mbedTLS
 add_definitions(${MYCOMPILE_FLAGS})
@@ -71,12 +71,12 @@ include_directories(
     ${wolfssl}/wolfcrypt
     ${wolfssl}/wolfssl/wolfcrypt
     wolfssl-examples-master/embedded
-    ${polarssl}
-    ${polarssl}/mbedtls/include
-    ${polarssl}/mbedtls/include/mbedtls
-    ${bearssl}/inc
-    ${bearssl}/samples
-    ${bearssl}/src
+#    ${polarssl}
+#    ${polarssl}/mbedtls/include
+#    ${polarssl}/mbedtls/include/mbedtls
+#    ${bearssl}/inc
+#    ${bearssl}/samples
+#    ${bearssl}/src
     )
 
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
@@ -89,8 +89,8 @@ file (GLOB ioLibrary_Driver_src
     )
 add_library(ioLibrary_Driver_LIB ${ioLibrary_Driver_src})
 
-file (GLOB_RECURSE bear_src ${bearssl}/src/*.c  ioLibrary_Driver/Internet/httpServer/*.c)
-add_library(bearSSL_LIB ${bear_src} )
+#file (GLOB_RECURSE bear_src ${bearssl}/src/*.c  ioLibrary_Driver/Internet/httpServer/*.c)
+#add_library(bearSSL_LIB ${bear_src} )
 
 file (GLOB fatfs_src FATFS/App/*.c FATFS/Target/*.c ${fatfs}/*.c ${fatfs}/option/*.c)
 add_library(fatfs_LIB ${fatfs_src})
@@ -104,10 +104,10 @@ file (GLOB wolfssl_src ${wolfssl}/src/*.c
     )
 add_library(wolfssl_LIB ${wolfssl_src})
 
-file (GLOB polarssl_src ${polarssl}/*.c
-    ${polarssl}/mbedtls/library/*.c
-    )
-add_library(polarssl_LIB ${polarssl_src})
+#file (GLOB polarssl_src ${polarssl}/*.c
+#    ${polarssl}/mbedtls/library/*.c
+#    )
+#add_library(polarssl_LIB ${polarssl_src})
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s)
 add_executable(${PROJECT_NAME}.elf ${src})
@@ -138,8 +138,8 @@ target_link_libraries(${PROJECT_NAME}.elf PUBLIC
     fatfs_LIB
     littlefs_LIB
     wolfssl_LIB
-    polarssl_LIB
-    bearSSL_LIB
+#    polarssl_LIB
+#    bearSSL_LIB
     )
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)

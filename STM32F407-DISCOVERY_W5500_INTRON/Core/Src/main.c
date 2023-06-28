@@ -7,7 +7,7 @@
 #include "my_function.h"
 #include "eeprom.h"
 #include "wizchip_init.h"
-#include "SSLInterface.h"
+//#include "SSLInterface.h"
 #include "httpServer.h"
 #include "webpage.h"
 #include "spi_eeprom.h"

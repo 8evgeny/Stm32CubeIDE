@@ -67,6 +67,7 @@ uint16_t local_port = LOCAL_PORT;
 extern uint8_t bufRead[5];
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
+extern int8_t http_disconnect(uint8_t sn);
 //uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 //uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
 
@@ -1047,40 +1048,14 @@ void prepearUDP_PLIS()
     //OpenSocket(6, Sn_MR_UDP);
     //OpenSocket(7, Sn_MR_UDP);
 
-    #ifdef INTRON
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
-    #endif
-    #ifndef INTRON
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
     //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
-    #endif
+
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
 
 void sendReceiveUDP()
 {
-#ifdef INTRON
-    for (uint8_t i = 4; i < 8 ;++i)
-    {
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-
-      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-
-      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
-      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
-
-      sendPackets(4, destip, destport + 4 );
-      if (firstSend != 1)
-          receivePackets(4, destip, destport + 4 );
-    }
-    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
-#endif
-
-#ifndef INTRON
 //    for (uint8_t i = 4; i < 8 ;++i)
 //    {
 //      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
@@ -1099,7 +1074,6 @@ void sendReceiveUDP()
 //          receivePackets(4, destip, destport + 4 );
 //    }
 //    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
-#endif
 
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
@@ -1185,6 +1159,7 @@ void testSPI_EEPROM()
 void reboot()
 {
     printf("*****  REBOOT  *****\r\n");
+    http_disconnect(0);
     HAL_NVIC_SystemReset();
 }
 

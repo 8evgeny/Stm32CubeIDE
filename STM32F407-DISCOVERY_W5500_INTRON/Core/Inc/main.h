@@ -32,13 +32,6 @@ asm volatile ("MOV R0,%[loops]\n                       \
 /* I/O buffer size - wolfSSL buffers messages internally as well. */
 #define BUFFER_SIZE         2048
 #define MAX_HTTPSOCK	1 //Для нового WEB-сервера
-#ifdef INTRON
-
-#define MAC_ADDR {0x00,0x15,0x42,0xBF,0xF0,0x51}
-#endif
-#ifndef INTRON
-#define MAC_ADDR {0x00,0x15,0x42,0xBF,0xF0,0x52}
-#endif
 
 #define EEPROM_CS_Pin GPIO_PIN_2
 #define EEPROM_CS_GPIO_Port GPIOE

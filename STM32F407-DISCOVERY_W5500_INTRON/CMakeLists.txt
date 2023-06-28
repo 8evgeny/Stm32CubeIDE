@@ -8,14 +8,10 @@ set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 #set(CMAKE_CXX_LINKER_LAUNCHER ${TOOLS_PATH}/bin/arm-none-eabi-g++)
 set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
-#add_definitions(-DINTRON)         #Закомментировать при прошивке DT
-add_definitions(-DNEW_HTTP_SERVER)
-#add_definitions(-DMAC_IN_DECIMAL)
+add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET
 add_definitions(-DTLS_ON)         #Режим http / https
-add_definitions(-UWOLFSSL_TLS13)
-add_definitions(-UMBEDTLS_SSL_CLI_C)
-add_definitions(-DMBEDTLS_SSL_SRV_C)
-add_definitions(-DATOMIC_USER)
+#add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде
+
 #add_definitions(-DWOLFSSL_ALLOW_TLSV10)
 #add_definitions(-DMBEDTLS_ECDSA_C)
 #add_definitions(-DMBEDTLS_ECP_C)

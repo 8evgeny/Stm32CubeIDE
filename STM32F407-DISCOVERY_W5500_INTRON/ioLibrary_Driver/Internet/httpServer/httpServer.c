@@ -67,8 +67,6 @@ FRESULT fr;	// FatFs: File function return code
 void httpServer_Sockinit(uint8_t cnt, uint8_t * socklist);
 static uint8_t getHTTPSocketNum(uint8_t seqnum);
 static int8_t getHTTPSequenceNum(uint8_t socket);
-static int8_t http_disconnect(uint8_t sn); //отключил - иначе ошибки
-
 static void http_process_handler(uint8_t s, st_http_request * p_http_request);
 static void send_http_response_header(uint8_t s, uint8_t content_type, uint32_t body_len, uint16_t http_status);
 static void send_http_response_body(uint8_t s, uint8_t * uri_name, uint8_t * buf, uint32_t start_addr, uint32_t file_len);
@@ -476,14 +474,13 @@ static void send_http_response_cgi(uint8_t s, uint8_t * buf, uint8_t * http_body
 }
 
 //Если отсоединяться - теряются запросы
-//static int8_t http_disconnect(uint8_t sn)
-//{
-//	setSn_CR(sn,Sn_CR_DISCON);
-//	/* wait to process the command... */
-//	while(getSn_CR(sn));
-
-//	return SOCK_OK;
-//}
+int8_t http_disconnect(uint8_t sn)
+{
+    setSn_CR(sn,Sn_CR_DISCON);
+    /* wait to process the command... */
+    while(getSn_CR(sn));
+    return SOCK_OK;
+}
 
 
 static void http_process_handler(uint8_t s, st_http_request * p_http_request)

@@ -1,3 +1,4 @@
+#ifndef   NEW_HTTP_SERVER
 #ifndef W5500_H_
 #define W5500_H_
 //--------------------------------------------------
@@ -131,3 +132,4 @@ void w5500_readSockBuf(uint8_t sock_num, uint16_t point, uint8_t *buf, uint16_t 
 #include "httpd.h"
 
 #endif /* W5500_H_ */
+#endif

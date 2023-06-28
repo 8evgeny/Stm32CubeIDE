@@ -1,3 +1,4 @@
+#ifndef   NEW_HTTP_SERVER
 #include "w5500.h"
 #include <stdio.h>
 
@@ -14,7 +15,7 @@ char tmpbuf[30] __attribute__ ((aligned (4)));
 uint8_t sect[515] __attribute__ ((aligned (4)));
 //extern http_sock_prop_ptr httpsockprop[8];
 //-----------------------------------------------
-uint8_t macaddr[6]={0x00}/*MAC_ADDR*/;
+extern uint8_t macaddr[6];
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
@@ -339,3 +340,4 @@ delayUS_ASM(100000);
 
 }
 //-----------------------------------------------
+#endif

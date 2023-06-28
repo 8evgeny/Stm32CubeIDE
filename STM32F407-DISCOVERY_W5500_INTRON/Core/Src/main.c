@@ -137,7 +137,7 @@ uint32_t indexLen;
 uint32_t mainLen;
 #endif
 uint8_t destip[4];
-extern uint8_t macaddr[6];
+uint8_t macaddr[6]={0x00}/*MAC_ADDR*/;
 extern wiz_NetInfo defaultNetInfo;
 uint8_t RX_BUF[DATA_BUF_SIZE];
 uint8_t TX_BUF[DATA_BUF_SIZE];
@@ -878,8 +878,8 @@ void wep_define_func(void)
 {
 #ifdef   NEW_HTTP_SERVER
     // Index page and netinfo / base64 image demo
-//    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
-    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET
+    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
+//    reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET
     reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);                // main.html
     reg_httpServer_webContent((uint8_t *)"host_IP", (uint8_t *)host_IP);
     reg_httpServer_webContent((uint8_t *)"dest_IP", (uint8_t *)dest_IP);

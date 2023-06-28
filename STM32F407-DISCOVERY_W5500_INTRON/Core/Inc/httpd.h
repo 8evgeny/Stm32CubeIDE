@@ -1,3 +1,4 @@
+#ifndef   NEW_HTTP_SERVER
 #ifndef HTTPD_H_
 #define HTTPD_H_
 #include "stm32f4xx_hal.h"
@@ -27,3 +28,4 @@ typedef struct http_sock_prop {
 //--------------------------------------------------
 void http_request(void);
 #endif /* HTTPD_H_ */
+#endif

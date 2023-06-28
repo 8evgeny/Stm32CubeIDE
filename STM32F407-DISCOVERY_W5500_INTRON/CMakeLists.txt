@@ -8,6 +8,8 @@ set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 #set(CMAKE_CXX_LINKER_LAUNCHER ${TOOLS_PATH}/bin/arm-none-eabi-g++)
 set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
+#set(LFS ON)
+
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
 #add_definitions(-DTLS_ON)         #Режим http / https
 #add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде
@@ -26,8 +28,14 @@ project(11_Converter_F407_INTRON_DT C CXX ASM)
 set (ioLibrary_Eth ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Ethernet)
 set (ioLibrary_Int ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Internet/httpServer)
 set (fatfs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/FatFs/src)
-#set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs_new)
-set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
+
+if(LFS STREQUAL ON)
+    add_definitions(-DLFS)
+    #set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs_new)
+    set (littlefs ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/littlefs)
+    include_directories(${littlefs})
+endif()
+
 set (wolfssl ${CMAKE_HOME_DIRECTORY}/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl)
 #set (polarssl ${CMAKE_HOME_DIRECTORY}/W5500_TLS/TrueStudio/W5500_TLS/Drivers/TLS)
 #set (bearssl ${CMAKE_HOME_DIRECTORY}/bearSSL)
@@ -66,7 +74,6 @@ include_directories(
     FATFS/App
     FATFS/Target
     ${fatfs}
-    ${littlefs}
     wolfSSL
     ${wolfssl}
     ${wolfssl}/wolfssl
@@ -97,8 +104,10 @@ add_library(ioLibrary_Driver_LIB ${ioLibrary_Driver_src})
 file (GLOB fatfs_src FATFS/App/*.c FATFS/Target/*.c ${fatfs}/*.c ${fatfs}/option/*.c)
 add_library(fatfs_LIB ${fatfs_src})
 
-file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h)
-add_library(littlefs_LIB ${littlefs_src})
+if(LFS STREQUAL ON)
+    file (GLOB littlefs_src ${littlefs}/*.c ${littlefs}/*.h)
+    add_library(littlefs_LIB ${littlefs_src})
+endif()
 
 file (GLOB wolfssl_src ${wolfssl}/src/*.c
     ${wolfssl}/wolfcrypt/src/*.c
@@ -111,7 +120,7 @@ add_library(wolfssl_LIB ${wolfssl_src})
 #    )
 #add_library(polarssl_LIB ${polarssl_src})
 
-file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s)
+file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s Middlewares/Third_Party/littlefs/eeprom.c)
 add_executable(${PROJECT_NAME}.elf ${src})
 
 set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINKER_LANGUAGE CXX)
@@ -138,11 +147,14 @@ target_link_libraries(${PROJECT_NAME}.elf PUBLIC
     hal_LIB
     ioLibrary_Driver_LIB
     fatfs_LIB
-    littlefs_LIB
     wolfssl_LIB
 #    polarssl_LIB
 #    bearSSL_LIB
     )
+
+if(LFS STREQUAL ON)
+    target_link_libraries(${PROJECT_NAME}.elf PUBLIC littlefs_LIB )
+endif()
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bin)

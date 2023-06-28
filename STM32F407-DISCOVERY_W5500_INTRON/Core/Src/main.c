@@ -5,7 +5,9 @@
 #include "net.h"
 #include "loopback.h"
 #include "my_function.h"
+#ifdef LFS
 #include "eeprom.h"
+#endif
 #include "wizchip_init.h"
 //#include "SSLInterface.h"
 #include "httpServer.h"
@@ -57,8 +59,10 @@ char *pindex;
 char *pmain;
 char *psettingsIP;
 
+#ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
+#endif
 //uint8_t num_block_index = 1;
 //uint8_t num_block_main = 8;
 //char indexLen[8];
@@ -282,23 +286,31 @@ void saveLenFileToEeprom(const char* nameFile_onSD, uint32_t numByteFile)
 void copyFileToAdressEEPROM(const char* nameFile_onSD, uint16_t WriteAddr)
 {
     printf("\n\nCopy file %s to adress 0x%.4X i2c eeprom \n",nameFile_onSD, WriteAddr);
-    f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
-    uint32_t numByteFile = fil.obj.objsize;
-    saveLenFileToEeprom(nameFile_onSD, numByteFile);
-    printf("num byte: %d\n",numByteFile);
-    UINT rc;
-    pindex = malloc(numByteFile);
-    FRESULT res = f_read(&fil, pindex, numByteFile, &rc);
-    printf("file %s read: %d\n", nameFile_onSD, res);
-//    printf("copy %s to eeprpm (adress 0x%.4X)\n", nameFile_onSD, WriteAddr);
-    int result = BSP_EEPROM_WriteBuffer((uint8_t*)pindex, WriteAddr, numByteFile);
-    printf("file %s write to adress 0x%.4X on eprom: %d\n", nameFile_onSD, WriteAddr, result);
-    f_close(&fil);
-    free (pindex);
+    FRESULT result = f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
+    if (result == FR_OK)
+    {
+        uint32_t numByteFile = fil.obj.objsize;
+        saveLenFileToEeprom(nameFile_onSD, numByteFile);
+        printf("num byte: %d\n",numByteFile);
+        UINT rc;
+        pindex = malloc(numByteFile);
+        FRESULT res = f_read(&fil, pindex, numByteFile, &rc);
+        printf("file %s read: %d\n", nameFile_onSD, res);
+    //    printf("copy %s to eeprpm (adress 0x%.4X)\n", nameFile_onSD, WriteAddr);
+        int result = BSP_EEPROM_WriteBuffer((uint8_t*)pindex, WriteAddr, numByteFile);
+        printf("file %s write to adress 0x%.4X on eprom: %d\n", nameFile_onSD, WriteAddr, result);
+        f_close(&fil);
+        free (pindex);
+    }
+    else
+    {
+        printf("\nError opening file %s!!! \n",nameFile_onSD);
+    }
 }
 
 void copyFileToEEPROM(const char* nameFile_onSD)
 {
+#ifdef LFS
     uint32_t time = HAL_GetTick();
     f_open(&fil, nameFile_onSD, FA_OPEN_ALWAYS | FA_READ );
     uint32_t numByteFile = fil.obj.objsize;
@@ -317,6 +329,7 @@ void copyFileToEEPROM(const char* nameFile_onSD)
     sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
     Printf(tmp);
 //    printFileFromEEPROM(nameFile_onSD);
+#endif
 }
 
 void loadFilesFromEepromToMemory(uint16_t ReadAddrIndex, uint16_t numByteFileIndex,
@@ -378,6 +391,7 @@ void printFileFromAdressEEPROM(uint16_t ReadAddr, uint16_t numByteFile)
 
 void printFileFromEEPROM(const char* nameFile_onEEPROM)
 {
+#ifdef LFS
     lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
     uint32_t numByteFile = lfs_file_size(&lfs, &file);
     pindex = malloc(numByteFile);
@@ -391,10 +405,12 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM)
     }
     Printf("\n");
     free (pindex);
+#endif
 }
 
 void testReadFile(const char* nameFile_onEEPROM)
 {
+#ifdef LFS
     UART_Printf("test read %s ... ", nameFile_onEEPROM); delayUS_ASM(1000);
     uint32_t time = HAL_GetTick();
     lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
@@ -406,6 +422,7 @@ void testReadFile(const char* nameFile_onEEPROM)
     char tmp[30];
     sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
     UART_Printf(tmp); delayUS_ASM(5000);
+#endif
 }
 
 void markEEPROMasOld()
@@ -631,6 +648,7 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
 
 void copyParametersToEEPROM()
 {
+#ifdef LFS
     Printf("\nCopy IP settings from SD to eeprom\n");
     char tmp[100];
     char tmp1[5];
@@ -692,6 +710,7 @@ void copyParametersToEEPROM()
     lfs_file_open(&lfs, &file, "md5", LFS_O_WRONLY | LFS_O_CREAT);
     lfs_file_write(&lfs, &file, &tmp, sizeof(tmp));
     lfs_file_close(&lfs, &file);
+#endif
 }
 
 void setMacFromSD()
@@ -810,6 +829,7 @@ void setParametersFromSD()
 
 void SetParaametersFromEEPROM()
 {
+#ifdef LFS
     char tmp[100];
     char tmp5[23];
     char tmp6[3];
@@ -880,6 +900,7 @@ void SetParaametersFromEEPROM()
 
     sprintf(tmp,"mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
     Printf(tmp);
+#endif
 }
 
 void wep_define_func(void)
@@ -987,11 +1008,12 @@ void workI2C_EEPROM()
         copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);
         copyFileToAdressEEPROM("main.html", mainAdressInEEPROM);
 #endif
+#ifdef LFS
 //lfs не использую
 //        copyParametersToEEPROM();
 //        copyFileToEEPROM("index.html");
 //        copyFileToEEPROM("main.html");
-
+#endif
     } else //Работа с i2c eeprom
     {
         SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
@@ -1015,13 +1037,14 @@ void workI2C_EEPROM()
 //        printFileFromAdressEEPROM(indexAdressInEEPROM, indexLen); //index.html
 //        printFileFromAdressEEPROM(mainAdressInEEPROM, mainLen); //main.html
 #endif
-
+#ifdef LFS
 //lfs не использую
 //        SetParaametersFromEEPROM();
 //        testReadFile("index.html");
 //        testReadFile("main.html");
 //        printFileFromEEPROM("index.html");
 //        printFileFromEEPROM("main.html");
+#endif
     }
 }
 

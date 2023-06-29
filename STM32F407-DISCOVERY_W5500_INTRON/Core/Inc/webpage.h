@@ -458,7 +458,7 @@ const char main_page[] =
         "  sleep(100);"
         "  request5.onreadystatechange = function() "
         "  {"
-        "    document.getElementById('frm5').elements[0].value=request5.responseText.toString().substring(0, 15);"
+        "    document.getElementById('frm5').elements[0].value=request5.responseText.toString().substring(0, 17);"
         "    document.getElementById('frm5').style.visibility = 'visible';"
         "  };"
         ""
@@ -770,6 +770,7 @@ char host_IP[16] = "192.168.001.222";
 char dest_IP[16] = "192.168.001.200";
 char gate_IP[16] = "192.168.001.001";
 char mask_IP[16] = "255.255.255.000";
+char mac[18] = "00:15:42:BF:F0:50";
 
 //Код WIZNET
 const char index_page_WIZNET[] =

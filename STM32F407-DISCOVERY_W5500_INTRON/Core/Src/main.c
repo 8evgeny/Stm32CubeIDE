@@ -151,6 +151,7 @@ extern char host_IP[16]; //для http Сервера
 extern char dest_IP[16];
 extern char gate_IP[16];
 extern char mask_IP[16];
+extern char mac[18];
 FATFS fs;
 FIL fil;
 /* USER CODE END PV */
@@ -546,6 +547,7 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
     printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
     printf("MAC:\n%s\n",tmp);
+    strncpy(mac,tmp,18);
     strncpy(tmp2, tmp, 2);
     macaddr[0] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+3, 2);
@@ -721,6 +723,7 @@ void setMacFromSD()
     f_open(&fil, "mac16", FA_OPEN_ALWAYS | FA_READ );
     f_lseek(&fil, 0);
     f_gets(tmp, 18, &fil);
+    strncpy(mac,tmp,18);
     strncpy(tmp2,tmp,2);
     macaddr[0] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+3,2);
@@ -914,6 +917,7 @@ void wep_define_func(void)
     reg_httpServer_webContent((uint8_t *)"dest_IP", (uint8_t *)dest_IP);
     reg_httpServer_webContent((uint8_t *)"gate_IP", (uint8_t *)gate_IP);
     reg_httpServer_webContent((uint8_t *)"mask_IP", (uint8_t *)mask_IP);
+    reg_httpServer_webContent((uint8_t *)"mac_adr", (uint8_t *)mac);
 #endif
 #ifndef   PROD
     reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET

@@ -4402,6 +4402,7 @@ int wolfSSL_recv(WOLFSSL* ssl, void* data, int sz, int flags)
 WOLFSSL_ABI
 int wolfSSL_shutdown(WOLFSSL* ssl)
 {
+    printf("-- wolfSSL_shutdown --\n");
     int  ret = WOLFSSL_FATAL_ERROR;
     WOLFSSL_ENTER("wolfSSL_shutdown");
 

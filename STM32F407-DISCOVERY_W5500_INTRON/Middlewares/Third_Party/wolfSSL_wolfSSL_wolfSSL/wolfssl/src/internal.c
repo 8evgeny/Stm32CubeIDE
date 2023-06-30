@@ -19132,6 +19132,7 @@ static int DtlsShouldDrop(WOLFSSL* ssl, int retcode)
 
 int ProcessReply(WOLFSSL* ssl)
 {
+    printf("-- ProcessReply --\n");
     return ProcessReplyEx(ssl, 0);
 }
 

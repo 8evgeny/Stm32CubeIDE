@@ -1636,8 +1636,7 @@ enum Misc {
     MAX_SUITE_NAME     =  48,  /* maximum length of cipher suite string */
 
     DTLS_TIMEOUT_INIT       =  1, /* default timeout init for DTLS receive  */
-//    DTLS_TIMEOUT_MAX        = 64, /* default max timeout for DTLS receive */
-    DTLS_TIMEOUT_MAX        = 640,
+    DTLS_TIMEOUT_MAX        = 64, /* default max timeout for DTLS receive */
     DTLS_TIMEOUT_MULTIPLIER =  2, /* default timeout multiplier for DTLS recv */
 
     NULL_TERM_LEN        =   1,  /* length of null '\0' termination character */

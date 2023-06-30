@@ -44,6 +44,7 @@
     #define WOLFSSL_MISC_INCLUDED
     #include <wolfcrypt/src/misc.c>
 #endif
+
 #ifdef HAVE_ERRNO_H
     #include <errno.h>
 #endif
@@ -7437,7 +7438,6 @@ int ProcessBuffer(WOLFSSL_CTX* ctx, const unsigned char* buff,
             WOLFSSL_MSG("SSL layer setting cert, CTX had ECDSA, turning off");
             ssl->options.haveECDSAsig = 0;   /* may turn back on next */
         }
-PRINTHEX(cert->signatureOID)
 
         switch (cert->signatureOID) {
             case CTC_SHAwECDSA:
@@ -16732,7 +16732,6 @@ int wolfSSL_set_compression(WOLFSSL* ssl)
     int wolfSSL_use_certificate_buffer(WOLFSSL* ssl,
                                  const unsigned char* in, long sz, int format)
     {
-        printf("-- wolfSSL_use_certificate_buffer --\n");
         WOLFSSL_ENTER("wolfSSL_use_certificate_buffer");
         if (ssl == NULL)
             return BAD_FUNC_ARG;
@@ -16745,7 +16744,6 @@ int wolfSSL_set_compression(WOLFSSL* ssl)
     int wolfSSL_use_PrivateKey_buffer(WOLFSSL* ssl,
                                  const unsigned char* in, long sz, int format)
     {
-        printf("-- wolfSSL_use_PrivateKey_buffer --\n");
         WOLFSSL_ENTER("wolfSSL_use_PrivateKey_buffer");
         if (ssl == NULL)
             return BAD_FUNC_ARG;
@@ -16816,7 +16814,6 @@ int wolfSSL_set_compression(WOLFSSL* ssl)
     int wolfSSL_use_certificate_chain_buffer_format(WOLFSSL* ssl,
                                  const unsigned char* in, long sz, int format)
     {
-        printf("-- wolfSSL_use_certificate_chain_buffer_format --\n");
         WOLFSSL_ENTER("wolfSSL_use_certificate_chain_buffer_format");
         if (ssl == NULL)
             return BAD_FUNC_ARG;
@@ -16828,7 +16825,6 @@ int wolfSSL_set_compression(WOLFSSL* ssl)
     int wolfSSL_use_certificate_chain_buffer(WOLFSSL* ssl,
                                  const unsigned char* in, long sz)
     {
-        printf("-- wolfSSL_use_certificate_chain_buffer --\n");
         return wolfSSL_use_certificate_chain_buffer_format(ssl, in, sz,
                                                             WOLFSSL_FILETYPE_PEM);
     }

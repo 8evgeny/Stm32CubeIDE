@@ -54,6 +54,7 @@
 //
 //*****************************************************************************
 #include "socket.h"
+#include "main.h"
 
 //M20150401 : Typing Error
 //#define SOCK_ANY_PORT_NUM  0xC000;
@@ -296,6 +297,7 @@ int8_t connect(uint8_t sn, uint8_t * addr, uint16_t port)
 
 int8_t disconnect(uint8_t sn)
 {
+   printf("-- disconnect --\n");
    CHECK_SOCKNUM();
    CHECK_SOCKMODE(Sn_MR_TCP);
 	setSn_CR(sn,Sn_CR_DISCON);

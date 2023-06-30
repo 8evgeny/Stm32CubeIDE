@@ -142,7 +142,7 @@ printf("\n");
 /* #define WOLFSSL_STM32F2 */
 
 /* Uncomment next line if using STM32F4 */
-/* #define WOLFSSL_STM32F4 */
+#define WOLFSSL_STM32F4
 
 /* Uncomment next line if using STM32FL */
 /* #define WOLFSSL_STM32FL */

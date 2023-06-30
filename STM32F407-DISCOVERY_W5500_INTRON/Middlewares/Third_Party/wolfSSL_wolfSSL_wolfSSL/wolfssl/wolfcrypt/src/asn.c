@@ -37,7 +37,7 @@
 #ifdef HAVE_CONFIG_H
     #include <config.h>
 #endif
-extern char string_print_Hex(unsigned char *buf, unsigned int len);
+
 #include <wolfssl/wolfcrypt/settings.h>
 
 /*
@@ -12503,6 +12503,7 @@ static int GetRDN(DecodedCert* cert, char* full, word32* idx, int* nid,
 static int GetCertName(DecodedCert* cert, char* full, byte* hash, int nameType,
                        const byte* input, word32* inOutIdx, word32 maxIdx)
 {
+    printf("     -- GetCertName --\n");
 #ifndef WOLFSSL_ASN_TEMPLATE
     int    length;  /* length of all distinguished names */
     int    dummy;
@@ -13327,6 +13328,7 @@ enum {
  */
 int GetName(DecodedCert* cert, int nameType, int maxIdx)
 {
+    printf("     -- GetName --\n");
 #ifndef WOLFSSL_ASN_TEMPLATE
     char*  full;
     byte*  hash;
@@ -14242,6 +14244,7 @@ int wc_GetPubX509(DecodedCert* cert, int verify, int* badDate)
 
 int DecodeToKey(DecodedCert* cert, int verify)
 {
+    printf("-- DecodeToKey --\n");
 #ifndef WOLFSSL_ASN_TEMPLATE
     int badDate = 0;
     int ret;
@@ -14263,7 +14266,7 @@ int DecodeToKey(DecodedCert* cert, int verify)
 
     ret = GetCertKey(cert, cert->source, &cert->srcIdx, cert->maxIdx);
 
-//string_print_Hex((unsigned char *)cert->source, sizeof (cert->source));
+    PRINTHEX(cert->source)
 
     if (ret != 0)
         return ret;
@@ -14291,6 +14294,7 @@ int DecodeToKey(DecodedCert* cert, int verify)
 #if !defined(NO_CERTS) && !defined(WOLFSSL_ASN_TEMPLATE)
 static int GetSignature(DecodedCert* cert)
 {
+    printf("-- GetSignature --\n");
     int length;
     int ret;
 

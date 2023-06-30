@@ -59,6 +59,15 @@
 #include <wolfssl/options.h>
 #endif
 
+#include "HexTrans.h"
+
+#define PRINTHEX(string) \
+printf("\n"); \
+printf(#string); \
+printf(":\n"); \
+string_print_Hex((unsigned char *)string, sizeof (string)); \
+printf("\n");
+
 /* Uncomment next line if using IPHONE */
 /* #define IPHONE */
 

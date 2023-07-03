@@ -10,8 +10,7 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
 #set(LFS ON)
 
-#add_definitions(-DWOLFSSL_PK_INCLUDED)
-#add_definitions(-DOPENSSL_EXTRA)
+add_definitions(-DOPENSSL_ALL)
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
 add_definitions(-DTLS_ON)         #Режим http / https
 #add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде

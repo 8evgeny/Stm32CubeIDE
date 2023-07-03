@@ -11450,6 +11450,7 @@ static int BuildFinished(WOLFSSL* ssl, Hashes* hashes, const byte* sender)
    return 1 on success */
 int MatchDomainName(const char* pattern, int len, const char* str)
 {
+printf("*** MatchDomainName ***\n");
     int ret = 0;
     char p, s;
 
@@ -11814,6 +11815,7 @@ static int CopyREQAttributes(WOLFSSL_X509* x509, DecodedCert* dCert)
  * altNames pointers could be free'd by second x509 still active by first */
 int CopyDecodedToX509(WOLFSSL_X509* x509, DecodedCert* dCert)
 {
+printf("***** CopyDecodedToX509 *****\n");
     int ret = 0;
 
     if (x509 == NULL || dCert == NULL ||
@@ -11907,6 +11909,8 @@ int CopyDecodedToX509(WOLFSSL_X509* x509, DecodedCert* dCert)
         else
             x509->notAfter.length = 0;
     }
+
+printf("***** DATE: %s\n",x509->notAfter.data);
 
     if (dCert->publicKey != NULL && dCert->pubKeySize != 0) {
         x509->pubKey.buffer = (byte*)XMALLOC(
@@ -21790,6 +21794,7 @@ printf("sendSz = %d\n",sendSz);
     #endif
 
         ssl->buffers.outputBuffer.length += sendSz;
+//Отправка сертификата
         if (!ssl->options.groupMessages)
             ret = SendBuffered(ssl);
     }

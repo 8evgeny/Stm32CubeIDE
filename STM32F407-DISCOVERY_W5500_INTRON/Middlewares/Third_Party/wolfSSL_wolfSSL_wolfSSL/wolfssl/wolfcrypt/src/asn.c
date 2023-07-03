@@ -13341,10 +13341,12 @@ int GetName(DecodedCert* cert, int nameType, int maxIdx)
     if (nameType == ISSUER) {
         full = cert->issuer;
         hash = cert->issuerHash;
+printf("name:%s\n",full);
     }
     else {
         full = cert->subject;
         hash = cert->subjectHash;
+printf("name:%s\n",full);
     }
 
     if (cert->srcIdx >= (word32)maxIdx) {

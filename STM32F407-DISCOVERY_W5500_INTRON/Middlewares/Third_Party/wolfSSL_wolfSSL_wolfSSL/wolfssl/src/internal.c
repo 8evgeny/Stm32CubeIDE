@@ -26,7 +26,7 @@
 #endif
 
 #include <wolfssl/wolfcrypt/settings.h>
-
+#include "main.h"
 /*
  * WOLFSSL_SMALL_CERT_VERIFY:
  *     Verify the certificate signature without using DecodedCert. Doubles up
@@ -484,6 +484,7 @@ static int SSL_hmac(WOLFSSL* ssl, byte* digest, const byte* in, word32 sz,
 
 int IsTLS(const WOLFSSL* ssl)
 {
+printf("-- IsTLS --\n");
     if (ssl->version.major == SSLv3_MAJOR && ssl->version.minor >=TLSv1_MINOR)
         return 1;
 
@@ -493,6 +494,7 @@ int IsTLS(const WOLFSSL* ssl)
 
 int IsAtLeastTLSv1_2(const WOLFSSL* ssl)
 {
+printf("-- IsAtLeastTLSv1_2 --\n");
     if (ssl->version.major == SSLv3_MAJOR && ssl->version.minor >=TLSv1_2_MINOR)
         return 1;
 #ifdef WOLFSSL_DTLS
@@ -505,6 +507,7 @@ int IsAtLeastTLSv1_2(const WOLFSSL* ssl)
 
 int IsAtLeastTLSv1_3(const ProtocolVersion pv)
 {
+printf("-- IsAtLeastTLSv1_3 --\n");
     int ret;
     ret = (pv.major == SSLv3_MAJOR && pv.minor >= TLSv1_3_MINOR);
 
@@ -518,6 +521,7 @@ int IsAtLeastTLSv1_3(const ProtocolVersion pv)
 
 int IsEncryptionOn(WOLFSSL* ssl, int isSend)
 {
+printf("-- IsEncryptionOn --\n");
     #ifdef WOLFSSL_DTLS
     /* For DTLS, epoch 0 is always not encrypted. */
     if (ssl->options.dtls && !isSend) {
@@ -2063,6 +2067,7 @@ int wolfSSL_session_export_internal(WOLFSSL* ssl, byte* buf, word32* sz,
 
 void InitSSL_Method(WOLFSSL_METHOD* method, ProtocolVersion pv)
 {
+printf("-- InitSSL_Method --\n");
     method->version    = pv;
     method->side       = WOLFSSL_CLIENT_END;
     method->downgrade  = 0;
@@ -2135,6 +2140,7 @@ int InitSSL_Side(WOLFSSL* ssl, word16 side)
 /* Initialize SSL context, return 0 on success */
 int InitSSL_Ctx(WOLFSSL_CTX* ctx, WOLFSSL_METHOD* method, void* heap)
 {
+printf("-- InitSSL_Ctx --\n");
     int ret = 0;
 
     XMEMSET(ctx, 0, sizeof(WOLFSSL_CTX));
@@ -2443,6 +2449,7 @@ static void FreeEchConfigs(WOLFSSL_EchConfig* configs, void* heap)
  * a NULL heap hint. */
 void SSL_CtxResourceFree(WOLFSSL_CTX* ctx)
 {
+printf("-- SSL_CtxResourceFree --\n");
 #if defined(HAVE_CERTIFICATE_STATUS_REQUEST_V2) && \
                      defined(HAVE_TLS_EXTENSIONS) && !defined(NO_WOLFSSL_SERVER)
     int i;
@@ -2616,6 +2623,7 @@ static void SSL_CtxResourceFreeStaticMem(void* heap)
 
 void FreeSSL_Ctx(WOLFSSL_CTX* ctx)
 {
+printf("-- FreeSSL_Ctx --\n");
     int isZero;
     int ret;
     void* heap = ctx->heap;
@@ -2668,6 +2676,7 @@ void FreeSSL_Ctx(WOLFSSL_CTX* ctx)
 /* Set cipher pointers to null */
 void InitCiphers(WOLFSSL* ssl)
 {
+printf("-- InitCiphers --\n");
 #ifdef BUILD_ARC4
     ssl->encrypt.arc4 = NULL;
     ssl->decrypt.arc4 = NULL;
@@ -2710,6 +2719,7 @@ void InitCiphers(WOLFSSL* ssl)
 /* Free ciphers */
 void FreeCiphers(WOLFSSL* ssl)
 {
+printf("-- FreeCiphers --\n");
     (void)ssl;
 #ifdef BUILD_ARC4
     wc_Arc4Free(ssl->encrypt.arc4);
@@ -2791,6 +2801,7 @@ void FreeCiphers(WOLFSSL* ssl)
 
 void InitCipherSpecs(CipherSpecs* cs)
 {
+printf("-- InitCipherSpecs --\n");
     XMEMSET(cs, 0, sizeof(CipherSpecs));
 
     cs->bulk_cipher_algorithm = INVALID_BYTE;
@@ -2840,6 +2851,7 @@ static int GetMacDigestSize(byte macAlgo)
 static WC_INLINE void AddSuiteHashSigAlgo(byte* hashSigAlgo, byte macAlgo,
     byte sigAlgo, int keySz, word16* inOutIdx)
 {
+printf("-- AddSuiteHashSigAlgo --\n");
     int addSigAlgo = 1;
 
 #ifdef USE_ECDSA_KEYSZ_HASH_ALGO
@@ -2922,6 +2934,7 @@ void InitSuitesHashSigAlgo(Suites* suites, int haveECDSAsig, int haveRSAsig,
     int haveFalconSig, int haveDilithiumSig, int haveAnon, int tls1_2,
     int keySz)
 {
+printf("-- InitSuitesHashSigAlgo --\n");
     InitSuitesHashSigAlgo_ex(suites->hashSigAlgo, haveECDSAsig, haveRSAsig,
             haveFalconSig, haveDilithiumSig, haveAnon, tls1_2, keySz,
             &suites->hashSigAlgoSz);
@@ -3035,6 +3048,7 @@ void InitSuitesHashSigAlgo_ex(byte* hashSigAlgo, int haveECDSAsig,
 
 int AllocateCtxSuites(WOLFSSL_CTX* ctx)
 {
+printf("-- AllocateCtxSuites --\n");
     if (ctx->suites == NULL) {
         ctx->suites = (Suites*)XMALLOC(sizeof(Suites), ctx->heap,
                                        DYNAMIC_TYPE_SUITES);
@@ -3050,6 +3064,7 @@ int AllocateCtxSuites(WOLFSSL_CTX* ctx)
 /* Call this when the ssl object needs to have its own ssl->suites object */
 int AllocateSuites(WOLFSSL* ssl)
 {
+printf("-- AllocateSuites --\n");
     if (ssl->suites == NULL) {
         ssl->suites = (Suites*)XMALLOC(sizeof(Suites), ssl->heap,
                                        DYNAMIC_TYPE_SUITES);
@@ -3071,6 +3086,7 @@ void InitSuites(Suites* suites, ProtocolVersion pv, int keySz, word16 haveRSA,
                 word16 haveFalconSig, word16 haveDilithiumSig, word16 haveAnon,
                 word16 haveNull, int side)
 {
+printf("-- InitSuites --\n");
     word16 idx = 0;
     int    tls    = pv.major == SSLv3_MAJOR && pv.minor >= TLSv1_MINOR;
     int    tls1_2 = pv.major == SSLv3_MAJOR && pv.minor >= TLSv1_2_MINOR;
@@ -4045,6 +4061,7 @@ void InitSuites(Suites* suites, ProtocolVersion pv, int keySz, word16 haveRSA,
  */
 static WC_INLINE void DecodeSigAlg(const byte* input, byte* hashAlgo, byte* hsType)
 {
+printf("-- DecodeSigAlg --\n");
     *hsType = invalid_sa_algo;
     switch (input[0]) {
         case NEW_SA_MAJOR:
@@ -4123,6 +4140,7 @@ static WC_INLINE void DecodeSigAlg(const byte* input, byte* hashAlgo, byte* hsTy
 
 static enum wc_HashType HashAlgoToType(int hashAlgo)
 {
+printf("-- HashAlgoToType --\n");
     switch (hashAlgo) {
     #ifdef WOLFSSL_SHA512
         case sha512_mac:
@@ -4160,6 +4178,7 @@ static enum wc_HashType HashAlgoToType(int hashAlgo)
 
 void InitX509Name(WOLFSSL_X509_NAME* name, int dynamicFlag, void* heap)
 {
+printf("-- InitX509Name --\n");
     (void)dynamicFlag;
 
     if (name != NULL) {
@@ -4173,6 +4192,7 @@ void InitX509Name(WOLFSSL_X509_NAME* name, int dynamicFlag, void* heap)
 
 void FreeX509Name(WOLFSSL_X509_NAME* name)
 {
+printf("-- FreeX509Name --\n");
     if (name != NULL) {
         if (name->dynamicName) {
             XFREE(name->name, name->heap, DYNAMIC_TYPE_SUBJECT_CN);
@@ -4203,6 +4223,7 @@ void FreeX509Name(WOLFSSL_X509_NAME* name)
 /* Initialize wolfSSL X509 type */
 void InitX509(WOLFSSL_X509* x509, int dynamicFlag, void* heap)
 {
+printf("-- InitX509 --\n");
     if (x509 == NULL) {
         WOLFSSL_MSG("Null parameter passed in!");
         return;
@@ -4227,6 +4248,7 @@ void InitX509(WOLFSSL_X509* x509, int dynamicFlag, void* heap)
 /* Free wolfSSL X509 type */
 void FreeX509(WOLFSSL_X509* x509)
 {
+printf("-- FreeX509 --\n");
     if (x509 == NULL)
         return;
 
@@ -4329,6 +4351,7 @@ void FreeX509(WOLFSSL_X509* x509)
  */
 static WC_INLINE void EncodeSigAlg(byte hashAlgo, byte hsType, byte* output)
 {
+printf("-- EncodeSigAlg --\n");
     switch (hsType) {
 #ifdef HAVE_ECC
         case ecc_dsa_sa_algo:
@@ -4495,6 +4518,7 @@ int RsaSign(WOLFSSL* ssl, const byte* in, word32 inSz, byte* out,
             word32* outSz, int sigAlgo, int hashAlgo, RsaKey* key,
             DerBuffer* keyBufInfo)
 {
+printf("-- RsaSign --\n");
     int ret;
 #ifdef HAVE_PK_CALLBACKS
     const byte* keyBuf = NULL;
@@ -4579,6 +4603,7 @@ int RsaSign(WOLFSSL* ssl, const byte* in, word32 inSz, byte* out,
 int RsaVerify(WOLFSSL* ssl, byte* in, word32 inSz, byte** out, int sigAlgo,
               int hashAlgo, RsaKey* key, buffer* keyBufInfo)
 {
+printf("-- RsaVerify --\n");
     int ret = SIG_VERIFY_E;
 
 #ifdef HAVE_PK_CALLBACKS
@@ -4660,6 +4685,7 @@ int VerifyRsaSign(WOLFSSL* ssl, byte* verifySig, word32 sigSz,
     const byte* plain, word32 plainSz, int sigAlgo, int hashAlgo, RsaKey* key,
     DerBuffer* keyBufInfo)
 {
+printf("-- VerifyRsaSign --\n");
     byte* out = NULL;  /* inline result */
     int   ret;
 #ifdef HAVE_PK_CALLBACKS
@@ -4798,6 +4824,7 @@ int VerifyRsaSign(WOLFSSL* ssl, byte* verifySig, word32 sigSz,
 int RsaDec(WOLFSSL* ssl, byte* in, word32 inSz, byte** out, word32* outSz,
     RsaKey* key, DerBuffer* keyBufInfo)
 {
+printf("-- RsaDec --\n");
     byte *outTmp;
     byte mask;
     int ret;
@@ -4862,6 +4889,7 @@ int RsaDec(WOLFSSL* ssl, byte* in, word32 inSz, byte** out, word32* outSz,
 int RsaEnc(WOLFSSL* ssl, const byte* in, word32 inSz, byte* out, word32* outSz,
     RsaKey* key, buffer* keyBufInfo)
 {
+printf("-- RsaEnc --\n");
     int ret = BAD_FUNC_ARG;
 #ifdef HAVE_PK_CALLBACKS
     const byte* keyBuf = NULL;
@@ -4928,6 +4956,7 @@ int RsaEnc(WOLFSSL* ssl, const byte* in, word32 inSz, byte* out, word32* outSz,
 int EccSign(WOLFSSL* ssl, const byte* in, word32 inSz, byte* out,
     word32* outSz, ecc_key* key, DerBuffer* keyBufInfo)
 {
+printf("-- EccSign --\n");
     int ret;
 #ifdef HAVE_PK_CALLBACKS
     const byte* keyBuf = NULL;
@@ -4989,6 +5018,7 @@ int EccSign(WOLFSSL* ssl, const byte* in, word32 inSz, byte* out,
 int EccVerify(WOLFSSL* ssl, const byte* in, word32 inSz, const byte* out,
     word32 outSz, ecc_key* key, buffer* keyBufInfo)
 {
+printf("-- EccVerify --\n");
     int ret = SIG_VERIFY_E;
 #ifdef HAVE_PK_CALLBACKS
     const byte* keyBuf = NULL;
@@ -5058,6 +5088,7 @@ int EccSharedSecret(WOLFSSL* ssl, ecc_key* priv_key, ecc_key* pub_key,
         byte* pubKeyDer, word32* pubKeySz, byte* out, word32* outlen,
         int side)
 {
+printf("-- EccSharedSecret --\n");
     int ret;
 #ifdef WOLFSSL_ASYNC_CRYPT
     WC_ASYNC_DEV* asyncDev = NULL;
@@ -5117,6 +5148,7 @@ int EccSharedSecret(WOLFSSL* ssl, ecc_key* priv_key, ecc_key* pub_key,
 
 int EccMakeKey(WOLFSSL* ssl, ecc_key* key, ecc_key* peer)
 {
+printf("-- EccMakeKey --\n");
     int ret = 0;
     int keySz = 0;
     int ecc_curve = ECC_CURVE_DEF;

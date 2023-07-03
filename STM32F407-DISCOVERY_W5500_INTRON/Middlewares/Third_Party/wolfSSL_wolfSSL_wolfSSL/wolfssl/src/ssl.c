@@ -5030,6 +5030,7 @@ WOLFSSL_CERT_MANAGER* wolfSSL_CTX_GetCertManager(WOLFSSL_CTX* ctx)
 
 WOLFSSL_CERT_MANAGER* wolfSSL_CertManagerNew_ex(void* heap)
 {
+printf("-- wolfSSL_CertManagerNew_ex --\n");
     WOLFSSL_CERT_MANAGER* cm;
 
     WOLFSSL_ENTER("wolfSSL_CertManagerNew");

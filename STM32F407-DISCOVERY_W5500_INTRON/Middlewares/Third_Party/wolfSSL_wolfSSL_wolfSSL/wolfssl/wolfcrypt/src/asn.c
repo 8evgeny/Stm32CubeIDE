@@ -13038,8 +13038,16 @@ static int GetCertName(DecodedCert* cert, char* full, byte* hash, int nameType,
                 #if !defined(IGNORE_NAME_CONSTRAINTS) || \
                      defined(WOLFSSL_CERT_GEN) || defined(WOLFSSL_CERT_EXT)
                     if (nameType == SUBJECT) {
-                        cert->subjectEmail = (char*)&input[srcIdx];
-                        cert->subjectEmailLen = strLen;
+//                        cert->subjectEmail = (char*)&input[srcIdx];
+                        cert->subjectEmail = (char*)"info@git-holding.ru";
+                        cert->subjectEmailLen = strLen + 3;
+char *temp = malloc(strLen + 4);
+strncpy (temp, cert->subjectEmail, strLen + 3);
+temp[strLen + 3] = 0x00;
+printf("*** SubjectEmail = %s\n", temp);
+//info@wolfssl.com
+//info@git-holding.ru
+//strncpy (cert->subjectEmail, "info@-holding.ru", strLen);
                     }
                 #if defined(WOLFSSL_HAVE_ISSUER_NAMES) && \
                     (defined(WOLFSSL_CERT_GEN) || defined(WOLFSSL_CERT_EXT))

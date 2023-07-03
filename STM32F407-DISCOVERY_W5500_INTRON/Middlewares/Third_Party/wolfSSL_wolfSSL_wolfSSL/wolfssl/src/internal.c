@@ -10000,6 +10000,7 @@ void ShrinkInputBuffer(WOLFSSL* ssl, int forcedFree)
 
 int SendBuffered(WOLFSSL* ssl)
 {
+printf("--- SendBuffered ---\n");
     if (ssl->CBIOSend == NULL && !WOLFSSL_IS_QUIC(ssl)) {
         WOLFSSL_MSG("Your IO Send callback is null, please set");
         return SOCKET_ERROR_E;
@@ -21530,6 +21531,7 @@ int cipherExtraData(WOLFSSL* ssl)
 /* handle generation of certificate (11) */
 int SendCertificate(WOLFSSL* ssl)
 {
+printf("*** SendCertificate ***\n");
     int    ret = 0;
     word32 certSz, certChainSz, headerSz, listSz, payloadSz;
     word32 length, maxFragment;
@@ -21564,21 +21566,24 @@ int SendCertificate(WOLFSSL* ssl)
             return BUFFER_ERROR;
         }
         certSz = ssl->buffers.certificate->length;
+printf("certSz = %d\n",certSz);
         headerSz = 2 * CERT_HEADER_SZ;
         /* list + cert size */
         length = certSz + headerSz;
+printf("length = %d\n",length);
         listSz = certSz + CERT_HEADER_SZ;
-
+printf("listSz = %d\n",listSz);
         /* may need to send rest of chain, already has leading size(s) */
         if (certSz && ssl->buffers.certChain) {
             certChainSz = ssl->buffers.certChain->length;
+printf("certChainSz = %d\n",certChainSz);
             length += certChainSz;
             listSz += certChainSz;
         }
         else
             certChainSz = 0;
     }
-
+printf("certChainSz = %d\n",certChainSz);
     payloadSz = length;
 
     if (ssl->fragOffset != 0)
@@ -21627,7 +21632,7 @@ int SendCertificate(WOLFSSL* ssl)
 
         if (IsEncryptionOn(ssl, 1))
             sendSz += cipherExtraData(ssl);
-
+printf("sendSz = %d\n",sendSz);
         /* check for available size */
         if ((ret = CheckAvailableSize(ssl, sendSz)) != 0)
             return ret;

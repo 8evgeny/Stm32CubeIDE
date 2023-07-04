@@ -111,7 +111,12 @@ int recv_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 /* Server attempts to write data to client. */
 int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 {
-    printf("-- send_server %d byte --\n", sz);
+    printf("-- send_server %d byte --\n\n", sz);
+    if (sz == 1275)
+    {
+        string_print_Hex((unsigned char *)buff, sz);
+        printf("\n");
+    }
     if (client_buffer_sz < BUFFER_SIZE)
     {
         if (sz > BUFFER_SIZE - client_buffer_sz)
@@ -124,7 +129,6 @@ int send_server(WOLFSSL* ssl, char* buff, int sz, void* ctx)
 
      if (client_buffer_sz > 0)
          w5500_packetSend_forTLS(0);
-//string_print_Hex((unsigned char *)buff, sz);
     return sz;
 }
 

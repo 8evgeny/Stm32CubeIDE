@@ -494,7 +494,7 @@ printf("-- IsTLS --\n");
 
 int IsAtLeastTLSv1_2(const WOLFSSL* ssl)
 {
-printf("-- IsAtLeastTLSv1_2 --\n");
+//printf("-- IsAtLeastTLSv1_2 --\n");
     if (ssl->version.major == SSLv3_MAJOR && ssl->version.minor >=TLSv1_2_MINOR)
         return 1;
 #ifdef WOLFSSL_DTLS
@@ -507,7 +507,7 @@ printf("-- IsAtLeastTLSv1_2 --\n");
 
 int IsAtLeastTLSv1_3(const ProtocolVersion pv)
 {
-printf("-- IsAtLeastTLSv1_3 --\n");
+//printf("-- IsAtLeastTLSv1_3 --\n");
     int ret;
     ret = (pv.major == SSLv3_MAJOR && pv.minor >= TLSv1_3_MINOR);
 
@@ -521,7 +521,7 @@ printf("-- IsAtLeastTLSv1_3 --\n");
 
 int IsEncryptionOn(WOLFSSL* ssl, int isSend)
 {
-printf("-- IsEncryptionOn --\n");
+//printf("-- IsEncryptionOn --\n");
     #ifdef WOLFSSL_DTLS
     /* For DTLS, epoch 0 is always not encrypted. */
     if (ssl->options.dtls && !isSend) {
@@ -34313,6 +34313,7 @@ static int DoSessionTicket(WOLFSSL* ssl, const byte* input, word32* inOutIdx,
     /* handle generation of server_hello_done (14) */
     int SendServerHelloDone(WOLFSSL* ssl)
     {
+printf("---- SendServerHelloDone ----\n");
         byte* output;
         int   sendSz = RECORD_HEADER_SZ + HANDSHAKE_HEADER_SZ;
         int   ret;

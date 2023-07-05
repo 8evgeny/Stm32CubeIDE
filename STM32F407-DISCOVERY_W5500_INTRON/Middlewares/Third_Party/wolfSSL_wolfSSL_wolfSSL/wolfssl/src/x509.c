@@ -11289,6 +11289,7 @@ err:
     int wolfSSL_X509_NAME_add_entry(WOLFSSL_X509_NAME* name,
             WOLFSSL_X509_NAME_ENTRY* entry, int idx, int set)
     {
+printf("____ wolfSSL_X509_NAME_add_entry ____\n");
         WOLFSSL_X509_NAME_ENTRY* current = NULL;
         int ret, i;
 

@@ -4,7 +4,7 @@
 /*************************************************************************************
  * JavaScript Functions
  *************************************************************************************/
-
+#ifndef PROD
 const char w5x00web_ajax_js[] =
 "    function AJAX(a,e) "
 "    { "
@@ -136,11 +136,11 @@ const char w5x00web_dio_js[] =
         "}"
 ;
 
-
+#endif
 /*************************************************************************************
  * HTML Pages (web pages)
  *************************************************************************************/
-
+#ifdef PROD
 const char index_page[] =
 "<!DOCTYPE html> "
 "<html lang='ru'>"
@@ -764,6 +764,7 @@ const char main_page[] =
 "    </footer>"
 "</html>"
 ;
+#endif
 
 //Перезаписываются при загрузке параметров с SD или EEPROM
 char host_IP[16] =  "192.168.001.222";
@@ -772,6 +773,7 @@ char gate_IP[16] =  "192.168.001.001";
 char mask_IP[16] =  "255.255.255.000";
 char mac[18] =    "00:15:42:BF:F0:50";
 
+#ifndef PROD
 //Код WIZNET
 const char index_page_WIZNET[] =
           "<html>"
@@ -1069,5 +1071,5 @@ const char img_page[] =
         "</body>"
     "</html>"
 ;
-
 #endif
+#endif //_WEBPAGE_H_

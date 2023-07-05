@@ -1147,6 +1147,7 @@ void testSpiEepromWriteRead()
         }
         if (err == 1)
             break;
+
     }
     if (err == 0)
         printf("Test SPI OK");
@@ -1652,7 +1653,7 @@ int main(void)
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
-//    testSPI_EEPROM();//Test с SPI EEPROM
+    testSPI_EEPROM();//Test с SPI EEPROM
 //    copyDataFromI2cEepromToSpiEeprom();//Копируем данные из I2C eeprom в SPI eeprom (Settings и Mac)
 
   /* USER CODE END 2 */

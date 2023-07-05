@@ -1134,33 +1134,18 @@ void testSpiEepromClearWriteRead()
     uint8_t TxBuffer[256] = {0x00};
     uint8_t ClearBuffer[256] = {0x00};
     uint8_t err = 0;
-    for (uint32_t adr = 0; adr< 0xFFFF; adr += 256)
+    for (uint32_t adr = 0; adr< 0xFFFFF; adr += 4096)
     {
-        EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
-//        printf("eeprom before clear: %s\n", RxBuffer);
-        EEPROM_SPI_WritePage(ClearBuffer, adr, (uint16_t)256);
-//        EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
-//        printf("eeprom after clear: %s\n", RxBuffer);
         sprintf(TxBuffer,"%d", HAL_GetTick());
-//        printf("Data to write: %s\n", TxBuffer);
         EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
-    //    HAL_Delay(2000);
-    //    EEPROM_PowerDown();
-    //    HAL_Delay(1000);
-    //    EEPROM_WakeUP();
-    //    HAL_Delay(1000);
         EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
-//        printf("eeprom after write: %s\n", RxBuffer);
         if (strcmp(TxBuffer, RxBuffer) == 0)
-        {
-//            printf("test SPI for address %d OK data: %s\n", adr, TxBuffer);
-        }
+            printf("test SPI for address %5X OK data: %s\n", adr, TxBuffer);
         else
         {
-            printf("test SPI for address %d ERROR data: %s\n", adr, TxBuffer);
+            printf("test SPI for address %5X ERROR data: %s\n", adr, TxBuffer);
             err = 1;
         }
-
         if (err == 1)
             break;
     }

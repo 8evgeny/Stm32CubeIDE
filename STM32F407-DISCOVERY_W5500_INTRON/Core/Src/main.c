@@ -1126,7 +1126,7 @@ void sendReceiveUDP()
 //        );
 }
 
-void testSpiEepromClearWriteRead()
+void testSpiEepromWriteRead()
 {
     //25AA1024  page - 256
     printf("\ntestSpiEepromClearWriteRead\n");
@@ -1197,22 +1197,13 @@ void testSpiEepromWriteByte(uint32_t adr)
 
 void testSPI_EEPROM()
 {
-    Printf("\n-- Tests_SPI_EEPROM --\n");
-
+    printf("\n-- Tests_SPI_EEPROM --\n");
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
     EEPROM_SPI_INIT(&hspi3);
     printEepromSpiStatus();
-
 //    EEPROM_CHIP_ERASE();
-//    HAL_Delay(10000);
-//    EEPROM_PAGE_ERASE(0x00000100);
-
-    testSpiEepromClearWriteRead();
-
-//    testSpiEepromWritePage(0x00000000);
-//    testSpiEepromReadPage(0x00000000);
-//    testSpiEepromWriteByte(0x00000005);
-
+//    EEPROM_PAGE_ERASE(0x00000100); //PAGE_ERASE не работает
+    testSpiEepromWriteRead();
 }
 
 void reboot()

@@ -1132,7 +1132,6 @@ void testSpiEepromWriteRead()
     printf("\ntestSpiEepromClearWriteRead\n");
     uint8_t RxBuffer[256] = {0x00};
     uint8_t TxBuffer[256] = {0x00};
-    uint8_t ClearBuffer[256] = {0x00};
     uint8_t err = 0;
     for (uint32_t adr = 0; adr< 0xFFFFF; adr += 4096)
     {
@@ -1204,6 +1203,37 @@ void testSPI_EEPROM()
 //    EEPROM_CHIP_ERASE();
 //    EEPROM_PAGE_ERASE(0x00000100); //PAGE_ERASE не работает
     testSpiEepromWriteRead();
+}
+
+void copyDataFromI2cEepromToSpiEeprom()
+{
+#if 0
+    0000 - 00FF   256b   IP settings
+    0100 - 010F   16b    длина index.html
+    0110 - 011F   16b    длина main.html
+    0120 - 019F   128b   mac
+#endif
+    printf("copyDataFromI2cEepromToSpiEeprom\n");
+    uint16_t numByteSettings = settingsLen;
+    uint16_t * pnumByteSettings = &numByteSettings;
+    uint16_t numByteMac = 18;
+    uint16_t * pnumByteMac = &numByteMac;
+    uint8_t tmpSettings[settingsLen];
+    uint8_t tmpMac[settingsLen];
+    BSP_EEPROM_ReadBuffer((uint8_t *)tmpSettings, 0x0000, pnumByteSettings);
+    BSP_EEPROM_ReadBuffer((uint8_t *)tmpMac, 0x0120, pnumByteMac);
+
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+    EEPROM_SPI_INIT(&hspi3);
+
+    EEPROM_SPI_WriteBuffer(tmpSettings, 0x0000, settingsLen);
+    EEPROM_SPI_WriteBuffer(tmpMac, 0x0120, 18);
+    uint8_t SettBuff[settingsLen];
+    uint8_t MacBuff[18];
+    EEPROM_SPI_ReadBuffer(SettBuff, 0x0000, settingsLen);
+    EEPROM_SPI_ReadBuffer(MacBuff, 0x0120, 18);
+    printf("Settings: %s\n", SettBuff);
+    printf("Mac: %s\n", MacBuff);
 }
 
 void reboot()
@@ -1625,7 +1655,9 @@ int main(void)
     //Работа с SPI EEPROM
     if (sdCartOn == 0)
     {
-        testSPI_EEPROM();
+//        testSPI_EEPROM();
+        //Копировать данные из I2C eeprom в SPI eeprom
+        copyDataFromI2cEepromToSpiEeprom();
     }
 
   /* USER CODE END 2 */

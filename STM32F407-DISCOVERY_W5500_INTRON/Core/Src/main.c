@@ -131,7 +131,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 extern uint8_t RxBuffer[256];
 extern uint8_t EEPROM_StatusByte;
 
-uint8_t TxBuffer[256] = "__---COOL!!!1234512345qwertasdfgh";
+uint8_t TxBuffer[256] = "__12345COOL!!!1234512345qwertasdfgh";
 uint8_t capture = 0;
 uint8_t ipaddr[4];
 uint8_t ipgate[4];
@@ -1126,6 +1126,48 @@ void sendReceiveUDP()
 //        );
 }
 
+void testSpiEepromClearWriteRead()
+{
+    //25AA1024  page - 256
+    printf("\ntestSpiEepromClearWriteRead\n");
+    uint8_t RxBuffer[256] = {0x00};
+    uint8_t TxBuffer[256] = {0x00};
+    uint8_t ClearBuffer[256] = {0x00};
+    uint8_t err = 0;
+    for (uint32_t adr = 0; adr< 0xFFFF; adr += 256)
+    {
+        EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+//        printf("eeprom before clear: %s\n", RxBuffer);
+        EEPROM_SPI_WritePage(ClearBuffer, adr, (uint16_t)256);
+//        EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+//        printf("eeprom after clear: %s\n", RxBuffer);
+        sprintf(TxBuffer,"%d", HAL_GetTick());
+//        printf("Data to write: %s\n", TxBuffer);
+        EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
+    //    HAL_Delay(2000);
+    //    EEPROM_PowerDown();
+    //    HAL_Delay(1000);
+    //    EEPROM_WakeUP();
+    //    HAL_Delay(1000);
+        EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
+//        printf("eeprom after write: %s\n", RxBuffer);
+        if (strcmp(TxBuffer, RxBuffer) == 0)
+        {
+//            printf("test SPI for address %d OK data: %s\n", adr, TxBuffer);
+        }
+        else
+        {
+            printf("test SPI for address %d ERROR data: %s\n", adr, TxBuffer);
+            err = 1;
+        }
+
+        if (err == 1)
+            break;
+    }
+    if (err == 0)
+        printf("Test SPI OK");
+}
+
 void testSpiEepromWritePage(uint32_t adr)
 {
     uint8_t RxBuffer[256] = {0x00};
@@ -1178,13 +1220,12 @@ void testSPI_EEPROM()
 
 //    EEPROM_CHIP_ERASE();
 //    HAL_Delay(10000);
-
 //    EEPROM_PAGE_ERASE(0x00000100);
 
+    testSpiEepromClearWriteRead();
+
 //    testSpiEepromWritePage(0x00000000);
-
-    testSpiEepromReadPage(0x00000000);
-
+//    testSpiEepromReadPage(0x00000000);
 //    testSpiEepromWriteByte(0x00000005);
 
 }
@@ -1608,7 +1649,7 @@ int main(void)
     //Работа с SPI EEPROM
     if (sdCartOn == 0)
     {
-    //    testSPI_EEPROM();
+        testSPI_EEPROM();
     }
 
   /* USER CODE END 2 */

@@ -421,6 +421,7 @@ void EEPROM_SPI_SendInstruction(uint8_t *instruction, uint8_t size)
     if (HAL_SPI_Transmit(EEPROM_SPI, (uint8_t*)instruction, (uint16_t)size, 10000) != HAL_OK) {//send command
         Error_Handler();
     }
+
 }
 
 /**

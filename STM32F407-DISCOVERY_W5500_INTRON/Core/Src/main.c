@@ -5,14 +5,12 @@
 #include "net.h"
 #include "loopback.h"
 #include "my_function.h"
-#ifdef LFS
-#include "eeprom.h"
-#endif
 #include "wizchip_init.h"
 //#include "SSLInterface.h"
 #include "httpServer.h"
 #include "webpage.h"
 #include "spi_eeprom.h"
+#include "eeprom.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/

@@ -8,9 +8,11 @@ extern int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count);
 __IO uint16_t  EEPROMDataRead;
 __IO uint8_t   EEPROMDataWrite;
 // variables used by the filesystem
+
+extern I2C_HandleTypeDef hi2c1;
+#ifdef LFS
 lfs_t lfs;
 lfs_file_t file;
-extern I2C_HandleTypeDef hi2c1;
 //Изменил параметры EEPROM
 uint8_t littlefs_mem[32768];
 //uint8_t littlefs_mem[131072];
@@ -140,7 +142,7 @@ void FsForEeprom_test()
         UART_Printf("OK\r\n"); delayUS_ASM(10000);
 
 }
-
+#endif
 __weak void BSP_EEPROM_TIMEOUT_UserCallback(void)
 {
 }

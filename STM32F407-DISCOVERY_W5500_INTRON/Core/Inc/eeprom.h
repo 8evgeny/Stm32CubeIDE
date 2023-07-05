@@ -2,7 +2,9 @@
 #define FSFOREEPROM_H
 
 #include <stdint.h>
+#ifdef LFS
 #include "lfs.h"
+#endif
 #include "main.h"
 #include "stm32f4xx_hal_def.h"
 #define EEPROM_I2C_ADDRESS          0xA0

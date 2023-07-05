@@ -9,7 +9,7 @@ set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 
 #set(LFS ON)
-
+add_definitions(-DWOLFSSL_X509_INCLUDED)
 add_definitions(-DOPENSSL_ALL)
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
 add_definitions(-DTLS_ON)         #Режим http / https

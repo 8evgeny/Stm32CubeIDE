@@ -25,6 +25,7 @@
 #endif
 
 #include <wolfssl/wolfcrypt/settings.h>
+#include "internal.h"
 
 #if !defined(WOLFSSL_X509_INCLUDED)
     #ifndef WOLFSSL_IGNORE_FILE_WARN

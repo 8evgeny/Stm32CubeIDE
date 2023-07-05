@@ -513,6 +513,16 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
     Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
 }
 
+void copyParametersFromSDToAdressSPIEEPROM()
+{
+
+}
+
+void copyMacToAdressSPIEEPROM()
+{
+
+}
+
 void copyDefaultParametersToAdressEEPROM(uint16_t Addr)
 {
     printf("\nSet default IP settings to adress 0x%.4X eeprom\n",Addr);
@@ -1046,6 +1056,17 @@ void workI2C_EEPROM()
 //        printFileFromEEPROM("index.html");
 //        printFileFromEEPROM("main.html");
 #endif
+    }
+}
+
+void workSPI_EEPROM()
+{
+    //    testSPI_EEPROM();//Test с SPI EEPROM
+    //    copyDataFromI2cEepromToSpiEeprom();//Копируем данные из I2C eeprom в SPI eeprom (Settings и Mac)
+    if (sdCartOn == 1)
+    {
+        copyParametersFromSDToAdressSPIEEPROM();//Копируем Settings из SD в SPI eeprom
+        copyMacToAdressSPIEEPROM();             //Копируем MAC из SD в SPI eeprom
     }
 }
 
@@ -1652,9 +1673,7 @@ int main(void)
 //    net_ini();
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
-
-//    testSPI_EEPROM();//Test с SPI EEPROM
-    copyDataFromI2cEepromToSpiEeprom();//Копируем данные из I2C eeprom в SPI eeprom (Settings и Mac)
+    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 

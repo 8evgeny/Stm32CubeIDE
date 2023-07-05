@@ -1652,13 +1652,8 @@ int main(void)
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
-    //Работа с SPI EEPROM
-    if (sdCartOn == 0)
-    {
-//        testSPI_EEPROM();
-        //Копировать данные из I2C eeprom в SPI eeprom
-        copyDataFromI2cEepromToSpiEeprom();
-    }
+//    testSPI_EEPROM();//Test с SPI EEPROM
+//    copyDataFromI2cEepromToSpiEeprom();//Копируем данные из I2C eeprom в SPI eeprom (Settings и Mac)
 
   /* USER CODE END 2 */
 

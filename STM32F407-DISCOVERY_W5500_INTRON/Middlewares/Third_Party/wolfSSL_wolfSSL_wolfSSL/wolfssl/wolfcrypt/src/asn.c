@@ -13344,7 +13344,7 @@ int GetName(DecodedCert* cert, int nameType, int maxIdx)
     word32 localIdx;
     byte   tag;
 
-    WOLFSSL_MSG("Getting Name");
+    WOLFSSL_MSG("2Getting Name");
 
     if (nameType == ISSUER) {
         full = cert->issuer;
@@ -13393,7 +13393,7 @@ printf("name:%s\n",full);
     char*  full;
     byte*  hash;
 
-    WOLFSSL_MSG("Getting Name");
+    WOLFSSL_MSG("1Getting Name");
 
     XMEMSET(dataASN, 0, sizeof(dataASN));
     /* Initialize for data and don't check optional prefix OID. */

@@ -11291,6 +11291,12 @@ err:
             WOLFSSL_X509_NAME_ENTRY* entry, int idx, int set)
     {
 printf("____ wolfSSL_X509_NAME_add_entry ____\n");
+printf("entry: %s\n",entry->value);
+//if(strcmp(entry->value,"US" == 0))
+//{
+//    entry->value = "RU";
+//    entry->set = 1;
+//}
         WOLFSSL_X509_NAME_ENTRY* current = NULL;
         int ret, i;
 

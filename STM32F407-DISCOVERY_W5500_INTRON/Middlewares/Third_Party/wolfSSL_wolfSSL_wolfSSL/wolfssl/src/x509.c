@@ -1888,8 +1888,7 @@ out:
  * use already decoded extension in this function to avoid decoding twice.
  * Currently we do not make use of idx since getting pre decoded extensions.
  */
-void* wolfSSL_X509_get_ext_d2i(const WOLFSSL_X509* x509, int nid, int* c,
-    int* idx)
+void* wolfSSL_X509_get_ext_d2i(const WOLFSSL_X509* x509, int nid, int* c, int* idx)
 {
     void* ret = NULL;
     WOLFSSL_STACK* sk = NULL;
@@ -2359,8 +2358,7 @@ err:
 #endif /* OPENSSL_EXTRA || WOLFSSL_WPAS_SMALL */
 
 #ifdef OPENSSL_EXTRA
-int wolfSSL_X509_add_altname_ex(WOLFSSL_X509* x509, const char* name,
-        word32 nameSz, int type)
+int wolfSSL_X509_add_altname_ex(WOLFSSL_X509* x509, const char* name, word32 nameSz, int type)
 {
     DNS_entry* newAltName = NULL;
     char* nameCopy = NULL;
@@ -2424,8 +2422,7 @@ WOLFSSL_X509_EXTENSION *wolfSSL_X509_delete_ext(WOLFSSL_X509 *x509, int loc)
 
 /* currently LHASH is not implemented (and not needed for Apache port) */
 WOLFSSL_X509_EXTENSION* wolfSSL_X509V3_EXT_conf_nid(
-        WOLF_LHASH_OF(CONF_VALUE)* conf, WOLFSSL_X509V3_CTX* ctx, int nid,
-        char* value)
+        WOLF_LHASH_OF(CONF_VALUE)* conf, WOLFSSL_X509V3_CTX* ctx, int nid, char* value)
 {
     WOLFSSL_STUB("wolfSSL_X509V3_EXT_conf_nid");
 
@@ -2595,8 +2592,7 @@ WOLFSSL_X509_EXTENSION* wolfSSL_X509V3_EXT_nconf(WOLFSSL_CONF *conf,
     return NULL;
 }
 
-static void wolfSSL_X509V3_EXT_METHOD_populate(WOLFSSL_v3_ext_method *method,
-                                               int nid)
+static void wolfSSL_X509V3_EXT_METHOD_populate(WOLFSSL_v3_ext_method *method, int nid)
 {
     if (!method)
         return;
@@ -2635,8 +2631,7 @@ static void wolfSSL_X509V3_EXT_METHOD_populate(WOLFSSL_v3_ext_method *method,
  * @param data This data is copied to the returned extension.
  * @return
  */
-WOLFSSL_X509_EXTENSION *wolfSSL_X509V3_EXT_i2d(int nid, int crit,
-                                               void *data)
+WOLFSSL_X509_EXTENSION *wolfSSL_X509V3_EXT_i2d(int nid, int crit, void *data)
 {
     WOLFSSL_X509_EXTENSION *ext = NULL;
     WOLFSSL_ASN1_STRING* asn1str = NULL;
@@ -2787,8 +2782,7 @@ err_cleanup:
 }
 
 /* Returns pointer to ASN1_OBJECT from an X509_EXTENSION object */
-WOLFSSL_ASN1_OBJECT* wolfSSL_X509_EXTENSION_get_object \
-    (WOLFSSL_X509_EXTENSION* ext)
+WOLFSSL_ASN1_OBJECT* wolfSSL_X509_EXTENSION_get_object (WOLFSSL_X509_EXTENSION* ext)
 {
     WOLFSSL_ENTER("wolfSSL_X509_EXTENSION_get_object");
     if(ext == NULL)
@@ -2801,8 +2795,7 @@ WOLFSSL_ASN1_OBJECT* wolfSSL_X509_EXTENSION_get_object \
  * duplicates the 'obj' input and sets it into the 'ext' structure
  * returns WOLFSSL_SUCCESS on success
  */
-int wolfSSL_X509_EXTENSION_set_object(WOLFSSL_X509_EXTENSION* ext,
-        const WOLFSSL_ASN1_OBJECT* obj)
+int wolfSSL_X509_EXTENSION_set_object(WOLFSSL_X509_EXTENSION* ext,const WOLFSSL_ASN1_OBJECT* obj)
 {
     WOLFSSL_ASN1_OBJECT *current;
 
@@ -2828,13 +2821,11 @@ WOLFSSL_ASN1_STRING* wolfSSL_X509_EXTENSION_get_data(WOLFSSL_X509_EXTENSION* ext
     return &ext->value;
 }
 
-
 /**
  * Creates a duplicate of input 'data' and sets it into 'ext' structure
  * returns WOLFSSL_SUCCESS on success
  */
-int wolfSSL_X509_EXTENSION_set_data(WOLFSSL_X509_EXTENSION* ext,
-        WOLFSSL_ASN1_STRING* data)
+int wolfSSL_X509_EXTENSION_set_data(WOLFSSL_X509_EXTENSION* ext,  WOLFSSL_ASN1_STRING* data)
 {
     WOLFSSL_ASN1_STRING* current;
 
@@ -3017,8 +3008,7 @@ char* wolfSSL_X509_NAME_oneline(WOLFSSL_X509_NAME* name, char* in, int sz)
 /* Given an X509_NAME, convert it to canonical form and then hash
  * with the provided hash type. Returns the first 4 bytes of the hash
  * as unsigned long on success, and 0 otherwise. */
-static unsigned long X509NameHash(WOLFSSL_X509_NAME* name,
-    enum wc_HashType hashType)
+static unsigned long X509NameHash(WOLFSSL_X509_NAME* name, enum wc_HashType hashType)
 {
     unsigned long  hash = 0;
     unsigned char* canonName = NULL;
@@ -3246,13 +3236,11 @@ char* wolfSSL_X509_get_name_oneline(WOLFSSL_X509_NAME* name, char* in, int sz)
 }
 #endif
 
-
 /* Wraps wolfSSL_X509_d2i
  *
  * returns a WOLFSSL_X509 structure pointer on success and NULL on fail
  */
-WOLFSSL_X509* wolfSSL_d2i_X509(WOLFSSL_X509** x509, const unsigned char** in,
-        int len)
+WOLFSSL_X509* wolfSSL_d2i_X509(WOLFSSL_X509** x509, const unsigned char** in, int len)
 {
     WOLFSSL_X509* newX509 = NULL;
     WOLFSSL_ENTER("wolfSSL_d2i_X509");
@@ -3269,8 +3257,7 @@ WOLFSSL_X509* wolfSSL_d2i_X509(WOLFSSL_X509** x509, const unsigned char** in,
     return newX509;
 }
 
-static WOLFSSL_X509* d2i_X509orX509REQ(WOLFSSL_X509** x509,
-                                        const byte* in, int len, int req)
+static WOLFSSL_X509* d2i_X509orX509REQ(WOLFSSL_X509** x509,  const byte* in, int len, int req)
 {
     WOLFSSL_X509 *newX509 = NULL;
     int type = req ? CERTREQ_TYPE : CERT_TYPE;
@@ -3397,8 +3384,7 @@ char* wolfSSL_X509_get_next_altname(WOLFSSL_X509* cert)
     return ret;
 }
 
-int wolfSSL_X509_get_signature(WOLFSSL_X509* x509,
-                                                unsigned char* buf, int* bufSz)
+int wolfSSL_X509_get_signature(WOLFSSL_X509* x509, unsigned char* buf, int* bufSz)
 {
     WOLFSSL_ENTER("wolfSSL_X509_get_signature");
     if (x509 == NULL || bufSz == NULL || (*bufSz < (int)x509->sig.length &&
@@ -3412,7 +3398,6 @@ int wolfSSL_X509_get_signature(WOLFSSL_X509* x509,
     return WOLFSSL_SUCCESS;
 }
 
-
 /* Getter function that copies over the DER public key buffer to "buf" and
     * sets the size in bufSz. If "buf" is NULL then just bufSz is set to needed
     * buffer size. "bufSz" passed in should initially be set by the user to be
@@ -3422,8 +3407,7 @@ int wolfSSL_X509_get_signature(WOLFSSL_X509* x509,
     * Note: this is the X.509 form of key with "header" info.
     * return WOLFSSL_SUCCESS on success
     */
-int wolfSSL_X509_get_pubkey_buffer(WOLFSSL_X509* x509,
-                                            unsigned char* buf, int* bufSz)
+int wolfSSL_X509_get_pubkey_buffer(WOLFSSL_X509* x509, unsigned char* buf, int* bufSz)
 {
 #ifdef WOLFSSL_SMALL_STACK
     DecodedCert* cert;
@@ -3488,7 +3472,6 @@ int wolfSSL_X509_get_pubkey_buffer(WOLFSSL_X509* x509,
     return WOLFSSL_SUCCESS;
 }
 
-
 /* Getter function for the public key OID value
     * return public key OID stored in WOLFSSL_X509 structure */
 int wolfSSL_X509_get_pubkey_type(WOLFSSL_X509* x509)
@@ -3506,8 +3489,7 @@ int wolfSSL_X509_get_pubkey_type(WOLFSSL_X509* x509)
 /* write X509 serial number in unsigned binary to buffer
     buffer needs to be at least EXTERNAL_SERIAL_SIZE (32) for all cases
     return WOLFSSL_SUCCESS on success */
-int wolfSSL_X509_get_serial_number(WOLFSSL_X509* x509,
-                                    byte* in, int* inOutSz)
+int wolfSSL_X509_get_serial_number(WOLFSSL_X509* x509, byte* in, int* inOutSz)
 {
     WOLFSSL_ENTER("wolfSSL_X509_get_serial_number");
     if (x509 == NULL || inOutSz == NULL) {
@@ -3731,7 +3713,6 @@ WOLFSSL_ASN1_TIME* wolfSSL_X509_get_notBefore(const WOLFSSL_X509* x509)
     return (WOLFSSL_ASN1_TIME*)&x509->notBefore;
 }
 
-
 WOLFSSL_ASN1_TIME* wolfSSL_X509_get_notAfter(const WOLFSSL_X509* x509)
 {
     WOLFSSL_ENTER("wolfSSL_X509_get_notAfter");
@@ -3741,7 +3722,6 @@ WOLFSSL_ASN1_TIME* wolfSSL_X509_get_notAfter(const WOLFSSL_X509* x509)
 
     return (WOLFSSL_ASN1_TIME*)&x509->notAfter;
 }
-
 
 /* return 1 on success 0 on fail */
 int wolfSSL_sk_X509_push(WOLF_STACK_OF(WOLFSSL_X509_NAME)* sk, WOLFSSL_X509* x509)
@@ -3754,7 +3734,6 @@ int wolfSSL_sk_X509_push(WOLF_STACK_OF(WOLFSSL_X509_NAME)* sk, WOLFSSL_X509* x50
 
     return wolfSSL_sk_push(sk, x509);
 }
-
 
 /* Return and remove the last x509 pushed on stack */
 WOLFSSL_X509* wolfSSL_sk_X509_pop(WOLF_STACK_OF(WOLFSSL_X509_NAME)* sk)
@@ -3804,7 +3783,6 @@ WOLFSSL_X509* wolfSSL_sk_X509_value(STACK_OF(WOLFSSL_X509)* sk, int i)
         return NULL;
     return sk->data.x509;
 }
-
 
 /* Return and remove the first x509 pushed on stack */
 WOLFSSL_X509* wolfSSL_sk_X509_shift(WOLF_STACK_OF(WOLFSSL_X509)* sk)
@@ -3858,7 +3836,6 @@ void wolfSSL_sk_X509_pop_free(STACK_OF(WOLFSSL_X509)* sk,
     WOLFSSL_ENTER("wolfSSL_sk_X509_pop_free");
     wolfSSL_sk_pop_free(sk, (wolfSSL_sk_freefunc)f);
 }
-
 
 /* free just the stack structure */
 void wolfSSL_sk_X509_free(WOLF_STACK_OF(WOLFSSL_X509)* sk)

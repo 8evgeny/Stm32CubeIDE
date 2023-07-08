@@ -52,7 +52,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
     -DUSE_HAL_DRIVER \
     -DSTM32F407xx \
     -c \
-    -Os \
+    -O0 \
+    -g \
     -ffunction-sections \
     -fdata-sections \
     -Wall \

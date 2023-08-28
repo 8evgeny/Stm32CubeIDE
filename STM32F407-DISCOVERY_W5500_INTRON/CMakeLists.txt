@@ -136,6 +136,7 @@ set(LINKER_FLAGS "SHELL: \
     -Wl,--gc-sections \
     -static \
     --specs=nano.specs \
+    -Wl,--gc-sections,--print-memory-usage \
     -mfpu=fpv5-d16 \
     -mfloat-abi=hard \
     -mthumb

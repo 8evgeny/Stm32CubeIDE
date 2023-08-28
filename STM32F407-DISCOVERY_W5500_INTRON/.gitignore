@@ -3,3 +3,5 @@ Debug
 Release
 cmake-build-debug
 /CMakeLists.txt.user
+build_debug
+build_release

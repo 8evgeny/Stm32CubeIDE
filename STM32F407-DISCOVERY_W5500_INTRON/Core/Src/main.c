@@ -229,11 +229,11 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
 void simpleTestI2C_EEPROM(uint16_t addr)
 {
-    printf("\nSimple test I2C_EEPROM\n");
+    printf("Simple test I2C_EEPROM ...\n");
     uint8_t rd_value[36] = {0};
     uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
                             'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
-    uint8_t erase_value[36] = {'H','e','f','l','o'};
+    uint8_t erase_value[36] = {'H','e','l','l','o'};
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
     uint16_t num = 36;
@@ -249,7 +249,7 @@ void simpleTestI2C_EEPROM(uint16_t addr)
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
-    UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
+    printf("EEPROM read: %s\r\n",rd_value);
 
     printf("EEPROM write:");
     printf("%s\r\n",wr_value);
@@ -261,6 +261,8 @@ void simpleTestI2C_EEPROM(uint16_t addr)
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
+
+    printf("\nSimple test I2C_EEPROM ..OK\n");
 }
 
 void saveLenFileToEeprom(const char* nameFile_onSD, uint32_t numByteFile)
@@ -967,7 +969,7 @@ void net_ini_WIZNET()
 
 void workI2C_EEPROM()
 {
-//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
+      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();
@@ -1662,11 +1664,14 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
-//    workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
+    printf("Test UART...\n");
+
+    workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
+
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
-    printf("test....\n");
+
 //    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 //    workSPI_EEPROM();
 

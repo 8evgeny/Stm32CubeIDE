@@ -52,7 +52,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
     -DUSE_HAL_DRIVER \
     -DSTM32F407xx \
     -c \
-    -O0 \
+    -Os \
     -g \
     -ffunction-sections \
     -fdata-sections \
@@ -174,6 +174,6 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
 #    COMMAND st-flash erase
 #    COMMENT "Erasing . . .")
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
-    COMMENT "Write Flash ")
+#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
+#    COMMENT "Write Flash ")

@@ -132,6 +132,7 @@ set(LINKER_FLAGS "SHELL: \
     -T${LINKER_SCRIPT_FLASH} \
     -mcpu=cortex-m4 \
     --specs=nosys.specs \
+    -Wl,-Map=${PROJECT_NAME}.map \
     -Wl,--gc-sections \
     -static \
     --specs=nano.specs \

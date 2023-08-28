@@ -940,12 +940,16 @@ void wep_define_func(void)
 
 void net_ini_WIZNET()
 {
+    printf("net_ini_WIZNET\n");
+
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_Delay(70);
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
     HAL_Delay(70);
     uint8_t sn_TCP = 0; // Сокет 0
     WIZCHIPInitialize();
+
+    printf("WIZCHIPInitialize  OK\n");
 
     for (int i =0; i < 6; ++i)
     {
@@ -1008,8 +1012,8 @@ void workI2C_EEPROM()
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-        copyParametersFromSDToAdressEEPROM(ipSettingAdressInEEPROM);
-        copyMacToAdressEEPROM(macAdressInEEPROM);
+//        copyParametersFromSDToAdressEEPROM(ipSettingAdressInEEPROM);
+//        copyMacToAdressEEPROM(macAdressInEEPROM);
         setMacFromSD();
 #ifndef   NEW_HTTP_SERVER
         copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);

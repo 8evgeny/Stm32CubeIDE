@@ -1697,7 +1697,10 @@ int main(void)
   {
 
 #ifdef   NEW_HTTP_SERVER
-    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+    for(i = 0; i < MAX_HTTPSOCK; i++)
+    {
+        httpServer_run(i);
+    }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();

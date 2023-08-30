@@ -43,6 +43,7 @@ void WIZCHIPInitialize(){
 		  return;
 		}
 	} while (tmp == PHY_LINK_OFF);
+    printf("link_ON\n");
 }
 
 void wizchip_spi_readburst(uint8_t* pBuf, uint16_t len)

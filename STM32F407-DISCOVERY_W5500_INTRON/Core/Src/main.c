@@ -233,7 +233,7 @@ void simpleTestI2C_EEPROM(uint16_t addr)
     uint8_t rd_value[36] = {0};
     uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
                             'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
-    uint8_t erase_value[36] = {'H','e','f','l','o'};
+    uint8_t erase_value[36] = {'H','e','l','l','o'};
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
     uint16_t num = 36;
@@ -971,7 +971,7 @@ void net_ini_WIZNET()
 
 void workI2C_EEPROM()
 {
-//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
+      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();
@@ -1012,8 +1012,8 @@ void workI2C_EEPROM()
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-//        copyParametersFromSDToAdressEEPROM(ipSettingAdressInEEPROM);
-//        copyMacToAdressEEPROM(macAdressInEEPROM);
+        copyParametersFromSDToAdressEEPROM(ipSettingAdressInEEPROM);
+        copyMacToAdressEEPROM(macAdressInEEPROM);
         setMacFromSD();
 #ifndef   NEW_HTTP_SERVER
         copyFileToAdressEEPROM("index.html", indexAdressInEEPROM);

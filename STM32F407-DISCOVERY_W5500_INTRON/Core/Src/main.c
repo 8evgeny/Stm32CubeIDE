@@ -942,12 +942,16 @@ void wep_define_func(void)
 
 void net_ini_WIZNET()
 {
+    printf("net_ini_WIZNET\n");
+
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_Delay(70);
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
     HAL_Delay(70);
     uint8_t sn_TCP = 0; // Сокет 0
     WIZCHIPInitialize();
+
+    printf("WIZCHIPInitialize  OK\n");
 
     for (int i =0; i < 6; ++i)
     {
@@ -1671,9 +1675,8 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
-
-//    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
-//    workSPI_EEPROM();
+    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 
@@ -1683,10 +1686,10 @@ int main(void)
     prepearUDP_PLIS();
 
 #ifdef   NEW_HTTP_SERVER //web serverWIZ
-//    uint8_t i;
-//    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
-//    wep_define_func();
-//    display_reg_webContent_list();
+    uint8_t i;
+    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
+    wep_define_func();
+    display_reg_webContent_list();
 #endif
 
 //    tls_client_serverTest(); // работает
@@ -1699,7 +1702,10 @@ int main(void)
   {
 
 #ifdef   NEW_HTTP_SERVER
-//    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+    for(i = 0; i < MAX_HTTPSOCK; i++)
+    {
+        httpServer_run(i);
+    }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();

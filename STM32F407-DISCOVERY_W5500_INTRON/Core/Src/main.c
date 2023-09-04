@@ -1667,16 +1667,15 @@ int main(void)
   MX_RTC_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
     printf("Test UART...\n");
-
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
 
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
-    workSPI_EEPROM();
+
+//    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 
@@ -1695,7 +1694,6 @@ int main(void)
 //    tls_client_serverTest(); // работает
 //    polarSSLTest();
 //    bearSSLTest();
-
 
 //uint8_t firstSend = 1;
   while (1)

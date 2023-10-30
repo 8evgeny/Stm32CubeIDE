@@ -58,7 +58,7 @@ EEPROM I2C : ATMEL 24C256
 0110 - 011F   16b    длина main.html  (при чтении с карты - старый web сервер)
 0120 - 019F   128b   mac
 01A0 - 01AF   16b    Признак чистой EEPROM (если FF - пишем нули и пишем параметры и mac по умолчанию)
-01A0 - 03FF   резерв
+01A0 - 03FF   simple test eeprom
 0400 - 07FF   2k   index.html
 0800 - 0BFF   3k
 0C00 - 0FFF   4k
@@ -89,7 +89,7 @@ EEPROM I2C : ATMEL 24C256
 7000 - 73FF   29K
 7400 - 77FF   30k
 7800 - 7BFF   31k   резерв
-7C00 - 7FFF   32k   simple test eeprom
+7C00 - 7FFF   32k
 */
 
 #define  ipSettingAdressInEEPROM 0x0000
@@ -100,8 +100,8 @@ EEPROM I2C : ATMEL 24C256
 #define  mainAdressInEEPROM      0x2800
 #define  macAdressInEEPROM       0x0120
 #define  markEEPROMclear         0x01A0
-#define  simpleTestEEPROMadress  0x7C00
-
+//#define  simpleTestEEPROMadress  0x7C00
+#define  simpleTestEEPROMadress  0x01A0
 #include "types.h"
 
 /* USER CODE END Header */

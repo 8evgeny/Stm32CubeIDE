@@ -185,7 +185,7 @@ HAL_StatusTypeDef readData(uint16_t DevAddress, uint16_t MemAddress, uint8_t *pD
 {
     while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
         HAL_Delay(10);
-    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(&hi2c1, DevAddress, MemAddress, I2C_MEMADD_SIZE_16BIT, pData, Size, HAL_MAX_DELAY);
+    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(&hi2c1, DevAddress, MemAddress, I2C_MEMADD_SIZE_8BIT, pData, Size, HAL_MAX_DELAY);
 
 //    while(i2cReadReady != SET); //Выпилил
 //    i2cReadReady = RESET;
@@ -198,7 +198,7 @@ HAL_StatusTypeDef writeData(uint16_t DevAddress, uint16_t MemAddress, uint8_t *p
 
     while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY);
 
-    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(&hi2c1, DevAddress, MemAddress, I2C_MEMADD_SIZE_16BIT, pData, Size, HAL_MAX_DELAY);
+    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(&hi2c1, DevAddress, MemAddress, I2C_MEMADD_SIZE_8BIT, pData, Size, HAL_MAX_DELAY);
     for(;;)
     { // wait...
         status = HAL_I2C_IsDeviceReady(&hi2c1, DevAddress, 1, HAL_MAX_DELAY);
@@ -244,7 +244,6 @@ uint32_t BSP_EEPROM_ReadBuffer(uint8_t *pBuffer, uint16_t ReadAddr, uint16_t *Nu
 
 uint32_t BSP_EEPROM_WriteBuffer(uint8_t *pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite)
 {
-printf("__1__\r\n");
     uint8_t  numofpage = 0, numofsingle = 0, count = 0;
     uint16_t addr = 0;
     uint8_t  dataindex = 0;

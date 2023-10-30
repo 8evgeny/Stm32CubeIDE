@@ -229,20 +229,20 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
 void simpleTestI2C_EEPROM(uint16_t addr)
 {
+    uint16_t num = 16;
     printf("Simple test I2C_EEPROM ...\n");
-    uint8_t rd_value[36] = {0};
-    uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
-                            'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
-    uint8_t erase_value[36] = {'H','e','l','l','o'};
+
+    uint8_t rd_value[16] = {0};
+    uint8_t wr_value[16] = {'1','2','3','4','5','6','7','8','9','a','b','c','d','e','\0'};
 
 //    AT24C_ReadBytes (0x004A, rd_value, 36);
-    uint16_t num = 16;
+
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
 
     printf("EEPROM write:");
-    printf("%s\r\n",erase_value);
-    BSP_EEPROM_WriteBuffer(erase_value, addr, num);
+    printf("%s\r\n",wr_value);
+    BSP_EEPROM_WriteBuffer(wr_value, addr, num);
 //    AT24C_WriteBytes (0x004A, erase_value, 36);
 
     delayUS_ASM(100000);
@@ -251,16 +251,7 @@ void simpleTestI2C_EEPROM(uint16_t addr)
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
 
-    printf("EEPROM write:");
-    printf("%s\r\n",wr_value);
-    BSP_EEPROM_WriteBuffer(wr_value, addr, num);
-//    AT24C_WriteBytes (0x004A, wr_value, 36);
-
     delayUS_ASM(100000);
-
-//    AT24C_ReadBytes (0x004A, rd_value, 36);
-    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
-    printf("EEPROM read: %s\r\n",rd_value);
 
     printf("\nSimple test I2C_EEPROM ..OK\n");
 }
@@ -973,7 +964,7 @@ void net_ini_WIZNET()
 
 void workI2C_EEPROM()
 {
-//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
+      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();

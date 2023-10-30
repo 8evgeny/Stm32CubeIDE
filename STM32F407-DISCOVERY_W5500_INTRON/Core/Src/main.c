@@ -984,7 +984,7 @@ void workI2C_EEPROM()
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
     {
-        Printf("SD active\n");
+        Printf("SD active\r\n");
     }
     else
     {
@@ -1003,13 +1003,13 @@ void workI2C_EEPROM()
         }
         else
         {
-            printf("EEPROM: OLD\n");
+            printf("EEPROM: OLD\r\n");
         }
 
     }
 
     if (result != 0)
-        printf("not found SD\n");
+        printf("not found SD\r\n");
     f_close(&fil);
     if (sdCartOn == 1)
     {
@@ -1667,14 +1667,14 @@ int main(void)
   MX_RTC_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-    printf("Test UART...\n");
+    printf("Test UART...OK\r\n");
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
-
+    printf("Test EEPROM or SD...OK\r\n");
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
-
+    printf("WIZNET...OK\r\n");
 //    workSPI_EEPROM();
 
   /* USER CODE END 2 */

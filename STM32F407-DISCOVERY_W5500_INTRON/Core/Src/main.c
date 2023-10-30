@@ -1063,7 +1063,7 @@ void workI2C_EEPROM()
 
 void workSPI_EEPROM()
 {
-    //    testSPI_EEPROM();//Test с SPI EEPROM
+        testSPI_EEPROM();//Test с SPI EEPROM
     //    copyDataFromI2cEepromToSpiEeprom();//Копируем данные из I2C eeprom в SPI eeprom (Settings и Mac)
     if (sdCartOn == 1)
     {
@@ -1669,7 +1669,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
     printf("Test UART...OK\r\n");
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
-    printf("Test EEPROM or SD...OK\r\n");
+
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif

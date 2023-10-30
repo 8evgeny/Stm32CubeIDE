@@ -140,7 +140,7 @@ void setNewGateIP(char * buf);
 void setNewDestIP(char * buf);
 void setNewPassword(char * buf);
 int convertHexToDecimal();
-
+void testSPI_EEPROM();
 
 /* USER CODE END Includes */
 

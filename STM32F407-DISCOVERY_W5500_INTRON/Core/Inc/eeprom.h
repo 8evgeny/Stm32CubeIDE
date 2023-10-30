@@ -14,9 +14,9 @@
 
 /* EEPROM hardware address and page size */
 //#define EEPROM_PAGESIZE             128
-#define EEPROM_PAGESIZE             64
-//#define EEPROM_MAX_SIZE             0x20000 /* 1Mbit*/
-#define EEPROM_MAX_SIZE             0x8000 //256 kbit
+//#define EEPROM_PAGESIZE             64
+#define EEPROM_PAGESIZE             16
+#define EEPROM_MAX_SIZE             0x800 //16 kbit
 /* Maximum Timeout values for flags and events waiting loops: This timeout is based
    on systick set to 1ms.
    Timeout for read based if read all the EEPROM: EEPROM_MAX_SIZE * BSP_I2C_SPEED (640ms) */

@@ -244,7 +244,7 @@ uint32_t BSP_EEPROM_ReadBuffer(uint8_t *pBuffer, uint16_t ReadAddr, uint16_t *Nu
 
 uint32_t BSP_EEPROM_WriteBuffer(uint8_t *pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite)
 {
-
+printf("__1__\r\n");
     uint8_t  numofpage = 0, numofsingle = 0, count = 0;
     uint16_t addr = 0;
     uint8_t  dataindex = 0;
@@ -262,6 +262,7 @@ uint32_t BSP_EEPROM_WriteBuffer(uint8_t *pBuffer, uint16_t WriteAddr, uint16_t N
             /* Store the number of data to be written */
             dataindex = numofsingle;
             /* Start writing data */
+
             status = EEPROM_WritePage(pBuffer, WriteAddr, (uint8_t *)(&dataindex));
             if (status != EEPROM_OK) {
                 return status;

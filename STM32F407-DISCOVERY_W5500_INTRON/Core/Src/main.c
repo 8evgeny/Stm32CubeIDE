@@ -1246,7 +1246,7 @@ void testSPI_EEPROM()
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
     EEPROM_SPI_INIT(&hspi3);
     printEepromSpiStatus();
-    EEPROM_CHIP_ERASE();
+//    EEPROM_CHIP_ERASE();
 //    EEPROM_PAGE_ERASE(0x00000100); //PAGE_ERASE не работает
     testSpiEepromWriteRead();
 }

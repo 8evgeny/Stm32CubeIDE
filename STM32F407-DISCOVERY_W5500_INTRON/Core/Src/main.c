@@ -120,8 +120,6 @@ SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 
-TIM_HandleTypeDef htim1;
-
 UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart6_tx;
 
@@ -160,7 +158,6 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_SPI3_Init(void);
-static void MX_TIM1_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_RNG_Init(void);
@@ -170,30 +167,30 @@ static void MX_I2C1_Init(void);
 
 void UART_Printf(const char* fmt, ...);
 extern void print_network_information(void);
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-// Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
-    if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
-    {
-        ++capture;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+//{
+//// Этот обратный вызов автоматически вызывается HAL при возникновении события UEV
+//    if(htim->Instance == TIM1) //check if the interrupt comes from TIM1
+//    {
+//        ++capture;
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-        if (capture == 2)
-        {
-            ++count;
-//            HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
-//            memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
-        }
-        if (capture == 1)
-        {
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+//        if (capture == 2)
+//        {
+//            ++count;
+////            HAL_SPI_TransmitReceive(&hspi3, txBuf , rxBuf, MAX_PACKET_LEN, 0x1000);
+////            memcpy(txBuf, rxBuf + 1, MAX_PACKET_LEN);
+//        }
+//        if (capture == 1)
+//        {
+//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+//            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
 
-        }
-    }
+//        }
+//    }
 
-}
+//}
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     if(hspi->Instance == SPI3)
@@ -210,12 +207,13 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 //        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 //    }
 }
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
-{
-    capture = 0;
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
-}
+
+//void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+//{
+//    capture = 0;
+////    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET);
+////    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_RESET);
+//}
 
 /* USER CODE END PFP */
 
@@ -231,38 +229,30 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
 void simpleTestI2C_EEPROM(uint16_t addr)
 {
-    printf("\nSimple test I2C_EEPROM\n");
-    uint8_t rd_value[36] = {0};
-    uint8_t wr_value[36] = {'f','b','c','d','e','f','g','i','j','k','l','m','n','o','p','q',
-                            'r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','\0'};
-    uint8_t erase_value[36] = {'H','e','f','l','o'};
+    uint16_t num = 16;
+    printf("Simple test I2C_EEPROM ...\n");
 
-//    AT24C_ReadBytes (0x004A, rd_value, 36);
-    uint16_t num = 36;
+    uint8_t rd_value[16] = {0};
+    uint8_t wr_value[16] = {'1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','\0'};
+    uint8_t wr_value2[16] = {'A','B','3','D','E','F','J','K','L','M','N','O','P','Q','R','\0'};
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
-
-    printf("EEPROM write:");
-    printf("%s\r\n",erase_value);
-    BSP_EEPROM_WriteBuffer(erase_value, addr, 36);
-//    AT24C_WriteBytes (0x004A, erase_value, 36);
-
-    delayUS_ASM(100000);
-
-//    AT24C_ReadBytes (0x004A, rd_value, 36);
-    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
-    UART_Printf("EEPROM read: %s\r\n",rd_value); delayUS_ASM(10000);
-
     printf("EEPROM write:");
     printf("%s\r\n",wr_value);
-    BSP_EEPROM_WriteBuffer(wr_value, addr, 36);
-//    AT24C_WriteBytes (0x004A, wr_value, 36);
-
+    BSP_EEPROM_WriteBuffer(wr_value, addr, num);
     delayUS_ASM(100000);
-
-//    AT24C_ReadBytes (0x004A, rd_value, 36);
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
+    delayUS_ASM(100000);
+
+    printf("EEPROM write:");
+    printf("%s\r\n",wr_value2);
+    BSP_EEPROM_WriteBuffer(wr_value2, addr, num);
+    delayUS_ASM(100000);
+    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
+    printf("EEPROM read: %s\r\n",rd_value);
+    delayUS_ASM(100000);
+    printf("Simple test I2C_EEPROM ..OK\r\n\n");
 }
 
 void saveLenFileToEeprom(const char* nameFile_onSD, uint32_t numByteFile)
@@ -942,12 +932,16 @@ void wep_define_func(void)
 
 void net_ini_WIZNET()
 {
+//    printf("net_ini_WIZNET\n");
+
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_Delay(70);
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
     HAL_Delay(70);
     uint8_t sn_TCP = 0; // Сокет 0
     WIZCHIPInitialize();
+
+    printf("WIZCHIPInitialize  OK\n");
 
     for (int i =0; i < 6; ++i)
     {
@@ -980,7 +974,7 @@ void workI2C_EEPROM()
     FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     if (result == 0)
     {
-        Printf("SD active\n");
+        Printf("SD active\r\n");
     }
     else
     {
@@ -999,13 +993,13 @@ void workI2C_EEPROM()
         }
         else
         {
-            printf("EEPROM: OLD\n");
+            printf("EEPROM: OLD\r\n");
         }
 
     }
 
     if (result != 0)
-        printf("not found SD\n");
+        printf("not found SD\r\n");
     f_close(&fil);
     if (sdCartOn == 1)
     {
@@ -1059,7 +1053,7 @@ void workI2C_EEPROM()
 
 void workSPI_EEPROM()
 {
-    //    testSPI_EEPROM();//Test с SPI EEPROM
+        testSPI_EEPROM();//Test с SPI EEPROM
     //    copyDataFromI2cEepromToSpiEeprom();//Копируем данные из I2C eeprom в SPI eeprom (Settings и Mac)
     if (sdCartOn == 1)
     {
@@ -1625,7 +1619,6 @@ void setNewPassword(char * tmpbuf)
 
 /* USER CODE END 0 */
 
-
 /**
   * @brief  The application entry point.
   * @retval int
@@ -1657,7 +1650,6 @@ int main(void)
   MX_DMA_Init();
   MX_USART6_UART_Init();
   MX_SPI3_Init();
-  MX_TIM1_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_FATFS_Init();
@@ -1665,12 +1657,14 @@ int main(void)
   MX_RTC_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+    printf("Test UART...OK\r\n");
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
+
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
+
     workSPI_EEPROM();
 
   /* USER CODE END 2 */
@@ -1691,13 +1685,15 @@ int main(void)
 //    polarSSLTest();
 //    bearSSLTest();
 
-
 //uint8_t firstSend = 1;
   while (1)
   {
 
 #ifdef   NEW_HTTP_SERVER
-    for(i = 0; i < MAX_HTTPSOCK; i++) {httpServer_run(i);}
+    for(i = 0; i < MAX_HTTPSOCK; i++)
+    {
+        httpServer_run(i);
+    }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();
@@ -1731,13 +1727,14 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 336;
+  RCC_OscInitStruct.PLL.PLLN = 100;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -1753,7 +1750,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
@@ -1775,7 +1772,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 1000000;
+  hi2c1.Init.ClockSpeed = 400000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
@@ -1996,74 +1993,6 @@ static void MX_SPI3_Init(void)
 }
 
 /**
-  * @brief TIM1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM1_Init(void)
-{
-
-  /* USER CODE BEGIN TIM1_Init 0 */
-
-  /* USER CODE END TIM1_Init 0 */
-
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_IC_InitTypeDef sConfigIC = {0};
-
-  /* USER CODE BEGIN TIM1_Init 1 */
-
-  /* USER CODE END TIM1_Init 1 */
-  htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
-  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 20730;
-  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim1.Init.RepetitionCounter = 0;
-  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_IC_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
-  sSlaveConfig.InputTrigger = TIM_TS_TI1FP1;
-  sSlaveConfig.TriggerPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
-  sSlaveConfig.TriggerFilter = 0;
-  if (HAL_TIM_SlaveConfigSynchro(&htim1, &sSlaveConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_FALLING;
-  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
-  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
-  sConfigIC.ICFilter = 0;
-  if (HAL_TIM_IC_ConfigChannel(&htim1, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM1_Init 2 */
-
-  /* USER CODE END TIM1_Init 2 */
-
-}
-
-/**
   * @brief USART6 Initialization Function
   * @param None
   * @retval None
@@ -2143,7 +2072,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|GPIO_PIN_10|Green_Led_Pin|Orange_Led_Pin
-                          |Red_Led_Pin|Blue_Led_Pin, GPIO_PIN_RESET);
+                          |Red_Led_Pin|Blue_Led_Pin|GPIO_PIN_3, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11|GPIO_PIN_2, GPIO_PIN_SET);
@@ -2205,6 +2134,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PD3 */
+  GPIO_InitStruct.Pin = GPIO_PIN_3;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
 }

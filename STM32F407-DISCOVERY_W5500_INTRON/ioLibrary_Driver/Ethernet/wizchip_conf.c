@@ -290,6 +290,8 @@ int8_t ctlwizchip(ctlwizchip_type cwtype, void* arg)
          *(uint8_t*)arg = tmp;
          break;
       case CW_GET_PHYLINK:
+// printf("link_OFF\n");
+ HAL_Delay(100);
          tmp = wizphy_getphylink();
          if((int8_t)tmp == -1) return -1;
          *(uint8_t*)arg = tmp;

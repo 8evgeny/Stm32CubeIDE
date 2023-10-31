@@ -181,11 +181,21 @@ static uint32_t EEPROM_WritePage(uint8_t *pBuffer, uint16_t WriteAddr, uint8_t *
     return status;
 }
 
+
+
 HAL_StatusTypeDef readData(uint16_t DevAddress, uint16_t MemAddress, uint8_t *pData, uint16_t Size)
 {
     while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
         HAL_Delay(10);
-    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(&hi2c1, DevAddress, MemAddress, I2C_MEMADD_SIZE_16BIT, pData, Size, HAL_MAX_DELAY);
+    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(&hi2c1,
+                                                DevAddress, MemAddress,
+#ifdef EEPROMADRESS8bit
+                                                I2C_MEMADD_SIZE_8BIT,
+#endif
+#ifndef EEPROMADRESS8bit
+                                                I2C_MEMADD_SIZE_16BIT,
+#endif
+                                                pData, Size, HAL_MAX_DELAY);
 
 //    while(i2cReadReady != SET); //Выпилил
 //    i2cReadReady = RESET;
@@ -198,7 +208,15 @@ HAL_StatusTypeDef writeData(uint16_t DevAddress, uint16_t MemAddress, uint8_t *p
 
     while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY);
 
-    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(&hi2c1, DevAddress, MemAddress, I2C_MEMADD_SIZE_16BIT, pData, Size, HAL_MAX_DELAY);
+    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(&hi2c1,
+                                                 DevAddress, MemAddress,
+#ifdef EEPROMADRESS8bit
+                                             I2C_MEMADD_SIZE_8BIT,
+#endif
+#ifndef EEPROMADRESS8bit
+                                             I2C_MEMADD_SIZE_16BIT,
+#endif
+                                                pData, Size, HAL_MAX_DELAY);
     for(;;)
     { // wait...
         status = HAL_I2C_IsDeviceReady(&hi2c1, DevAddress, 1, HAL_MAX_DELAY);
@@ -244,7 +262,6 @@ uint32_t BSP_EEPROM_ReadBuffer(uint8_t *pBuffer, uint16_t ReadAddr, uint16_t *Nu
 
 uint32_t BSP_EEPROM_WriteBuffer(uint8_t *pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite)
 {
-
     uint8_t  numofpage = 0, numofsingle = 0, count = 0;
     uint16_t addr = 0;
     uint8_t  dataindex = 0;
@@ -262,6 +279,7 @@ uint32_t BSP_EEPROM_WriteBuffer(uint8_t *pBuffer, uint16_t WriteAddr, uint16_t N
             /* Store the number of data to be written */
             dataindex = numofsingle;
             /* Start writing data */
+
             status = EEPROM_WritePage(pBuffer, WriteAddr, (uint8_t *)(&dataindex));
             if (status != EEPROM_OK) {
                 return status;

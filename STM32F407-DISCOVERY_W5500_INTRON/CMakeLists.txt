@@ -12,7 +12,7 @@ set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
 add_definitions(-DWOLFSSL_X509_INCLUDED)
 add_definitions(-DOPENSSL_ALL)
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
-add_definitions(-DTLS_ON)         #Режим http / https
+#add_definitions(-DTLS_ON)         #Режим http / https
 #add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде
 add_definitions(-DPROD)  #Основной файл index.html или пример WIZNET
 
@@ -52,7 +52,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
     -DUSE_HAL_DRIVER \
     -DSTM32F407xx \
     -c \
-    -O0 \
+    -Os \
     -g \
     -ffunction-sections \
     -fdata-sections \
@@ -123,6 +123,8 @@ add_library(wolfssl_LIB ${wolfssl_src})
 #    )
 #add_library(polarssl_LIB ${polarssl_src})
 
+#add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)
+
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s Middlewares/Third_Party/littlefs/eeprom.c)
 add_executable(${PROJECT_NAME}.elf ${src})
 
@@ -132,9 +134,11 @@ set(LINKER_FLAGS "SHELL: \
     -T${LINKER_SCRIPT_FLASH} \
     -mcpu=cortex-m4 \
     --specs=nosys.specs \
+    -Wl,-Map=${PROJECT_NAME}.map \
     -Wl,--gc-sections \
     -static \
     --specs=nano.specs \
+    -Wl,--gc-sections,--print-memory-usage \
     -mfpu=fpv5-d16 \
     -mfloat-abi=hard \
     -mthumb
@@ -174,6 +178,6 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
 #    COMMAND st-flash erase
 #    COMMENT "Erasing . . .")
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
-    COMMENT "Write Flash ")
+#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
+#    COMMENT "Write Flash ")

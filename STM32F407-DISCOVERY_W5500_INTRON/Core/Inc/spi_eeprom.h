@@ -35,6 +35,7 @@
 #define EEPROM_WPEN            0x80  /* Write protection */
 
 
+
 #define EEPROM_PAGESIZE        256   /* !< Pagesize according to documentation :256Byte*/
 /*25LC1024：1Mbit= 1024Kbit =128KB  = 512*256B = 131072 X 8bit
  Page 1 Address: 00000-000FF   length 256b

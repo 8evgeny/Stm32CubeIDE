@@ -1093,6 +1093,20 @@ void workSPI_EEPROM()
 
 void prepearUDP_PLIS()
 {
+#if 0
+GPIO для дебага
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_SET); //81 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET); //82 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET); //84 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET); //85 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); //86 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_6, GPIO_PIN_SET); //87 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET); //88 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET); //56 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET); //57 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
+
+#endif
     uint8_t sn = 0;
     //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
     //char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
@@ -1174,7 +1188,7 @@ void sendReceiveUDP()
 void testSpiEepromWriteRead()
 {
     //25AA1024  page - 256
-    printf("\ntestSpiEepromClearWriteRead\n");
+    printf("\ntestSpiEepromClearWriteRead\r\n");
     uint8_t RxBuffer[256] = {0x00};
     uint8_t TxBuffer[256] = {0x00};
     uint8_t err = 0;
@@ -1697,7 +1711,7 @@ int main(void)
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
-    workSPI_EEPROM();
+//    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 

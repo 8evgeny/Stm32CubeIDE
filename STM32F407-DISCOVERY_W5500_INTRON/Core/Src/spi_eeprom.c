@@ -192,10 +192,11 @@ EEPROMStatus EEPROM_SPI_WriteBuffer(uint8_t* pBuffer, uint32_t WriteAddr, uint16
 
 EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite)
 {
+printf("---1---\r\n");
     while (EEPROM_SPI->State != HAL_SPI_STATE_READY) {
         HAL_Delay(1);
     }
-
+printf("---2---\r\n");
     HAL_StatusTypeDef spiTransmitStatus;// SPI transmission status
 
     EEPROM_WriteEnable();// write enable
@@ -204,7 +205,7 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
         We gonna send commands in one packet of 4 bytes
      */
     uint8_t header[4];
-
+printf("---3---\r\n");
     header[0] = EEPROM_WRITE;    // Send "Write to Memory" instruction
     // send 24-bit Address (maximum address 1fffh)
     header[1] = (WriteAddr >> 16)&0xFF;
@@ -217,11 +218,11 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
     EEPROM_SPI_SendInstruction((uint8_t*)header, 4);
-
+printf("---4---\r\n");
     // Make 5 attemtps to write the data
     for (uint8_t i = 0; i < 5; i++) {
         spiTransmitStatus = HAL_SPI_Transmit(EEPROM_SPI, pBuffer, NumByteToWrite, 1000);
-
+printf("---5---\r\n");
         if (spiTransmitStatus == HAL_BUSY) {
             HAL_Delay(5);
         } else {
@@ -231,7 +232,7 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
 
     // Deselect the EEPROM: Chip Select high
     EEPROM_CS_HIGH();
-
+printf("---6---\r\n");
     // Wait the end of EEPROM writing
     EEPROM_SPI_WaitStandbyState();// Waiting for write to complete
 
@@ -359,6 +360,7 @@ uint8_t EEPROM_ReadStatusRegister(void)
 {
    uint8_t answerByte;
     // Select the EEPROM: Chip Select low
+    EEPROM_CS_HIGH();
     EEPROM_CS_LOW();
 
     answerByte = EEPROM_SendByte(EEPROM_RDSR);
@@ -385,17 +387,17 @@ uint8_t EEPROM_SPI_WaitStandbyState(void)
 
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();
-
+printf("---7---\r\n");
     // Send "Read Status Register" instruction
     EEPROM_SPI_SendInstruction((uint8_t*)command, 1);// Send a read status register command
-
+printf("---8---\r\n");
     // Loop as long as the memory is busy with a write cycle
     do {
 
         while (HAL_SPI_Receive(EEPROM_SPI, (uint8_t*)EEPROMstatus, 1, 200) == HAL_BUSY) {// Waiting for the data reception completion
             HAL_Delay(1);
         };
-
+printf("---9---\r\n");
         HAL_Delay(1);
 
        } while ((EEPROMstatus[0] & EEPROM_WIP_BUSY) == SET); // Write in progress

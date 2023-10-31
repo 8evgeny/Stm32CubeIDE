@@ -191,7 +191,8 @@ HAL_StatusTypeDef readData(uint16_t DevAddress, uint16_t MemAddress, uint8_t *pD
                                                 DevAddress, MemAddress,
 #ifdef EEPROMADRESS8bit
                                                 I2C_MEMADD_SIZE_8BIT,
-#elif EEPROMADRESS8bit
+#endif
+#ifndef EEPROMADRESS8bit
                                                 I2C_MEMADD_SIZE_16BIT,
 #endif
                                                 pData, Size, HAL_MAX_DELAY);
@@ -210,9 +211,10 @@ HAL_StatusTypeDef writeData(uint16_t DevAddress, uint16_t MemAddress, uint8_t *p
     HAL_StatusTypeDef status = HAL_I2C_Mem_Write(&hi2c1,
                                                  DevAddress, MemAddress,
 #ifdef EEPROMADRESS8bit
-                                                I2C_MEMADD_SIZE_8BIT,
-#elif EEPROMADRESS8bit
-                                                I2C_MEMADD_SIZE_16BIT,
+                                             I2C_MEMADD_SIZE_8BIT,
+#endif
+#ifndef EEPROMADRESS8bit
+                                             I2C_MEMADD_SIZE_16BIT,
 #endif
                                                 pData, Size, HAL_MAX_DELAY);
     for(;;)

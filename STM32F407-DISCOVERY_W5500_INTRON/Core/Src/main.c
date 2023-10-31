@@ -233,26 +233,25 @@ void simpleTestI2C_EEPROM(uint16_t addr)
     printf("Simple test I2C_EEPROM ...\n");
 
     uint8_t rd_value[16] = {0};
-    uint8_t wr_value[16] = {'1','2','3','4','5','6','7','8','9','a','b','c','d','e','\0'};
-
-//    AT24C_ReadBytes (0x004A, rd_value, 36);
-
+    uint8_t wr_value[16] = {'1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','\0'};
+    uint8_t wr_value2[16] = {'A','B','3','D','E','F','J','K','L','M','N','O','P','Q','R','\0'};
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
-
     printf("EEPROM write:");
     printf("%s\r\n",wr_value);
     BSP_EEPROM_WriteBuffer(wr_value, addr, num);
-//    AT24C_WriteBytes (0x004A, erase_value, 36);
-
     delayUS_ASM(100000);
-
-//    AT24C_ReadBytes (0x004A, rd_value, 36);
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
-
     delayUS_ASM(100000);
 
+    printf("EEPROM write:");
+    printf("%s\r\n",wr_value2);
+    BSP_EEPROM_WriteBuffer(wr_value2, addr, num);
+    delayUS_ASM(100000);
+    BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
+    printf("EEPROM read: %s\r\n",rd_value);
+    delayUS_ASM(100000);
     printf("\nSimple test I2C_EEPROM ..OK\n");
 }
 

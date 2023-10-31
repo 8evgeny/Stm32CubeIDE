@@ -1246,7 +1246,7 @@ void testSPI_EEPROM()
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
     EEPROM_SPI_INIT(&hspi3);
     printEepromSpiStatus();
-//    EEPROM_CHIP_ERASE();
+    EEPROM_CHIP_ERASE();
 //    EEPROM_PAGE_ERASE(0x00000100); //PAGE_ERASE не работает
     testSpiEepromWriteRead();
 }
@@ -1697,7 +1697,7 @@ int main(void)
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
-//    workSPI_EEPROM();
+    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 
@@ -2091,7 +2091,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, CS_EEPROM_Pin|WP_EEPROM_Pin|HOLD_EEPROM_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOE, CS_EEPROM_Pin|HOLD_EEPROM_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(WP_EEPROM_GPIO_Port, WP_EEPROM_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);

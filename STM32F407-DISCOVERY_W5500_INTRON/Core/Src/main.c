@@ -229,12 +229,21 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
 void simpleTestI2C_EEPROM(uint16_t addr)
 {
-    uint16_t num = 16;
+    uint16_t num = 256;
     printf("Simple test I2C_EEPROM ...\n");
 
-    uint8_t rd_value[16] = {0};
-    uint8_t wr_value[16] = {'1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','\0'};
-    uint8_t wr_value2[16] = {'A','B','3','D','E','F','J','K','L','M','N','O','P','Q','R','\0'};
+    uint8_t rd_value[256] = {0};
+    uint8_t wr_value[256] = {'1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+                             '1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+                             '1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+                             '1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+                             '1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+                             '1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+                             '1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
+                             'Q','W','R','_','_','*',
+                             '1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','\0'};
+
+    uint8_t wr_value2[256] = {'A','B','3','D','E','F','J','K','L','M','N','O','P','Q','R','\0'};
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
     printf("EEPROM write:");
@@ -497,8 +506,15 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
     f_gets(tmp+60, 33, &fil);
     f_close(&fil);
     printf("settings:\n%s\n",tmp);
-    int result = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
-    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
+    BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
+    delayUS_ASM(100000);
+//    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
+
+    uint16_t len = 93;
+    uint8_t rd_value[93] = {0};
+    BSP_EEPROM_ReadBuffer(rd_value, Addr, &len);
+    printf("\r\nEEPROM read: %s\r\n",rd_value);
+
 }
 
 void copyParametersFromSDToAdressSPIEEPROM()
@@ -592,8 +608,15 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     uint16_t * pnumByte = &numByte;
     char tmp[settingsLen];
     char tmp2[3];
+
+    uint16_t len = 93;
+    uint8_t rd_value[93] = {0};
+    BSP_EEPROM_ReadBuffer(rd_value, Addr, &len);
+    printf("\r\nEEPROM read: %s\r\n",rd_value);
+
+
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-//    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
+    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
     printf("settings:\n%s\n",tmp);
 
     strncpy(host_IP,tmp,15);
@@ -963,7 +986,7 @@ void net_ini_WIZNET()
 
 void workI2C_EEPROM()
 {
-//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
+      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();
@@ -1772,7 +1795,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.ClockSpeed = 100000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;

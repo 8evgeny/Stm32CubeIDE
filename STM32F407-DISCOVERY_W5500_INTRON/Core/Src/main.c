@@ -262,6 +262,12 @@ void simpleTestI2C_EEPROM(uint16_t addr)
     printf("EEPROM read: %s\r\n",rd_value);
     delayUS_ASM(100000);
     printf("Simple test I2C_EEPROM ..OK\r\n\n");
+
+    uint16_t len = 93;
+    uint8_t rd_value2[93] = {0};
+    BSP_EEPROM_ReadBuffer(rd_value2, ipSettingAdressInEEPROM, &len);
+    printf("\r\nEEPROM settings read: %s\r\n", rd_value2);
+
 }
 
 void saveLenFileToEeprom(const char* nameFile_onSD, uint32_t numByteFile)
@@ -512,8 +518,8 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 
     uint16_t len = 93;
     uint8_t rd_value[93] = {0};
-    BSP_EEPROM_ReadBuffer(rd_value, Addr, &len);
-    printf("\r\nEEPROM read: %s\r\n",rd_value);
+    BSP_EEPROM_ReadBuffer(rd_value, ipSettingAdressInEEPROM, &len);
+    printf("\r\nEEPROM read settings: %s\r\n",rd_value);
 
 }
 
@@ -1118,8 +1124,6 @@ void prepearUDP_PLIS()
     //OpenSocket(7, Sn_MR_UDP);
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
-    //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET); //Внутреннее тактирование
-
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 

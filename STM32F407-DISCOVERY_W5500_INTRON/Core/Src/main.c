@@ -932,7 +932,7 @@ void wep_define_func(void)
 
 void net_ini_WIZNET()
 {
-    printf("net_ini_WIZNET\n");
+//    printf("net_ini_WIZNET\n");
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_Delay(70);
@@ -963,7 +963,7 @@ void net_ini_WIZNET()
 
 void workI2C_EEPROM()
 {
-      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
+//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();
@@ -1664,8 +1664,8 @@ int main(void)
 //    net_ini();
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
-    printf("WIZNET...OK\r\n");
-//    workSPI_EEPROM();
+
+    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 

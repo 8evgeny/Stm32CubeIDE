@@ -123,7 +123,7 @@ add_library(wolfssl_LIB ${wolfssl_src})
 #    )
 #add_library(polarssl_LIB ${polarssl_src})
 
-#add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)
+add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s Middlewares/Third_Party/littlefs/eeprom.c)
 add_executable(${PROJECT_NAME}.elf ${src})

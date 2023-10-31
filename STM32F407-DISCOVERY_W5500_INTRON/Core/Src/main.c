@@ -1665,7 +1665,7 @@ int main(void)
 #endif
     net_ini_WIZNET();// Делаю то-же но на родной библиотеке
 
-    workSPI_EEPROM();
+//    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 

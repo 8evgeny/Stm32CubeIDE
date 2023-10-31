@@ -252,7 +252,7 @@ void simpleTestI2C_EEPROM(uint16_t addr)
     BSP_EEPROM_ReadBuffer(rd_value, addr, &num);
     printf("EEPROM read: %s\r\n",rd_value);
     delayUS_ASM(100000);
-    printf("\nSimple test I2C_EEPROM ..OK\n");
+    printf("Simple test I2C_EEPROM ..OK\r\n\n");
 }
 
 void saveLenFileToEeprom(const char* nameFile_onSD, uint32_t numByteFile)

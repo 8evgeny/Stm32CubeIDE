@@ -1145,30 +1145,30 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 }
-
+uint8_t firstSend = 1;
 void sendReceiveUDP()
 {
-//    for (uint8_t i = 4; i < 8 ;++i)
-//    {
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+    for (uint8_t i = 4; i < 5 ;++i)
+    {
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
-//      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
 
-//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
-//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-//      sendPackets(4, destip, destport + 4 );
-//      if (firstSend != 1)
-//          receivePackets(4, destip, destport + 4 );
-//    }
-//    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
+      sendPackets(4, destip, 3000 );
+      if (firstSend != 1)
+          receivePackets(4, destip, 3000 );
+    }
+    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
 //    HAL_Delay(1000);
 //UART_Printf("txCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
@@ -1738,7 +1738,7 @@ int main(void)
 #ifdef   NEW_HTTP_SERVER
     for(i = 0; i < MAX_HTTPSOCK; i++)
     {
-        httpServer_run(i);
+//        httpServer_run(i);
     }
 #endif
 #ifndef   NEW_HTTP_SERVER
@@ -2217,14 +2217,14 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 //    }
     if (num_send == 500)
     {
-        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
     }
     if (num_send == 1000)
     {
 //        close(0);
 //        socket(0, Sn_MR_UDP, localport, 0x00);
         num_send = 0;
-        HAL_GPIO_WritePin(GPIOD, Orange_Led_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);

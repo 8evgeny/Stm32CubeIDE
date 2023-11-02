@@ -1107,7 +1107,7 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET); //57 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
 
 #endif
-    uint8_t sn = 0;
+//    uint8_t sn = 0;
     //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
     //char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
     //char buf2[] = "1234567890\r\n";
@@ -1123,10 +1123,10 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
       extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
 
-    //for (uint8_t i = 4; i < 8 ;++i)
-    //{
-    //    socket(i, Sn_MR_UDP, localport + i, 0x00);
-    //}
+    for (uint8_t i = 4; i < 5 ;++i)
+    {
+        socket(i, Sn_MR_UDP, 3000 , 0x00);
+    }
 
     //OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
     //OpenSocket(1, Sn_MR_UDP);
@@ -1143,7 +1143,7 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET); //Синий
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 }
 uint8_t firstSend = 1;
 void sendReceiveUDP()

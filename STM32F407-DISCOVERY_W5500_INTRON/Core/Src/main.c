@@ -105,6 +105,9 @@ uint8_t test5[MAX_PACKET_LEN] = {0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99, 0x99,
 uint8_t test6[MAX_PACKET_LEN] = {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
                                 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
                                 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
+uint8_t zeroStr[MAX_PACKET_LEN] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 
@@ -961,7 +964,7 @@ void wep_define_func(void)
 #endif //NEW_HTTP_SERVER
 }
 
-void net_ini_WIZNET_WEB(uint8_t socketTCP)
+void net_ini_WIZNET(uint8_t socketTCP)
 {
     printf("net_ini_WIZNET_WEB\n");
 
@@ -990,37 +993,6 @@ void net_ini_WIZNET_WEB(uint8_t socketTCP)
     socket(sn_TCP, Sn_MR_TCP, local_port_web, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
     if (SOCK_OK == listen(sn_TCP))
         printf("socket %d listening\n", sn_TCP);
-}
-
-void net_ini_WIZNET_UDP(uint8_t socketUDP)
-{
-    printf("net_ini_WIZNET_UDP\n");
-
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
-    HAL_Delay(70);
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-    HAL_Delay(70);
-    uint8_t sn_UDP = socketUDP;
-    WIZCHIPInitialize();
-
-    printf("WIZCHIPInitialize  OK\n");
-
-    for (int i =0; i < 6; ++i)
-    {
-        defaultNetInfo.mac[i] = macaddr[i];
-    }
-    for (int i =0; i < 4; ++i)
-    {
-        defaultNetInfo.ip[i] = ipaddr[i];
-        defaultNetInfo.gw[i] = ipgate[i];
-        defaultNetInfo.sn[i] = ipmask[i];
-    }
-
-    ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
-    print_network_information();
-    socket(sn_UDP, Sn_MR_UDP, local_port_udp, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
-    if (SOCK_OK == listen(sn_UDP))
-        printf("socket %d listening\n", sn_UDP);
 }
 
 void workI2C_EEPROM()
@@ -1123,9 +1095,6 @@ void workSPI_EEPROM()
         copyMacToAdressSPIEEPROM();             //Копируем MAC из SD в SPI eeprom
     }
 }
-
-void prepearUDP_PLIS()
-{
 #if 0
 GPIO для дебага
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_SET); //81 pin
@@ -1138,15 +1107,12 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET); //88 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET); //56 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET); //57 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
-
 #endif
+void prepearUDP_PLIS(uint8_t udpSocket)
+{
 //    uint8_t sn = 0;
-    //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-
-//    for (uint8_t i = 4; i < 5 ;++i)
-//    {
-//        socket(i, Sn_MR_UDP, local_port_udp , 0x00);
-//    }
+//    socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
+    socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
@@ -1167,6 +1133,9 @@ void sendReceiveUDP(uint8_t udpSocket)
 //      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
       HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+
+     if(strcmp((char*)rxCyclon, (char*)zeroStr) != 0)
+         printf("string no zero\r\n");
 
 //      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
 //      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
@@ -1731,22 +1700,22 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
-//    net_ini_WIZNET_WEB(0);
-    net_ini_WIZNET_UDP(0);
+    net_ini_WIZNET(0); //TCP socket 0
+
 //    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-    prepearUDP_PLIS();
+    uint8_t udpSocket = 4;
+    prepearUDP_PLIS(udpSocket);
 
 #ifdef   NEW_HTTP_SERVER //web serverWIZ
     uint8_t i;
-//    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
-//    wep_define_func();
-//    display_reg_webContent_list();
+    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
+    wep_define_func();
+    display_reg_webContent_list();
 #endif
 
 //    tls_client_serverTest(); // работает
@@ -1758,16 +1727,16 @@ int main(void)
   {
 
 #ifdef   NEW_HTTP_SERVER
-//    for(i = 0; i < MAX_HTTPSOCK; i++)
-//    {
-//        httpServer_run(i);
-//    }
+    for(i = 0; i < MAX_HTTPSOCK; i++)
+    {
+        httpServer_run(i);
+    }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();
 #endif
 
-      sendReceiveUDP(0);
+      sendReceiveUDP(udpSocket);
 
     /* USER CODE END WHILE */
 
@@ -2228,7 +2197,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-//    sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
+    sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
 
     ++num_send;
 //    if (num_send % 20000 == 0)

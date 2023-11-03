@@ -19,7 +19,7 @@ extern uint8_t macaddr[6];
 extern uint8_t ipaddr[4];
 extern uint8_t ipgate[4];
 extern uint8_t ipmask[4];
-extern uint16_t local_port;
+extern uint16_t local_port_web;
 extern unsigned char server_buffer[BUFFER_SIZE];
 extern int server_buffer_sz;
 extern unsigned char client_buffer[BUFFER_SIZE];
@@ -248,8 +248,8 @@ void w5500_ini(void)
 	w5500_writeReg(opcode, SIPR3,ipaddr[3]);
     //Настраиваем сокет 0
     opcode = (BSB_S0<<3)|OM_FDM1;
-    w5500_writeReg(opcode, Sn_PORT0,local_port>>8);
-    w5500_writeReg(opcode, Sn_PORT1,local_port);
+    w5500_writeReg(opcode, Sn_PORT0,local_port_web>>8);
+    w5500_writeReg(opcode, Sn_PORT1,local_port_web);
     //инициализируем активный сокет
     tcpprop.cur_sock = 0;
     //Открываем сокет 0

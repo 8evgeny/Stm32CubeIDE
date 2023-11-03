@@ -65,7 +65,8 @@ extern lfs_file_t file;
 //uint8_t num_block_main = 8;
 //char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024
-uint16_t local_port = LOCAL_PORT;
+uint16_t local_port_web = LOCAL_PORT_WEB;
+uint16_t local_port_udp = LOCAL_PORT_UDP;
 extern uint8_t bufRead[5];
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
@@ -106,7 +107,7 @@ uint8_t test6[MAX_PACKET_LEN] = {0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
                                 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
-uint32_t num;
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -140,8 +141,9 @@ uint32_t mainLen;
 uint8_t destip[4];
 uint8_t macaddr[6]={0x00}/*MAC_ADDR*/;
 extern wiz_NetInfo defaultNetInfo;
-uint8_t RX_BUF[DATA_BUF_SIZE];
-uint8_t TX_BUF[DATA_BUF_SIZE];
+#define DATA_BUF_SIZE   2048
+uint8_t RX_BUF_WEB[DATA_BUF_SIZE];
+uint8_t TX_BUF_WEB[DATA_BUF_SIZE];
 uint8_t socknumlist[] = {0, 1, 2, 3};
 extern char host_IP[16]; //для http Сервера
 extern char dest_IP[16];
@@ -959,15 +961,15 @@ void wep_define_func(void)
 #endif //NEW_HTTP_SERVER
 }
 
-void net_ini_WIZNET()
+void net_ini_WIZNET_WEB(uint8_t socketTCP)
 {
-//    printf("net_ini_WIZNET\n");
+    printf("net_ini_WIZNET_WEB\n");
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_Delay(70);
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
     HAL_Delay(70);
-    uint8_t sn_TCP = 0; // Сокет 0
+    uint8_t sn_TCP = socketTCP;
     WIZCHIPInitialize();
 
     printf("WIZCHIPInitialize  OK\n");
@@ -985,9 +987,40 @@ void net_ini_WIZNET()
 
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
     print_network_information();
-    socket(sn_TCP, Sn_MR_TCP, local_port, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
+    socket(sn_TCP, Sn_MR_TCP, local_port_web, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
     if (SOCK_OK == listen(sn_TCP))
         printf("socket %d listening\n", sn_TCP);
+}
+
+void net_ini_WIZNET_UDP(uint8_t socketUDP)
+{
+    printf("net_ini_WIZNET_UDP\n");
+
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+    HAL_Delay(70);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    HAL_Delay(70);
+    uint8_t sn_UDP = socketUDP;
+    WIZCHIPInitialize();
+
+    printf("WIZCHIPInitialize  OK\n");
+
+    for (int i =0; i < 6; ++i)
+    {
+        defaultNetInfo.mac[i] = macaddr[i];
+    }
+    for (int i =0; i < 4; ++i)
+    {
+        defaultNetInfo.ip[i] = ipaddr[i];
+        defaultNetInfo.gw[i] = ipgate[i];
+        defaultNetInfo.sn[i] = ipmask[i];
+    }
+
+    ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
+    print_network_information();
+    socket(sn_UDP, Sn_MR_UDP, local_port_udp, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
+    if (SOCK_OK == listen(sn_UDP))
+        printf("socket %d listening\n", sn_UDP);
 }
 
 void workI2C_EEPROM()
@@ -1109,33 +1142,11 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
 #endif
 //    uint8_t sn = 0;
     //socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-    //char buf1[] = "abcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjkabcdefghjk\r\n";
-    //char buf2[] = "1234567890\r\n";
-    //char buf3[] = "2345678901\r\n";
-    //char buf4[] = "3456789012\r\n";
-    //char buf5[] = "4567890123\r\n";
-    //char buf6[] = "5678901234\r\n";
-    //char buf7[] = "6789012345\r\n";
-    //char buf8[] = "7890123456\r\n";
-    //char buf[82] ;
-    #define SOCK_UDPS        1
-    #define DATA_BUF_SIZE   2048
-      extern uint8_t gDATABUF[DATA_BUF_SIZE];
 
-
-    for (uint8_t i = 4; i < 5 ;++i)
-    {
-        socket(i, Sn_MR_UDP, 3000 , 0x00);
-    }
-
-    //OpenSocket(0, Sn_MR_UDP); //То -же но локальный порт по умолчанию
-    //OpenSocket(1, Sn_MR_UDP);
-    //OpenSocket(2, Sn_MR_UDP);
-    //OpenSocket(3, Sn_MR_UDP);
-    //OpenSocket(4, Sn_MR_UDP);
-    //OpenSocket(5, Sn_MR_UDP);
-    //OpenSocket(6, Sn_MR_UDP);
-    //OpenSocket(7, Sn_MR_UDP);
+//    for (uint8_t i = 4; i < 5 ;++i)
+//    {
+//        socket(i, Sn_MR_UDP, local_port_udp , 0x00);
+//    }
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
@@ -1146,36 +1157,47 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 }
 uint8_t firstSend = 1;
-void sendReceiveUDP()
+uint8_t destipTEST[4] = {192,168,1,11};
+void sendReceiveUDP(uint8_t udpSocket)
 {
-    for (uint8_t i = 4; i < 5 ;++i)
-    {
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+//    for (uint8_t socket = udpSocket; udpSocket < 5 ;++udpSocket)
+//    {
+//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET); // Жду пока плис уронит флаг
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
       HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
 
-      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
-      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
+//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-      sendPackets(4, destip, 3000 );
-      if (firstSend != 1)
-          receivePackets(4, destip, 3000 );
-    }
+//      sendPackets(udpSocket, destip, local_port_udp);
+            sendPackets(udpSocket, destipTEST, local_port_udp);
+//      if (firstSend != 1)
+//          receivePackets(4, destip, 3000 );
+//    }
     firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-//    HAL_Delay(1000);
-//UART_Printf("txCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
+//printf("%u\ttxCyclon1 - "
+//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//       "\r\n",
+//       HAL_GetTick(),
 //        txCyclon[0],txCyclon[1],txCyclon[2],txCyclon[3],txCyclon[4],txCyclon[5],txCyclon[6],txCyclon[7],
 //        txCyclon[8],txCyclon[9],txCyclon[10],txCyclon[11],txCyclon[12],txCyclon[13],txCyclon[14],txCyclon[15],
 //        txCyclon[16],txCyclon[17],txCyclon[18],txCyclon[19],txCyclon[20],txCyclon[21],txCyclon[22],txCyclon[23],
-//        txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31]
+//        txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31],
+//        txCyclon[32],txCyclon[33],txCyclon[34],txCyclon[35],txCyclon[36],txCyclon[37],txCyclon[38],txCyclon[39],
+//        txCyclon[40],txCyclon[41],txCyclon[42],txCyclon[43],txCyclon[44],txCyclon[45],txCyclon[46],txCyclon[47]
 //        );
 //UART_Printf("rxCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
 //        rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
@@ -1709,8 +1731,8 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
-    net_ini_WIZNET();// Делаю то-же но на родной библиотеке
-
+//    net_ini_WIZNET_WEB(0);
+    net_ini_WIZNET_UDP(0);
 //    workSPI_EEPROM();
 
   /* USER CODE END 2 */
@@ -1722,9 +1744,9 @@ int main(void)
 
 #ifdef   NEW_HTTP_SERVER //web serverWIZ
     uint8_t i;
-    httpServer_init(TX_BUF, RX_BUF, MAX_HTTPSOCK, socknumlist);
-    wep_define_func();
-    display_reg_webContent_list();
+//    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
+//    wep_define_func();
+//    display_reg_webContent_list();
 #endif
 
 //    tls_client_serverTest(); // работает
@@ -1736,16 +1758,16 @@ int main(void)
   {
 
 #ifdef   NEW_HTTP_SERVER
-    for(i = 0; i < MAX_HTTPSOCK; i++)
-    {
+//    for(i = 0; i < MAX_HTTPSOCK; i++)
+//    {
 //        httpServer_run(i);
-    }
+//    }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();
 #endif
 
-      sendReceiveUDP();
+      sendReceiveUDP(0);
 
     /* USER CODE END WHILE */
 
@@ -2206,14 +2228,13 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-//    sendto_mod(sn, (uint8_t *)test6, MAX_PACKET_LEN, destip, destport);
+//    sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
 
     ++num_send;
-//    ++num;
-//    if (num % 20000 == 0)
+//    if (num_send % 20000 == 0)
 //    {
-//        sprintf(tmp, "%u\r\n",num);
-//        UART_Printf(tmp);
+//        sprintf(tmp, "%u\r\n",num_send);
+//        printf(tmp);
 //    }
     if (num_send == 500)
     {

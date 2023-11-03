@@ -32,14 +32,14 @@ void WIZCHIPInitialize(){
 	if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1)
 	{
 		//myprintf("WIZCHIP Initialized fail.\r\n");
-        Printf("WIZCHIP Initialized fail.\r\n", 1, 10);
+        printf("WIZCHIP Initialized fail.\r\n", 1, 10);
 	  return;
 	}
 	/* PHY link status check */
 	do {
 		if(ctlwizchip(CW_GET_PHYLINK, (void*)&tmp) == -1)
 		{
-            Printf("Unknown PHY Link status.\r\n", 1, 10);
+            printf("Unknown PHY Link status.\r\n", 1, 10);
 		  return;
 		}
 	} while (tmp == PHY_LINK_OFF);

@@ -33,7 +33,7 @@ static uint8_t HTTPSock_Num[_WIZCHIP_SOCK_NUM_] = {0, };
 static st_http_request * http_request;				/**< Pointer to received HTTP request */
 static st_http_request * parsed_http_request;		/**< Pointer to parsed HTTP request */
 static uint8_t * http_response;						/**< Pointer to HTTP response */
-extern uint16_t local_port;
+extern uint16_t local_port_web;
 extern uint8_t loginOK;
 extern uint8_t passwordOK;
 uint8_t mainIsLoad = 0;
@@ -244,7 +244,7 @@ void httpServer_run(uint8_t seqnum)
 
 		case SOCK_CLOSED:
 			printf("> HTTPSocket[%d] : CLOSED\r\n", s);
-            if(socket(s, Sn_MR_TCP, local_port, 0x00) == s)    /* Reinitialize the socket */
+            if(socket(s, Sn_MR_TCP, local_port_web, 0x00) == s)    /* Reinitialize the socket */
 			{
 				printf("> HTTPSocket[%d] : OPEN\r\n", s);
 			}

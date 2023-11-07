@@ -1713,9 +1713,9 @@ int main(void)
 
 #ifdef   NEW_HTTP_SERVER //web serverWIZ
     uint8_t i;
-    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
-    wep_define_func();
-    display_reg_webContent_list();
+//    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
+//    wep_define_func();
+//    display_reg_webContent_list();
 #endif
 
 //    tls_client_serverTest(); // работает
@@ -1729,7 +1729,7 @@ int main(void)
 #ifdef   NEW_HTTP_SERVER
     for(i = 0; i < MAX_HTTPSOCK; i++)
     {
-        httpServer_run(i);
+//        httpServer_run(i);
     }
 #endif
 #ifndef   NEW_HTTP_SERVER
@@ -2196,7 +2196,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-    sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+//    sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
     sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
 
     ++num_send;

@@ -1114,7 +1114,7 @@ void prepearUDP_PLIS(uint8_t udpSocket)
 //    uint8_t sn = 0;
 //    socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
 
-//    socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
+    socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
@@ -1176,10 +1176,10 @@ void sendReceiveUDP(uint8_t udpSocket)
       HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
       HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис поднимет флаг
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис поднимет флаг
 
 //        sendPackets(udpSocket, destip, local_port_udp);
-//        sendPackets(udpSocket, destipTEST, local_port_udp);
+        sendPackets(udpSocket, destipTEST, local_port_udp);
 //      if (firstSend != 1)
 //          receivePackets(4, destip, 3000 );
 //    }
@@ -1736,7 +1736,7 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
-//    net_ini_WIZNET(0); //TCP socket 0
+    net_ini_WIZNET(0); //TCP socket 0
 
 //    workSPI_EEPROM();
 

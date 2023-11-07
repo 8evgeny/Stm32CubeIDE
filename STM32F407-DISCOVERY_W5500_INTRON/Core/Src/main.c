@@ -1130,8 +1130,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 {
 //    for (uint8_t socket = udpSocket; udpSocket < 5 ;++udpSocket)
 //    {
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET)
-      {}; // CPU_INT Жду пока плис поднимет флаг
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
       HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
       HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
@@ -1175,8 +1174,6 @@ void sendReceiveUDP(uint8_t udpSocket)
 
       HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
       HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис поднимет флаг
 
 //        sendPackets(udpSocket, destip, local_port_udp);
         sendPackets(udpSocket, destipTEST, local_port_udp);

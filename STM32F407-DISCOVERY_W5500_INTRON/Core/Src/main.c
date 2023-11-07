@@ -1130,37 +1130,53 @@ void sendReceiveUDP(uint8_t udpSocket)
 {
 //    for (uint8_t socket = udpSocket; udpSocket < 5 ;++udpSocket)
 //    {
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET); // Жду пока плис уронит флаг
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET)
+      {}; // CPU_INT Жду пока плис поднимет флаг
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
 
     HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-    printf("%u\trxCyclon - "
-         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-         "\r\n",
-         HAL_GetTick(),
-          rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
-          rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
-          rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
-          rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31],
-          rxCyclon[32],rxCyclon[33],rxCyclon[34],rxCyclon[35],rxCyclon[36],rxCyclon[37],rxCyclon[38],rxCyclon[39],
-          rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
-          );
-
+//    HAL_SPI_TransmitReceive(&hspi2, test1 , rxCyclon, MAX_PACKET_LEN, 0x1000);
+//    printf("%u\trxCyclon - "
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "\r\n",
+//         HAL_GetTick(),
+//          rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
+//          rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
+//          rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
+//          rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31],
+//          rxCyclon[32],rxCyclon[33],rxCyclon[34],rxCyclon[35],rxCyclon[36],rxCyclon[37],rxCyclon[38],rxCyclon[39],
+//          rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
+//          );
+//    printf("\ttxCyclon - "
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "\r\n",
+//          test1[0],test1[1],test1[2],test1[3],test1[4],test1[5],test1[6],test1[7],
+//          test1[8],test1[9],test1[10],test1[11],test1[12],test1[13],test1[14],test1[15],
+//          test1[16],test1[17],test1[18],test1[19],test1[20],test1[21],test1[22],test1[23],
+//          test1[24],test1[25],test1[26],test1[27],test1[28],test1[29],test1[30],test1[31],
+//          test1[32],test1[33],test1[34],test1[35],test1[36],test1[37],test1[38],test1[39],
+//          test1[40],test1[41],test1[42],test1[43],test1[44],test1[45],test1[46],test1[47]
+//          );
 
 //     if(strcmp((char*)rxCyclon, (char*)zeroStr) != 0)
 //         printf("string no zero\r\n");
 
-//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
-//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис поднимет флаг
 
 //        sendPackets(udpSocket, destip, local_port_udp);
 //        sendPackets(udpSocket, destipTEST, local_port_udp);

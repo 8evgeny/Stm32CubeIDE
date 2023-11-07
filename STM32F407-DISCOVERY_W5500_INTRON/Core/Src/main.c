@@ -1120,9 +1120,9 @@ void prepearUDP_PLIS(uint8_t udpSocket)
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
 
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET); //Синий
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET); //Синий
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 }
 uint8_t firstSend = 1;
 uint8_t destipTEST[4] = {192,168,1,11};
@@ -1130,12 +1130,16 @@ void sendReceiveUDP(uint8_t udpSocket)
 {
 //    for (uint8_t socket = udpSocket; udpSocket < 5 ;++udpSocket)
 //    {
-      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-
-
+#ifndef NO_TRANSIVER //Пока с ПЛИС работает только станционный мост
+    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
     HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+    sendPackets(udpSocket, destip, local_port_udp);
+//    sendPackets(udpSocket, destipTEST, local_port_udp);
+#endif
 //    HAL_SPI_TransmitReceive(&hspi2, test1 , rxCyclon, MAX_PACKET_LEN, 0x1000);
 //    printf("%u\trxCyclon - "
 //         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
@@ -1172,41 +1176,14 @@ void sendReceiveUDP(uint8_t udpSocket)
 //     if(strcmp((char*)rxCyclon, (char*)zeroStr) != 0)
 //         printf("string no zero\r\n");
 
-      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
-      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-//        sendPackets(udpSocket, destip, local_port_udp);
-        sendPackets(udpSocket, destipTEST, local_port_udp);
+
+#ifdef NO_TRANSIVER //Пока с ПЛИС работает только станционный мост
 //      if (firstSend != 1)
-//          receivePackets(4, destip, 3000 );
+    receivePackets(udpSocket, destip, local_port_udp);
 //    }
-    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
-
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-//printf("%u\ttxCyclon1 - "
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "\r\n",
-//       HAL_GetTick(),
-//        txCyclon[0],txCyclon[1],txCyclon[2],txCyclon[3],txCyclon[4],txCyclon[5],txCyclon[6],txCyclon[7],
-//        txCyclon[8],txCyclon[9],txCyclon[10],txCyclon[11],txCyclon[12],txCyclon[13],txCyclon[14],txCyclon[15],
-//        txCyclon[16],txCyclon[17],txCyclon[18],txCyclon[19],txCyclon[20],txCyclon[21],txCyclon[22],txCyclon[23],
-//        txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31],
-//        txCyclon[32],txCyclon[33],txCyclon[34],txCyclon[35],txCyclon[36],txCyclon[37],txCyclon[38],txCyclon[39],
-//        txCyclon[40],txCyclon[41],txCyclon[42],txCyclon[43],txCyclon[44],txCyclon[45],txCyclon[46],txCyclon[47]
-//        );
-//UART_Printf("rxCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
-//        rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
-//        rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
-//        rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
-//        rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31]
-//        );
+//    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
+#endif
 }
 
 void testSpiEepromWriteRead()
@@ -2226,8 +2203,8 @@ static void MX_GPIO_Init(void)
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     char tmp[20];
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
 //    sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
@@ -2255,7 +2232,8 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
+//    recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
+    recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
     ++num_rcvd;

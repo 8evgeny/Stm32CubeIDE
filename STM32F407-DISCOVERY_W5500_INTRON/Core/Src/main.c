@@ -1110,9 +1110,11 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
 #endif
 void prepearUDP_PLIS(uint8_t udpSocket)
 {
+    printf("prepearUDP_PLIS\r\n");
 //    uint8_t sn = 0;
 //    socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-    socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
+
+//    socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
@@ -1132,18 +1134,36 @@ void sendReceiveUDP(uint8_t udpSocket)
 //      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи
 //      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
-      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
 
-     if(strcmp((char*)rxCyclon, (char*)zeroStr) != 0)
-         printf("string no zero\r\n");
+    HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+    printf("%u\trxCyclon - "
+         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+         "\r\n",
+         HAL_GetTick(),
+          rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
+          rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
+          rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
+          rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31],
+          rxCyclon[32],rxCyclon[33],rxCyclon[34],rxCyclon[35],rxCyclon[36],rxCyclon[37],rxCyclon[38],rxCyclon[39],
+          rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
+          );
+
+
+//     if(strcmp((char*)rxCyclon, (char*)zeroStr) != 0)
+//         printf("string no zero\r\n");
 
 //      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
 //      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
 //      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
 
-//      sendPackets(udpSocket, destip, local_port_udp);
-            sendPackets(udpSocket, destipTEST, local_port_udp);
+//        sendPackets(udpSocket, destip, local_port_udp);
+//        sendPackets(udpSocket, destipTEST, local_port_udp);
 //      if (firstSend != 1)
 //          receivePackets(4, destip, 3000 );
 //    }
@@ -1700,7 +1720,7 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
-    net_ini_WIZNET(0); //TCP socket 0
+//    net_ini_WIZNET(0); //TCP socket 0
 
 //    workSPI_EEPROM();
 
@@ -2196,8 +2216,8 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
-//    sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-    sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
+    sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+//    sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
 
     ++num_send;
 //    if (num_send % 20000 == 0)

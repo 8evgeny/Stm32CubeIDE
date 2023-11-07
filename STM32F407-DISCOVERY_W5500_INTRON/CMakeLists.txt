@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.15)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 # Set ARM compiler
+set(toolchain /home/evg/toolchain/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi)
 set(TOOLS_PATH /home/evg/toolchain/gcc-arm-none-eabi-new)
 #set(CMAKE_C_COMPILER ${TOOLS_PATH}/bin/arm-none-eabi-gcc)
 #set(CMAKE_CXX_COMPILER ${TOOLS_PATH}/bin/arm-none-eabi-g++)
 #set(CMAKE_CXX_LINKER_LAUNCHER ${TOOLS_PATH}/bin/arm-none-eabi-g++)
-set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
+#set(CMAKE_OBJCOPY ${TOOLS_PATH}/bin/arm-none-eabi-objcopy)
+set(CMAKE_OBJCOPY ${toolchain}/bin/arm-none-eabi-objcopy)
 
 #set(LFS ON)
 add_definitions(-DWOLFSSL_X509_INCLUDED)
@@ -123,7 +125,7 @@ add_library(wolfssl_LIB ${wolfssl_src})
 #    )
 #add_library(polarssl_LIB ${polarssl_src})
 
-add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)
+#add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s Middlewares/Third_Party/littlefs/eeprom.c)
 add_executable(${PROJECT_NAME}.elf ${src})

@@ -56,7 +56,7 @@ uint8_t sdCartOn = 1;
 char *pindex;
 char *pmain;
 char *psettingsIP;
-
+uint8_t ABONENT_or_BASE;
 #ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -1117,7 +1117,7 @@ void prepearUDP_PLIS(uint8_t udpSocket)
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
 
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
-//    Этот pin теперь IN  0 - я в централи  1 - я в абоненте
+//    pin  C8 теперь IN  0 - я в централи  1 - я в абоненте
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 
@@ -1132,7 +1132,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 {
 //    for (uint8_t socket = udpSocket; udpSocket < 5 ;++udpSocket)
 //    {
-#ifndef NO_TRANSIVER //Пока с ПЛИС работает только станционный мост
+if (ABONENT_or_BASE == 0) {   //Пока с ПЛИС работает только станционный мост
     while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
@@ -1141,7 +1141,7 @@ void sendReceiveUDP(uint8_t udpSocket)
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
     sendPackets(udpSocket, destip, local_port_udp);
 //    sendPackets(udpSocket, destipTEST, local_port_udp);
-#endif
+}
 //    HAL_SPI_TransmitReceive(&hspi2, test1 , rxCyclon, MAX_PACKET_LEN, 0x1000);
 //    printf("%u\trxCyclon - "
 //         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
@@ -1180,12 +1180,12 @@ void sendReceiveUDP(uint8_t udpSocket)
 
 
 
-#ifdef NO_TRANSIVER //Пока с ПЛИС работает только станционный мост
+if (ABONENT_or_BASE == 1) {  //Пока с ПЛИС работает только станционный мост
 //      if (firstSend != 1)
     receivePackets(udpSocket, destip, local_port_udp);
 //    }
 //    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
-#endif
+}
 }
 
 void testSpiEepromWriteRead()
@@ -1708,7 +1708,16 @@ int main(void)
   /* USER CODE BEGIN 2 */
     printf("Test UART...OK\r\n");
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
-
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) //Я в централи - сигналл выдает ПЛИС
+    {
+        ABONENT_or_BASE = 0;
+        printf("WORK in BASE INTRON\r\n");
+    }
+    else //Я в абоненте - сигналл выдает ПЛИС
+    {
+        ABONENT_or_BASE = 1;
+        printf("WORK in ABONENT\r\n");
+    }
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif

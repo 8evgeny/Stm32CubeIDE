@@ -16,9 +16,6 @@ add_definitions(-DOPENSSL_ALL)
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
 #add_definitions(-DTLS_ON)         #Режим http / https
 add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)
-
-#add_definitions(-DNO_TRANSIVER) #Абонентский мост без трансивера
-
 #add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде
 add_definitions(-DPROD)  #Основной файл index.html или пример WIZNET
 

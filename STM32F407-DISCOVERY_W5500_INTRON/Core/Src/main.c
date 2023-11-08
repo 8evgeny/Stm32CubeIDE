@@ -1115,24 +1115,25 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+
         sendPackets(udpSocket, destip, local_port_udp);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-    //    receivePackets(udpSocket, destip, local_port_udp);
+
+        receivePackets(udpSocket, destip, local_port_udp);
     }
 
     if (ABONENT_or_BASE == 1) {  //Абонентский мост
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
-//        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-//        HAL_SPI_TransmitReceive(&hspi2, test1 , rxCyclon, MAX_PACKET_LEN, 0x1000);
-        receivePackets(udpSocket, destip, local_port_udp);
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
 
-//        sendPackets(udpSocket, destip, local_port_udp);
-    //    sendPackets(udpSocket, destipHOST, local_port_udp);  //test
-//        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
-//        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+        receivePackets(udpSocket, destip, local_port_udp);
+
+        sendPackets(udpSocket, destip, local_port_udp);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
     }
 }
 

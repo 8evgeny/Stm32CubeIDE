@@ -105,23 +105,23 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   lcd lcd1;
   lcd1.maxValue = 600;
-  lcd1.stepUp = 2;
-  lcd1.stepDown = 2;
+  lcd1.stepUp = 1;
+  lcd1.stepDown = 1;
   lcd1.DownDur = 3000;
-  lcd1.UpDur = 1000;
+  lcd1.UpDur = 4000;
 
   lcd lcd2;
   lcd2.maxValue = 600;
   lcd2.stepUp = 1;
   lcd2.stepDown = 1;
-  lcd2.DownDur = 0;
-  lcd2.UpDur = 1000;
+  lcd2.DownDur = 7999;
+  lcd2.UpDur = 4000;
 
   lcd lcd3;
   lcd3.maxValue = 600;
   lcd3.stepUp = 1;
   lcd3.stepDown = 1;
-  lcd3.DownDur = 0;
+  lcd3.DownDur = 5000;
   lcd3.UpDur = 1000;
 
   lcd lcd4;
@@ -151,7 +151,7 @@ int main(void)
 //                TIM2->CCR1 = setValue(&lcd5);
 
 
-                HAL_Delay(5);
+                HAL_Delay(20);
 
 
     /* USER CODE END WHILE */

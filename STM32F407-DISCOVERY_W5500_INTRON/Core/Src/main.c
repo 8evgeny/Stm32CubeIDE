@@ -67,6 +67,7 @@ extern lfs_file_t file;
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port_web = LOCAL_PORT_WEB;
 uint16_t local_port_udp = LOCAL_PORT_UDP;
+uint8_t destipHOST[4] = {192,168,1,11}; //для тестов
 extern uint8_t bufRead[5];
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
@@ -1107,27 +1108,18 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET); //88 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET); //56 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET); //57 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET); //Синий
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 #endif
+
 void prepearUDP_PLIS(uint8_t udpSocket)
 {
     printf("prepearUDP_PLIS\r\n");
-//    uint8_t sn = 0;
-//    socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
-
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
-
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
-//    pin  C8 теперь IN  0 - я в централи  1 - я в абоненте
-
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
-
-
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET); //Синий
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 }
 
-uint8_t destipHOST[4] = {192,168,1,11};
 void sendReceiveUDP(uint8_t udpSocket)
 {
     if (ABONENT_or_BASE == 0) {   //Cтанционный мост

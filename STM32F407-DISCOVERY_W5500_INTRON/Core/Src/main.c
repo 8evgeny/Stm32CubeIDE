@@ -56,7 +56,7 @@ uint8_t sdCartOn = 1;
 char *pindex;
 char *pmain;
 char *psettingsIP;
-
+uint8_t ABONENT_or_BASE;
 #ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -67,26 +67,15 @@ extern lfs_file_t file;
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port_web = LOCAL_PORT_WEB;
 uint16_t local_port_udp = LOCAL_PORT_UDP;
-extern uint8_t bufRead[5];
+uint8_t destipHOST[4] = {192,168,1,11}; //для тестов
+
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
 extern int8_t http_disconnect(uint8_t sn);
-//uint8_t txBuf[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
-//uint8_t txBufW5500[MAX_PACKET_LEN ]= {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55};
-
-//uint8_t txCyclon[32]= {0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
-//                       0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa};
-
-//uint8_t txCyclon[32]= {0x00, 0x80, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-//                       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,};
-
-//uint8_t txCyclon[32]= {0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-//                       0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00};
 
 uint8_t txCyclon[MAX_PACKET_LEN];
 uint8_t rxCyclon[MAX_PACKET_LEN];
-//uint8_t test[32] = {0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff,
-//                    0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff, 0x55, 0xff};
+
 uint8_t test1[MAX_PACKET_LEN] = {0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
                                  0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
                                 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55};
@@ -1107,73 +1096,45 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET); //88 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET); //56 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET); //57 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET); //Синий
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 #endif
+
 void prepearUDP_PLIS(uint8_t udpSocket)
 {
-//    uint8_t sn = 0;
-//    socket(sn, Sn_MR_UDP, 9999, SF_UNI_BLOCK);
+    printf("prepearUDP_PLIS\r\n");
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
-
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET); //Внешнее тактирование
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
-
-
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET); //Синий
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 }
-uint8_t firstSend = 1;
-uint8_t destipTEST[4] = {192,168,1,11};
+
 void sendReceiveUDP(uint8_t udpSocket)
 {
-//    for (uint8_t socket = udpSocket; udpSocket < 5 ;++udpSocket)
-//    {
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET); // Жду пока плис уронит флаг
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+    if (ABONENT_or_BASE == 0) {   //Cтанционный мост
+        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
 
-      HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+        sendPackets(udpSocket, destip, local_port_udp);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-     if(strcmp((char*)rxCyclon, (char*)zeroStr) != 0)
-         printf("string no zero\r\n");
+        receivePackets(udpSocket, destip, local_port_udp);
+    }
 
-//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема
-//      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+    if (ABONENT_or_BASE == 1) {  //Абонентский мост
+        while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
 
-//      while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET); // Жду пока плис уронит флаг
+        receivePackets(udpSocket, destip, local_port_udp);
 
-//      sendPackets(udpSocket, destip, local_port_udp);
-            sendPackets(udpSocket, destipTEST, local_port_udp);
-//      if (firstSend != 1)
-//          receivePackets(4, destip, 3000 );
-//    }
-    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
-
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-//printf("%u\ttxCyclon1 - "
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//       "\r\n",
-//       HAL_GetTick(),
-//        txCyclon[0],txCyclon[1],txCyclon[2],txCyclon[3],txCyclon[4],txCyclon[5],txCyclon[6],txCyclon[7],
-//        txCyclon[8],txCyclon[9],txCyclon[10],txCyclon[11],txCyclon[12],txCyclon[13],txCyclon[14],txCyclon[15],
-//        txCyclon[16],txCyclon[17],txCyclon[18],txCyclon[19],txCyclon[20],txCyclon[21],txCyclon[22],txCyclon[23],
-//        txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31],
-//        txCyclon[32],txCyclon[33],txCyclon[34],txCyclon[35],txCyclon[36],txCyclon[37],txCyclon[38],txCyclon[39],
-//        txCyclon[40],txCyclon[41],txCyclon[42],txCyclon[43],txCyclon[44],txCyclon[45],txCyclon[46],txCyclon[47]
-//        );
-//UART_Printf("rxCyclon1 - %.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X\r\n",
-//        rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
-//        rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
-//        rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
-//        rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31]
-//        );
+        sendPackets(udpSocket, destip, local_port_udp);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+    }
 }
 
 void testSpiEepromWriteRead()
@@ -1696,7 +1657,16 @@ int main(void)
   /* USER CODE BEGIN 2 */
     printf("Test UART...OK\r\n");
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
-
+    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET) //Я в централи - сигналл выдает ПЛИС
+    {
+        ABONENT_or_BASE = 0;
+        printf("WORK in BASE INTRON\r\n");
+    }
+    else //Я в абоненте - сигналл выдает ПЛИС
+    {
+        ABONENT_or_BASE = 1;
+        printf("WORK in ABONENT\r\n");
+    }
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
@@ -1713,9 +1683,9 @@ int main(void)
 
 #ifdef   NEW_HTTP_SERVER //web serverWIZ
     uint8_t i;
-    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
-    wep_define_func();
-    display_reg_webContent_list();
+//    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
+//    wep_define_func();
+//    display_reg_webContent_list();
 #endif
 
 //    tls_client_serverTest(); // работает
@@ -1729,7 +1699,7 @@ int main(void)
 #ifdef   NEW_HTTP_SERVER
     for(i = 0; i < MAX_HTTPSOCK; i++)
     {
-        httpServer_run(i);
+//        httpServer_run(i);
     }
 #endif
 #ifndef   NEW_HTTP_SERVER
@@ -1771,7 +1741,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 100;
+  RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -1787,7 +1757,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     Error_Handler();
   }
@@ -2102,7 +2072,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(WP_EEPROM_GPIO_Port, WP_EEPROM_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_9, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4|GPIO_PIN_5, GPIO_PIN_RESET);
@@ -2165,8 +2135,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PC8 PC9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
+  /*Configure GPIO pin : PC8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -2193,11 +2169,10 @@ static void MX_GPIO_Init(void)
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     char tmp[20];
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-    sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
 
     ++num_send;
 //    if (num_send % 20000 == 0)
@@ -2216,15 +2191,16 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
     }
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 }
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
+//    recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
+    recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
     ++num_rcvd;
     if (num_rcvd == 500)
     {
@@ -2254,7 +2230,41 @@ int convertHexToDecimal(char hexadecimalnumber[2])
 //    printf("Decimal Number : %d", decimalNumber);
     return decimalNumber;
 }
+//    HAL_SPI_TransmitReceive(&hspi2, test1 , rxCyclon, MAX_PACKET_LEN, 0x1000);
+//    printf("%u\trxCyclon - "
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "\r\n",
+//         HAL_GetTick(),
+//          rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
+//          rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
+//          rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
+//          rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31],
+//          rxCyclon[32],rxCyclon[33],rxCyclon[34],rxCyclon[35],rxCyclon[36],rxCyclon[37],rxCyclon[38],rxCyclon[39],
+//          rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
+//          );
+//    printf("\ttxCyclon - "
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+//         "\r\n",
+//          test1[0],test1[1],test1[2],test1[3],test1[4],test1[5],test1[6],test1[7],
+//          test1[8],test1[9],test1[10],test1[11],test1[12],test1[13],test1[14],test1[15],
+//          test1[16],test1[17],test1[18],test1[19],test1[20],test1[21],test1[22],test1[23],
+//          test1[24],test1[25],test1[26],test1[27],test1[28],test1[29],test1[30],test1[31],
+//          test1[32],test1[33],test1[34],test1[35],test1[36],test1[37],test1[38],test1[39],
+//          test1[40],test1[41],test1[42],test1[43],test1[44],test1[45],test1[46],test1[47]
+//          );
 
+//     if(strcmp((char*)rxCyclon, (char*)zeroStr) != 0)
+//         printf("string no zero\r\n");
 /* USER CODE END 4 */
 
 /**

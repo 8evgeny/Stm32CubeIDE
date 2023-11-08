@@ -68,6 +68,7 @@ extern lfs_file_t file;
 uint16_t local_port_web = LOCAL_PORT_WEB;
 uint16_t local_port_udp = LOCAL_PORT_UDP;
 uint8_t destipHOST[4] = {192,168,1,11}; //для тестов
+
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
 extern int8_t http_disconnect(uint8_t sn);
@@ -1122,14 +1123,16 @@ void sendReceiveUDP(uint8_t udpSocket)
 
     if (ABONENT_or_BASE == 1) {  //Абонентский мост
         while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
+//        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+        HAL_SPI_TransmitReceive(&hspi2, test1 , rxCyclon, MAX_PACKET_LEN, 0x1000);
         receivePackets(udpSocket, destip, local_port_udp);
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-        sendPackets(udpSocket, destip, local_port_udp);
+
+//        sendPackets(udpSocket, destip, local_port_udp);
     //    sendPackets(udpSocket, destipHOST, local_port_udp);  //test
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+//        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
+//        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
     }
 }
 

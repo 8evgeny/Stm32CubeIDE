@@ -1132,7 +1132,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 {
 //    for (uint8_t socket = udpSocket; udpSocket < 5 ;++udpSocket)
 //    {
-if (ABONENT_or_BASE == 0) {   //Пока с ПЛИС работает только станционный мост
+if (ABONENT_or_BASE == 0) {   //Cтанционный мост
     while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
@@ -1179,10 +1179,17 @@ if (ABONENT_or_BASE == 0) {   //Пока с ПЛИС работает тольк
 //         printf("string no zero\r\n");
 
 
-
-if (ABONENT_or_BASE == 1) {  //Пока с ПЛИС работает только станционный мост
+if (ABONENT_or_BASE == 1) {  //Абонентский мост
 //      if (firstSend != 1)
+    while(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) {}; // CPU_INT Жду пока плис поднимет флаг
     receivePackets(udpSocket, destip, local_port_udp);
+
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+    HAL_SPI_Transmit(&hspi2, txCyclon , MAX_PACKET_LEN, 0x1000);
+
+
+
 //    }
 //    firstSend = 0; //После сброса сперва отправляем 4 пакета а потом уже прием
 }

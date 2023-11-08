@@ -1708,7 +1708,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
     printf("Test UART...OK\r\n");
     workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
-    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_RESET) //Я в централи - сигналл выдает ПЛИС
+    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET) //Я в централи - сигналл выдает ПЛИС
     {
         ABONENT_or_BASE = 0;
         printf("WORK in BASE INTRON\r\n");

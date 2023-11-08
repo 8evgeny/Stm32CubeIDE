@@ -2173,7 +2173,6 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 
     sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-    sendto_mod(sn, (uint8_t *)test1, MAX_PACKET_LEN, destip, destport);
 
     ++num_send;
 //    if (num_send % 20000 == 0)

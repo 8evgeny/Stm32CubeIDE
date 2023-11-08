@@ -96,7 +96,9 @@ int main(void)
     while (1)
     {
         HAL_UART_Transmit(&huart1,(uint8_t *)"Test\r\n",sizeof("Test\r\n") - 1, 1000);
+        HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
         HAL_Delay(1000);
+        HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
 
     /* USER CODE END WHILE */
 

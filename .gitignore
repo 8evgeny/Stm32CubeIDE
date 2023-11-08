@@ -5,3 +5,5 @@ sc4_test/Release/
 GV_infoboard/Debug/
 GV_infoboard/Release/
 .metadata/
+
+*.prefs

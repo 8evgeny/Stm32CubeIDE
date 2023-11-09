@@ -5,3 +5,7 @@ sc4_test/Release/
 GV_infoboard/Debug/
 GV_infoboard/Release/
 .metadata/
+
+*.prefs
+
+test_STM32F103C8/.settings/language.settings.xml

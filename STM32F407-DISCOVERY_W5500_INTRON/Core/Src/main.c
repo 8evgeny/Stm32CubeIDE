@@ -986,7 +986,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
 
 void workI2C_EEPROM()
 {
-      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
+//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();

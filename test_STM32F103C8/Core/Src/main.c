@@ -144,11 +144,14 @@ int main(void)
 //        HAL_Delay(50);
 //        HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_RESET);
 //        HAL_Delay(2000);
-                TIM1->CCR1 = setValue(&lcd1);
-                TIM1->CCR2 = setValue(&lcd2);
-                TIM1->CCR3 = setValue(&lcd3);
+//                TIM1->CCR1 = setValue(&lcd1);
+//                TIM1->CCR2 = setValue(&lcd2);
+//                TIM1->CCR3 = setValue(&lcd3);
 //                TIM1->CCR4 = setValue(&lcd4);
 //                TIM2->CCR1 = setValue(&lcd5);
+                __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, setValue(&lcd1));
+                __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, setValue(&lcd1));
+                __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, setValue(&lcd1));
 
 
                 HAL_Delay(20);

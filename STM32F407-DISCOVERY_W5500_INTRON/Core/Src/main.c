@@ -1115,11 +1115,9 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-
-        sendPackets(udpSocket, destip, local_port_udp);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
+        sendPackets(udpSocket, destip, local_port_udp);
         receivePackets(udpSocket, destip, local_port_udp);
     }
 
@@ -1128,12 +1126,11 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); //Очищаю сдвиговый регистр передачи MOSI
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
-
-        receivePackets(udpSocket, destip, local_port_udp);
-
-        sendPackets(udpSocket, destip, local_port_udp);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //Очищаю сдвиговый регистр приема MISO
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+        receivePackets(udpSocket, destip, local_port_udp);
+        sendPackets(udpSocket, destip, local_port_udp);
+
     }
 }
 

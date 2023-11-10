@@ -2168,7 +2168,7 @@ static void MX_GPIO_Init(void)
 
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    char tmp[20];
+//    char tmp[20];
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 

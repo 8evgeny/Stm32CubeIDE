@@ -2168,46 +2168,30 @@ static void MX_GPIO_Init(void)
 
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-//    char tmp[20];
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
-
-    sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-
+    if (ABONENT_or_BASE == 0) {  //База
+        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+    }
+    if (ABONENT_or_BASE == 1) {  //Абонентский мост
+        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+    }
     ++num_send;
-//    if (num_send % 20000 == 0)
-//    {
-//        sprintf(tmp, "%u\r\n",num_send);
-//        printf(tmp);
-//    }
-    if (num_send == 500)
-    {
+    if (num_send == 500){
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_send == 1000)
-    {
-//        close(0);
-//        socket(0, Sn_MR_UDP, localport, 0x00);
+    if (num_send == 1000){
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
     }
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
 }
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-//    recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
     recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_SET);
-//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, GPIO_PIN_RESET);
     ++num_rcvd;
-    if (num_rcvd == 500)
-    {
+    if (num_rcvd == 500){
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_rcvd == 1000)
-    {
+    if (num_rcvd == 1000){
         num_rcvd = 0;
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
     }

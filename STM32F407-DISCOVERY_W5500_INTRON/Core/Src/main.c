@@ -57,6 +57,7 @@ char *pindex;
 char *pmain;
 char *psettingsIP;
 uint8_t ABONENT_or_BASE;
+uint8_t HANDSHAKE = 0;
 #ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -1132,10 +1133,26 @@ void sendReceiveUDP(uint8_t udpSocket)
 //Очищаю сдвиговый регистр приема MISO
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-        receivePackets(udpSocket, destip, local_port_udp);
         sendPackets(udpSocket, destip, local_port_udp);
+        receivePackets(udpSocket, destip, local_port_udp);
+
     }
 }
+
+void sendHANDSHAKE(uint8_t udpSocket) {
+    uint32_t currTime = HAL_GetTick();
+    uint32_t delay = 500;
+    sendto(udpSocket, (uint8_t *)test1, MAX_PACKET_LEN, destip, local_port_udp);
+    if (HAL_GetTick() < currTime + delay){ //Пакет отправился быстро - destip в сети
+        printf("HANDSHAKE = 1\r\n");
+        HANDSHAKE = 1;
+    }
+    else {
+        printf("HANDSHAKE = 0\r\n");
+        HAL_Delay(1000);
+    }
+}
+
 
 void testSpiEepromWriteRead()
 {
@@ -1706,8 +1723,10 @@ int main(void)
       net_poll();
 #endif
 
-      sendReceiveUDP(udpSocket);
-
+      if (HANDSHAKE == 1)
+          sendReceiveUDP(udpSocket);
+      if (HANDSHAKE == 0)
+          sendHANDSHAKE(udpSocket);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

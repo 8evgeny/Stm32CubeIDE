@@ -2197,12 +2197,12 @@ static void MX_GPIO_Init(void)
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     if (ABONENT_or_BASE == 0) {  //База
-        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-//        sendto(sn, (uint8_t *)test7, MAX_PACKET_LEN, destip, destport);
+//        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+        sendto(sn, (uint8_t *)test7, MAX_PACKET_LEN, destip, destport);
     }
     if (ABONENT_or_BASE == 1) {  //Абонентский мост
-        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-//        sendto(sn, (uint8_t *)test7, MAX_PACKET_LEN, destip, destport);
+//        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+        sendto(sn, (uint8_t *)test7, MAX_PACKET_LEN, destip, destport);
     }
     ++num_send;
     if (num_send == 500){
@@ -2217,8 +2217,12 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
+     if (0 != strcmp((const char*)txCyclon, (const char*)test7))
+         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_SET);
+
     ++num_rcvd;
     if (num_rcvd == 500){
+        HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
     }
     if (num_rcvd == 1000){

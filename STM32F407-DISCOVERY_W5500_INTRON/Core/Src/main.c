@@ -2197,12 +2197,12 @@ static void MX_GPIO_Init(void)
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     if (ABONENT_or_BASE == 0) {  //База
-//        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-        sendto(sn, (uint8_t *)test7, MAX_PACKET_LEN, destip, destport);
+        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+//        sendto(sn, (uint8_t *)test7, MAX_PACKET_LEN, destip, destport);
     }
     if (ABONENT_or_BASE == 1) {  //Абонентский мост
-//        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-        sendto(sn, (uint8_t *)test7, MAX_PACKET_LEN, destip, destport);
+        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+//        sendto(sn, (uint8_t *)test7, MAX_PACKET_LEN, destip, destport);
     }
     ++num_send;
     if (num_send == 500){

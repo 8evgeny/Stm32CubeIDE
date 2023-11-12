@@ -2217,8 +2217,8 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
-     if (0 != strcmp((const char*)txCyclon, (const char*)test7))
-         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_SET);
+//     if (0 != strcmp((const char*)txCyclon, (const char*)test7)) //Для теста
+//         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_SET);
 
     ++num_rcvd;
     if (num_rcvd == 500){

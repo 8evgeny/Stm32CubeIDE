@@ -1092,9 +1092,9 @@ void workSPI_EEPROM()
 GPIO для дебага
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_SET); //81 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET); //82 pin
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET); //84 pin  1 pin Debug
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET); //85 pin  2 pin Debug
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); //86 pin
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET); //84 pin  1 pin Debug  send
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET); //85 pin  2 pin Debug  receive
+HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); //86 pin  3 pin Debug  Обмен с ПЛИС
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_6, GPIO_PIN_SET); //87 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET); //88 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET); //56 pin
@@ -1119,7 +1119,9 @@ void sendReceiveUDP(uint8_t udpSocket)
 //Очищаю сдвиговый регистр передачи MOSI
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 //Обмен с ПЛИС
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 //Очищаю сдвиговый регистр приема MISO
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
@@ -1132,7 +1134,9 @@ void sendReceiveUDP(uint8_t udpSocket)
 //Очищаю сдвиговый регистр передачи MOSI
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 //Обмен с ПЛИС
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
         HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 //Очищаю сдвиговый регистр приема MISO
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
@@ -1975,7 +1979,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

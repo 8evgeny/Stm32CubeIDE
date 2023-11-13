@@ -19,6 +19,14 @@ add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адр�
 #add_definitions(-DMAC_IN_DECIMAL) #MAC в 16 или 10 виде
 add_definitions(-DPROD)  #Основной файл index.html или пример WIZNET
 
+#TЕСТОВАЯ  ОТПРАВКА  ДАННЫХ
+add_definitions(-DbaseSendTestData)  #Отправка c базы тестовых данных абоненту
+#add_definitions(-DabonSendTestData)  #Отправка от абонента тестовых данных в базу
+#add_definitions(-DfpgaToCpuBaseTestData)  #Отдаю из FPGA в CPU тестовые данные на базе
+#add_definitions(-DfpgaToCpuAbonTestData)  #Отдаю из FPGA в CPU тестовые данные на абоненте
+#add_definitions(-DcpuToFpgaBaseTestData)  #Отдаю из CPU в FPGA тестовымые данные на базе
+#add_definitions(-DcpuToFpgaAbonTestData)  #Отдаю из CPU в FPGA тестовымые данные на абоненте
+
 #Эти 4 параметра не используются
 #add_definitions(-DWOLFSSL_ALLOW_TLSV10)
 #add_definitions(-DMBEDTLS_ECDSA_C)

@@ -1111,7 +1111,6 @@ void prepearUDP_PLIS(uint8_t udpSocket)
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
-
 void sendReceiveUDP(uint8_t udpSocket)
 {
     if (ABONENT_or_BASE == 0) {   //Cтанционный мост
@@ -1120,7 +1119,22 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 //Обмен с ПЛИС
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
-        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+
+        HAL_SPI_TransmitReceive(&hspi2,
+                                #ifndef  fpgaToCpuBaseTestData
+                                txCyclon ,
+                                #endif
+                                #ifdef  fpgaToCpuBaseTestData
+                                TEST_DATA ,
+                                #endif
+                                #ifndef  cpuToFpgaBaseTestData
+                                rxCyclon ,
+                                #endif
+                                #ifdef  cpuToFpgaBaseTestData
+                                TEST_DATA ,
+                                #endif
+                                MAX_PACKET_LEN, 0x1000);
+
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 //Очищаю сдвиговый регистр приема MISO
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
@@ -1135,7 +1149,22 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 //Обмен с ПЛИС
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
-        HAL_SPI_TransmitReceive(&hspi2, txCyclon , rxCyclon, MAX_PACKET_LEN, 0x1000);
+
+        HAL_SPI_TransmitReceive(&hspi2,
+                                #ifndef  fpgaToCpuAbonTestData
+                                txCyclon ,
+                                #endif
+                                #ifdef  fpgaToCpuAbonTestData
+                                test4 ,
+                                #endif
+                                #ifndef  cpuToFpgaAbonTestData
+                                rxCyclon ,
+                                #endif
+                                #ifdef  cpuToFpgaAbonTestData
+                                test4 ,
+                                #endif
+                                MAX_PACKET_LEN, 0x1000);
+
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 //Очищаю сдвиговый регистр приема MISO
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
@@ -2198,17 +2227,24 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     if (ABONENT_or_BASE == 0) {  //База
+#ifdef baseSendTestData
+        sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
+#endif
+#ifndef baseSendTestData
         sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-//        sendto(sn, (uint8_t *)test6, MAX_PACKET_LEN, destip, destport);
+#endif
     }
     if (ABONENT_or_BASE == 1) {  //Абонентский мост
+#ifdef abonSendTestData
+        sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
+#endif
+#ifndef abonSendTestData
         sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
-//        sendto(sn, (uint8_t *)test6, MAX_PACKET_LEN, destip, destport);
+#endif
     }
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);

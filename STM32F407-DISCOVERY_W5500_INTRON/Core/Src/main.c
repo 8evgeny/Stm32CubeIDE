@@ -2245,14 +2245,32 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #ifndef abonSendTestData
         sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
 #endif
+        printf("send - "
+             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X"
+             "\r\n",
+              rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
+              rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
+              rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
+              rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31],
+              rxCyclon[32],rxCyclon[33],rxCyclon[34],rxCyclon[35],rxCyclon[36],rxCyclon[37],rxCyclon[38],rxCyclon[39],
+              rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
+              );
     }
+
+
+
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
     ++num_send;
-    if (num_send == 500){
+    if (num_send == 50){
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_send == 1000){
+    if (num_send == 100){
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
     }
@@ -2264,48 +2282,32 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
 //     if (0 != strncmp((const char*)txCyclon, (const char*)test4, MAX_PACKET_LEN)) //Для теста
 //     {
-//         printf("txCyclon - "
-//              "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//              "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//              "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//              "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//              "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//              "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//              "\r\n",
-//               txCyclon[0],txCyclon[1],txCyclon[2],txCyclon[3],txCyclon[4],txCyclon[5],txCyclon[6],txCyclon[7],
-//               txCyclon[8],txCyclon[9],txCyclon[10],txCyclon[11],txCyclon[12],txCyclon[13],txCyclon[14],txCyclon[15],
-//               txCyclon[16],txCyclon[17],txCyclon[18],txCyclon[19],txCyclon[20],txCyclon[21],txCyclon[22],txCyclon[23],
-//               txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31],
-//               txCyclon[32],txCyclon[33],txCyclon[34],txCyclon[35],txCyclon[36],txCyclon[37],txCyclon[38],txCyclon[39],
-//               txCyclon[40],txCyclon[41],txCyclon[42],txCyclon[43],txCyclon[44],txCyclon[45],txCyclon[46],txCyclon[47]
-//               );
-//             printf("error - "
-//                  "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//                  "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//                  "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//                  "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//                  "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//                  "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-//                  "\r\n",
-//                   test4[0],test4[1],test4[2],test4[3],test4[4],test4[5],test4[6],test4[7],
-//                   test4[8],test4[9],test4[10],test4[11],test4[12],test4[13],test4[14],test4[15],
-//                   test4[16],test4[17],test4[18],test4[19],test4[20],test4[21],test4[22],test4[23],
-//                   test4[24],test4[25],test4[26],test4[27],test4[28],test4[29],test4[30],test4[31],
-//                   test4[32],test4[33],test4[34],test4[35],test4[36],test4[37],test4[38],test4[39],
-//                   test4[40],test4[41],test4[42],test4[43],test4[44],test4[45],test4[46],test4[47]
-//                   );
-//         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_SET);
-//     }
-
+if (ABONENT_or_BASE == 0) {  //База
+         printf("received - "
+              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
+              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X"
+              "\r\n",
+               txCyclon[0],txCyclon[1],txCyclon[2],txCyclon[3],txCyclon[4],txCyclon[5],txCyclon[6],txCyclon[7],
+               txCyclon[8],txCyclon[9],txCyclon[10],txCyclon[11],txCyclon[12],txCyclon[13],txCyclon[14],txCyclon[15],
+               txCyclon[16],txCyclon[17],txCyclon[18],txCyclon[19],txCyclon[20],txCyclon[21],txCyclon[22],txCyclon[23],
+               txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31],
+               txCyclon[32],txCyclon[33],txCyclon[34],txCyclon[35],txCyclon[36],txCyclon[37],txCyclon[38],txCyclon[39],
+               txCyclon[40],txCyclon[41],txCyclon[42],txCyclon[43],txCyclon[44],txCyclon[45],txCyclon[46],txCyclon[47]
+               );
+}
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
 
     ++num_rcvd;
-    if (num_rcvd == 500){
+    if (num_rcvd == 50){
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_rcvd == 1000){
+    if (num_rcvd == 100){
         num_rcvd = 0;
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
     }

@@ -126,7 +126,7 @@ extern "C" {
 #include "my_function.h"
 
 #define MAX_PACKET_LEN 48
-#define TEST_DATA test3
+#define TEST_DATA test5
 
 void 	wizchip_cs_select(void);
 void  wizchip_cs_deselect(void);

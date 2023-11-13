@@ -20,7 +20,7 @@ add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адр�
 add_definitions(-DPROD)  #Основной файл index.html или пример WIZNET
 
 #TЕСТОВАЯ  ОТПРАВКА  ДАННЫХ
-add_definitions(-DbaseSendTestData)  #Отправка c базы тестовых данных абоненту
+#add_definitions(-DbaseSendTestData)  #Отправка c базы тестовых данных абоненту
 #add_definitions(-DabonSendTestData)  #Отправка от абонента тестовых данных в базу
 #add_definitions(-DfpgaToCpuBaseTestData)  #Отдаю из FPGA в CPU тестовые данные на базе
 #add_definitions(-DfpgaToCpuAbonTestData)  #Отдаю из FPGA в CPU тестовые данные на абоненте

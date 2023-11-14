@@ -1110,7 +1110,7 @@ void prepearUDP_PLIS(uint8_t udpSocket)
     printf("prepearUDP_PLIS\r\n");
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
 
-    //Это будет EXTI4
+    //Это будет INPUT
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
 void sendReceiveUDP(uint8_t udpSocket)
@@ -1757,7 +1757,7 @@ int main(void)
 //uint8_t firstSend = 1;
   while (1)
   {
-
+//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 #ifdef   NEW_HTTP_SERVER
     for(i = 0; i < MAX_HTTPSOCK; i++)
     {

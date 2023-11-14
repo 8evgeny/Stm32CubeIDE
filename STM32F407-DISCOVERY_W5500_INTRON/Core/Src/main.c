@@ -57,6 +57,7 @@ char *pindex;
 char *pmain;
 char *psettingsIP;
 uint8_t ABONENT_or_BASE;
+uint8_t receiveFuckFromFPGA = 0;
 uint8_t HANDSHAKE = 0;
 #ifdef LFS
 extern lfs_t lfs;
@@ -1144,7 +1145,6 @@ void sendReceiveUDP(uint8_t udpSocket)
 
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);
-
         }
 
         if (ABONENT_or_BASE == 1) {  //Абонентский мост
@@ -2288,7 +2288,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
-    recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
+    recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
 //     if (0 != strncmp((const char*)txCyclon, (const char*)test4, MAX_PACKET_LEN)) //Для теста
 //     {
 //if (ABONENT_or_BASE == 0) {  //База

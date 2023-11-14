@@ -254,7 +254,6 @@ int8_t listen(uint8_t sn)
    return SOCK_OK;
 }
 
-
 int8_t connect(uint8_t sn, uint8_t * addr, uint16_t port)
 {
    CHECK_SOCKNUM();
@@ -382,7 +381,6 @@ int32_t send(uint8_t sn, uint8_t * buf, uint16_t len)
    //return len;
    return (int32_t)len;
 }
-
 
 int32_t recv(uint8_t sn, uint8_t * buf, uint16_t len)
 {
@@ -560,108 +558,6 @@ int32_t sendto(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t
 	setSn_CR(sn,Sn_CR_SEND);
 	/* wait to process the command... */
 	while(getSn_CR(sn));
-   while(1)
-   {
-      tmp = getSn_IR(sn);
-      if(tmp & Sn_IR_SENDOK)
-      {
-         setSn_IR(sn, Sn_IR_SENDOK);
-         break;
-      }
-      //M:20131104
-      //else if(tmp & Sn_IR_TIMEOUT) return SOCKERR_TIMEOUT;
-      else if(tmp & Sn_IR_TIMEOUT)
-      {
-         setSn_IR(sn, Sn_IR_TIMEOUT);
-         //M20150409 : Fixed the lost of sign bits by type casting.
-         //len = (uint16_t)SOCKERR_TIMEOUT;
-         //break;
-         #if _WIZCHIP_ < 5500   //M20150401 : for WIZCHIP Errata #4, #5 (ARP errata)
-            if(taddr) setSUBR((uint8_t*)&taddr);
-         #endif
-         return SOCKERR_TIMEOUT;
-      }
-      ////////////
-   }
-   #if _WIZCHIP_ < 5500   //M20150401 : for WIZCHIP Errata #4, #5 (ARP errata)
-      if(taddr) setSUBR((uint8_t*)&taddr);
-   #endif
-   //M20150409 : Explicit Type Casting
-   //return len;
-   return (int32_t)len;
-}
-
-int32_t sendto_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t port)
-{
-   uint8_t tmp = 0;
-   uint16_t freesize = 0;
-   uint32_t taddr;
-
-   CHECK_SOCKNUM();
-   switch(getSn_MR(sn) & 0x0F)
-   {
-      case Sn_MR_UDP:
-      case Sn_MR_MACRAW:
-//         break;
-//   #if ( _WIZCHIP_ < 5200 )
-      case Sn_MR_IPRAW:
-         break;
-//   #endif
-      default:
-         return SOCKERR_SOCKMODE;
-   }
-   CHECK_SOCKDATA();
-   //M20140501 : For avoiding fatal error on memory align mismatched
-   //if(*((uint32_t*)addr) == 0) return SOCKERR_IPINVALID;
-   //{
-      //uint32_t taddr;
-      taddr = ((uint32_t)addr[0]) & 0x000000FF;
-      taddr = (taddr << 8) + ((uint32_t)addr[1] & 0x000000FF);
-      taddr = (taddr << 8) + ((uint32_t)addr[2] & 0x000000FF);
-      taddr = (taddr << 8) + ((uint32_t)addr[3] & 0x000000FF);
-   //}
-   //
-   //if(*((uint32_t*)addr) == 0) return SOCKERR_IPINVALID;
-   if((taddr == 0) && ((getSn_MR(sn)&Sn_MR_MACRAW) != Sn_MR_MACRAW)) return SOCKERR_IPINVALID;
-   if((port  == 0) && ((getSn_MR(sn)&Sn_MR_MACRAW) != Sn_MR_MACRAW)) return SOCKERR_PORTZERO;
-   tmp = getSn_SR(sn);
-//#if ( _WIZCHIP_ < 5200 )
-   if((tmp != SOCK_MACRAW) && (tmp != SOCK_UDP) && (tmp != SOCK_IPRAW)) return SOCKERR_SOCKSTATUS;
-//#else
-//   if(tmp != SOCK_MACRAW && tmp != SOCK_UDP) return SOCKERR_SOCKSTATUS;
-//#endif
-
-   setSn_DIPR(sn,addr);
-   setSn_DPORT(sn,port);
-   freesize = getSn_TxMAX(sn);
-   if (len > freesize) len = freesize; // check size not to exceed MAX size.
-   while(1)
-   {
-      freesize = getSn_TX_FSR(sn);
-      if(getSn_SR(sn) == SOCK_CLOSED) return SOCKERR_SOCKCLOSED;
-      if( (sock_io_mode & (1<<sn)) && (len > freesize) ) return SOCK_BUSY;
-      if(len <= freesize) break;
-   };
-    wiz_send_data(sn, buf, len);
-
-   #if _WIZCHIP_ < 5500   //M20150401 : for WIZCHIP Errata #4, #5 (ARP errata)
-      getSIPR((uint8_t*)&taddr);
-      if(taddr == 0)
-      {
-         getSUBR((uint8_t*)&taddr);
-         setSUBR((uint8_t*)"\x00\x00\x00\x00");
-      }
-      else taddr = 0;
-   #endif
-
-//A20150601 : For W5300
-#if _WIZCHIP_ == 5300
-   setSn_TX_WRSR(sn, len);
-#endif
-//
-    setSn_CR(sn,Sn_CR_SEND);
-    /* wait to process the command... */
-    while(getSn_CR(sn));
    while(1)
    {
       tmp = getSn_IR(sn);
@@ -876,23 +772,12 @@ int32_t recvfrom(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16
 
 int32_t recvfrom_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t *port)
 {
-//M20150601 : For W5300
-#if _WIZCHIP_ == 5300
-   uint16_t mr;
-   uint16_t mr1;
-#else
    uint8_t  mr;
-#endif
-//
    uint8_t  head[8];
     uint16_t pack_len=0;
 
    CHECK_SOCKNUM();
-   //CHECK_SOCKMODE(Sn_MR_UDP);
-//A20150601
-#if _WIZCHIP_ == 5300
-   mr1 = getMR();
-#endif
+//   CHECK_SOCKMODE(Sn_MR_UDP);
 
    switch((mr=getSn_MR(sn)) & 0x0F)
    {
@@ -900,10 +785,6 @@ int32_t recvfrom_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, ui
       case Sn_MR_IPRAW:
       case Sn_MR_MACRAW:
          break;
-   #if ( _WIZCHIP_ < 5200 )
-      case Sn_MR_PPPoE:
-         break;
-   #endif
       default:
          return SOCKERR_SOCKMODE;
    }
@@ -929,22 +810,6 @@ int32_t recvfrom_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, ui
             setSn_CR(sn,Sn_CR_RECV);
             while(getSn_CR(sn));
             // read peer's IP address, port number & packet length
-       //A20150601 : For W5300
-        #if _WIZCHIP_ == 5300
-           if(mr1 & MR_FS)
-           {
-              addr[0] = head[1];
-              addr[1] = head[0];
-              addr[2] = head[3];
-              addr[3] = head[2];
-              *port = head[5];
-              *port = (*port << 8) + head[4];
-                sock_remained_size[sn] = head[7];
-                sock_remained_size[sn] = (sock_remained_size[sn] << 8) + head[6];
-           }
-            else
-            {
-         #endif
                addr[0] = head[0];
                 addr[1] = head[1];
                 addr[2] = head[2];
@@ -953,24 +818,12 @@ int32_t recvfrom_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, ui
                 *port = (*port << 8) + head[5];
                 sock_remained_size[sn] = head[6];
                 sock_remained_size[sn] = (sock_remained_size[sn] << 8) + head[7];
-         #if _WIZCHIP_ == 5300
-            }
-         #endif
             sock_pack_info[sn] = PACK_FIRST;
        }
             if(len < sock_remained_size[sn]) pack_len = len;
             else pack_len = sock_remained_size[sn];
             //A20150601 : For W5300
             len = pack_len;
-            #if _WIZCHIP_ == 5300
-               if(sock_pack_info[sn] & PACK_FIFOBYTE)
-               {
-                  *buf++ = sock_remained_byte[sn];
-                  pack_len -= 1;
-                  sock_remained_size[sn] -= 1;
-                  sock_pack_info[sn] &= ~PACK_FIFOBYTE;
-               }
-            #endif
             //
             // Need to packet length check (default 1472)
             //
@@ -985,12 +838,6 @@ int32_t recvfrom_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, ui
             // read peer's IP address, port number & packet length
                 sock_remained_size[sn] = head[0];
             sock_remained_size[sn] = (sock_remained_size[sn] <<8) + head[1] -2;
-            #if _WIZCHIP_ == W5300
-            if(sock_remained_size[sn] & 0x01)
-                sock_remained_size[sn] = sock_remained_size[sn] + 1 - 4;
-            else
-                sock_remained_size[sn] -= 4;
-            #endif
             if(sock_remained_size[sn] > 1514)
             {
                close(sn);
@@ -1041,14 +888,8 @@ int32_t recvfrom_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, ui
     if(sock_remained_size[sn] != 0)
     {
        sock_pack_info[sn] |= PACK_REMAINED;
-   #if _WIZCHIP_ == 5300
-       if(pack_len & 0x01) sock_pack_info[sn] |= PACK_FIFOBYTE;
-   #endif
     }
     else sock_pack_info[sn] = PACK_COMPLETED;
-#if _WIZCHIP_ == 5300
-   pack_len = len;
-#endif
    //
    //M20150409 : Explicit Type Casting
    //return pack_len;

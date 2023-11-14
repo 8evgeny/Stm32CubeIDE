@@ -24,7 +24,7 @@ add_definitions(-DPROD)  #Основной файл index.html или приме
 #add_definitions(-DabonSendTestData)  #Отправка от абонента тестовых данных в базу
 #add_definitions(-DfpgaToCpuBaseTestData)  #Отдаю из FPGA в CPU тестовые данные на базе
 #add_definitions(-DfpgaToCpuAbonTestData)  #Отдаю из FPGA в CPU тестовые данные на абоненте
-add_definitions(-DcpuToFpgaBaseTestData)  #Отдаю из CPU в FPGA тестовые данные на базе
+#add_definitions(-DcpuToFpgaBaseTestData)  #Отдаю из CPU в FPGA тестовые данные на базе
 #add_definitions(-DcpuToFpgaAbonTestData)  #Отдаю из CPU в FPGA тестовые данные на абоненте
 
 #Эти 4 параметра не используются

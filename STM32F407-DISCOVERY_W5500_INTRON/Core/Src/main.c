@@ -58,6 +58,7 @@ char *pmain;
 char *psettingsIP;
 uint8_t ABONENT_or_BASE;
 uint8_t receiveFuckFromFPGA = 0;
+uint8_t receiveON = 0;
 uint8_t HANDSHAKE = 0;
 #ifdef LFS
 extern lfs_t lfs;
@@ -1144,7 +1145,10 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
             sendPackets(udpSocket, destip, local_port_udp);
-            receivePackets(udpSocket, destip, local_port_udp);
+            if (receiveON ==1) {
+                receivePackets(udpSocket, destip, local_port_udp);
+                receiveON = 0;
+            }
         }
 
         if (ABONENT_or_BASE == 1) {  //Абонентский мост
@@ -1172,7 +1176,10 @@ void sendReceiveUDP(uint8_t udpSocket)
                 //Очищаю сдвиговый регистр приема MISO
                 HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-                receivePackets(udpSocket, destip, local_port_udp);
+                if (receiveON ==1) {
+                    receivePackets(udpSocket, destip, local_port_udp);
+                    receiveON = 0;
+                }
                 sendPackets(udpSocket, destip, local_port_udp);
         }
     } //end if
@@ -1769,7 +1776,12 @@ int main(void)
 #endif
 
       if (HANDSHAKE == 1)
+      {
+//          if (getSn_RX_RSR(udpSocket) != 0)
+              receiveON = 1;
+
           sendReceiveUDP(udpSocket);
+      }
       if (HANDSHAKE == 0)
           sendHANDSHAKE(udpSocket);
     /* USER CODE END WHILE */

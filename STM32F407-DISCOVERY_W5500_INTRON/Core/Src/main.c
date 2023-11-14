@@ -1109,7 +1109,9 @@ void prepearUDP_PLIS(uint8_t udpSocket)
 {
     printf("prepearUDP_PLIS\r\n");
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
+
+    //Это будет EXTI4
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
 void sendReceiveUDP(uint8_t udpSocket)
 {

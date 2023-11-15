@@ -2270,10 +2270,10 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
     ++num_send;
-    if (num_send == 100){
+    if (num_send == 20){
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_send == 200){
+    if (num_send == 40){
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
     }
@@ -2281,7 +2281,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    if (receiveBlank == 1000)
+    if (receiveBlank == 10000)
     {
         receiveBlank = 0;
         return;
@@ -2293,11 +2293,11 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
     ++receiveBlank;
     ++num_rcvd;
-    if (num_rcvd == 100){
+    if (num_rcvd == 20){
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_rcvd == 200){
+    if (num_rcvd == 40){
         num_rcvd = 0;
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
     }

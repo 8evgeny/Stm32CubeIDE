@@ -60,6 +60,9 @@ uint8_t ABONENT_or_BASE;
 uint8_t receiveFuckFromFPGA = 0;
 uint8_t receiveON = 0;
 uint8_t HANDSHAKE = 0;
+uint32_t num_send = 0;
+uint32_t num_rcvd = 0;
+uint32_t receiveBlank = 0;
 #ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -103,9 +106,6 @@ uint8_t test7[MAX_PACKET_LEN] = {0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
 uint8_t zeroStr[MAX_PACKET_LEN] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-uint32_t num_send = 0;
-uint32_t num_rcvd = 0;
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -2266,32 +2266,14 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #ifndef abonSendTestData
         sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
 #endif
-//        printf("send - "
-//             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//             "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X"
-//             "\r\n",
-//              rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
-//              rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
-//              rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
-//              rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31],
-//              rxCyclon[32],rxCyclon[33],rxCyclon[34],rxCyclon[35],rxCyclon[36],rxCyclon[37],rxCyclon[38],rxCyclon[39],
-//              rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
-//              );
     }
-
-
-
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
     ++num_send;
-    if (num_send == 10){
+    if (num_send == 100){
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_send == 20){
+    if (num_send == 200){
         num_send = 0;
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
     }
@@ -2299,36 +2281,23 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
+    if (receiveBlank == 1000)
+    {
+        receiveBlank = 0;
+        return;
+    }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
+
     recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
-//     if (0 != strncmp((const char*)txCyclon, (const char*)test4, MAX_PACKET_LEN)) //Для теста
-//     {
-//if (ABONENT_or_BASE == 0) {  //База
-//         printf("received - "
-//              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X  "
-//              "%.2X%.2X  %.2X%.2X  %.2X%.2X  %.2X%.2X"
-//              "\r\n",
-//               txCyclon[0],txCyclon[1],txCyclon[2],txCyclon[3],txCyclon[4],txCyclon[5],txCyclon[6],txCyclon[7],
-//               txCyclon[8],txCyclon[9],txCyclon[10],txCyclon[11],txCyclon[12],txCyclon[13],txCyclon[14],txCyclon[15],
-//               txCyclon[16],txCyclon[17],txCyclon[18],txCyclon[19],txCyclon[20],txCyclon[21],txCyclon[22],txCyclon[23],
-//               txCyclon[24],txCyclon[25],txCyclon[26],txCyclon[27],txCyclon[28],txCyclon[29],txCyclon[30],txCyclon[31],
-//               txCyclon[32],txCyclon[33],txCyclon[34],txCyclon[35],txCyclon[36],txCyclon[37],txCyclon[38],txCyclon[39],
-//               txCyclon[40],txCyclon[41],txCyclon[42],txCyclon[43],txCyclon[44],txCyclon[45],txCyclon[46],txCyclon[47]
-//               );
-//}
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
-
+    ++receiveBlank;
     ++num_rcvd;
-    if (num_rcvd == 10){
+    if (num_rcvd == 100){
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
     }
-    if (num_rcvd == 20){
+    if (num_rcvd == 200){
         num_rcvd = 0;
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
     }

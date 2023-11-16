@@ -1114,8 +1114,34 @@ void prepearUDP_PLIS(uint8_t udpSocket)
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
 
-void convertData()
+void convertRxData()
 {
+    for (uint8_t i = 1; i<=MAX_PACKET_LEN - 3; i=i+4) {
+        rxCyclon[i] &= 0xF0; rxCyclon[i] |= 0x05; //Последнее E меняем на 5
+
+        uint8_t tmp = rxCyclon[i]; //Первый октет меняем согласно таблице
+        tmp=tmp>>4;
+        switch (tmp) {
+        case 0: tmp = 7; break;
+        case 1: tmp = 6; break;
+        case 2: tmp = 5; break;
+        case 3: tmp = 4; break;
+        case 4: tmp = 3; break;
+        case 5: tmp = 2; break;
+        case 6: tmp = 1; break;
+        case 7: tmp = 0; break;
+        case 8: tmp = 0x0F; break;
+        case 9: tmp = 0x0E; break;
+        case 0x0A: tmp = 0x0D; break;
+        case 0x0B: tmp = 0x0C; break;
+        case 0x0C: tmp = 0x0B; break;
+        case 0x0D: tmp = 0x0A; break;
+        case 0x0E: tmp = 0x09; break;
+        case 0x0F: tmp = 0x08; break;
+        }
+        tmp = tmp<<4;
+        rxCyclon[i] &= 0x0F; rxCyclon[i] |= tmp;
+    }
 
 }
 
@@ -1169,6 +1195,8 @@ void sendReceiveUDP(uint8_t udpSocket)
 //                rxCyclon[i] &= 0xF0; rxCyclon[i] |= 0x05;
 //            }
 
+            convertRxData();
+
 //            printf("\trxCyclon - "
 //             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
 //             "%.2X %.2X %.2X %.2X"
@@ -1186,8 +1214,6 @@ void sendReceiveUDP(uint8_t udpSocket)
 //                rxCyclon[41],
 //                rxCyclon[45]
 //              );
-
-            convertData();
 
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);
@@ -1769,12 +1795,12 @@ int main(void)
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET) //Я в централи - сигналл выдает ПЛИС
     {
         ABONENT_or_BASE = 0;
-        printf("WORK in BASE INTRON\r\n");
+        printf("\rWORK in BASE INTRON\r\n");
     }
     else //Я в абоненте - сигналл выдает ПЛИС
     {
         ABONENT_or_BASE = 1;
-        printf("WORK in ABONENT\r\n");
+        printf("\rWORK in ABONENT\r\n");
     }
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();

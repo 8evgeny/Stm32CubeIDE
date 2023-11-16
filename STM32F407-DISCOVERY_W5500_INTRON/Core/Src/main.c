@@ -464,14 +464,14 @@ void copyMacToAdressEEPROM(uint16_t Addr)
     FRESULT result = f_open(&fil, "mac16", FA_OPEN_ALWAYS | FA_READ );
     if (result == FR_OK)
     {
-        printf("\nCopy MAC adress from SD in Hex to adress 0x%.4X eeprom\n",Addr);
+        printf("\nCopy MAC adress from SD in Hex to adress 0x%.4X eeprom\r\n",Addr);
         UINT rc;
         f_read(&fil, tmp, 18, &rc);
         f_close(&fil);
         tmp[17]=0x00;
-        printf("MAC:\n%s\n",tmp);
+        printf("MAC: %s\r\n",tmp);
         int open = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 18);
-        printf("MAC write from SD in Hex to adress 0x%.4X on eprom: %d\n", Addr, open);
+        printf("MAC write from SD in Hex to adress 0x%.4X on eprom: %d\r\n", Addr, open);
     }
 #endif
 #ifdef  MAC_IN_DECIMAL
@@ -493,7 +493,7 @@ void copyMacToAdressEEPROM(uint16_t Addr)
 
 void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 {
-    printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\n",Addr);
+    printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\r\n",Addr);
     char tmp[settingsLen];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     UINT rc;
@@ -511,7 +511,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp+60, 33, &fil);
     f_close(&fil);
-    printf("settings:\n%s\n",tmp);
+    printf("settings:\r\n%s\r\n",tmp);
     BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
     delayUS_ASM(100000);
 //    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
@@ -549,24 +549,24 @@ void copyDefaultParametersToAdressEEPROM(uint16_t Addr)
 
 void copyDefaultMACToAdressEEPROM(uint16_t Addr)
 {
-    printf("Set default MAC adress to adress eeprom 0x%.4X \n", Addr);
+    printf("Set default MAC adress to adress eeprom 0x%.4X \r\n", Addr);
     char defaultMAC[24] =
     {'0','0','0',':','0','2','1',':','0','6','6',':','1','9','1',':','2','4','0',':','0','8','2','\0'};
     int result = BSP_EEPROM_WriteBuffer((uint8_t *)defaultMAC, Addr, 24);
-    printf("Set default MAC adress to adress eeprom 0x%.4X: %d\n", Addr, result);
+    printf("Set default MAC adress to adress eeprom 0x%.4X: %d\r\n", Addr, result);
 }
 
 void SetMacFromAdressEEPROM(uint16_t Addr)
 {
 #ifndef MAC_IN_DECIMAL
-    printf("Set MAC adress in HEX from adress eeprom 0x%.4X \n", Addr);
+    printf("Set MAC adress in HEX from adress eeprom 0x%.4X \r\n", Addr);
     uint16_t numByte = 18;
     uint16_t * pnumByte = &numByte;
     char tmp[18];
     char tmp2[2];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
-    printf("MAC:\n%s\n",tmp);
+    printf("MAC read from adress 0x%.4X on eprom: %d\r\n", Addr, result);
+    printf("MAC:\r\n%s\r\n",tmp);
     strncpy(mac,tmp,18);
     strncpy(tmp2, tmp, 2);
     macaddr[0] = convertHexToDecimal(tmp2);
@@ -580,7 +580,7 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
     macaddr[4] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+15, 2);
     macaddr[5] = convertHexToDecimal(tmp2);
-    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
 #endif
 #ifdef MAC_IN_DECIMAL
     printf("Set MAC adress in decimal from adress eeprom 0x%.4X \n", Addr);
@@ -672,7 +672,7 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
     printf("dest_IP: %d.%d.%d.%d\n",destip[0],destip[1],destip[2],destip[3]);
     printf("gate_IP: %d.%d.%d.%d\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     printf("mask_IP: %d.%d.%d.%d\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    printf("md5: %s\n", MD5);
+    printf("md5: %s\r\n", MD5);
 }
 
 void copyParametersToEEPROM()
@@ -854,7 +854,7 @@ void setParametersFromSD()
     f_gets(tmp, 33, &fil);
     strncpy(MD5, tmp, 32);
     f_close(&fil);
-    printf("md5: %s\n",MD5);
+    printf("md5: %s\r\n",MD5);
 }
 
 void SetParaametersFromEEPROM()
@@ -961,7 +961,7 @@ void wep_define_func(void)
 
 void net_ini_WIZNET(uint8_t socketTCP)
 {
-    printf("net_ini_WIZNET_WEB\n");
+    printf("net_ini_WIZNET_WEB\r\n");
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_Delay(70);
@@ -970,7 +970,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
     uint8_t sn_TCP = socketTCP;
     WIZCHIPInitialize();
 
-    printf("WIZCHIPInitialize  OK\n");
+    printf("WIZCHIPInitialize  OK\r\n");
 
     for (int i =0; i < 6; ++i)
     {
@@ -987,7 +987,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
     print_network_information();
     socket(sn_TCP, Sn_MR_TCP, local_port_web, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
     if (SOCK_OK == listen(sn_TCP))
-        printf("socket %d listening\n", sn_TCP);
+        printf("socket %d listening\r\n", sn_TCP);
 }
 
 void workI2C_EEPROM()
@@ -1143,6 +1143,44 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+
+//printf("\trxCyclon - "
+// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
+// "\r\n",
+//  rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
+//  rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
+//  rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
+//  rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31],
+//  rxCyclon[32],rxCyclon[33],rxCyclon[34],rxCyclon[35],rxCyclon[36],rxCyclon[37],rxCyclon[38],rxCyclon[39],
+//  rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
+//  );
+
+            for (uint8_t i = 1; i<=45; i=i+4)
+            {
+                rxCyclon[i] &= 0xF0; rxCyclon[i] |= 0x05;
+            }
+//            printf("\trxCyclon - "
+//             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+//             "%.2X %.2X %.2X %.2X"
+//             "\r\n",
+//                rxCyclon[1],
+//                rxCyclon[5],
+//                rxCyclon[9],
+//                rxCyclon[13],
+//                rxCyclon[17],
+//                rxCyclon[21],
+//                rxCyclon[25],
+//                rxCyclon[29],
+//                rxCyclon[33],
+//                rxCyclon[37],
+//                rxCyclon[41],
+//                rxCyclon[45]
+//              );
 
             sendPackets(udpSocket, destip, local_port_udp);
             if (receiveON ==1) {

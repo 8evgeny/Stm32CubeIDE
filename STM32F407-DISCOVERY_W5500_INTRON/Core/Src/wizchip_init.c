@@ -43,7 +43,7 @@ void WIZCHIPInitialize(){
 		  return;
 		}
 	} while (tmp == PHY_LINK_OFF);
-    printf("link_ON\n");
+    printf("link_ON\r\n");
 }
 
 void wizchip_spi_readburst(uint8_t* pBuf, uint16_t len)
@@ -89,7 +89,7 @@ void wizchip_cris_exit(void)
 void print_network_information(void)
 {
     wizchip_getnetinfo(&defaultNetInfo);
-    printf("Mac addr:\t%02X:%02X:%02X:%02X:%02X:%02X\n\r",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
+    printf("\rMac addr:\t%02X:%02X:%02X:%02X:%02X:%02X\n\r",defaultNetInfo.mac[0],defaultNetInfo.mac[1],defaultNetInfo.mac[2],defaultNetInfo.mac[3],defaultNetInfo.mac[4],defaultNetInfo.mac[5]);
     printf("IP address:\t%d.%d.%d.%d\n\r",defaultNetInfo.ip[0],defaultNetInfo.ip[1],defaultNetInfo.ip[2],defaultNetInfo.ip[3]);
     printf("SM Mask:\t%d.%d.%d.%d\n\r",defaultNetInfo.sn[0],defaultNetInfo.sn[1],defaultNetInfo.sn[2],defaultNetInfo.sn[3]);
     printf("Gate way:\t%d.%d.%d.%d\n\r",defaultNetInfo.gw[0],defaultNetInfo.gw[1],defaultNetInfo.gw[2],defaultNetInfo.gw[3]);

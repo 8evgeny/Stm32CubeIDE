@@ -129,7 +129,7 @@ uint8_t capture = 0;
 uint8_t ipaddr[4];
 uint8_t ipgate[4];
 uint8_t ipmask[4];
-char MD5[32];
+char MD5[33];
 #ifndef   NEW_HTTP_SERVER
 uint32_t indexLen;
 uint32_t mainLen;
@@ -666,11 +666,11 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
 
     strncpy(MD5, tmp+60, 32);
 
-    printf("host_IP: %d.%d.%d.%d\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    printf("dest_IP: %d.%d.%d.%d\n",destip[0],destip[1],destip[2],destip[3]);
-    printf("gate_IP: %d.%d.%d.%d\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-    printf("mask_IP: %d.%d.%d.%d\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    printf("md5: %s\r\n", MD5);
+    printf("host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    printf("dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
+    printf("gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    printf("mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    printf("md5: %.16s\r\n", MD5);
 }
 
 void copyParametersToEEPROM()
@@ -789,7 +789,7 @@ void setMacFromSD()
 
 void setParametersFromSD()
 {
-    Printf("\nSet IP Parameters from SD\n");
+    Printf("\nSet IP Parameters from SD\r\n");
     char tmp[33];
     char tmp2[3];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
@@ -852,6 +852,7 @@ void setParametersFromSD()
     f_gets(tmp, 33, &fil);
     strncpy(MD5, tmp, 32);
     f_close(&fil);
+    MD5[32] = '\0';
     printf("md5: %s\r\n",MD5);
 }
 
@@ -1261,7 +1262,7 @@ void sendHANDSHAKE(uint8_t udpSocket) {
         HANDSHAKE = 1;
     }
     else {
-        printf("HANDSHAKE = 0\r\n");
+        printf("Waiting for destination connection...\r\n");
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
         HAL_Delay(200);

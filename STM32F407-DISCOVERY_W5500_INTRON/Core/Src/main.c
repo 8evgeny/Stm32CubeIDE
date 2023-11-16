@@ -11,6 +11,7 @@
 #include "webpage.h"
 #include "spi_eeprom.h"
 #include "eeprom.h"
+#include "SEGGER_RTT.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -1115,36 +1116,45 @@ void prepearUDP_PLIS(uint8_t udpSocket)
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
 
-void convertRxData()
+void convertToBaseData()
 {
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
         rxCyclon[i] &= 0xF0;
         rxCyclon[i] |= 0x05; //Последнее E меняем на 5
-
-        uint8_t tmp = rxCyclon[i]; //Первый октет меняем согласно таблице
-        tmp = tmp >> 4;
-        switch (tmp) {
-        case 0:     tmp = 7;    break;
-        case 1:     tmp = 6;    break;
-        case 2:     tmp = 5;    break;
-        case 3:     tmp = 4;    break;
-        case 4:     tmp = 3;    break;
-        case 5:     tmp = 2;    break;
-        case 6:     tmp = 1;    break;
-        case 7:     tmp = 0;    break;
-        case 8:     tmp = 0x0F; break;
-        case 9:     tmp = 0x0E; break;
-        case 0x0A:  tmp = 0x0D; break;
-        case 0x0B:  tmp = 0x0C; break;
-        case 0x0C:  tmp = 0x0B; break;
-        case 0x0D:  tmp = 0x0A; break;
-        case 0x0E:  tmp = 0x09; break;
-        case 0x0F:  tmp = 0x08; break;
-        }
-        tmp = tmp << 4;
+        uint8_t tmp = rxCyclon[i]; //Первый октет инвертируем
+        tmp = ~tmp;
+        tmp &= 0xF0;
         rxCyclon[i] &= 0x0F;
         rxCyclon[i] |= tmp;
+
+//        printf("\tBASE - "
+//         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X\r\n",
+//            rxCyclon[1], rxCyclon[5], rxCyclon[9], rxCyclon[13], rxCyclon[17], rxCyclon[21],
+//            rxCyclon[25], rxCyclon[29], rxCyclon[33], rxCyclon[37], rxCyclon[41], rxCyclon[45] );
+
     }
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
+}
+
+void convertToAbonData()
+{
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
+    for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
+        txCyclon[i] &= 0xF0;
+        txCyclon[i] |= 0x05; //Последнее E меняем на 5
+        uint8_t tmp = txCyclon[i]; //Первый октет инвертируем
+        tmp = ~tmp;
+        tmp &= 0xF0;
+        txCyclon[i] &= 0x0F;
+        txCyclon[i] |= tmp;
+
+//        printf("\tABON - "
+//         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X\r\n",
+//            txCyclon[1], txCyclon[5], txCyclon[9], txCyclon[13], txCyclon[17], txCyclon[21],
+//            txCyclon[25], txCyclon[29], txCyclon[33], txCyclon[37], txCyclon[41], txCyclon[45] );
+    }
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
 }
 
 void sendReceiveUDP(uint8_t udpSocket)
@@ -1176,57 +1186,18 @@ void sendReceiveUDP(uint8_t udpSocket)
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-//printf("\trxCyclon - "
-// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-// "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X"
-// "\r\n",
-//  rxCyclon[0],rxCyclon[1],rxCyclon[2],rxCyclon[3],rxCyclon[4],rxCyclon[5],rxCyclon[6],rxCyclon[7],
-//  rxCyclon[8],rxCyclon[9],rxCyclon[10],rxCyclon[11],rxCyclon[12],rxCyclon[13],rxCyclon[14],rxCyclon[15],
-//  rxCyclon[16],rxCyclon[17],rxCyclon[18],rxCyclon[19],rxCyclon[20],rxCyclon[21],rxCyclon[22],rxCyclon[23],
-//  rxCyclon[24],rxCyclon[25],rxCyclon[26],rxCyclon[27],rxCyclon[28],rxCyclon[29],rxCyclon[30],rxCyclon[31],
-//  rxCyclon[32],rxCyclon[33],rxCyclon[34],rxCyclon[35],rxCyclon[36],rxCyclon[37],rxCyclon[38],rxCyclon[39],
-//  rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
-//  );
-
-//            for (uint8_t i = 1; i<=45; i=i+4)
-//            {
-//                rxCyclon[i] &= 0xF0; rxCyclon[i] |= 0x05;
-//            }
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
-            convertRxData();
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
-//            printf("\trxCyclon - "
-//             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//             "%.2X %.2X %.2X %.2X"
-//             "\r\n",
-//                rxCyclon[1],
-//                rxCyclon[5],
-//                rxCyclon[9],
-//                rxCyclon[13],
-//                rxCyclon[17],
-//                rxCyclon[21],
-//                rxCyclon[25],
-//                rxCyclon[29],
-//                rxCyclon[33],
-//                rxCyclon[37],
-//                rxCyclon[41],
-//                rxCyclon[45]
-//              );
-
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);
         }
 
         if (ABONENT_or_BASE == 1) {  //Абонентский мост
+            //Перед обменом с ПЛИС конверсия данных
+            convertToAbonData();
+
             //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             //Обмен с ПЛИС
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
-
             HAL_SPI_TransmitReceive(&hspi2,
                                     #ifndef  fpgaToCpuAbonTestData
                                     txCyclon ,
@@ -1241,8 +1212,11 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
                                     test4 ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
-
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+
+            //После обмена с ПЛИС конверсия данных
+            convertToBaseData();
+
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
@@ -1829,26 +1803,28 @@ int main(void)
 //    polarSSLTest();
 //    bearSSLTest();
 
-//uint8_t firstSend = 1;
-  while (1)
-  {
+    SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
+    while (1)
+    {
 //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET); //Debug 3
 #ifdef   NEW_HTTP_SERVER
-    for(i = 0; i < MAX_HTTPSOCK; i++)
-    {
-//        httpServer_run(i);
-    }
+        for(i = 0; i < MAX_HTTPSOCK; i++)
+        {
+//            httpServer_run(i);
+        }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();
 #endif
 
-      if (HANDSHAKE == 1)
-      {
-          sendReceiveUDP(udpSocket);
-      }
-      if (HANDSHAKE == 0)
-          sendHANDSHAKE(udpSocket);
+SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
+
+        if (HANDSHAKE == 1){
+            sendReceiveUDP(udpSocket);
+        }
+        if (HANDSHAKE == 0)
+            sendHANDSHAKE(udpSocket);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -100,6 +100,7 @@ include_directories(
 #    ${bearssl}/inc
 #    ${bearssl}/samples
 #    ${bearssl}/src
+    RTT
     )
 
 file (GLOB hal_src Drivers/STM32F4xx_HAL_Driver/Src/*.c)
@@ -135,7 +136,10 @@ add_library(wolfssl_LIB ${wolfssl_src})
 #add_library(polarssl_LIB ${polarssl_src})
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s Middlewares/Third_Party/littlefs/eeprom.c)
-add_executable(${PROJECT_NAME}.elf ${src})
+add_executable(${PROJECT_NAME}.elf
+    ${src}
+    RTT/SEGGER_RTT.c
+    )
 
 set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINKER_LANGUAGE CXX)
 set(LINKER_SCRIPT_FLASH "${CMAKE_SOURCE_DIR}/STM32F407VGTX_FLASH.ld")

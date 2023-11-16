@@ -11,6 +11,7 @@
 #include "webpage.h"
 #include "spi_eeprom.h"
 #include "eeprom.h"
+#include "SEGGER_RTT.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -57,8 +58,6 @@ char *pindex;
 char *pmain;
 char *psettingsIP;
 uint8_t ABONENT_or_BASE;
-uint8_t receiveFuckFromFPGA = 0;
-uint8_t receiveON = 0;
 uint8_t HANDSHAKE = 0;
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
@@ -131,7 +130,7 @@ uint8_t capture = 0;
 uint8_t ipaddr[4];
 uint8_t ipgate[4];
 uint8_t ipmask[4];
-char MD5[32];
+char MD5[33];
 #ifndef   NEW_HTTP_SERVER
 uint32_t indexLen;
 uint32_t mainLen;
@@ -464,14 +463,14 @@ void copyMacToAdressEEPROM(uint16_t Addr)
     FRESULT result = f_open(&fil, "mac16", FA_OPEN_ALWAYS | FA_READ );
     if (result == FR_OK)
     {
-        printf("\nCopy MAC adress from SD in Hex to adress 0x%.4X eeprom\n",Addr);
+        printf("\nCopy MAC adress from SD in Hex to adress 0x%.4X eeprom\r\n",Addr);
         UINT rc;
         f_read(&fil, tmp, 18, &rc);
         f_close(&fil);
         tmp[17]=0x00;
-        printf("MAC:\n%s\n",tmp);
+        printf("MAC: %s\r\n",tmp);
         int open = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, 18);
-        printf("MAC write from SD in Hex to adress 0x%.4X on eprom: %d\n", Addr, open);
+        printf("MAC write from SD in Hex to adress 0x%.4X on eprom: %d\r\n", Addr, open);
     }
 #endif
 #ifdef  MAC_IN_DECIMAL
@@ -493,7 +492,7 @@ void copyMacToAdressEEPROM(uint16_t Addr)
 
 void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 {
-    printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\n",Addr);
+    printf("\nCopy IP settings from SD to adress 0x%.4X eeprom\r\n",Addr);
     char tmp[settingsLen];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
     UINT rc;
@@ -511,7 +510,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp+60, 33, &fil);
     f_close(&fil);
-    printf("settings:\n%s\n",tmp);
+    printf("settings: \t\t%s\r\n",tmp);
     BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
     delayUS_ASM(100000);
 //    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
@@ -519,7 +518,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
     uint16_t len = 93;
     uint8_t rd_value[93] = {0};
     BSP_EEPROM_ReadBuffer(rd_value, ipSettingAdressInEEPROM, &len);
-    printf("\r\nEEPROM read settings: %s\r\n",rd_value);
+    printf("\rEEPROM read settings:\t%s\r\n",rd_value);
 
 }
 
@@ -549,24 +548,24 @@ void copyDefaultParametersToAdressEEPROM(uint16_t Addr)
 
 void copyDefaultMACToAdressEEPROM(uint16_t Addr)
 {
-    printf("Set default MAC adress to adress eeprom 0x%.4X \n", Addr);
+    printf("Set default MAC adress to adress eeprom 0x%.4X \r\n", Addr);
     char defaultMAC[24] =
     {'0','0','0',':','0','2','1',':','0','6','6',':','1','9','1',':','2','4','0',':','0','8','2','\0'};
     int result = BSP_EEPROM_WriteBuffer((uint8_t *)defaultMAC, Addr, 24);
-    printf("Set default MAC adress to adress eeprom 0x%.4X: %d\n", Addr, result);
+    printf("Set default MAC adress to adress eeprom 0x%.4X: %d\r\n", Addr, result);
 }
 
 void SetMacFromAdressEEPROM(uint16_t Addr)
 {
 #ifndef MAC_IN_DECIMAL
-    printf("Set MAC adress in HEX from adress eeprom 0x%.4X \n", Addr);
+    printf("Set MAC adress in HEX from adress eeprom 0x%.4X \r\n", Addr);
     uint16_t numByte = 18;
     uint16_t * pnumByte = &numByte;
     char tmp[18];
     char tmp2[2];
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
-    printf("MAC:\n%s\n",tmp);
+    printf("MAC read from adress 0x%.4X on eprom: %d\r\n", Addr, result);
+    printf("MAC:\r\n%s\r\n",tmp);
     strncpy(mac,tmp,18);
     strncpy(tmp2, tmp, 2);
     macaddr[0] = convertHexToDecimal(tmp2);
@@ -580,7 +579,7 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
     macaddr[4] = convertHexToDecimal(tmp2);
     strncpy(tmp2,tmp+15, 2);
     macaddr[5] = convertHexToDecimal(tmp2);
-    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
 #endif
 #ifdef MAC_IN_DECIMAL
     printf("Set MAC adress in decimal from adress eeprom 0x%.4X \n", Addr);
@@ -668,11 +667,11 @@ void SetParaametersFromAdressEEPROM(uint16_t Addr)
 
     strncpy(MD5, tmp+60, 32);
 
-    printf("host_IP: %d.%d.%d.%d\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
-    printf("dest_IP: %d.%d.%d.%d\n",destip[0],destip[1],destip[2],destip[3]);
-    printf("gate_IP: %d.%d.%d.%d\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
-    printf("mask_IP: %d.%d.%d.%d\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    printf("md5: %s\n", MD5);
+    printf("host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    printf("dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
+    printf("gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    printf("mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    printf("md5: %.16s\r\n", MD5);
 }
 
 void copyParametersToEEPROM()
@@ -791,7 +790,7 @@ void setMacFromSD()
 
 void setParametersFromSD()
 {
-    Printf("\nSet IP Parameters from SD\n");
+    Printf("\nSet IP Parameters from SD\r\n");
     char tmp[33];
     char tmp2[3];
     f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
@@ -854,7 +853,8 @@ void setParametersFromSD()
     f_gets(tmp, 33, &fil);
     strncpy(MD5, tmp, 32);
     f_close(&fil);
-    printf("md5: %s\n",MD5);
+    MD5[32] = '\0';
+    printf("md5: %s\r\n",MD5);
 }
 
 void SetParaametersFromEEPROM()
@@ -961,7 +961,7 @@ void wep_define_func(void)
 
 void net_ini_WIZNET(uint8_t socketTCP)
 {
-    printf("net_ini_WIZNET_WEB\n");
+    printf("net_ini_WIZNET_WEB\r\n");
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_Delay(70);
@@ -970,7 +970,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
     uint8_t sn_TCP = socketTCP;
     WIZCHIPInitialize();
 
-    printf("WIZCHIPInitialize  OK\n");
+    printf("WIZCHIPInitialize  OK\r\n");
 
     for (int i =0; i < 6; ++i)
     {
@@ -987,7 +987,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
     print_network_information();
     socket(sn_TCP, Sn_MR_TCP, local_port_web, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
     if (SOCK_OK == listen(sn_TCP))
-        printf("socket %d listening\n", sn_TCP);
+        printf("socket %d listening\r\n", sn_TCP);
 }
 
 void workI2C_EEPROM()
@@ -1115,6 +1115,48 @@ void prepearUDP_PLIS(uint8_t udpSocket)
     //Это будет INPUT - сигнал от ПЛИС 10 такт
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
+
+void convertToBaseData()
+{
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
+    for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
+        rxCyclon[i] &= 0xF0;
+        rxCyclon[i] |= 0x05; //Последнее E меняем на 5
+        uint8_t tmp = rxCyclon[i]; //Первый октет инвертируем
+        tmp = ~tmp;
+        tmp &= 0xF0;
+        rxCyclon[i] &= 0x0F;
+        rxCyclon[i] |= tmp;
+
+//        printf("\tBASE - "
+//         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X\r\n",
+//            rxCyclon[1], rxCyclon[5], rxCyclon[9], rxCyclon[13], rxCyclon[17], rxCyclon[21],
+//            rxCyclon[25], rxCyclon[29], rxCyclon[33], rxCyclon[37], rxCyclon[41], rxCyclon[45] );
+
+    }
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
+}
+
+void convertToAbonData()
+{
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
+    for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
+        txCyclon[i] &= 0xF0;
+        txCyclon[i] |= 0x05; //Последнее E меняем на 5
+        uint8_t tmp = txCyclon[i]; //Первый октет инвертируем
+        tmp = ~tmp;
+        tmp &= 0xF0;
+        txCyclon[i] &= 0x0F;
+        txCyclon[i] |= tmp;
+
+//        printf("\tABON - "
+//         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X\r\n",
+//            txCyclon[1], txCyclon[5], txCyclon[9], txCyclon[13], txCyclon[17], txCyclon[21],
+//            txCyclon[25], txCyclon[29], txCyclon[33], txCyclon[37], txCyclon[41], txCyclon[45] );
+    }
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
+}
+
 void sendReceiveUDP(uint8_t udpSocket)
 {
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
@@ -1145,45 +1187,45 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
             sendPackets(udpSocket, destip, local_port_udp);
-            if (receiveON ==1) {
-                receivePackets(udpSocket, destip, local_port_udp);
-                receiveON = 0;
-            }
+            receivePackets(udpSocket, destip, local_port_udp);
         }
 
         if (ABONENT_or_BASE == 1) {  //Абонентский мост
-                //Очищаю сдвиговый регистр передачи MOSI
-                HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-                //Обмен с ПЛИС
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
+            //Перед обменом с ПЛИС конверсия данных
+            convertToAbonData();
 
-                HAL_SPI_TransmitReceive(&hspi2,
-                                        #ifndef  fpgaToCpuAbonTestData
-                                        txCyclon ,
-                                        #endif
-                                        #ifdef  fpgaToCpuAbonTestData
-                                        test4 ,
-                                        #endif
-                                        #ifndef  cpuToFpgaAbonTestData
-                                        rxCyclon ,
-                                        #endif
-                                        #ifdef  cpuToFpgaAbonTestData
-                                        test4 ,
-                                        #endif
-                                        MAX_PACKET_LEN, 0x1000);
+            //Очищаю сдвиговый регистр передачи MOSI
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+            //Обмен с ПЛИС
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
+            HAL_SPI_TransmitReceive(&hspi2,
+                                    #ifndef  fpgaToCpuAbonTestData
+                                    txCyclon ,
+                                    #endif
+                                    #ifdef  fpgaToCpuAbonTestData
+                                    test4 ,
+                                    #endif
+                                    #ifndef  cpuToFpgaAbonTestData
+                                    rxCyclon ,
+                                    #endif
+                                    #ifdef  cpuToFpgaAbonTestData
+                                    test4 ,
+                                    #endif
+                                    MAX_PACKET_LEN, 0x1000);
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
-                //Очищаю сдвиговый регистр приема MISO
-                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+            //После обмена с ПЛИС конверсия данных
+            convertToBaseData();
 
-                if (receiveON ==1) {
-                    receivePackets(udpSocket, destip, local_port_udp);
-                    receiveON = 0;
-                }
-                sendPackets(udpSocket, destip, local_port_udp);
+            //Очищаю сдвиговый регистр приема MISO
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+
+            receivePackets(udpSocket, destip, local_port_udp);
+            sendPackets(udpSocket, destip, local_port_udp);
         }
-    } //end if
+    }//if
 }
+
 
 void sendHANDSHAKE(uint8_t udpSocket) {
     uint32_t currTime = HAL_GetTick();
@@ -1195,7 +1237,7 @@ void sendHANDSHAKE(uint8_t udpSocket) {
         HANDSHAKE = 1;
     }
     else {
-        printf("HANDSHAKE = 0\r\n");
+        printf("Waiting for destination connection...\r\n");
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
         HAL_Delay(200);
@@ -1729,12 +1771,12 @@ int main(void)
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET) //Я в централи - сигналл выдает ПЛИС
     {
         ABONENT_or_BASE = 0;
-        printf("WORK in BASE INTRON\r\n");
+        printf("\rWORK in BASE INTRON\r\n");
     }
     else //Я в абоненте - сигналл выдает ПЛИС
     {
         ABONENT_or_BASE = 1;
-        printf("WORK in ABONENT\r\n");
+        printf("\rWORK in ABONENT\r\n");
     }
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
@@ -1761,29 +1803,28 @@ int main(void)
 //    polarSSLTest();
 //    bearSSLTest();
 
-//uint8_t firstSend = 1;
-  while (1)
-  {
+    SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
+    while (1)
+    {
 //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET); //Debug 3
 #ifdef   NEW_HTTP_SERVER
-    for(i = 0; i < MAX_HTTPSOCK; i++)
-    {
-//        httpServer_run(i);
-    }
+        for(i = 0; i < MAX_HTTPSOCK; i++)
+        {
+//            httpServer_run(i);
+        }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();
 #endif
 
-      if (HANDSHAKE == 1)
-      {
-//          if (getSn_RX_RSR(udpSocket) != 0)
-              receiveON = 1;
+SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
 
-          sendReceiveUDP(udpSocket);
-      }
-      if (HANDSHAKE == 0)
-          sendHANDSHAKE(udpSocket);
+        if (HANDSHAKE == 1){
+            sendReceiveUDP(udpSocket);
+        }
+        if (HANDSHAKE == 0)
+            sendHANDSHAKE(udpSocket);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

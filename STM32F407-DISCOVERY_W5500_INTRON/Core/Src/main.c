@@ -57,8 +57,6 @@ char *pindex;
 char *pmain;
 char *psettingsIP;
 uint8_t ABONENT_or_BASE;
-uint8_t receiveFuckFromFPGA = 0;
-uint8_t receiveON = 0;
 uint8_t HANDSHAKE = 0;
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
@@ -1115,6 +1113,12 @@ void prepearUDP_PLIS(uint8_t udpSocket)
     //Это будет INPUT - сигнал от ПЛИС 10 такт
 //    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
+
+void convertData()
+{
+
+}
+
 void sendReceiveUDP(uint8_t udpSocket)
 {
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
@@ -1160,10 +1164,11 @@ void sendReceiveUDP(uint8_t udpSocket)
 //  rxCyclon[40],rxCyclon[41],rxCyclon[42],rxCyclon[43],rxCyclon[44],rxCyclon[45],rxCyclon[46],rxCyclon[47]
 //  );
 
-            for (uint8_t i = 1; i<=45; i=i+4)
-            {
-                rxCyclon[i] &= 0xF0; rxCyclon[i] |= 0x05;
-            }
+//            for (uint8_t i = 1; i<=45; i=i+4)
+//            {
+//                rxCyclon[i] &= 0xF0; rxCyclon[i] |= 0x05;
+//            }
+
 //            printf("\trxCyclon - "
 //             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
 //             "%.2X %.2X %.2X %.2X"
@@ -1182,46 +1187,43 @@ void sendReceiveUDP(uint8_t udpSocket)
 //                rxCyclon[45]
 //              );
 
+            convertData();
+
             sendPackets(udpSocket, destip, local_port_udp);
-            if (receiveON ==1) {
-                receivePackets(udpSocket, destip, local_port_udp);
-                receiveON = 0;
-            }
+            receivePackets(udpSocket, destip, local_port_udp);
         }
 
         if (ABONENT_or_BASE == 1) {  //Абонентский мост
-                //Очищаю сдвиговый регистр передачи MOSI
-                HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
-                //Обмен с ПЛИС
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
+            //Очищаю сдвиговый регистр передачи MOSI
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+            //Обмен с ПЛИС
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
 
-                HAL_SPI_TransmitReceive(&hspi2,
-                                        #ifndef  fpgaToCpuAbonTestData
-                                        txCyclon ,
-                                        #endif
-                                        #ifdef  fpgaToCpuAbonTestData
-                                        test4 ,
-                                        #endif
-                                        #ifndef  cpuToFpgaAbonTestData
-                                        rxCyclon ,
-                                        #endif
-                                        #ifdef  cpuToFpgaAbonTestData
-                                        test4 ,
-                                        #endif
-                                        MAX_PACKET_LEN, 0x1000);
+            HAL_SPI_TransmitReceive(&hspi2,
+                                    #ifndef  fpgaToCpuAbonTestData
+                                    txCyclon ,
+                                    #endif
+                                    #ifdef  fpgaToCpuAbonTestData
+                                    test4 ,
+                                    #endif
+                                    #ifndef  cpuToFpgaAbonTestData
+                                    rxCyclon ,
+                                    #endif
+                                    #ifdef  cpuToFpgaAbonTestData
+                                    test4 ,
+                                    #endif
+                                    MAX_PACKET_LEN, 0x1000);
 
-                HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
-                //Очищаю сдвиговый регистр приема MISO
-                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+            //Очищаю сдвиговый регистр приема MISO
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-                if (receiveON ==1) {
-                    receivePackets(udpSocket, destip, local_port_udp);
-                    receiveON = 0;
-                }
-                sendPackets(udpSocket, destip, local_port_udp);
+            receivePackets(udpSocket, destip, local_port_udp);
+            sendPackets(udpSocket, destip, local_port_udp);
         }
-    } //end if
+    }//if
 }
+
 
 void sendHANDSHAKE(uint8_t udpSocket) {
     uint32_t currTime = HAL_GetTick();
@@ -1815,9 +1817,6 @@ int main(void)
 
       if (HANDSHAKE == 1)
       {
-//          if (getSn_RX_RSR(udpSocket) != 0)
-              receiveON = 1;
-
           sendReceiveUDP(udpSocket);
       }
       if (HANDSHAKE == 0)

@@ -509,7 +509,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp+60, 33, &fil);
     f_close(&fil);
-    printf("settings:\r\n%s\r\n",tmp);
+    printf("settings: \t\t%s\r\n",tmp);
     BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
     delayUS_ASM(100000);
 //    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
@@ -517,7 +517,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
     uint16_t len = 93;
     uint8_t rd_value[93] = {0};
     BSP_EEPROM_ReadBuffer(rd_value, ipSettingAdressInEEPROM, &len);
-    printf("\r\nEEPROM read settings: %s\r\n",rd_value);
+    printf("\rEEPROM read settings:\t%s\r\n",rd_value);
 
 }
 

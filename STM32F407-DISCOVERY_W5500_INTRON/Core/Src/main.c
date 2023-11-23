@@ -1267,7 +1267,7 @@ void testSpiEepromWriteRead()
 
     }
     if (err == 0)
-        printf("Test SPI OK");
+        printf("Test SPI OK\r\n");
 }
 
 void testSpiEepromWritePage(uint32_t adr)

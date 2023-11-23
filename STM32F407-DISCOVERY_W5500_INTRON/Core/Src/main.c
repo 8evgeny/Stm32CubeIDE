@@ -59,6 +59,7 @@ char *pmain;
 char *psettingsIP;
 uint8_t ABONENT_or_BASE;
 uint8_t HANDSHAKE = 0;
+uint8_t UDP_or_TCP = 1;
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 uint32_t receiveBlank = 0;
@@ -1794,9 +1795,9 @@ int main(void)
 
 #ifdef   NEW_HTTP_SERVER //web serverWIZ
     uint8_t i;
-//    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
-//    wep_define_func();
-//    display_reg_webContent_list();
+    httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
+    wep_define_func();
+    display_reg_webContent_list();
 #endif
 
 //    tls_client_serverTest(); // работает
@@ -1810,21 +1811,23 @@ int main(void)
 #ifdef   NEW_HTTP_SERVER
         for(i = 0; i < MAX_HTTPSOCK; i++)
         {
-//            httpServer_run(i);
+            httpServer_run(i);
         }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();
 #endif
 
-SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
+//SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
 
+      if (UDP_or_TCP == 1)
+      {
         if (HANDSHAKE == 1){
             sendReceiveUDP(udpSocket);
         }
         if (HANDSHAKE == 0)
             sendHANDSHAKE(udpSocket);
-
+      }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

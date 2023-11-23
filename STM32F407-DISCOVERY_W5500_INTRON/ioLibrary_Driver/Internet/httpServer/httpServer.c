@@ -18,6 +18,7 @@ extern WOLFSSL_CTX* server_ctx;
 extern WOLFSSL*     server_ssl ;
 extern unsigned char client_buffer[BUFFER_SIZE];
 extern unsigned char server_buffer[BUFFER_SIZE];
+extern uint8_t UDP_or_TCP;
 #ifdef	_USE_SDCARD_
 #include "ff.h" 	// header file for FatFs library (FAT file system)
 #endif
@@ -160,6 +161,8 @@ void httpServer_run(uint8_t seqnum)
 				case STATE_HTTP_IDLE :
 					if ((len = getSn_RX_RSR(s)) > 0)
 					{
+//Выключаю обмен по UDP
+UDP_or_TCP = 0;
 
 						if (len > DATA_BUF_SIZE) len = DATA_BUF_SIZE;
 #ifdef TLS_ON

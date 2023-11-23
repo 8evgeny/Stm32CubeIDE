@@ -987,7 +987,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
 
 void workI2C_EEPROM()
 {
-      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
+//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();
@@ -1256,10 +1256,10 @@ void testSpiEepromWriteRead()
         EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
         EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
         if (strcmp(TxBuffer, RxBuffer) == 0)
-            printf("test SPI for address %5X OK data: %s\n", adr, TxBuffer);
+            printf("test SPI for address %5X OK data: %s\r\n", adr, TxBuffer);
         else
         {
-            printf("test SPI for address %5X ERROR data: %s\n", adr, TxBuffer);
+            printf("test SPI for address %5X ERROR data: %s\r\n", adr, TxBuffer);
             err = 1;
         }
         if (err == 1)
@@ -1314,7 +1314,7 @@ void testSpiEepromWriteByte(uint32_t adr)
 
 void testSPI_EEPROM()
 {
-    printf("\n-- Tests_SPI_EEPROM --\n");
+    printf("\n-- Tests_SPI_EEPROM --\r\n");
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
     EEPROM_SPI_INIT(&hspi3);
     printEepromSpiStatus();
@@ -1776,9 +1776,9 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
-    net_ini_WIZNET(0); //TCP socket 0
+//    net_ini_WIZNET(0); //TCP socket 0
 
-//    workSPI_EEPROM();
+    workSPI_EEPROM();
 
   /* USER CODE END 2 */
 

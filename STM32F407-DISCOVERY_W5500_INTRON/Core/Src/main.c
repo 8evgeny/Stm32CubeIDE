@@ -230,7 +230,7 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM);
 void simpleTestI2C_EEPROM(uint16_t addr)
 {
     uint16_t num = 256;
-    printf("Simple test I2C_EEPROM ...\n");
+    printf("Simple test I2C_EEPROM ...\r\n");
 
     uint8_t rd_value[256] = {0};
     uint8_t wr_value[256] = {'1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
@@ -987,7 +987,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
 
 void workI2C_EEPROM()
 {
-//      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
+      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
 //      littleFsInit();

@@ -49,7 +49,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #endif
 #define LOCAL_PORT_UDP 3000
 /*
-EEPROM I2C : ATMEL 24C256
+EEPROM I2C : ATMEL 24C1024 (24C256)
 32768 byte 0000 - 7FFF
 1MHz (2.5V, 2.7V, 5.0V) compatibility
 512 pages of 64-bytes each
@@ -104,7 +104,7 @@ EEPROM I2C : ATMEL 24C256
 #define  markEEPROMclear         0x01A0
 //#define  simpleTestEEPROMadress  0x7C00
 //#define  simpleTestEEPROMadress  0x01A0 //Так длинные значения не пишет
-#define  simpleTestEEPROMadress  0x0300
+#define  simpleTestEEPROMadress  0x300
 #include "types.h"
 
 /* USER CODE END Header */

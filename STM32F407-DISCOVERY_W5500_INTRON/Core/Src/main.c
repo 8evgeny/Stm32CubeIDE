@@ -609,21 +609,15 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
 
 void SetParaametersFromAdressEEPROM(uint16_t Addr)
 {
-    printf("Set IP paraameters from adress eeprom 0x%.4X \n", Addr);
+    printf("Set IP paraameters from adress eeprom 0x%.4X \r\n", Addr);
     uint16_t numByte = settingsLen;
     uint16_t * pnumByte = &numByte;
     char tmp[settingsLen];
     char tmp2[3];
 
-    uint16_t len = 93;
-    uint8_t rd_value[93] = {0};
-    BSP_EEPROM_ReadBuffer(rd_value, Addr, &len);
-    printf("\r\nEEPROM read: %s\r\n",rd_value);
-
-
     int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-    printf("Settings IP read from adress 0x%.4X on eprom: %d\n", Addr, result);
-    printf("settings:\n%s\n",tmp);
+    printf("Settings IP read from adress 0x%.4X on eprom: %d\r\n", Addr, result);
+    printf("settings: %.93s\r\n",tmp);
 
     strncpy(host_IP,tmp,15);
     strncpy(dest_IP,tmp+15,15);
@@ -1899,7 +1893,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.ClockSpeed = 100000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;

@@ -198,7 +198,6 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     HAL_StatusTypeDef spiTransmitStatus;// SPI transmission status
 
     EEPROM_WriteEnable();// write enable
-    HAL_Delay(10);
     /*
         We gonna send commands in one packet of 4 bytes
      */
@@ -210,7 +209,6 @@ EEPROMStatus EEPROM_SPI_WritePage(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t
     header[3] =  WriteAddr       &0xFF;
 
     EEPROM_WriteEnable();// write enable
-    HAL_Delay(10);
 
     // Select the EEPROM: Chip Select low
     EEPROM_CS_LOW();

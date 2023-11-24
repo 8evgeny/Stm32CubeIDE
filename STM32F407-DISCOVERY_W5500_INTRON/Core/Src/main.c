@@ -219,11 +219,19 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 typedef enum {
     eepromCLEAR,
     eepromNotCLEAR
 } isEEPROMClear;
+
+typedef enum {
+    eepromSPICLEAR,
+    eepromSPINotCLEAR
+} isSPIEEPROMClear;
+
 isEEPROMClear isEEPROMclear();
+isSPIEEPROMClear isSPIEEPROMclear();
 
 void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
@@ -523,13 +531,46 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 
 }
 
-void copyParametersFromSDToAdressSPIEEPROM()
-{
+void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
+    printf("copyParametersFromSDToAdressSPIEEPROM 0x%.4X \r\n",Addr);
+
 
 }
 
-void copyMacToAdressSPIEEPROM()
+void copyMacToAdressSPIEEPROM(uint16_t Addr){
+    printf("copyMacToAdressSPIEEPROM 0x%.4X \r\n",Addr);
+
+
+}
+
+void  SetParaametersFromAdressSPIEEPROM(uint16_t Addr){
+    printf("SetParaametersFromAdressSPIEEPROM 0x%.4X \r\n",Addr);
+
+
+}
+
+void  SetMacFromAdressSPIEEPROM(uint16_t Addr){
+    printf("SetMacFromAdressSPIEEPROM 0x%.4X \r\n",Addr);
+
+
+}
+
+void  markSPIEEPROMasNew(){
+    printf("markSPIEEPROMasNew \r\n");
+
+
+}
+
+isSPIEEPROMClear isSPIEEPROMclear()
 {
+//    return eepromSPICLEAR;
+
+    return eepromSPINotCLEAR;
+}
+
+void markSPIEEPROMasOld(){
+    printf("markSPIEEPROMasOld \r\n");
+
 
 }
 
@@ -997,13 +1038,12 @@ void isSdCartOn()
     else
     {
         sdCartOn = 0;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);     //EEPROM SPI
+        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);   //SD
         printf("not found SD\r\n");
     }
     f_close(&fil);
 }
-
 
 void workI2C_EEPROM()
 {
@@ -1049,7 +1089,7 @@ void workI2C_EEPROM()
 //        copyFileToEEPROM("index.html");
 //        copyFileToEEPROM("main.html");
 #endif
-    } else //Работа с i2c eeprom
+    } else //Установка параметров с i2c eeprom
     {
         SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
         SetMacFromAdressEEPROM(macAdressInEEPROM);
@@ -1096,11 +1136,37 @@ void workSPI_EEPROM()
 //    testSpiEepromReadPage(0x0000);
 //    testSpiEepromReadPage(0x0100);
 //    testSpiEepromReadPage(0x0200);
-    //    copyDataFromI2cEepromToSpiEeprom();//Копируем данные из I2C eeprom в SPI eeprom (Settings и Mac)
+
+//    markSPIEEPROMasNew(); //Ручная установка SPIEEPROM как NEW
+    if (sdCartOn == 0)
+    {
+        if (eepromSPICLEAR == isSPIEEPROMclear()) //Проверяем EEPROM новая ли
+        {
+            printf("SPI EEPROM: NEW\n");
+//            // Пишем на eeprom все параметры по умолчанию
+            copyParametersFromSDToAdressSPIEEPROM(ipSettingAdressInEEPROM);
+            copyMacToAdressSPIEEPROM(macAdressInEEPROM);
+            SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
+            markSPIEEPROMasOld(); // Снимаем признак новая EEPROM
+        }
+        else
+        {
+            printf("SPI EEPROM: OLD\r\n");
+        }
+
+    }
+
+
     if (sdCartOn == 1)
     {
-        copyParametersFromSDToAdressSPIEEPROM();//Копируем Settings из SD в SPI eeprom
-        copyMacToAdressSPIEEPROM();             //Копируем MAC из SD в SPI eeprom
+        setParametersFromSD();
+        copyParametersFromSDToAdressSPIEEPROM(ipSettingAdressInEEPROM); //Копируем Settings из SD в SPI eeprom
+        copyMacToAdressSPIEEPROM(macAdressInEEPROM);                    //Копируем MAC из SD в SPI eeprom
+        setMacFromSD();
+    } else //Установка параметров с SPI eeprom
+    {
+        SetParaametersFromAdressSPIEEPROM(ipSettingAdressInEEPROM);
+        SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
     }
 }
 #if 0
@@ -1779,15 +1845,14 @@ int main(void)
   /* USER CODE BEGIN 2 */
     printf("Test UART...OK\r\n");
     isSdCartOn(); //Проверка вставлена ли SD карта
-    workI2C_EEPROM();
-
-    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET) //Я в централи - сигналл выдает ПЛИС
-    {
+//    workI2C_EEPROM();
+    initSPI_EEPROM();
+    workSPI_EEPROM();
+    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
         printf("\rWORK in BASE INTRON\r\n");
     }
-    else //Я в абоненте - сигналл выдает ПЛИС
-    {
+    else { //Я в абоненте - сигналл выдает ПЛИС
         ABONENT_or_BASE = 1;
         printf("\rWORK in ABONENT\r\n");
     }
@@ -1795,10 +1860,8 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
-//    net_ini_WIZNET(0); //TCP socket 0
 
-    initSPI_EEPROM();
-    workSPI_EEPROM();
+//    net_ini_WIZNET(0); //TCP socket 0
 
   /* USER CODE END 2 */
 

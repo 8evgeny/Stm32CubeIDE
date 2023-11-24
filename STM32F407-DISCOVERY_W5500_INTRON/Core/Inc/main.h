@@ -105,6 +105,25 @@ EEPROM I2C : ATMEL 24C1024 (24C256)
 //#define  simpleTestEEPROMadress  0x7C00
 //#define  simpleTestEEPROMadress  0x01A0 //Так длинные значения не пишет
 #define  simpleTestEEPROMadress  0x300
+
+#define  ipSettingAdressInSPIEEPROM 0x0000
+#define  settingsLenInSPI           93
+#define  macAdressInSPIEEPROM       0x0120
+#define  markEEPROMSPIclear         0x01A0
+/*25LC1024：1Mbit= 1024Kbit =128KB  = 512*256B = 131072 X 8bit
+ Page 1     Address: 00000-000FF length 256b   IP settings
+ Page 2     Address: 00100-001FF length 256b
+ Page 3     Address: 00200-002FF length 256b
+ Page 4     Address: 00300-003FF length 256b
+`
+`
+`
+ Page 510   Address: 1FD00-1FDFF length 256b
+ Page 511   Address: 1FE00-1FEFF length 256b
+ Page 512   Address: 1F000-1FFFF length 256b
+*/
+
+
 #include "types.h"
 
 /* USER CODE END Header */

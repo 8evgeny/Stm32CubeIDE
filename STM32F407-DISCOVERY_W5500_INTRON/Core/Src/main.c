@@ -230,8 +230,8 @@ typedef enum {
     eepromSPINotCLEAR
 } isSPIEEPROMClear;
 
-isEEPROMClear isEEPROMclear();
-isSPIEEPROMClear isSPIEEPROMclear();
+isEEPROMClear isEEPROMclear(uint16_t Addr);
+isSPIEEPROMClear isSPIEEPROMclear(uint16_t Addr);
 
 void printFileFromEEPROM(const char* nameFile_onEEPROM);
 
@@ -452,13 +452,13 @@ void markEEPROMasNew()
     printf("eeprom mark as NEW\n");
 }
 
-isEEPROMClear isEEPROMclear()
+isEEPROMClear isEEPROMclear(uint16_t Addr)
 {
     uint16_t numByte = 16;
     uint16_t * pnumByte = &numByte;
     char tmp[16];
     char clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
-    BSP_EEPROM_ReadBuffer((uint8_t *)tmp, markEEPROMclear, pnumByte);
+    BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
     if(strncmp(tmp, clear, 15) == 0)
         return eepromCLEAR;
     else
@@ -531,11 +531,24 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 
 }
 
+void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
+    printf("copyDefaultParametersToAdressSPIEEPROM 0x%.4X \r\n",Addr);
+
+
+}
+
 void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
     printf("copyParametersFromSDToAdressSPIEEPROM 0x%.4X \r\n",Addr);
 
 
 }
+
+void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr)
+{
+
+
+}
+
 
 void copyMacToAdressSPIEEPROM(uint16_t Addr){
     printf("copyMacToAdressSPIEEPROM 0x%.4X \r\n",Addr);
@@ -561,8 +574,18 @@ void  markSPIEEPROMasNew(){
 
 }
 
-isSPIEEPROMClear isSPIEEPROMclear()
+isSPIEEPROMClear isSPIEEPROMclear(uint16_t Addr)
 {
+//    testSpiEepromReadPage(markEEPROMSPIclear);
+//    EEPROM_PAGE_ERASE(markEEPROMSPIclear);
+    testSpiEepromReadPage(markEEPROMSPIclear);
+    uint8_t RxBuffer[256] = {0x00};
+    Printf("Test EEPROM_SPI_ReadPage\r\n");
+    EEPROM_SPI_ReadBuffer(RxBuffer, Addr, (uint16_t)256);
+    Printf("adress 0x%X read: %.256s\r\n", Addr, RxBuffer);
+
+
+
 //    return eepromSPICLEAR;
 
     return eepromSPINotCLEAR;
@@ -1057,7 +1080,7 @@ void workI2C_EEPROM()
 //        markEEPROMasNew(); //Ручная установка EEPROM как NEW
     if (sdCartOn == 0)
     {
-        if (eepromCLEAR == isEEPROMclear()) //Проверяем EEPROM новая ли
+        if (eepromCLEAR == isEEPROMclear(markEEPROMclear)) //Проверяем EEPROM новая ли
         {
             printf("EEPROM: NEW\n");
             // Пишем на eeprom все параметры по умолчанию
@@ -1134,34 +1157,30 @@ void workSPI_EEPROM()
 {
 //    testSPI_EEPROM();
 //    testSpiEepromReadPage(0x0000);
-//    testSpiEepromReadPage(0x0100);
-//    testSpiEepromReadPage(0x0200);
 
 //    markSPIEEPROMasNew(); //Ручная установка SPIEEPROM как NEW
     if (sdCartOn == 0)
     {
-        if (eepromSPICLEAR == isSPIEEPROMclear()) //Проверяем EEPROM новая ли
+        if (eepromSPICLEAR == isSPIEEPROMclear(markEEPROMSPIclear)) //Проверяем EEPROM новая ли
         {
             printf("SPI EEPROM: NEW\n");
 //            // Пишем на eeprom все параметры по умолчанию
-            copyParametersFromSDToAdressSPIEEPROM(ipSettingAdressInEEPROM);
-            copyMacToAdressSPIEEPROM(macAdressInEEPROM);
-            SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
+            copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
+            copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
             markSPIEEPROMasOld(); // Снимаем признак новая EEPROM
         }
         else
         {
             printf("SPI EEPROM: OLD\r\n");
         }
-
     }
 
 
     if (sdCartOn == 1)
     {
         setParametersFromSD();
-        copyParametersFromSDToAdressSPIEEPROM(ipSettingAdressInEEPROM); //Копируем Settings из SD в SPI eeprom
-        copyMacToAdressSPIEEPROM(macAdressInEEPROM);                    //Копируем MAC из SD в SPI eeprom
+        copyParametersFromSDToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM); //Копируем Settings из SD в SPI eeprom
+        copyMacToAdressSPIEEPROM(macAdressInSPIEEPROM);                    //Копируем MAC из SD в SPI eeprom
         setMacFromSD();
     } else //Установка параметров с SPI eeprom
     {
@@ -1376,11 +1395,9 @@ void testSpiEepromWritePage(uint32_t adr)
 void testSpiEepromReadPage(uint32_t adr)
 {
     uint8_t RxBuffer[256] = {0x00};
-    HAL_Delay(1000);
     Printf("Test EEPROM_SPI_ReadPage\r\n");
     EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
-//    HAL_Delay(2000);
-    Printf("adress %d read: %s\r\n", adr, RxBuffer);
+    Printf("adress 0x%X read: %.256s\r\n", adr, RxBuffer);
 }
 
 void testSpiEepromWriteByte(uint32_t adr)
@@ -1402,7 +1419,7 @@ void testSPI_EEPROM()
 
 //    EEPROM_CHIP_ERASE();
 //    EEPROM_PAGE_ERASE(0x00000100); //PAGE_ERASE не работает
-    testSpiEepromWriteRead();
+//    testSpiEepromWriteRead();
 }
 
 void copyDataFromI2cEepromToSpiEeprom()

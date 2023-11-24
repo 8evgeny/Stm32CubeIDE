@@ -2017,24 +2017,22 @@ int main(void)
         printf("\rWORK in ABONENT\r\n");
     }
 
-    isSdCartOn(); //Проверка вставлена ли SD карта
-    workI2C_EEPROM();
-    initSPI_EEPROM();
+    isSdCartOn();       //Проверка вставлена ли SD карта
+    workI2C_EEPROM();   //Только MAC
+    initSPI_EEPROM();   //IP настройки
 
-    // считываем значение по адресу markTimeFromReset
+    // считываем значение по адресу resetTwiceFlag
     uint8_t twinReset[1];
     EEPROM_SPI_ReadBuffer(twinReset, resetTwiceFlag, 1);
     if (twinReset[0] == 0x88) {
-        setResetTwice = 1;
+        setResetTwice = 1; //Был нажат двойной сброс - восстановить значения по умолчанию
         printf("Set reset twice  - restore default srttings!!!\r\n");
-        //Был нажат двойной сброс - восстановить значения по умолчанию
     }
     else {
         twinReset[0] = 0x88;
         EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
     }
-    if (setResetTwice == 0) HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу markTimeFromReset отсутствие двойного нажатия - FF
-
+    if (setResetTwice == 0) HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу resetTwiceFlag отсутствие двойного нажатия - FF
     twinReset[0] = 0xFF;
     EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
 

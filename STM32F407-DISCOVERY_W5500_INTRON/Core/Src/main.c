@@ -534,15 +534,25 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 
 void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
     printf("copyDefaultParametersToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-
-    char defaultIP[settingsLenInSPI] =
-    {'1','9','2','.','1','6','8','.','0','0','1','.','2','2','2',
-     '1','9','2','.','1','6','8','.','0','0','1','.','2','0','0',
-     '1','9','2','.','1','6','8','.','0','0','1','.','0','0','1',
-     '2','5','5','.','2','5','5','.','2','5','5','.','0','0','0',
-     'd','4','1','d','8','c','d','9','8','f','0','0','b','2','0','4','e','9','8','0','0','9','9','8','e','c','f','8','4','2','7','e','\0'};
-    printf("default settings: %s\r\n",defaultIP);
-    EEPROM_SPI_WriteBuffer((uint8_t *)defaultIP, Addr, settingsLenInSPI);
+    if (ABONENT_or_BASE == 0) { //База
+        char defaultIP[settingsLenInSPI] =
+        {'1','9','2','.','1','6','8','.','0','0','1','.','1','2','2',
+         '1','9','2','.','1','6','8','.','0','0','1','.','1','0','0',
+         '1','9','2','.','1','6','8','.','0','0','1','.','0','0','1',
+         '2','5','5','.','2','5','5','.','2','5','5','.','0','0','0',
+         'd','4','1','d','8','c','d','9','8','f','0','0','b','2','0','4','e','9','8','0','0','9','9','8','e','c','f','8','4','2','7','e','\0'};
+        printf("default settings: %s\r\n",defaultIP);
+        EEPROM_SPI_WriteBuffer((uint8_t *)defaultIP, Addr, settingsLenInSPI);
+    } else {//Абонент
+        char defaultIP[settingsLenInSPI] =
+        {'1','9','2','.','1','6','8','.','0','0','1','.','1','0','0',
+         '1','9','2','.','1','6','8','.','0','0','1','.','1','2','2',
+         '1','9','2','.','1','6','8','.','0','0','1','.','0','0','1',
+         '2','5','5','.','2','5','5','.','2','5','5','.','0','0','0',
+         'd','4','1','d','8','c','d','9','8','f','0','0','b','2','0','4','e','9','8','0','0','9','9','8','e','c','f','8','4','2','7','e','\0'};
+        printf("default settings: %s\r\n",defaultIP);
+        EEPROM_SPI_WriteBuffer((uint8_t *)defaultIP, Addr, settingsLenInSPI);
+    }
 }
 
 void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
@@ -570,10 +580,17 @@ void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
 
 void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr){ //только 16 - ричный
     printf("copyDefaultMACToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-    char defaultMAC[18] =
-    {'0','0',':','1','5',':','4','2',':','B','F',':','F','0',':','5','2','\0'};
-    printf("default MAC: %s\r\n",defaultMAC);
-    EEPROM_SPI_WriteBuffer((uint8_t *)defaultMAC, Addr, 18);
+    if (ABONENT_or_BASE == 0) { //База
+        char defaultMAC[18] =
+        {'0','0',':','1','5',':','4','2',':','B','F',':','F','0',':','5','2','\0'};
+        printf("default MAC: %s\r\n",defaultMAC);
+        EEPROM_SPI_WriteBuffer((uint8_t *)defaultMAC, Addr, 18);
+    } else {//абонент
+        char defaultMAC[18] =
+        {'0','0',':','1','5',':','4','2',':','B','F',':','F','0',':','5','3','\0'};
+        printf("default MAC: %s\r\n",defaultMAC);
+        EEPROM_SPI_WriteBuffer((uint8_t *)defaultMAC, Addr, 18);
+    }
 }
 
 void copyMacToAdressSPIEEPROM(uint16_t Addr){
@@ -1991,32 +2008,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
     printf("Test UART...OK\r\n");
-    isSdCartOn(); //Проверка вставлена ли SD карта
-//    workI2C_EEPROM();
-    initSPI_EEPROM();
-
-    // считываем значение по адресу markTimeFromReset
-    uint8_t twinReset[1];
-    EEPROM_SPI_ReadBuffer(twinReset, markTimeFromReset, 1);
-    if (twinReset[0] == 0x88)
-    {
-        setResetTwice = 1;
-        printf("Set reset twice  - restore default srttings!!!\r\n");
-        //Был нажат двойной сброс - восстановить значения по умолчанию
-    }
-    else
-    {
-        twinReset[0] = 0x88;
-        EEPROM_SPI_WriteBuffer(twinReset, markTimeFromReset, 1);
-    }
-
-    if (setResetTwice == 0)
-        HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу markTimeFromReset отсутствие двойного нажатия - FF
-    twinReset[0] = 0xFF;
-    EEPROM_SPI_WriteBuffer(twinReset, markTimeFromReset, 1);
-
-    workSPI_EEPROM();
-
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
         printf("\rWORK in BASE INTRON\r\n");
@@ -2025,6 +2016,29 @@ int main(void)
         ABONENT_or_BASE = 1;
         printf("\rWORK in ABONENT\r\n");
     }
+
+    isSdCartOn(); //Проверка вставлена ли SD карта
+//    workI2C_EEPROM();
+    initSPI_EEPROM();
+
+    // считываем значение по адресу markTimeFromReset
+    uint8_t twinReset[1];
+    EEPROM_SPI_ReadBuffer(twinReset, resetTwiceFlag, 1);
+    if (twinReset[0] == 0x88) {
+        setResetTwice = 1;
+        printf("Set reset twice  - restore default srttings!!!\r\n");
+        //Был нажат двойной сброс - восстановить значения по умолчанию
+    }
+    else {
+        twinReset[0] = 0x88;
+        EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
+    }
+    if (setResetTwice == 0) HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу markTimeFromReset отсутствие двойного нажатия - FF
+
+    twinReset[0] = 0xFF;
+    EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
+
+    workSPI_EEPROM();
 
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();

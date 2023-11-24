@@ -631,6 +631,24 @@ void  SetParaametersFromAdressSPIEEPROM(uint16_t Addr){
 void  SetMacFromAdressSPIEEPROM(uint16_t Addr){
     printf("SetMacFromAdressSPIEEPROM 0x%.4X \r\n",Addr);
 
+    printf("Set MAC adress in HEX from adress SPI eeprom 0x%.4X \r\n", Addr);
+    char tmp[18];
+    char tmp2[2];
+    EEPROM_SPI_ReadBuffer((uint8_t *)tmp, Addr, 18);
+    strncpy(mac,tmp,18);
+    strncpy(tmp2, tmp, 2);
+    macaddr[0] = convertHexToDecimal(tmp2);
+    strncpy(tmp2,tmp+3, 2);
+    macaddr[1] = convertHexToDecimal(tmp2);
+    strncpy(tmp2,tmp+6, 2);
+    macaddr[2] = convertHexToDecimal(tmp2);
+    strncpy(tmp2,tmp+9, 2);
+    macaddr[3] = convertHexToDecimal(tmp2);
+    strncpy(tmp2,tmp+12, 2);
+    macaddr[4] = convertHexToDecimal(tmp2);
+    strncpy(tmp2,tmp+15, 2);
+    macaddr[5] = convertHexToDecimal(tmp2);
+    printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
 
 }
 
@@ -651,10 +669,6 @@ void markSPIEEPROMasOld(uint16_t Addr){
 
 isSPIEEPROMClear isSPIEEPROMclear(uint16_t Addr)
 {
-//    testSpiEepromReadPage(markEEPROMSPIclear);
-//    EEPROM_PAGE_ERASE(markEEPROMSPIclear);
-//    testSpiEepromReadPage(markEEPROMSPIclear);
-
     uint16_t numByte = 16;
     char RxBuffer[16] = {0x00};
     char clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};

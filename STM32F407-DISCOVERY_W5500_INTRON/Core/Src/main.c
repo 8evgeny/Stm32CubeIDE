@@ -164,7 +164,7 @@ static void MX_RNG_Init(void);
 static void MX_RTC_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-
+void testSpiEepromReadPage(uint32_t adr);
 void UART_Printf(const char* fmt, ...);
 extern void print_network_information(void);
 //void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -985,6 +985,26 @@ void net_ini_WIZNET(uint8_t socketTCP)
         printf("socket %d listening\r\n", sn_TCP);
 }
 
+void isSdCartOn()
+{
+    f_mount(&fs, "", 0);
+    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+
+    if (result == FR_OK)
+    {
+        Printf("SD active\r\n");
+    }
+    else
+    {
+        sdCartOn = 0;
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
+        printf("not found SD\r\n");
+    }
+    f_close(&fil);
+}
+
+
 void workI2C_EEPROM()
 {
 //      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
@@ -994,18 +1014,9 @@ void workI2C_EEPROM()
 //      Printf("FsEeprom TEST ... ");
 //      FsForEeprom_test();
 
-    f_mount(&fs, "", 0);
-    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
-    if (result == 0)
-    {
-        Printf("SD active\r\n");
-    }
-    else
-    {
-        sdCartOn = 0;
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);
 //        markEEPROMasNew(); //Ручная установка EEPROM как NEW
+    if (sdCartOn == 0)
+    {
         if (eepromCLEAR == isEEPROMclear()) //Проверяем EEPROM новая ли
         {
             printf("EEPROM: NEW\n");
@@ -1022,9 +1033,6 @@ void workI2C_EEPROM()
 
     }
 
-    if (result != 0)
-        printf("not found SD\r\n");
-    f_close(&fil);
     if (sdCartOn == 1)
     {
         setParametersFromSD();
@@ -1075,9 +1083,19 @@ void workI2C_EEPROM()
     }
 }
 
+void initSPI_EEPROM()
+{
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
+    EEPROM_SPI_INIT(&hspi3);
+    printEepromSpiStatus();
+}
+
 void workSPI_EEPROM()
 {
-        testSPI_EEPROM();//Test с SPI EEPROM
+//    testSPI_EEPROM();
+//    testSpiEepromReadPage(0x0000);
+//    testSpiEepromReadPage(0x0100);
+//    testSpiEepromReadPage(0x0200);
     //    copyDataFromI2cEepromToSpiEeprom();//Копируем данные из I2C eeprom в SPI eeprom (Settings и Mac)
     if (sdCartOn == 1)
     {
@@ -1250,7 +1268,7 @@ void testSpiEepromWriteRead()
     uint8_t RxBuffer[256] = {0x00};
     uint8_t TxBuffer[256] = {0x00};
     uint8_t err = 0;
-    for (uint32_t adr = 0; adr< 0xFFFFF; adr += 4096)
+    for (uint32_t adr = 0; adr< 0x1F000; adr += 4096) // должно быть 31 итерация
     {
         sprintf(TxBuffer,"%d", HAL_GetTick());
         EEPROM_SPI_WritePage(TxBuffer, adr, (uint16_t)256);
@@ -1293,10 +1311,10 @@ void testSpiEepromReadPage(uint32_t adr)
 {
     uint8_t RxBuffer[256] = {0x00};
     HAL_Delay(1000);
-    Printf("\nTest EEPROM_SPI_ReadPage\n");
+    Printf("Test EEPROM_SPI_ReadPage\r\n");
     EEPROM_SPI_ReadBuffer(RxBuffer, adr, (uint16_t)256);
 //    HAL_Delay(2000);
-    Printf("RX Buffer after read: %s\n", RxBuffer);
+    Printf("adress %d read: %s\r\n", adr, RxBuffer);
 }
 
 void testSpiEepromWriteByte(uint32_t adr)
@@ -1315,9 +1333,7 @@ void testSpiEepromWriteByte(uint32_t adr)
 void testSPI_EEPROM()
 {
     printf("\n-- Tests_SPI_EEPROM --\r\n");
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
-    EEPROM_SPI_INIT(&hspi3);
-    printEepromSpiStatus();
+
 //    EEPROM_CHIP_ERASE();
 //    EEPROM_PAGE_ERASE(0x00000100); //PAGE_ERASE не работает
     testSpiEepromWriteRead();
@@ -1762,7 +1778,9 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
     printf("Test UART...OK\r\n");
-    workI2C_EEPROM(); //  выбор eeprom i2c_eeprom и загрузка параметров
+    isSdCartOn(); //Проверка вставлена ли SD карта
+    workI2C_EEPROM();
+
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET) //Я в централи - сигналл выдает ПЛИС
     {
         ABONENT_or_BASE = 0;
@@ -1773,11 +1791,13 @@ int main(void)
         ABONENT_or_BASE = 1;
         printf("\rWORK in ABONENT\r\n");
     }
+
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
 //    net_ini_WIZNET(0); //TCP socket 0
 
+    initSPI_EEPROM();
     workSPI_EEPROM();
 
   /* USER CODE END 2 */

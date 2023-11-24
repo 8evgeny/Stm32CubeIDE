@@ -1191,7 +1191,7 @@ void isSdCartOn()
 }
 
 void workI2C_EEPROM()
-{
+{//Забираем только MAC !!!
 //      simpleTestI2C_EEPROM(simpleTestEEPROMadress);
 
 //Дальше работаю без  littleFsInit  глюки при записи больших файлов !!!
@@ -1200,28 +1200,28 @@ void workI2C_EEPROM()
 //      FsForEeprom_test();
 
 //        markEEPROMasNew(); //Ручная установка EEPROM как NEW
-    if (sdCartOn == 0)
-    {
-        if (eepromCLEAR == isEEPROMclear(markEEPROMclear)) //Проверяем EEPROM новая ли
-        {
-            printf("EEPROM: NEW\n");
-            // Пишем на eeprom все параметры по умолчанию
-            copyDefaultParametersToAdressEEPROM(ipSettingAdressInEEPROM);
-            copyDefaultMACToAdressEEPROM(macAdressInEEPROM);
-            SetMacFromAdressEEPROM(macAdressInEEPROM);
-            markEEPROMasOld(); // Снимаем признак новая EEPROM
-        }
-        else
-        {
-            printf("EEPROM: OLD\r\n");
-        }
+//    if (sdCartOn == 0)
+//    {
+//        if (eepromCLEAR == isEEPROMclear(markEEPROMclear)) //Проверяем EEPROM новая ли
+//        {
+//            printf("EEPROM: NEW\n");
+//            // Пишем на eeprom все параметры по умолчанию
+//            copyDefaultParametersToAdressEEPROM(ipSettingAdressInEEPROM);
+//            copyDefaultMACToAdressEEPROM(macAdressInEEPROM);
+//            SetMacFromAdressEEPROM(macAdressInEEPROM);
+//            markEEPROMasOld(); // Снимаем признак новая EEPROM
+//        }
+//        else
+//        {
+//            printf("EEPROM: OLD\r\n");
+//        }
 
-    }
+//    }
 
     if (sdCartOn == 1)
     {
-        setParametersFromSD();
-        copyParametersFromSDToAdressEEPROM(ipSettingAdressInEEPROM);
+//        setParametersFromSD();
+//        copyParametersFromSDToAdressEEPROM(ipSettingAdressInEEPROM);
         copyMacToAdressEEPROM(macAdressInEEPROM);
         setMacFromSD();
 #ifndef   NEW_HTTP_SERVER
@@ -1236,7 +1236,7 @@ void workI2C_EEPROM()
 #endif
     } else //Установка параметров с i2c eeprom
     {
-        SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
+//        SetParaametersFromAdressEEPROM(ipSettingAdressInEEPROM);
         SetMacFromAdressEEPROM(macAdressInEEPROM);
 #ifndef   NEW_HTTP_SERVER
         //Загружаем длины файлов
@@ -1289,7 +1289,7 @@ void workSPI_EEPROM()
                 printf("SPI EEPROM: NEW\n");
             // Пишем на eeprom все параметры по умолчанию
                 copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
-                copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
+//                copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
                 markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
             }
             else
@@ -1303,18 +1303,18 @@ void workSPI_EEPROM()
         {
             setParametersFromSD();
             copyParametersFromSDToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM); //Копируем Settings из SD в SPI eeprom
-            copyMacToAdressSPIEEPROM(macAdressInSPIEEPROM);                    //Копируем MAC из SD в SPI eeprom
-            setMacFromSD();
+//            copyMacToAdressSPIEEPROM(macAdressInSPIEEPROM);                    //Копируем MAC из SD в SPI eeprom
+//            setMacFromSD();
         } else //Установка параметров с SPI eeprom
         {
             SetParaametersFromAdressSPIEEPROM(ipSettingAdressInEEPROM);
-            SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
+//            SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
         }
     } else {//Дважды нажат сброс - восстановление дефолтных значений
         copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
-        copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
+//        copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
         SetParaametersFromAdressSPIEEPROM(ipSettingAdressInEEPROM);
-        SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
+//        SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
     }
 }
 #if 0
@@ -2018,7 +2018,7 @@ int main(void)
     }
 
     isSdCartOn(); //Проверка вставлена ли SD карта
-//    workI2C_EEPROM();
+    workI2C_EEPROM();
     initSPI_EEPROM();
 
     // считываем значение по адресу markTimeFromReset

@@ -1267,7 +1267,7 @@ void workSPI_EEPROM()
         if (eepromSPICLEAR == isSPIEEPROMclear(markEEPROMSPIclear)) //Проверяем EEPROM новая ли
         {
             printf("SPI EEPROM: NEW\n");
-//            // Пишем на eeprom все параметры по умолчанию
+        // Пишем на eeprom все параметры по умолчанию
             copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
             copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
             markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
@@ -1664,10 +1664,14 @@ void setNewHostIP(char * tmpbuf)
         else //EEPROM
         {
             printf("*****  write new host IP to eeprom  *****\n");
-            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_1, ipSettingAdressInEEPROM, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_2, ipSettingAdressInEEPROM + 4, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_3, ipSettingAdressInEEPROM + 8, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_4, ipSettingAdressInEEPROM + 12, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)host_IP_1, ipSettingAdressInSPIEEPROM, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)host_IP_2, ipSettingAdressInSPIEEPROM + 4, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)host_IP_3, ipSettingAdressInSPIEEPROM + 8, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)host_IP_4, ipSettingAdressInSPIEEPROM + 12, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_1, ipSettingAdressInEEPROM, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_2, ipSettingAdressInEEPROM + 4, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_3, ipSettingAdressInEEPROM + 8, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)host_IP_4, ipSettingAdressInEEPROM + 12, 3);
         }
     }
 }
@@ -1740,10 +1744,14 @@ void setNewMaskIP(char * tmpbuf)
         else //EEPROM
         {
             printf("*****  write new mask IP to eeprom  *****\n");
-            BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_1, ipSettingAdressInEEPROM + 45, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_2, ipSettingAdressInEEPROM + 49, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_3, ipSettingAdressInEEPROM + 54, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_4, ipSettingAdressInEEPROM + 58, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)mask_IP_1, ipSettingAdressInSPIEEPROM + 45, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)mask_IP_2, ipSettingAdressInSPIEEPROM + 49, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)mask_IP_3, ipSettingAdressInSPIEEPROM + 54, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)mask_IP_4, ipSettingAdressInSPIEEPROM + 58, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_1, ipSettingAdressInEEPROM + 45, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_2, ipSettingAdressInEEPROM + 49, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_3, ipSettingAdressInEEPROM + 54, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)mask_IP_4, ipSettingAdressInEEPROM + 58, 3);
         }
     }
 }
@@ -1816,10 +1824,14 @@ void setNewGateIP(char * tmpbuf)
         else //EEPROM
         {
             printf("*****  write new gate IP to eeprom  *****\n");
-            BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_1, ipSettingAdressInEEPROM + 30, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_2, ipSettingAdressInEEPROM + 34, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_3, ipSettingAdressInEEPROM + 38, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_4, ipSettingAdressInEEPROM + 42, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)gate_IP_1, ipSettingAdressInSPIEEPROM + 30, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)gate_IP_2, ipSettingAdressInSPIEEPROM + 34, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)gate_IP_3, ipSettingAdressInSPIEEPROM + 38, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)gate_IP_4, ipSettingAdressInSPIEEPROM + 42, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_1, ipSettingAdressInEEPROM + 30, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_2, ipSettingAdressInEEPROM + 34, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_3, ipSettingAdressInEEPROM + 38, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)gate_IP_4, ipSettingAdressInEEPROM + 42, 3);
         }
     }
 }
@@ -1892,10 +1904,14 @@ void setNewDestIP(char * tmpbuf)
         else //EEPROM
         {
             printf("*****  write new dest IP to eeprom  *****\n");
-            BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_1, ipSettingAdressInEEPROM + 15, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_2, ipSettingAdressInEEPROM + 19, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_3, ipSettingAdressInEEPROM + 23, 3);
-            BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_4, ipSettingAdressInEEPROM + 27, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)dest_IP_1, ipSettingAdressInSPIEEPROM + 15, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)dest_IP_2, ipSettingAdressInSPIEEPROM + 19, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)dest_IP_3, ipSettingAdressInSPIEEPROM + 23, 3);
+            EEPROM_SPI_WriteBuffer((uint8_t *)dest_IP_4, ipSettingAdressInSPIEEPROM + 27, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_1, ipSettingAdressInEEPROM + 15, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_2, ipSettingAdressInEEPROM + 19, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_3, ipSettingAdressInEEPROM + 23, 3);
+//            BSP_EEPROM_WriteBuffer((uint8_t *)dest_IP_4, ipSettingAdressInEEPROM + 27, 3);
         }
     }
 }
@@ -1919,7 +1935,8 @@ void setNewPassword(char * tmpbuf)
     else //EEPROM
     {
         printf("*****  write new md5 to eeprom  *****\n");
-        BSP_EEPROM_WriteBuffer((uint8_t *)tmpbuf, ipSettingAdressInEEPROM + 60, 33);
+        EEPROM_SPI_WriteBuffer((uint8_t *)tmpbuf, ipSettingAdressInSPIEEPROM + 60, 33);
+//        BSP_EEPROM_WriteBuffer((uint8_t *)tmpbuf, ipSettingAdressInEEPROM + 60, 33);
     }
 }
 

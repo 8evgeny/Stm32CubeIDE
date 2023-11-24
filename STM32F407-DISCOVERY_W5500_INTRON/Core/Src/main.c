@@ -570,7 +570,9 @@ void  SetMacFromAdressSPIEEPROM(uint16_t Addr){
 
 void  markSPIEEPROMasNew(uint16_t Addr){
     printf("markSPIEEPROMasNew \r\n");
-
+    uint16_t numByte = 16;
+    char markNEW[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
+    EEPROM_SPI_WriteBuffer((uint8_t *)markNEW, Addr, numByte);
 
 }
 
@@ -1168,7 +1170,7 @@ void workSPI_EEPROM()
 //            // Пишем на eeprom все параметры по умолчанию
             copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
             copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
-            markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
+//            markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
         }
         else
         {

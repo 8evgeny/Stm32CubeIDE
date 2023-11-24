@@ -542,14 +542,29 @@ void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
      'd','4','1','d','8','c','d','9','8','f','0','0','b','2','0','4','e','9','8','0','0','9','9','8','e','c','f','8','4','2','7','e','\0'};
     printf("default settings: %s\r\n",defaultIP);
     EEPROM_SPI_WriteBuffer((uint8_t *)defaultIP, Addr, settingsLenInSPI);
-    uint8_t tmp[settingsLenInSPI];
-    EEPROM_SPI_ReadBuffer(tmp, Addr, settingsLenInSPI);
 }
 
 void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
-    printf("copyParametersFromSDToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-
-
+    printf("\nCopy IP settings from SD to adress 0x%.4X SPI eeprom\r\n",Addr);
+    char tmp[settingsLenInSPI];
+    f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
+    UINT rc;
+    f_read(&fil, tmp, 15, &rc);
+    f_close(&fil);
+    f_open(&fil, "dest_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+15, 15, &rc);
+    f_close(&fil);
+    f_open(&fil, "gate_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+30, 15, &rc);
+    f_close(&fil);
+    f_open(&fil, "mask_IP", FA_OPEN_ALWAYS | FA_READ );
+    f_read(&fil, tmp+45, 15, &rc);
+    f_close(&fil);
+    f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
+    f_gets(tmp+60, 33, &fil);
+    f_close(&fil);
+    printf("settings: \t\t%s\r\n",tmp);
+    EEPROM_SPI_WriteBuffer((uint8_t *)tmp, Addr, settingsLenInSPI);
 }
 
 void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr){ //только 16 - ричный
@@ -558,14 +573,23 @@ void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr){ //только 16 - рич�
     {'0','0',':','1','5',':','4','2',':','B','F',':','F','0',':','5','2','\0'};
     printf("default MAC: %s\r\n",defaultMAC);
     EEPROM_SPI_WriteBuffer((uint8_t *)defaultMAC, Addr, 18);
-    uint8_t tmp[18];
-    EEPROM_SPI_ReadBuffer(tmp, Addr,18);
 }
-
 
 void copyMacToAdressSPIEEPROM(uint16_t Addr){
     printf("copyMacToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-
+    char tmp[18];
+    FRESULT result = f_open(&fil, "mac16", FA_OPEN_ALWAYS | FA_READ );
+    if (result == FR_OK)
+    {
+        printf("\nCopy MAC adress from SD in Hex to adress 0x%.4X eeprom\r\n",Addr);
+        UINT rc;
+        f_read(&fil, tmp, 18, &rc);
+        f_close(&fil);
+        tmp[17]=0x00;
+        printf("MAC: %s\r\n",tmp);
+        EEPROM_SPI_WriteBuffer((uint8_t *)tmp, Addr, 18);
+        printf("MAC write from SD in Hex to adress 0x%.4X on SPI eprom\r\n", Addr);
+    }
 
 }
 
@@ -629,8 +653,6 @@ void  SetParaametersFromAdressSPIEEPROM(uint16_t Addr){
 }
 
 void  SetMacFromAdressSPIEEPROM(uint16_t Addr){
-    printf("SetMacFromAdressSPIEEPROM 0x%.4X \r\n",Addr);
-
     printf("Set MAC adress in HEX from adress SPI eeprom 0x%.4X \r\n", Addr);
     char tmp[18];
     char tmp2[2];
@@ -649,7 +671,6 @@ void  SetMacFromAdressSPIEEPROM(uint16_t Addr){
     strncpy(tmp2,tmp+15, 2);
     macaddr[5] = convertHexToDecimal(tmp2);
     printf("mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\r\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
-
 }
 
 void  markSPIEEPROMasNew(uint16_t Addr){
@@ -673,7 +694,7 @@ isSPIEEPROMClear isSPIEEPROMclear(uint16_t Addr)
     char RxBuffer[16] = {0x00};
     char clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
     EEPROM_SPI_ReadBuffer((uint8_t *)RxBuffer, Addr, numByte);
-    printf("adress 0x%X read: %.16s\r\n", Addr, RxBuffer);
+//    printf("adress 0x%X read: %.16s\r\n", Addr, RxBuffer);
     if(strncmp(RxBuffer, clear, 15) == 0)
         return eepromSPICLEAR;
     else
@@ -1233,13 +1254,12 @@ void initSPI_EEPROM()
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);
     EEPROM_SPI_INIT(&hspi3);
-    printEepromSpiStatus();
+//    printEepromSpiStatus();
 }
 
 void workSPI_EEPROM()
 {
 //    testSPI_EEPROM();
-//    testSpiEepromReadPage(0x0000);
 
 //    markSPIEEPROMasNew(markEEPROMSPIclear); //Ручная установка SPIEEPROM как NEW
     if (sdCartOn == 0)
@@ -1250,7 +1270,7 @@ void workSPI_EEPROM()
 //            // Пишем на eeprom все параметры по умолчанию
             copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
             copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
-//            markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
+            markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
         }
         else
         {

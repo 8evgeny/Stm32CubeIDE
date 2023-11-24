@@ -534,7 +534,16 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
     printf("copyDefaultParametersToAdressSPIEEPROM 0x%.4X \r\n",Addr);
 
-
+    char defaultIP[settingsLenInSPI] =
+    {'1','9','2','.','1','6','8','.','0','0','1','.','2','2','2',
+     '1','9','2','.','1','6','8','.','0','0','1','.','2','0','0',
+     '1','9','2','.','1','6','8','.','0','0','1','.','0','0','1',
+     '2','5','5','.','2','5','5','.','2','5','5','.','0','0','0',
+     'd','4','1','d','8','c','d','9','8','f','0','0','b','2','0','4','e','9','8','0','0','9','9','8','e','c','f','8','4','2','7','e','\0'};
+    printf("default settings: %s\r\n",defaultIP);
+    EEPROM_SPI_WriteBuffer((uint8_t *)defaultIP, Addr, settingsLenInSPI);
+    uint8_t tmp[settingsLenInSPI];
+    EEPROM_SPI_ReadBuffer(tmp, Addr, settingsLenInSPI);
 }
 
 void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){

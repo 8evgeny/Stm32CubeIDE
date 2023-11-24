@@ -572,7 +572,60 @@ void copyMacToAdressSPIEEPROM(uint16_t Addr){
 void  SetParaametersFromAdressSPIEEPROM(uint16_t Addr){
     printf("SetParaametersFromAdressSPIEEPROM 0x%.4X \r\n",Addr);
 
+    char tmp[settingsLenInSPI];
+    char tmp2[3];
 
+    EEPROM_SPI_ReadBuffer((uint8_t *)tmp, Addr, settingsLenInSPI);
+    printf("settings: %.93s\r\n",tmp);
+
+    strncpy(host_IP,tmp,15);
+    strncpy(dest_IP,tmp+15,15);
+    strncpy(gate_IP,tmp+30,15);
+    strncpy(mask_IP,tmp+45,15);
+
+    strncpy(tmp2,tmp,3);
+    ipaddr[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+4,3);
+    ipaddr[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+8,3);
+    ipaddr[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+12,3);
+    ipaddr[3] = atoi(tmp2);
+
+    strncpy(tmp2,tmp+15,3);
+    destip[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+19,3);
+    destip[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+23,3);
+    destip[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+27,3);
+    destip[3] = atoi(tmp2);
+
+    strncpy(tmp2,tmp+30,3);
+    ipgate[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+34,3);
+    ipgate[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+38,3);
+    ipgate[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+42,3);
+    ipgate[3] = atoi(tmp2);
+
+    strncpy(tmp2,tmp+45,3);
+    ipmask[0] = atoi(tmp2);
+    strncpy(tmp2,tmp+49,3);
+    ipmask[1] = atoi(tmp2);
+    strncpy(tmp2,tmp+53,3);
+    ipmask[2] = atoi(tmp2);
+    strncpy(tmp2,tmp+57,3);
+    ipmask[3] = atoi(tmp2);
+
+    strncpy(MD5, tmp+60, 32);
+
+    printf("host_IP: %d.%d.%d.%d\r\n",ipaddr[0],ipaddr[1],ipaddr[2],ipaddr[3]);
+    printf("dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
+    printf("gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
+    printf("mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
+    printf("md5: %.32s\r\n", MD5);
 }
 
 void  SetMacFromAdressSPIEEPROM(uint16_t Addr){

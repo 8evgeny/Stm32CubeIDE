@@ -1998,7 +1998,7 @@ int main(void)
 //    net_ini();
 #endif
 
-//    net_ini_WIZNET(0); //TCP socket 0
+    net_ini_WIZNET(0); //TCP socket 0
 
   /* USER CODE END 2 */
 

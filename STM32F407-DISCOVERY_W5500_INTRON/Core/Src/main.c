@@ -543,8 +543,8 @@ void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
 
 }
 
-void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr)
-{
+void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr){
+    printf("copyDefaultMACToAdressSPIEEPROM 0x%.4X \r\n",Addr);
 
 
 }
@@ -568,33 +568,34 @@ void  SetMacFromAdressSPIEEPROM(uint16_t Addr){
 
 }
 
-void  markSPIEEPROMasNew(){
+void  markSPIEEPROMasNew(uint16_t Addr){
     printf("markSPIEEPROMasNew \r\n");
 
 
+}
+
+void markSPIEEPROMasOld(uint16_t Addr){
+    printf("markSPIEEPROMasOld \r\n");
+    uint16_t numByte = 16;
+    char markOLD[16] = {0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x08,0x00};
+    EEPROM_SPI_WriteBuffer((uint8_t *)markOLD, Addr, numByte);
 }
 
 isSPIEEPROMClear isSPIEEPROMclear(uint16_t Addr)
 {
 //    testSpiEepromReadPage(markEEPROMSPIclear);
 //    EEPROM_PAGE_ERASE(markEEPROMSPIclear);
-    testSpiEepromReadPage(markEEPROMSPIclear);
-    uint8_t RxBuffer[256] = {0x00};
-    Printf("Test EEPROM_SPI_ReadPage\r\n");
-    EEPROM_SPI_ReadBuffer(RxBuffer, Addr, (uint16_t)256);
-    Printf("adress 0x%X read: %.256s\r\n", Addr, RxBuffer);
+//    testSpiEepromReadPage(markEEPROMSPIclear);
 
-
-
-//    return eepromSPICLEAR;
-
-    return eepromSPINotCLEAR;
-}
-
-void markSPIEEPROMasOld(){
-    printf("markSPIEEPROMasOld \r\n");
-
-
+    uint16_t numByte = 16;
+    char RxBuffer[16] = {0x00};
+    char clear[16] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00};
+    EEPROM_SPI_ReadBuffer((uint8_t *)RxBuffer, Addr, numByte);
+    printf("adress 0x%X read: %.16s\r\n", Addr, RxBuffer);
+    if(strncmp(RxBuffer, clear, 15) == 0)
+        return eepromSPICLEAR;
+    else
+        return eepromSPINotCLEAR;
 }
 
 void copyDefaultParametersToAdressEEPROM(uint16_t Addr)
@@ -1158,7 +1159,7 @@ void workSPI_EEPROM()
 //    testSPI_EEPROM();
 //    testSpiEepromReadPage(0x0000);
 
-//    markSPIEEPROMasNew(); //Ручная установка SPIEEPROM как NEW
+//    markSPIEEPROMasNew(markEEPROMSPIclear); //Ручная установка SPIEEPROM как NEW
     if (sdCartOn == 0)
     {
         if (eepromSPICLEAR == isSPIEEPROMclear(markEEPROMSPIclear)) //Проверяем EEPROM новая ли
@@ -1167,7 +1168,7 @@ void workSPI_EEPROM()
 //            // Пишем на eeprom все параметры по умолчанию
             copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
             copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
-            markSPIEEPROMasOld(); // Снимаем признак новая EEPROM
+            markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
         }
         else
         {
@@ -1348,7 +1349,7 @@ void sendHANDSHAKE(uint8_t udpSocket) {
 
 void testSpiEepromWriteRead()
 {
-    //25AA1024  page - 256
+    //25AA1024  page = 256 byte,  512 pages
     printf("\ntestSpiEepromClearWriteRead\r\n");
     uint8_t RxBuffer[256] = {0x00};
     uint8_t TxBuffer[256] = {0x00};

@@ -1966,6 +1966,24 @@ void setNewPassword(char * tmpbuf)
     }
 }
 
+void checkTwinReset()
+{
+    // считываем значение по адресу resetTwiceFlag
+    uint8_t twinReset[1];
+    EEPROM_SPI_ReadBuffer(twinReset, resetTwiceFlag, 1);
+    if (twinReset[0] == 0x88) {
+        setResetTwice = 1; //Был нажат двойной сброс - восстановить значения по умолчанию
+        printf("Set reset twice  - restore default srttings!!!\r\n");
+    }
+    else {
+        twinReset[0] = 0x88;
+        EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
+    }
+    if (setResetTwice == 0) HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу resetTwiceFlag отсутствие двойного нажатия - FF
+    twinReset[0] = 0xFF;
+    EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -2020,22 +2038,7 @@ int main(void)
     isSdCartOn();       //Проверка вставлена ли SD карта
     workI2C_EEPROM();   //Только MAC
     initSPI_EEPROM();   //IP настройки
-
-    // считываем значение по адресу resetTwiceFlag
-    uint8_t twinReset[1];
-    EEPROM_SPI_ReadBuffer(twinReset, resetTwiceFlag, 1);
-    if (twinReset[0] == 0x88) {
-        setResetTwice = 1; //Был нажат двойной сброс - восстановить значения по умолчанию
-        printf("Set reset twice  - restore default srttings!!!\r\n");
-    }
-    else {
-        twinReset[0] = 0x88;
-        EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
-    }
-    if (setResetTwice == 0) HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу resetTwiceFlag отсутствие двойного нажатия - FF
-    twinReset[0] = 0xFF;
-    EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
-
+    checkTwinReset();   //Проверка нажатия сброса 2 раза за 1 секунду - восстановление Default settings
     workSPI_EEPROM();
 
 #ifndef   NEW_HTTP_SERVER

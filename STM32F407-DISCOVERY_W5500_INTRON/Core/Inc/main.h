@@ -110,6 +110,7 @@ EEPROM I2C : ATMEL 24C1024 (24C256)
 #define  settingsLenInSPI           93
 #define  macAdressInSPIEEPROM       0x0120
 #define  markEEPROMSPIclear         0x01A0
+#define  markTimeFromReset          0x0200
 /*25LC1024：1Mbit= 1024Kbit =128KB  = 512*256B = 131072 X 8bit
  Page 1     Address: 00000-000FF length 256b   IP settings
  Page 2     Address: 00100-001FF length 256b

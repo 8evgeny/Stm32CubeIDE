@@ -77,6 +77,7 @@ uint8_t destipHOST[4] = {192,168,1,11}; //для тестов
 
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
+uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
 
 uint8_t txCyclon[MAX_PACKET_LEN];
@@ -1259,34 +1260,42 @@ void initSPI_EEPROM()
 
 void workSPI_EEPROM()
 {
-//    testSPI_EEPROM();
-
-//    markSPIEEPROMasNew(markEEPROMSPIclear); //Ручная установка SPIEEPROM как NEW
-    if (sdCartOn == 0)
+    if (setResetTwice == 0)
     {
-        if (eepromSPICLEAR == isSPIEEPROMclear(markEEPROMSPIclear)) //Проверяем EEPROM новая ли
+    //    testSPI_EEPROM();
+
+    //    markSPIEEPROMasNew(markEEPROMSPIclear); //Ручная установка SPIEEPROM как NEW
+        if (sdCartOn == 0)
         {
-            printf("SPI EEPROM: NEW\n");
-        // Пишем на eeprom все параметры по умолчанию
-            copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
-            copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
-            markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
+            if (eepromSPICLEAR == isSPIEEPROMclear(markEEPROMSPIclear)) //Проверяем EEPROM новая ли
+            {
+                printf("SPI EEPROM: NEW\n");
+            // Пишем на eeprom все параметры по умолчанию
+                copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
+                copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
+                markSPIEEPROMasOld(markEEPROMSPIclear); // Снимаем признак новая EEPROM
+            }
+            else
+            {
+                printf("SPI EEPROM: OLD\r\n");
+            }
         }
-        else
+
+
+        if (sdCartOn == 1)
         {
-            printf("SPI EEPROM: OLD\r\n");
+            setParametersFromSD();
+            copyParametersFromSDToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM); //Копируем Settings из SD в SPI eeprom
+            copyMacToAdressSPIEEPROM(macAdressInSPIEEPROM);                    //Копируем MAC из SD в SPI eeprom
+            setMacFromSD();
+        } else //Установка параметров с SPI eeprom
+        {
+            SetParaametersFromAdressSPIEEPROM(ipSettingAdressInEEPROM);
+            SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
         }
-    }
-
-
-    if (sdCartOn == 1)
-    {
-        setParametersFromSD();
-        copyParametersFromSDToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM); //Копируем Settings из SD в SPI eeprom
-        copyMacToAdressSPIEEPROM(macAdressInSPIEEPROM);                    //Копируем MAC из SD в SPI eeprom
-        setMacFromSD();
-    } else //Установка параметров с SPI eeprom
-    {
+    } else {//Дважды нажат сброс - восстановление дефолтных значений
+        copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
+        copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
         SetParaametersFromAdressSPIEEPROM(ipSettingAdressInEEPROM);
         SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
     }
@@ -1980,11 +1989,34 @@ int main(void)
   MX_RTC_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+
     printf("Test UART...OK\r\n");
     isSdCartOn(); //Проверка вставлена ли SD карта
 //    workI2C_EEPROM();
     initSPI_EEPROM();
+
+    // считываем значение по адресу markTimeFromReset
+    uint8_t twinReset[1];
+    EEPROM_SPI_ReadBuffer(twinReset, markTimeFromReset, 1);
+    if (twinReset[0] == 0x88)
+    {
+        setResetTwice = 1;
+        printf("Set reset twice  - restore default srttings!!!\r\n");
+        //Был нажат двойной сброс - восстановить значения по умолчанию
+    }
+    else
+    {
+        twinReset[0] = 0x88;
+        EEPROM_SPI_WriteBuffer(twinReset, markTimeFromReset, 1);
+    }
+
+    if (setResetTwice == 0)
+        HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу markTimeFromReset отсутствие двойного нажатия - FF
+    twinReset[0] = 0xFF;
+    EEPROM_SPI_WriteBuffer(twinReset, markTimeFromReset, 1);
+
     workSPI_EEPROM();
+
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
         printf("\rWORK in BASE INTRON\r\n");

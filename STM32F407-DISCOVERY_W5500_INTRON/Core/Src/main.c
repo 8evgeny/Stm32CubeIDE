@@ -552,10 +552,14 @@ void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
 
 }
 
-void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr){
+void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr){ //только 16 - ричный
     printf("copyDefaultMACToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-
-
+    char defaultMAC[18] =
+    {'0','0',':','1','5',':','4','2',':','B','F',':','F','0',':','5','2','\0'};
+    printf("default MAC: %s\r\n",defaultMAC);
+    EEPROM_SPI_WriteBuffer((uint8_t *)defaultMAC, Addr, 18);
+    uint8_t tmp[18];
+    EEPROM_SPI_ReadBuffer(tmp, Addr,18);
 }
 
 

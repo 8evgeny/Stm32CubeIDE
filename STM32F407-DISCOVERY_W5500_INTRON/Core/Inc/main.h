@@ -224,12 +224,10 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 #define HOLD_EEPROM_Pin GPIO_PIN_1
 #define HOLD_EEPROM_GPIO_Port GPIOE
-
+/* USER CODE BEGIN Private defines */
 #define  blue_blink HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET); HAL_Delay(100); HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET); HAL_Delay(100);
 #define  red_blink HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_SET); HAL_Delay(100); HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET); HAL_Delay(100);
 #define  green_blink HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET); HAL_Delay(100); HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET); HAL_Delay(100);
-/* USER CODE BEGIN Private defines */
-
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

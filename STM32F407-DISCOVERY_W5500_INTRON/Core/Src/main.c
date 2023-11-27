@@ -2028,18 +2028,58 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-    printf("Test UART...OK\r\n");
 //Определяем в каком мы режиме - рабочем или технологическом
+//    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_RESET){ //Для отладки кода
+        printf("write MAC Mode...\r\n");
+        char tmp[18];
+        char tmp2[2];
+        HAL_StatusTypeDef  result = HAL_TIMEOUT;
 
+        while(result != HAL_OK) {
+            result = HAL_UART_Receive(&huart2, (uint8_t*)tmp, 17, 1000);
+            HAL_Delay(100);
+        }
+
+        printf ("Received new MAC: %.17s", tmp);
+        strncpy(mac,tmp,18);
+        strncpy(tmp2,tmp,2);
+        macaddr[0] = convertHexToDecimal(tmp2);
+        strncpy(tmp2,tmp+3,2);
+        macaddr[1] = convertHexToDecimal(tmp2);
+        strncpy(tmp2,tmp+6,2);
+        macaddr[2] = convertHexToDecimal(tmp2);
+        strncpy(tmp2,tmp+9,2);
+        macaddr[3] = convertHexToDecimal(tmp2);
+        strncpy(tmp2,tmp+12,2);
+        macaddr[4] = convertHexToDecimal(tmp2);
+        strncpy(tmp2,tmp+15,2);
+        macaddr[5] = convertHexToDecimal(tmp2);
+        printf("MAC: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+
+        tmp[17]=0x00;
+        int writeRes = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, macAdressInEEPROM, 18);
+        printf("MAC write from UART in Hex to adress 0x%.4X on eprom: %d\r\n", macAdressInEEPROM, writeRes);
+
+        while (1)
+        {
+            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+            HAL_Delay(1000);
+            printf ("Change FPGA firmware");
+        }
+    }
+    printf("normal mode (no write MAC)\r\n");
 
 
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
-        printf("\rWORK in BASE INTRON\r\n");
+        printf("work in BASE\r\n");
     }
     else { //Я в абоненте - сигналл выдает ПЛИС
         ABONENT_or_BASE = 1;
-        printf("\rWORK in ABONENT\r\n");
+        printf("work in ABONENT\r\n");
     }
 
     isSdCartOn();       //Проверка вставлена ли SD карта
@@ -2719,6 +2759,8 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+      HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+      HAL_Delay(100);
   }
   /* USER CODE END Error_Handler_Debug */
 }

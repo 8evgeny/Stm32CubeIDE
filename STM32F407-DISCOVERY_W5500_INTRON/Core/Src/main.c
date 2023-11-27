@@ -2029,14 +2029,19 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 //Определяем в каком мы режиме - рабочем или технологическом
-//    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_RESET){ //Технологический режим - сигнал выдает ПЛИС
-    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_SET){ //Для отладки кода
+//    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС
+    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_RESET){ //Для отладки кода
         printf("write MAC Mode...\r\n");
         char tmp[18];
         char tmp2[2];
 HAL_UART_Transmit(&huart2, (uint8_t*)"Test_UART2\r\n", 12, 1000);
-        while(1) {
-            HAL_StatusTypeDef result = HAL_UART_Receive(&huart2, (uint8_t*)tmp, 17, 1000);
+        while(1)
+        {
+            HAL_UART_StateTypeDef state = HAL_UART_GetState (&huart6);
+            printf("state = %d\r\n",state); // 32 - Ready
+
+            HAL_StatusTypeDef result = HAL_UART_Receive_IT(&huart6, (uint8_t*)tmp, 17);
+            printf("result = %d\r\n",result);
             if (result == HAL_OK)
                 break;
             HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);

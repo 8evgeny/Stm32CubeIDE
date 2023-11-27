@@ -2237,7 +2237,7 @@ static void MX_IWDG_Init(void)
 
   /* USER CODE END IWDG_Init 1 */
   hiwdg.Instance = IWDG;
-  hiwdg.Init.Prescaler = IWDG_PRESCALER_4;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_64;
   hiwdg.Init.Reload = 4095;
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
@@ -2709,6 +2709,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     if (num_rcvd == 40){
         num_rcvd = 0;
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
+        HAL_IWDG_Refresh(&hiwdg);
     }
 }
 

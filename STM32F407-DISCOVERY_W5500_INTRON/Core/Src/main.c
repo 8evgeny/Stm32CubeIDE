@@ -2029,6 +2029,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
     printf("Test UART...OK\r\n");
+//Определяем в каком мы режиме - рабочем или технологическом
+
+
+
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
         printf("\rWORK in BASE INTRON\r\n");
@@ -2571,6 +2575,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Write_MAC_Mode_Pin */
+  GPIO_InitStruct.Pin = Write_MAC_Mode_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(Write_MAC_Mode_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PD2 */
   GPIO_InitStruct.Pin = GPIO_PIN_2;

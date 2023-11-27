@@ -216,6 +216,8 @@ void Error_Handler(void);
 #define Red_Led_GPIO_Port GPIOD
 #define Blue_Led_Pin GPIO_PIN_15
 #define Blue_Led_GPIO_Port GPIOD
+#define Write_MAC_Mode_Pin GPIO_PIN_10
+#define Write_MAC_Mode_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14

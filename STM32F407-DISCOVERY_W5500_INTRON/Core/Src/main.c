@@ -747,14 +747,13 @@ void copyDefaultMACToAdressEEPROM(uint16_t Addr)
 void SetMacFromAdressEEPROM(uint16_t Addr)
 {
 #ifndef MAC_IN_DECIMAL
-    printf("Set MAC adress in HEX from adress eeprom 0x%.4X \r\n", Addr);
+    printf("Set mac from adress eeprom 0x%.4X \r\n", Addr);
     uint16_t numByte = 18;
     uint16_t * pnumByte = &numByte;
     char tmp[18];
     char tmp2[2];
-    int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-    printf("MAC read from adress 0x%.4X on eprom: %d\r\n", Addr, result);
-    printf("MAC:\r\n%s\r\n",tmp);
+    BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
+//    printf("MAC: %s\r\n",tmp);
     strncpy(mac,tmp,18);
     strncpy(tmp2, tmp, 2);
     macaddr[0] = convertHexToDecimal(tmp2);
@@ -776,9 +775,8 @@ void SetMacFromAdressEEPROM(uint16_t Addr)
     uint16_t * pnumByte = &numByte;
     char tmp[24];
     char tmp2[3];
-    int result = BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
-    printf("MAC read from adress 0x%.4X on eprom: %d\n", Addr, result);
-//    printf("MAC:\n%s\n",tmp);
+    BSP_EEPROM_ReadBuffer((uint8_t *)tmp, Addr, pnumByte);
+    printf("MAC: %s\n",tmp);
     strncpy(tmp2, tmp, 4);
     macaddr[0] = atoi(tmp2);
     strncpy(tmp2,tmp+4, 4);
@@ -2029,28 +2027,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 //Определяем в каком мы режиме - рабочем или технологическом
-//    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС
-    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_RESET){ //Для отладки кода
+    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС
+//    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_RESET){ //Для отладки кода
         printf("write MAC Mode...\r\n");
         char tmp[18];
         char tmp2[2];
-HAL_UART_Transmit(&huart2, (uint8_t*)"Test_UART2\r\n", 12, 1000);
-        while(1)
-        {
-            HAL_UART_StateTypeDef state = HAL_UART_GetState (&huart6);
-            printf("state = %d\r\n",state); // 32 - Ready
 
-            HAL_StatusTypeDef result = HAL_UART_Receive_IT(&huart6, (uint8_t*)tmp, 17);
-            printf("result = %d\r\n",result);
-            if (result == HAL_OK)
-                break;
-            HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);
-            HAL_UART_Transmit(&huart2, (uint8_t*)"no MAC\r\n", 8, 1000);
-            HAL_UART_Transmit(&huart2, (uint8_t*)result, 2, 1000);
-
-        }
-HAL_UART_Transmit(&huart2, (uint8_t*)"Received new MAC\n", sizeof ("Received new MAC\n"), 1000);
-        printf ("Received new MAC: %.17s", tmp);
+            /*HAL_StatusTypeDef result = */HAL_UART_Receive_IT(&huart6, (uint8_t*)tmp, 17);
+            blue_blink
+            while (HAL_UART_GetState (&huart6) != HAL_UART_STATE_READY);
 
         strncpy(tmp2, tmp, 2);
         macaddr[0] = convertHexToDecimal(tmp2);
@@ -2064,19 +2049,17 @@ HAL_UART_Transmit(&huart2, (uint8_t*)"Received new MAC\n", sizeof ("Received new
         macaddr[4] = convertHexToDecimal(tmp2);
         strncpy(tmp2, tmp+15, 2);
         macaddr[5] = convertHexToDecimal(tmp2);
-        printf("MAC: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
+        printf("new mac: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
 
         tmp[17]=0x00;
         int writeRes = BSP_EEPROM_WriteBuffer((uint8_t *)tmp, macAdressInEEPROM, 18);
-        printf("MAC write from UART in Hex to adress 0x%.4X on eprom: %d\r\n", macAdressInEEPROM, writeRes);
+        printf("mac write from UART in Hex to adress 0x%.4X on eprom: %d\r\n", macAdressInEEPROM, writeRes);
 
         while (1)
         {
-            HAL_GPIO_TogglePin(GPIOD, Red_Led_Pin);
-            HAL_GPIO_TogglePin(GPIOD, Green_Led_Pin);
-            HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);
+            green_blink
             HAL_Delay(1000);
-            printf ("Change FPGA firmware");
+            printf("wait new FPGA firmware\r\n");
         }
     }
     printf("normal mode (no write MAC)\r\n");

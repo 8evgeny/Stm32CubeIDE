@@ -2778,8 +2778,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
-      HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
-      HAL_Delay(100);
+      red_blink
   }
   /* USER CODE END Error_Handler_Debug */
 }

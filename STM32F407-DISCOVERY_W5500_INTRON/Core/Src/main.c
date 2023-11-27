@@ -2034,15 +2034,17 @@ int main(void)
         printf("write MAC Mode...\r\n");
         char tmp[18];
         char tmp2[2];
-HAL_UART_Transmit(&huart2, (uint8_t*)"Test_UART2\n", 11, 1000);
+HAL_UART_Transmit(&huart2, (uint8_t*)"Test_UART2\r\n", 12, 1000);
         while(1) {
-            HAL_StatusTypeDef result = HAL_UART_Receive(&huart6, (uint8_t*)tmp, 17, 1000);
+            HAL_StatusTypeDef result = HAL_UART_Receive(&huart2, (uint8_t*)tmp, 17, 1000);
             if (result == HAL_OK)
                 break;
-            HAL_Delay(1000);
             HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);
-        }
+            HAL_UART_Transmit(&huart2, (uint8_t*)"no MAC\r\n", 8, 1000);
+            HAL_UART_Transmit(&huart2, (uint8_t*)result, 2, 1000);
 
+        }
+HAL_UART_Transmit(&huart2, (uint8_t*)"Received new MAC\n", sizeof ("Received new MAC\n"), 1000);
         printf ("Received new MAC: %.17s", tmp);
 
         strncpy(tmp2, tmp, 2);
@@ -2573,8 +2575,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PC4 PC8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_8;
+  /*Configure GPIO pins : write_MAC_Pin PC8 */
+  GPIO_InitStruct.Pin = write_MAC_Pin|GPIO_PIN_8;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -2617,12 +2619,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : Write_MAC_Mode_Pin */
-  GPIO_InitStruct.Pin = Write_MAC_Mode_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(Write_MAC_Mode_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PD2 */
   GPIO_InitStruct.Pin = GPIO_PIN_2;

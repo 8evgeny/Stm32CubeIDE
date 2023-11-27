@@ -204,6 +204,8 @@ void Error_Handler(void);
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define OTG_FS_PowerSwitchOn_Pin GPIO_PIN_0
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
+#define write_MAC_Pin GPIO_PIN_4
+#define write_MAC_GPIO_Port GPIOC
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
 #define INT_Pin GPIO_PIN_8
@@ -216,8 +218,6 @@ void Error_Handler(void);
 #define Red_Led_GPIO_Port GPIOD
 #define Blue_Led_Pin GPIO_PIN_15
 #define Blue_Led_GPIO_Port GPIOD
-#define Write_MAC_Mode_Pin GPIO_PIN_10
-#define Write_MAC_Mode_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14

@@ -2131,6 +2131,8 @@ int main(void)
         }
         if (HANDSHAKE == 0)
             sendHANDSHAKE(udpSocket);
+      } else {
+           HAL_IWDG_Refresh(&hiwdg);
       }
     /* USER CODE END WHILE */
 

@@ -2029,16 +2029,18 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 //Определяем в каком мы режиме - рабочем или технологическом
-//    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС
-    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_RESET){ //Для отладки кода
+//    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_RESET){ //Технологический режим - сигнал выдает ПЛИС
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10) == GPIO_PIN_SET){ //Для отладки кода
         printf("write MAC Mode...\r\n");
         char tmp[18];
         char tmp2[2];
-        HAL_StatusTypeDef  result = HAL_TIMEOUT;
-
-        while(result != HAL_OK) {
-            result = HAL_UART_Receive(&huart2, (uint8_t*)tmp, 17, 1000);
-            HAL_Delay(100);
+HAL_UART_Transmit(&huart2, (uint8_t*)"Test_UART2\n", 11, 1000);
+        while(1) {
+            HAL_StatusTypeDef result = HAL_UART_Receive(&huart6, (uint8_t*)tmp, 17, 1000);
+            if (result == HAL_OK)
+                break;
+            HAL_Delay(1000);
+            HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);
         }
 
         printf ("Received new MAC: %.17s", tmp);
@@ -2063,9 +2065,9 @@ int main(void)
 
         while (1)
         {
-            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
-            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-            HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+            HAL_GPIO_TogglePin(GPIOD, Red_Led_Pin);
+            HAL_GPIO_TogglePin(GPIOD, Green_Led_Pin);
+            HAL_GPIO_TogglePin(GPIOD, Blue_Led_Pin);
             HAL_Delay(1000);
             printf ("Change FPGA firmware");
         }
@@ -2476,7 +2478,7 @@ static void MX_USART6_UART_Init(void)
 
   /* USER CODE END USART6_Init 1 */
   huart6.Instance = USART6;
-  huart6.Init.BaudRate = 230400;
+  huart6.Init.BaudRate = 115200;
   huart6.Init.WordLength = UART_WORDLENGTH_8B;
   huart6.Init.StopBits = UART_STOPBITS_1;
   huart6.Init.Parity = UART_PARITY_NONE;

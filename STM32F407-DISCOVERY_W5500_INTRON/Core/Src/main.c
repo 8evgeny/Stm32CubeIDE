@@ -2042,18 +2042,18 @@ int main(void)
         }
 
         printf ("Received new MAC: %.17s", tmp);
-        strncpy(mac,tmp,18);
-        strncpy(tmp2,tmp,2);
+
+        strncpy(tmp2, tmp, 2);
         macaddr[0] = convertHexToDecimal(tmp2);
-        strncpy(tmp2,tmp+3,2);
+        strncpy(tmp2, tmp+3, 2);
         macaddr[1] = convertHexToDecimal(tmp2);
-        strncpy(tmp2,tmp+6,2);
+        strncpy(tmp2, tmp+6, 2);
         macaddr[2] = convertHexToDecimal(tmp2);
-        strncpy(tmp2,tmp+9,2);
+        strncpy(tmp2, tmp+9, 2);
         macaddr[3] = convertHexToDecimal(tmp2);
-        strncpy(tmp2,tmp+12,2);
+        strncpy(tmp2, tmp+12, 2);
         macaddr[4] = convertHexToDecimal(tmp2);
-        strncpy(tmp2,tmp+15,2);
+        strncpy(tmp2, tmp+15, 2);
         macaddr[5] = convertHexToDecimal(tmp2);
         printf("MAC: %.2X:%.2X:%.2X:%.2X:%.2X:%.2X\n",macaddr[0],macaddr[1],macaddr[2],macaddr[3],macaddr[4],macaddr[5]);
 

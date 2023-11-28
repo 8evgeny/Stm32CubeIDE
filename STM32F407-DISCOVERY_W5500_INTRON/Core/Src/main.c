@@ -1987,6 +1987,26 @@ void checkTwinReset()
     EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
 }
 
+FLASH_OBProgramInitTypeDef	Fuses;
+void ReadProtect(void) // защита от считывания
+{
+
+  HAL_FLASHEx_OBGetConfig(&Fuses);
+
+  if (Fuses.RDPLevel != OB_RDP_LEVEL_1) {
+    HAL_FLASH_Unlock(); // разрешаем запись
+    HAL_FLASH_OB_Unlock(); // разрешаем запись
+
+    Fuses.RDPLevel = OB_RDP_LEVEL_1;
+    HAL_FLASHEx_OBProgram(&Fuses);
+
+    HAL_FLASH_OB_Launch();
+    HAL_FLASH_OB_Lock(); // запрещаем запись
+    HAL_FLASH_Lock(); // запрещаем запись
+  }
+}
+
+
 /* USER CODE END 0 */
 
 /**
@@ -2029,7 +2049,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
-
+//    ReadProtect(); //   <---------------------- защита от считывания
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
 
 //Определяем в каком мы режиме - рабочем или технологическом

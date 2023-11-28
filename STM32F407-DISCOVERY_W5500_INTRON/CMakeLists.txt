@@ -34,9 +34,18 @@ add_definitions(-DPROD)  #Основной файл index.html или приме
 #add_definitions(-DMBEDTLS_SHA256_C)
 add_definitions(-UWOLFSSL_TLS13)
 
-project(11_Converter_F407_INTRON_DT C CXX ASM)
+project(Bridge C CXX ASM)
 #set(CMAKE_BUILD_TYPE debug)
 #set(CMAKE_BUILD_TYPE release)
+
+FILE(STRINGS "version_Bridge" tmp LIMIT_COUNT 2)
+STRING(REGEX MATCHALL "[a-zA-Z0-9_]+[ ]*=[^\n]*(\n|$)" tmp_list "${tmp}")
+FOREACH(tmp_x ${tmp_list})
+        STRING(REGEX REPLACE "([a-zA-Z0-9_]+)[ ]*=[^\n]*(\n|$)" "\\1" tmp_nm "${tmp_x}")
+        STRING(REGEX REPLACE "[a-zA-Z0-9_]+[ ]*=[ ]*([^\n]*)(\n|$)" "\\1" tmp_val "${tmp_x}")
+        STRING(STRIP "${tmp_val}" ${tmp_nm})
+ENDFOREACH()
+MESSAGE("Version firmware: ${MAIN_VERSION_FIRMWARE}.${PATCH_VERSION}")
 
 set (ioLibrary_Eth ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Ethernet)
 set (ioLibrary_Int ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Internet/httpServer)
@@ -136,18 +145,20 @@ add_library(wolfssl_LIB ${wolfssl_src})
 #add_library(polarssl_LIB ${polarssl_src})
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s Middlewares/Third_Party/littlefs/eeprom.c)
-add_executable(${PROJECT_NAME}.elf
+
+set(nameFirmware BridgeFirmware_vers_${MAIN_VERSION_FIRMWARE}.${PATCH_VERSION})
+add_executable(${nameFirmware}
     ${src}
     RTT/SEGGER_RTT.c
     )
 
-set_target_properties(${PROJECT_NAME}.elf PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${nameFirmware} PROPERTIES LINKER_LANGUAGE CXX)
 set(LINKER_SCRIPT_FLASH "${CMAKE_SOURCE_DIR}/STM32F407VGTX_FLASH.ld")
 set(LINKER_FLAGS "SHELL: \
     -T${LINKER_SCRIPT_FLASH} \
     -mcpu=cortex-m4 \
     --specs=nosys.specs \
-    -Wl,-Map=${PROJECT_NAME}.map \
+    -Wl,-Map=${nameFirmware}.map \
     -Wl,--gc-sections \
     -static \
     --specs=nano.specs \
@@ -161,9 +172,9 @@ set(LINKER_FLAGS "SHELL: \
     -Wl,--end-group \
     ")
 
-target_link_options(${PROJECT_NAME}.elf PRIVATE ${LINKER_FLAGS})
+target_link_options(${nameFirmware} PRIVATE ${LINKER_FLAGS})
 
-target_link_libraries(${PROJECT_NAME}.elf PUBLIC
+target_link_libraries(${nameFirmware} PUBLIC
     hal_LIB
     ioLibrary_Driver_LIB
     fatfs_LIB
@@ -173,24 +184,24 @@ target_link_libraries(${PROJECT_NAME}.elf PUBLIC
     )
 
 if(LFS STREQUAL ON)
-    target_link_libraries(${PROJECT_NAME}.elf PUBLIC littlefs_LIB )
+    target_link_libraries(${nameFirmware} PUBLIC littlefs_LIB )
 endif()
 
-set(HEX_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.hex)
-set(BIN_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.bin)
+set(HEX_FILE ${CMAKE_BINARY_DIR}/${nameFirmware}.hex)
+set(BIN_FILE ${CMAKE_BINARY_DIR}/${nameFirmware}.bin)
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
+add_custom_command(TARGET ${nameFirmware} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${nameFirmware}> ${HEX_FILE}
     COMMENT "Building ${HEX_FILE} ")
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
+add_custom_command(TARGET ${nameFirmware} POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${nameFirmware}> ${BIN_FILE}
     COMMENT "Building ${BIN_FILE} ")
 
-#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#add_custom_command(TARGET ${nameFirmware} POST_BUILD
 #    COMMAND st-flash erase
 #    COMMENT "Erasing . . .")
 
-#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#add_custom_command(TARGET ${nameFirmware} POST_BUILD
 #    COMMAND st-flash --reset write ${BIN_FILE} 0x8000000
 #    COMMENT "Write Flash ")

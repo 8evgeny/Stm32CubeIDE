@@ -17,7 +17,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "fatfs.h"
-
+#include "config.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -525,7 +525,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
     f_open(&fil, "md5", FA_OPEN_ALWAYS | FA_READ );
     f_gets(tmp+60, 33, &fil);
     f_close(&fil);
-    printf("settings: \t\t%s\r\n",tmp);
+//    printf("settings: \t\t%s\r\n",tmp);
     BSP_EEPROM_WriteBuffer((uint8_t *)tmp, Addr, settingsLen);
     delayUS_ASM(100000);
 //    Printf("Settings IP write to adress 0x%.4X on eprom: %d", Addr, result);
@@ -617,13 +617,13 @@ void copyMacToAdressSPIEEPROM(uint16_t Addr){
 }
 
 void  SetParaametersFromAdressSPIEEPROM(uint16_t Addr){
-    printf("SetParaametersFromAdressSPIEEPROM 0x%.4X \r\n",Addr);
+    printf("Set IP settings from adress 0x%.4X SPIeeprom\r\n", Addr);
 
     char tmp[settingsLenInSPI];
     char tmp2[3];
 
     EEPROM_SPI_ReadBuffer((uint8_t *)tmp, Addr, settingsLenInSPI);
-    printf("settings: %.93s\r\n",tmp);
+//    printf("settings: %.93s\r\n",tmp);
 
     strncpy(host_IP,tmp,15);
     strncpy(dest_IP,tmp+15,15);
@@ -750,7 +750,7 @@ void copyDefaultMACToAdressEEPROM(uint16_t Addr)
 void SetMacFromAdressEEPROM(uint16_t Addr)
 {
 #ifndef MAC_IN_DECIMAL
-    printf("Set mac from adress eeprom 0x%.4X \r\n", Addr);
+    printf("Set mac from adress 0x%.4X I2Ceeprom  \r\n", Addr);
     uint16_t numByte = 18;
     uint16_t * pnumByte = &numByte;
     char tmp[18];
@@ -1145,7 +1145,7 @@ void wep_define_func(void)
 
 void net_ini_WIZNET(uint8_t socketTCP)
 {
-    printf("net_ini_WIZNET_WEB\r\n");
+//    printf("net_ini_WIZNET_WEB\r\n");
 
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
     HAL_Delay(70);
@@ -1154,7 +1154,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
     uint8_t sn_TCP = socketTCP;
     WIZCHIPInitialize();
 
-    printf("WIZCHIPInitialize  OK\r\n");
+//    printf("WIZCHIPInitialize  OK\r\n");
 
     for (int i =0; i < 6; ++i)
     {
@@ -1168,10 +1168,10 @@ void net_ini_WIZNET(uint8_t socketTCP)
     }
 
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
-    print_network_information();
+//    print_network_information();
     socket(sn_TCP, Sn_MR_TCP, local_port_web, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
     if (SOCK_OK == listen(sn_TCP))
-        printf("socket %d listening\r\n", sn_TCP);
+        printf("socket %d (WEB) listening\r\n", sn_TCP);
 }
 
 void isSdCartOn()
@@ -1297,7 +1297,7 @@ void workSPI_EEPROM()
             }
             else
             {
-                printf("SPI EEPROM: OLD\r\n");
+//                printf("SPI EEPROM: OLD\r\n");
             }
         }
 
@@ -1339,7 +1339,7 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
 
 void prepearUDP_PLIS(uint8_t udpSocket)
 {
-    printf("prepearUDP_PLIS\r\n");
+//    printf("prepearUDP_PLIS\r\n");
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
 
     //Это будет INPUT - сигнал от ПЛИС 10 такт
@@ -1462,7 +1462,7 @@ void sendHANDSHAKE(uint8_t udpSocket) {
     uint32_t delay = 500;
     sendto(udpSocket, (uint8_t *)test1, MAX_PACKET_LEN, destip, local_port_udp);
     if (HAL_GetTick() < currTime + delay){ //Пакет отправился быстро - destip в сети
-        printf("HANDSHAKE = 1\r\n");
+//        printf("HANDSHAKE = 1\r\n");
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
         HANDSHAKE = 1;
     }
@@ -2030,6 +2030,8 @@ int main(void)
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
 
+    printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
+
 //Определяем в каком мы режиме - рабочем или технологическом
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС
 //    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_RESET){ //Для отладки кода
@@ -2066,8 +2068,6 @@ int main(void)
             printf("wait new FPGA firmware\r\n");
         }
     }
-    printf("normal mode (no write MAC)\r\n");
-
 
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
@@ -2101,12 +2101,8 @@ int main(void)
     uint8_t i;
     httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
     wep_define_func();
-    display_reg_webContent_list();
+//    display_reg_webContent_list(); //Зарегистрированный web контент
 #endif
-
-//    tls_client_serverTest(); // работает
-//    polarSSLTest();
-//    bearSSLTest();
 
     SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
     while (1)

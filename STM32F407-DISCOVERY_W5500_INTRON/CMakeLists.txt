@@ -46,6 +46,10 @@ FOREACH(tmp_x ${tmp_list})
         STRING(STRIP "${tmp_val}" ${tmp_nm})
 ENDFOREACH()
 MESSAGE("Version firmware: ${MAIN_VERSION_FIRMWARE}.${PATCH_VERSION}")
+set (MAIN_FW "${MAIN_VERSION_FIRMWARE}")
+set (PATCH_FW "${PATCH_VERSION}")
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc/config.h.in config.h @ONLY)
+
 
 set (ioLibrary_Eth ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Ethernet)
 set (ioLibrary_Int ${CMAKE_HOME_DIRECTORY}/ioLibrary_Driver/Internet/httpServer)
@@ -86,6 +90,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}\
 #    --specs=nano.specs \
 
 include_directories(
+    build
     Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
     Core/Inc
     Drivers/CMSIS/Device/ST/STM32F4xx/Include
@@ -146,11 +151,13 @@ add_library(wolfssl_LIB ${wolfssl_src})
 
 file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s Middlewares/Third_Party/littlefs/eeprom.c)
 
-set(nameFirmware BridgeFirmware_vers_${MAIN_VERSION_FIRMWARE}.${PATCH_VERSION})
+set(nameFirmware Bridge_${MAIN_VERSION_FIRMWARE}_${PATCH_VERSION})
 add_executable(${nameFirmware}
     ${src}
     RTT/SEGGER_RTT.c
     )
+
+target_compile_definitions(${nameFirmware} PRIVATE fwareName=${nameFirmware})
 
 set_target_properties(${nameFirmware} PROPERTIES LINKER_LANGUAGE CXX)
 set(LINKER_SCRIPT_FLASH "${CMAKE_SOURCE_DIR}/STM32F407VGTX_FLASH.ld")

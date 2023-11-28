@@ -2060,8 +2060,11 @@ int main(void)
         char tmp2[2];
 
             /*HAL_StatusTypeDef result = */HAL_UART_Receive_IT(&huart6, (uint8_t*)tmp, 17);
-            blue_blink
-            while (HAL_UART_GetState (&huart6) != HAL_UART_STATE_READY);
+
+            while (HAL_UART_GetState (&huart6) != HAL_UART_STATE_READY){
+                blue_blink
+                HAL_IWDG_Refresh(&hiwdg);
+            };
 
         strncpy(tmp2, tmp, 2);
         macaddr[0] = convertHexToDecimal(tmp2);
@@ -2084,8 +2087,9 @@ int main(void)
         while (1)
         {
             green_blink
-            HAL_Delay(1000);
+            HAL_Delay(500);
             printf("wait new FPGA firmware\r\n");
+            HAL_IWDG_Refresh(&hiwdg);
         }
     }
 

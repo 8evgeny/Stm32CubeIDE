@@ -617,7 +617,7 @@ void copyMacToAdressSPIEEPROM(uint16_t Addr){
 }
 
 void  SetParaametersFromAdressSPIEEPROM(uint16_t Addr){
-    printf("Set IP settings from adress 0x%.4X SPIeeprom\r\n", Addr);
+//    printf("Set IP settings from adress 0x%.4X SPIeeprom\r\n", Addr);
 
     char tmp[settingsLenInSPI];
     char tmp2[3];
@@ -672,7 +672,7 @@ void  SetParaametersFromAdressSPIEEPROM(uint16_t Addr){
     printf("dest_IP: %d.%d.%d.%d\r\n",destip[0],destip[1],destip[2],destip[3]);
     printf("gate_IP: %d.%d.%d.%d\r\n",ipgate[0],ipgate[1],ipgate[2],ipgate[3]);
     printf("mask_IP: %d.%d.%d.%d\r\n",ipmask[0],ipmask[1],ipmask[2],ipmask[3]);
-    printf("md5: %.32s\r\n", MD5);
+//    printf("md5: %.32s\r\n", MD5);
 }
 
 void  SetMacFromAdressSPIEEPROM(uint16_t Addr){
@@ -750,7 +750,7 @@ void copyDefaultMACToAdressEEPROM(uint16_t Addr)
 void SetMacFromAdressEEPROM(uint16_t Addr)
 {
 #ifndef MAC_IN_DECIMAL
-    printf("Set mac from adress 0x%.4X I2Ceeprom  \r\n", Addr);
+//    printf("Set mac from adress 0x%.4X I2Ceeprom  \r\n", Addr);
     uint16_t numByte = 18;
     uint16_t * pnumByte = &numByte;
     char tmp[18];
@@ -1188,7 +1188,7 @@ void isSdCartOn()
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);     //EEPROM SPI
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);   //SD
-        printf("not found SD\r\n");
+//        printf("not found SD\r\n");
     }
     f_close(&fil);
 }

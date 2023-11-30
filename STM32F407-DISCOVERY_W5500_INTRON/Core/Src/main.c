@@ -2051,6 +2051,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
+    HAL_Delay(1000); //Нужна чтобы не ловился технологический режим при старте
 
 //Определяем в каком мы режиме - рабочем или технологическом
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС

@@ -61,6 +61,7 @@ char *psettingsIP;
 uint8_t ABONENT_or_BASE;
 uint8_t HANDSHAKE = 0;
 uint8_t UDP_or_TCP = 1;
+int8_t numWait = 10; //Количество ожиданий в цикле Handshake
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 uint32_t receiveBlank = 0;
@@ -1461,6 +1462,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 
 
 void sendHANDSHAKE(uint8_t udpSocket) {
+
     uint32_t currTime = HAL_GetTick();
     uint32_t delay = 500;
     sendto(udpSocket, (uint8_t *)test1, MAX_PACKET_LEN, destip, local_port_udp);
@@ -1473,11 +1475,12 @@ void sendHANDSHAKE(uint8_t udpSocket) {
         printf("Waiting for destination connection...\r\n");
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-        HAL_Delay(200);
-        HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
-        HAL_Delay(200);
-        HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_SET);
+        red_blink
+        red_blink
         HAL_IWDG_Refresh(&hiwdg);
+        --numWait;
+        if (numWait < 0)
+            HAL_NVIC_SystemReset();
     }
 }
 
@@ -2056,6 +2059,8 @@ int main(void)
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
     HAL_Delay(1000); //Нужна чтобы не ловился технологический режим при старте
+
+//Для восстановления дефолтных настроек нужно нажать сброс через 1 секунду (не позже 2 секунды)
 
 //Определяем в каком мы режиме - рабочем или технологическом
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС

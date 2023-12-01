@@ -542,7 +542,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 }
 
 void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
-    printf("copyDefaultParametersToAdressSPIEEPROM 0x%.4X \r\n",Addr);
+//    printf("copyDefaultParametersToAdressSPIEEPROM 0x%.4X \r\n",Addr);
     if (ABONENT_or_BASE == 0) { //База
         char defaultIP[settingsLenInSPI] =
         {'1','9','2','.','1','6','8','.','0','0','1','.','1','2','2',
@@ -550,7 +550,7 @@ void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
          '1','9','2','.','1','6','8','.','0','0','1','.','0','0','1',
          '2','5','5','.','2','5','5','.','2','5','5','.','0','0','0',
          'd','4','1','d','8','c','d','9','8','f','0','0','b','2','0','4','e','9','8','0','0','9','9','8','e','c','f','8','4','2','7','e','\0'};
-        printf("default settings: %s\r\n",defaultIP);
+//        printf("default settings: %s\r\n",defaultIP);
         EEPROM_SPI_WriteBuffer((uint8_t *)defaultIP, Addr, settingsLenInSPI);
     } else {//Абонент
         char defaultIP[settingsLenInSPI] =
@@ -559,7 +559,7 @@ void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
          '1','9','2','.','1','6','8','.','0','0','1','.','0','0','1',
          '2','5','5','.','2','5','5','.','2','5','5','.','0','0','0',
          'd','4','1','d','8','c','d','9','8','f','0','0','b','2','0','4','e','9','8','0','0','9','9','8','e','c','f','8','4','2','7','e','\0'};
-        printf("default settings: %s\r\n",defaultIP);
+//        printf("default settings: %s\r\n",defaultIP);
         EEPROM_SPI_WriteBuffer((uint8_t *)defaultIP, Addr, settingsLenInSPI);
     }
 }
@@ -1321,6 +1321,10 @@ void workSPI_EEPROM()
         copyDefaultParametersToAdressSPIEEPROM(ipSettingAdressInSPIEEPROM);
 //        copyDefaultMACToAdressSPIEEPROM(macAdressInSPIEEPROM);
         SetParaametersFromAdressSPIEEPROM(ipSettingAdressInEEPROM);
+        green_blink
+        green_blink
+        green_blink
+        HAL_NVIC_SystemReset();
 //        SetMacFromAdressSPIEEPROM(macAdressInEEPROM);
     }
 }
@@ -1989,7 +1993,10 @@ void checkTwinReset()
         twinReset[0] = 0x88;
         EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
     }
-    if (setResetTwice == 0) HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу resetTwiceFlag отсутствие двойного нажатия - FF
+    if (setResetTwice == 0) {
+        HAL_Delay(1000); //Ждем 1 секунду и пишем в SPI по адресу resetTwiceFlag отсутствие двойного нажатия - FF
+    }
+
     twinReset[0] = 0xFF;
     EEPROM_SPI_WriteBuffer(twinReset, resetTwiceFlag, 1);
 }
@@ -2058,9 +2065,24 @@ int main(void)
   /* USER CODE BEGIN 2 */
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
-    HAL_Delay(1000); //Нужна чтобы не ловился технологический режим при старте
 
-//Для восстановления дефолтных настроек нужно нажать сброс через 1 секунду (не позже 2 секунды)
+    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
+        ABONENT_or_BASE = 0;
+        printf("work in BASE\r\n");
+        MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 17 секунд
+    }
+    else { //Я в абоненте - сигналл выдает ПЛИС
+        ABONENT_or_BASE = 1;
+        printf("work in ABONENT\r\n");
+        MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 13 секунд
+    }
+
+    isSdCartOn();       //Проверка вставлена ли SD карта
+    workI2C_EEPROM();   //Только MAC
+    initSPI_EEPROM();   //IP настройки
+//Для восстановления дефолтных настроек нужно нажать сброс в течение 1 секунды
+    checkTwinReset();   //Проверка нажатия сброса 2 раза за 1 секунду - восстановление Default settings
+    workSPI_EEPROM();
 
 //Определяем в каком мы режиме - рабочем или технологическом
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС
@@ -2102,23 +2124,6 @@ int main(void)
             HAL_IWDG_Refresh(&hiwdg);
         }
     }
-
-    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
-        ABONENT_or_BASE = 0;
-        printf("work in BASE\r\n");
-        MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 17 секунд
-    }
-    else { //Я в абоненте - сигналл выдает ПЛИС
-        ABONENT_or_BASE = 1;
-        printf("work in ABONENT\r\n");
-        MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 13 секунд
-    }
-
-    isSdCartOn();       //Проверка вставлена ли SD карта
-    workI2C_EEPROM();   //Только MAC
-    initSPI_EEPROM();   //IP настройки
-    checkTwinReset();   //Проверка нажатия сброса 2 раза за 1 секунду - восстановление Default settings
-    workSPI_EEPROM();
 
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();

@@ -12,6 +12,7 @@
 #include "spi_eeprom.h"
 #include "eeprom.h"
 #include "SEGGER_RTT.h"
+#include "config.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -170,6 +171,8 @@ static void MX_I2C1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_IWDG_Init(void);
 /* USER CODE BEGIN PFP */
+static void MX_IWDG_Init_abonent(void);
+static void MX_IWDG_Init_base(void);
 void testSpiEepromReadPage(uint32_t adr);
 void UART_Printf(const char* fmt, ...);
 extern void print_network_information(void);
@@ -2097,10 +2100,12 @@ int main(void)
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
         printf("work in BASE\r\n");
+        MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 17 секунд
     }
     else { //Я в абоненте - сигналл выдает ПЛИС
         ABONENT_or_BASE = 1;
         printf("work in ABONENT\r\n");
+        MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 13 секунд
     }
 
     isSdCartOn();       //Проверка вставлена ли SD карта
@@ -2683,27 +2688,24 @@ static void MX_GPIO_Init(void)
 
 static void MX_IWDG_Init_abonent(void)
 {
-
-  /* USER CODE BEGIN IWDG_Init 0 */
-
-  /* USER CODE END IWDG_Init 0 */
-
-  /* USER CODE BEGIN IWDG_Init 1 */
-
-  /* USER CODE END IWDG_Init 1 */
   hiwdg.Instance = IWDG;
-  hiwdg.Init.Prescaler = IWDG_PRESCALER_64;
-  hiwdg.Init.Reload = 4095;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_128;
+  hiwdg.Init.Reload = 3000;
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN IWDG_Init 2 */
-
-  /* USER CODE END IWDG_Init 2 */
-
 }
-
+static void MX_IWDG_Init_base(void)
+{
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_128;
+  hiwdg.Init.Reload = 4000;
+  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
 
 
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)

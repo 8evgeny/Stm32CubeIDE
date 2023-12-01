@@ -1477,6 +1477,7 @@ void sendHANDSHAKE(uint8_t udpSocket) {
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
         HAL_Delay(200);
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_SET);
+        HAL_IWDG_Refresh(&hiwdg);
     }
 }
 

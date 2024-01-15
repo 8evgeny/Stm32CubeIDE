@@ -154,7 +154,6 @@ file (GLOB src Core/Src/*.c Core/Startup/startup_stm32f407vgtx.s Middlewares/Thi
 set(nameFirmware Bridge_${MAIN_VERSION_FIRMWARE}_${PATCH_VERSION})
 add_executable(${nameFirmware}
     ${src}
-    RTT/SEGGER_RTT.c
     )
 
 target_compile_definitions(${nameFirmware} PRIVATE fwareName=${nameFirmware})

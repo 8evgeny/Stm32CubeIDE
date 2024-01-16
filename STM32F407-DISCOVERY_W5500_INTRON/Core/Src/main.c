@@ -38,6 +38,16 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+// NRF_LOG_WARNING_COLOR - ANSI escape code prefix.
+// <0=> Default
+// <1=> Black
+// <2=> Red
+// <3=> Green
+// <4=> Yellow
+#ifndef NRF_LOG_WARNING_COLOR
+#define NRF_LOG_WARNING_COLOR 4
+#endif
+
 extern void FsForEeprom_test();
 extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );
@@ -2149,6 +2159,8 @@ int main(void)
 
     SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
     SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
+    SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);
+    SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BLUE);
     SEGGER_RTT_printf(0, "\r\nTest print from SEGGER!\n");
     while (1)
     {

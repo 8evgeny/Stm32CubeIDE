@@ -1429,6 +1429,24 @@ void sendReceiveUDP(uint8_t udpSocket)
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
+//Тут анализирую полученное  dataFromBase
+    SEGGER_RTT_SetTerminal(2);
+    SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "\r\n",
+dataFromBase[0], dataFromBase[1], dataFromBase[2], dataFromBase[3], dataFromBase[4], dataFromBase[5], dataFromBase[6], dataFromBase[7],
+dataFromBase[8],dataFromBase[9], dataFromBase[10], dataFromBase[11], dataFromBase[12], dataFromBase[13], dataFromBase[14], dataFromBase[15],
+dataFromBase[16], dataFromBase[17], dataFromBase[18], dataFromBase[19], dataFromBase[20], dataFromBase[21], dataFromBase[22], dataFromBase[23],
+dataFromBase[24], dataFromBase[25], dataFromBase[26], dataFromBase[27], dataFromBase[28], dataFromBase[29], dataFromBase[30], dataFromBase[31],
+dataFromBase[32], dataFromBase[33], dataFromBase[34], dataFromBase[35], dataFromBase[36], dataFromBase[37], dataFromBase[38], dataFromBase[39],
+dataFromBase[40], dataFromBase[41], dataFromBase[42], dataFromBase[43], dataFromBase[44], dataFromBase[45], dataFromBase[46], dataFromBase[47]
+                      );
+    SEGGER_RTT_SetTerminal(1);
+
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);
         }
@@ -2768,11 +2786,6 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-//    if (receiveBlank == 10000)
-//    {
-//        receiveBlank = 0;
-//        return;
-//    }
     //После 100 секунд работы пропускаем каждый 15 тыс пакет для избегания рассинхрона
     ++num_rcvd_SEGGER;
     if ((HAL_GetTick()/1000 > 100) && (num_rcvd_SEGGER % 15000 == 0)) {

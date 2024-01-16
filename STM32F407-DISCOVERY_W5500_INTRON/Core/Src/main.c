@@ -38,16 +38,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-// NRF_LOG_WARNING_COLOR - ANSI escape code prefix.
-// <0=> Default
-// <1=> Black
-// <2=> Red
-// <3=> Green
-// <4=> Yellow
-#ifndef NRF_LOG_WARNING_COLOR
-#define NRF_LOG_WARNING_COLOR 4
-#endif
-
 extern void FsForEeprom_test();
 extern void littleFsInit();
 void sendPackets(uint8_t, uint8_t* , uint16_t );

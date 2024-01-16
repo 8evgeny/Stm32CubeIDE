@@ -65,6 +65,8 @@ int8_t numWait = 10; //Количество ожиданий в цикле Hands
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 uint32_t receiveBlank = 0;
+uint32_t num_rcvd_SEGGER = 0;
+uint32_t num_skip_packet = 0;
 #ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -2145,7 +2147,9 @@ int main(void)
 //    display_reg_webContent_list(); //Зарегистрированный web контент
 #endif
 
-    SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
+    SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
+    SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
+    SEGGER_RTT_printf(0, "\r\nTest print from SEGGER!\n");
     while (1)
     {
 //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET); //Debug 3
@@ -2158,8 +2162,6 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
       net_poll();
 #endif
-
-//SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\n");
 
       if (UDP_or_TCP == 1)
       {
@@ -2752,11 +2754,20 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    if (receiveBlank == 10000)
-    {
-        receiveBlank = 0;
+//    if (receiveBlank == 10000)
+//    {
+//        receiveBlank = 0;
+//        return;
+//    }
+    //После 100 секунд работы пропускаем каждый 15 тыс пакет для избегания рассинхрона
+    ++num_rcvd_SEGGER;
+    if ((HAL_GetTick()/1000 > 100) && (num_rcvd_SEGGER % 15000 == 0)) {
+        ++num_skip_packet;
+        SEGGER_RTT_printf(0, "Skip packet %d, System time %d\r\n", num_skip_packet, HAL_GetTick()/1000);
+        ++num_rcvd_SEGGER;
         return;
     }
+
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
 
     recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);

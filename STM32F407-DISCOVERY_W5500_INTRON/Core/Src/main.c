@@ -71,12 +71,13 @@ char *psettingsIP;
 uint8_t ABONENT_or_BASE;
 uint8_t HANDSHAKE = 0;
 uint8_t UDP_or_TCP = 1;
-int8_t numWait = 10; //Количество ожиданий в цикле Handshake
+int8_t numWait = 50; //Количество ожиданий в цикле Handshake
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 uint32_t receiveBlank = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
+uint8_t SEGGER = 0;
 #ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -1488,7 +1489,7 @@ void sendHANDSHAKE(uint8_t udpSocket) {
         HANDSHAKE = 1;
     }
     else {
-        printf("Waiting for destination connection...\r\n");
+        printf("Waiting for destination connection %d ...\r\n", numWait);
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
         red_blink
@@ -2075,6 +2076,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
+#ifdef  enable_SEGGER
+  SEGGER = 1;
+#endif
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
 
@@ -2092,10 +2096,13 @@ int main(void)
     isSdCartOn();       //Проверка вставлена ли SD карта
     workI2C_EEPROM();   //Только MAC
     initSPI_EEPROM();   //IP настройки
+
+#ifdef  enable_twin_reset_to_restore_default_IP
 //Для восстановления дефолтных настроек нужно нажать сброс в течение 1 секунды
     checkTwinReset();   //Проверка нажатия сброса 2 раза за 1 секунду - восстановление Default settings
+#endif
     workSPI_EEPROM();
-
+#ifdef enable_write_MAC
 //Определяем в каком мы режиме - рабочем или технологическом
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_SET){ //Технологический режим - сигнал выдает ПЛИС
 //    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4) == GPIO_PIN_RESET){ //Для отладки кода
@@ -2136,6 +2143,7 @@ int main(void)
             HAL_IWDG_Refresh(&hiwdg);
         }
     }
+#endif
 
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
@@ -2156,13 +2164,14 @@ int main(void)
     wep_define_func();
 //    display_reg_webContent_list(); //Зарегистрированный web контент
 #endif
-
-    SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
-    SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
-    SEGGER_RTT_SetTerminal(1); // Select terminal 1
-    SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);
-    SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BLUE);
-    SEGGER_RTT_printf(0, "\r\nTest print from SEGGER!\n");
+    if (SEGGER){
+        SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
+        SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
+        SEGGER_RTT_SetTerminal(1); // Select terminal 1
+        SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);
+        SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BLUE);
+        SEGGER_RTT_printf(0, "\r\nTest print from SEGGER!\n");
+    }
     while (1)
     {
 //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET); //Debug 3
@@ -2776,7 +2785,8 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     ++num_rcvd_SEGGER;
     if ((HAL_GetTick()/1000 > 100) && (num_rcvd_SEGGER % 15000 == 0)) {
         ++num_skip_packet;
-        SEGGER_RTT_printf(0, "Skip packet %d, System time %d\r\n", num_skip_packet, HAL_GetTick()/1000);
+        if (SEGGER)
+            SEGGER_RTT_printf(0, "Skip packet %d, System time %d\r\n", num_skip_packet, HAL_GetTick()/1000);
         ++num_rcvd_SEGGER;
         return;
     }

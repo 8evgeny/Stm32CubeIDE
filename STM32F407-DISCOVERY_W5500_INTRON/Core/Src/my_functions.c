@@ -15,6 +15,7 @@
 #include "net.h"
 #include "httpServer.h"
 
+extern uint8_t SEGGER;
 extern UART_HandleTypeDef huart6;
 
 void UART_Printf(const char* fmt, ...) {
@@ -43,7 +44,8 @@ int _write(int fd, char *str, int len)
     for(int i=0; i<len; i++)
     {
         HAL_UART_Transmit(&huart6, (uint8_t *)&str[i], 1, 0xFFFF);
-        SEGGER_RTT_PutChar(0, str[i]);
+        if (SEGGER)
+            SEGGER_RTT_PutChar(0, str[i]);
     }
     return len;
 }

@@ -1481,6 +1481,24 @@ dataFromBase[40], dataFromBase[41], dataFromBase[42], dataFromBase[43], dataFrom
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
+//Тут анализирую полученное  dataFromDx
+//        SEGGER_RTT_SetTerminal(3);
+//        SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+//                             "\r\n",
+//                          dataFromDx[0], dataFromDx[1], dataFromDx[2], dataFromDx[3], dataFromDx[4], dataFromDx[5], dataFromDx[6], dataFromDx[7],
+//                          dataFromDx[8],dataFromDx[9], dataFromDx[10], dataFromDx[11], dataFromDx[12], dataFromDx[13], dataFromDx[14], dataFromDx[15],
+//                          dataFromDx[16], dataFromDx[17], dataFromDx[18], dataFromDx[19], dataFromDx[20], dataFromDx[21], dataFromDx[22], dataFromDx[23],
+//                          dataFromDx[24], dataFromDx[25], dataFromDx[26], dataFromDx[27], dataFromDx[28], dataFromDx[29], dataFromDx[30], dataFromDx[31],
+//                          dataFromDx[32], dataFromDx[33], dataFromDx[34], dataFromDx[35], dataFromDx[36], dataFromDx[37], dataFromDx[38], dataFromDx[39],
+//                          dataFromDx[40], dataFromDx[41], dataFromDx[42], dataFromDx[43], dataFromDx[44], dataFromDx[45], dataFromDx[46], dataFromDx[47]
+//                          );
+//            SEGGER_RTT_SetTerminal(1);
+
             receivePackets(udpSocket, destip, local_port_udp);
             sendPackets(udpSocket, destip, local_port_udp);
         }

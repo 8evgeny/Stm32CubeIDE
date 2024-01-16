@@ -329,7 +329,6 @@ int32_t sendto_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint
  *                       @ref SOCKBUSY           - Socket is busy.
  */
 int32_t recvfrom(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t *port);
-int32_t recvfrom_mod(uint8_t sn, uint8_t * buf, uint16_t len, uint8_t * addr, uint16_t *port);
 
 /////////////////////////////
 // SOCKET CONTROL & OPTION //

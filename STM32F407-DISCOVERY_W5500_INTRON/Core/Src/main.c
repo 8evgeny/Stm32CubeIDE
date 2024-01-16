@@ -2783,7 +2783,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
 
-    recvfrom_mod(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
+    recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
     ++receiveBlank;

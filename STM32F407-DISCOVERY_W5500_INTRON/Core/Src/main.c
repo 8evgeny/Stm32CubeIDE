@@ -85,8 +85,10 @@ uint8_t passwordOK = 0;
 uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
 
-uint8_t txCyclon[MAX_PACKET_LEN];
-uint8_t rxCyclon[MAX_PACKET_LEN];
+uint8_t dataToBase[MAX_PACKET_LEN];
+uint8_t dataFromBase[MAX_PACKET_LEN];
+uint8_t dataToDx[MAX_PACKET_LEN];
+uint8_t dataFromDx[MAX_PACKET_LEN];
 
 uint8_t test1[MAX_PACKET_LEN] = {0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
                                  0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
@@ -1361,13 +1363,13 @@ void convertToBaseData()
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
-        rxCyclon[i] &= 0xF0;
-        rxCyclon[i] |= 0x05; //Последнее E меняем на 5
-        uint8_t tmp = rxCyclon[i]; //Первый октет инвертируем
+        dataFromDx[i] &= 0xF0;
+        dataFromDx[i] |= 0x05; //Последнее E меняем на 5
+        uint8_t tmp = dataFromDx[i]; //Первый октет инвертируем
         tmp = ~tmp;
         tmp &= 0xF0;
-        rxCyclon[i] &= 0x0F;
-        rxCyclon[i] |= tmp;
+        dataFromDx[i] &= 0x0F;
+        dataFromDx[i] |= tmp;
 
 //        printf("\tBASE - "
 //         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X\r\n",
@@ -1382,13 +1384,13 @@ void convertToAbonData()
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
-        txCyclon[i] &= 0xF0;
-        txCyclon[i] |= 0x05; //Последнее E меняем на 5
-        uint8_t tmp = txCyclon[i]; //Первый октет инвертируем
+        dataToDx[i] &= 0xF0;
+        dataToDx[i] |= 0x05; //Последнее E меняем на 5
+        uint8_t tmp = dataToDx[i]; //Первый октет инвертируем
         tmp = ~tmp;
         tmp &= 0xF0;
-        txCyclon[i] &= 0x0F;
-        txCyclon[i] |= tmp;
+        dataToDx[i] &= 0x0F;
+        dataToDx[i] |= tmp;
 
 //        printf("\tABON - "
 //         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X\r\n",
@@ -1410,13 +1412,13 @@ void sendReceiveUDP(uint8_t udpSocket)
 
             HAL_SPI_TransmitReceive(&hspi2,
                                     #ifndef  fpgaToCpuBaseTestData
-                                    txCyclon ,
+                                    dataToBase ,
                                     #endif
                                     #ifdef  fpgaToCpuBaseTestData
                                     TEST_DATA ,
                                     #endif
                                     #ifndef  cpuToFpgaBaseTestData
-                                    rxCyclon ,
+                                    dataFromBase ,
                                     #endif
                                     #ifdef  cpuToFpgaBaseTestData
                                     TEST_DATA ,
@@ -1441,13 +1443,13 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
             HAL_SPI_TransmitReceive(&hspi2,
                                     #ifndef  fpgaToCpuAbonTestData
-                                    txCyclon ,
+                                    dataToDx ,
                                     #endif
                                     #ifdef  fpgaToCpuAbonTestData
                                     test4 ,
                                     #endif
                                     #ifndef  cpuToFpgaAbonTestData
-                                    rxCyclon ,
+                                    dataFromDx ,
                                     #endif
                                     #ifdef  cpuToFpgaAbonTestData
                                     test4 ,
@@ -2741,7 +2743,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef baseSendTestData
-        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+        sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
 #endif
     }
     if (ABONENT_or_BASE == 1) {  //Абонентский мост
@@ -2749,7 +2751,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef abonSendTestData
-        sendto(sn, (uint8_t *)rxCyclon, MAX_PACKET_LEN, destip, destport);
+        sendto(sn, (uint8_t *)dataFromDx, MAX_PACKET_LEN, destip, destport);
 #endif
     }
 
@@ -2782,9 +2784,12 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
-
-    recvfrom(sn, (uint8_t *)txCyclon, MAX_PACKET_LEN, destip, &destport);
-
+    if (ABONENT_or_BASE == 0) {  //База
+        recvfrom(sn, (uint8_t *)dataToBase, MAX_PACKET_LEN, destip, &destport);
+    }
+    if (ABONENT_or_BASE == 1) {  // Абонент
+        recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
+    }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
     ++receiveBlank;
     ++num_rcvd;

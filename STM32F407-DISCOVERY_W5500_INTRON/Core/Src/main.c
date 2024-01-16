@@ -2159,6 +2159,7 @@ int main(void)
 
     SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
     SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
+    SEGGER_RTT_SetTerminal(1); // Select terminal 1
     SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);
     SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BLUE);
     SEGGER_RTT_printf(0, "\r\nTest print from SEGGER!\n");

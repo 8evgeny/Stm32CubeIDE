@@ -93,7 +93,7 @@ uint8_t commandfromSaseToAbonentReboot[MAX_PACKET_LEN]= {0x88, 0x88, 0x88, 0x88,
                                                    0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                                    0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88};
 uint8_t receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
-uint8_t trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee, 0xee};
+uint8_t trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
 uint32_t timeStartControl = 0;
 uint8_t control_2_Channel = 0;
 
@@ -1446,7 +1446,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             }
 //Формируем массив из байтов 3 канала
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
-//            print_2_Channel_control(receivedDataFrom_2_Channel);
+            print_2_Channel_control(receivedDataFrom_2_Channel);
 //Логика перезагрузки - проверяю 3-й канал если не 2С в течение 45 сек то перезагрузка
 
             if (check_2_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
@@ -1454,7 +1454,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 //                timeStartControl = HAL_GetTick();
 //                control_3_Channel = 1;
                 SEGGER_RTT_SetTerminal(6);
-                SEGGER_RTT_printf(0, "data in 3 channal failed\r\n");
+                SEGGER_RTT_printf(0, "data in 2 channal failed\r\n");
                 SEGGER_RTT_SetTerminal(0);
             }
 //            else {

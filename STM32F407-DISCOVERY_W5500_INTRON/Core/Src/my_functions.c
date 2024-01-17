@@ -117,7 +117,7 @@ void print_4_Channel(uint8_t data[MAX_PACKET_LEN]) {
 
 void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]){
     for (int i = 0; i < 12; ++i) {
-        strncpy((char *)dataForControl + i , (const char*)dataFromBase + 2 + i * 4 , 1);
+        strncpy((char *)dataForControl + i , (const char*)dataFromBase + 1 + i * 4 , 1);
     }
 }
 

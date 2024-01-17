@@ -2823,13 +2823,11 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     if (ABONENT_or_BASE == 1) {  // Абонент
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
 //Проверяем не команда ли это от базы на перезагрузку
-//        if ( strcmp ((const char*)dataToDx, (const char*)commandfromSaseToAbonentReboot) == 0){
-//            //Перезагрузка
-//            printf("Received command Reboot from Base\r\n");
-//            reboot();
-//        }
-
-
+        if ( strcmp ((const char*)dataToDx, (const char*)commandfromSaseToAbonentReboot) == 0){
+            //Перезагрузка
+            printf("Received command Reboot from Base\r\n");
+            reboot();
+        }
 
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);

@@ -97,7 +97,7 @@ void print_3_Channel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(0);
 }
 
-void print_3_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]) {
+void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]) {
     SEGGER_RTT_SetTerminal(7);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
                       data[0], data[1], data[2], data[3], data[4], data[5],
@@ -115,13 +115,13 @@ void print_4_Channel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(0);
 }
 
-void create_3_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]){
+void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]){
     for (int i = 0; i < 12; ++i) {
         strncpy((char *)dataForControl + i , (const char*)dataFromBase + 2 + i * 4 , 1);
     }
 }
 
-uint8_t check_3_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]) {
+uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]) {
     if ( strncmp ((const char*)data, (const char*)trueData, 12) == 0){
         return 0;
     }

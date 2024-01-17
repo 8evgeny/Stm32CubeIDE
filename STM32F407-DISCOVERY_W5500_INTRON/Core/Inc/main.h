@@ -170,7 +170,10 @@ void printAllChannel(uint8_t data[MAX_PACKET_LEN]);
 void print_1_Channel(uint8_t data[MAX_PACKET_LEN]);
 void print_2_Channel(uint8_t data[MAX_PACKET_LEN]);
 void print_3_Channel(uint8_t data[MAX_PACKET_LEN]);
+void print_3_Channel_control(uint8_t data[MAX_PACKET_LEN]);
 void print_4_Channel(uint8_t data[MAX_PACKET_LEN]);
+void create_3_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]);
+uint8_t check_3_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]);
 
 /* USER CODE END Includes */
 

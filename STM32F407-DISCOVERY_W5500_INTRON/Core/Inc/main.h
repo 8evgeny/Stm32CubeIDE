@@ -166,6 +166,8 @@ void setNewDestIP(char * buf);
 void setNewPassword(char * buf);
 int convertHexToDecimal();
 void testSPI_EEPROM();
+void printAllChannel(uint8_t data[MAX_PACKET_LEN]);
+void print_1_Channel(uint8_t data[MAX_PACKET_LEN]);
 
 /* USER CODE END Includes */
 

@@ -1474,7 +1474,14 @@ void sendReceiveUDP(uint8_t udpSocket)
 //            }
 
             sendPackets(udpSocket, destip, local_port_udp);
-            receivePackets(udpSocket, destip, local_port_udp);
+
+            if (HAL_GetTick()/1000 < 10){//Для начального запуска
+                if(getSn_RX_RSR(udpSocket) > 0)
+                    receivePackets(udpSocket, destip, local_port_udp);
+            }
+            else {
+                receivePackets(udpSocket, destip, local_port_udp);
+            }
         }
 
         if (ABONENT_or_BASE == 1) {  //Абонентский мост
@@ -1525,7 +1532,13 @@ void sendReceiveUDP(uint8_t udpSocket)
 //                          );
 //            SEGGER_RTT_SetTerminal(1);
 
-            receivePackets(udpSocket, destip, local_port_udp);
+            if (HAL_GetTick()/1000 < 10){ //Для начального запуска
+                if(getSn_RX_RSR(udpSocket) > 0)
+                    receivePackets(udpSocket, destip, local_port_udp);
+            }
+            else {
+                receivePackets(udpSocket, destip, local_port_udp);
+            }
             sendPackets(udpSocket, destip, local_port_udp);
         }
     }//if

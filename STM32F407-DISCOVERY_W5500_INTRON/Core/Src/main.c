@@ -1445,14 +1445,14 @@ void sendReceiveUDP(uint8_t udpSocket)
             }
 //Формируем массив из байтов 3 канала
             create_3_channelDataForControl(dataFromBase, receivedDataFrom_3_Channel);
-            print_3_Channel_control(receivedDataFrom_3_Channel);
+//            print_3_Channel_control(receivedDataFrom_3_Channel);
 //Логика перезагрузки - проверяю 3-й канал если не 2С в течение 45 сек то перезагрузка
-//            if (check_3_Channel(receivedDataFrom_3_Channel, trueDataFrom_3_Channel) != 0){
-//            //Включаем таймер отсчета
-//                SEGGER_RTT_SetTerminal(6);
-//                SEGGER_RTT_printf(0, "data in 3 channal failed\r\n");
-//                SEGGER_RTT_SetTerminal(0);
-//            }
+            if (check_3_Channel(receivedDataFrom_3_Channel, trueDataFrom_3_Channel) != 0){
+            //Включаем таймер отсчета
+                SEGGER_RTT_SetTerminal(6);
+                SEGGER_RTT_printf(0, "data in 3 channal failed\r\n");
+                SEGGER_RTT_SetTerminal(0);
+            }
 
 // Команда в абонент на перезагрузку
 //            if ((HAL_GetTick()/1000)%90 == 0){ //Тестовая перезагрузка абонента раз в 90 секунд

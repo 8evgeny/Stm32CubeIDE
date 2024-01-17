@@ -122,7 +122,7 @@ void create_3_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_
 }
 
 uint8_t check_3_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]) {
-    if ( strcmp ((const char*)data, (const char*)trueData) == 0){
+    if ( strncmp ((const char*)data, (const char*)trueData, 12) == 0){
         return 0;
     }
     return 1;

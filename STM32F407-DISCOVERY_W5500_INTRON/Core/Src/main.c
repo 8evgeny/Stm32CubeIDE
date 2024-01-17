@@ -1443,12 +1443,11 @@ void sendReceiveUDP(uint8_t udpSocket)
 //Логика перезагрузки
 
 // Команда в абонент на перезагрузку
-            if (HAL_GetTick()%1000 == 120){ //Тестовая перезагрузка абонента раз в 120 секунд
-                sendto(udpSocket, (uint8_t *)commandfromSaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
-                red_blink
-                green_blink
-                blue_blink
-            }
+//            if ((HAL_GetTick()/1000)%90 == 0){ //Тестовая перезагрузка абонента раз в 90 секунд
+//                sendto(udpSocket, (uint8_t *)commandfromSaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
+//                printf("Sending command Reboot to abonent\r\n");
+//                reboot();
+//            }
 
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);
@@ -2823,6 +2822,15 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
     if (ABONENT_or_BASE == 1) {  // Абонент
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
+//Проверяем не команда ли это от базы на перезагрузку
+//        if ( strcmp ((const char*)dataToDx, (const char*)commandfromSaseToAbonentReboot) == 0){
+//            //Перезагрузка
+//            printf("Received command Reboot from Base\r\n");
+//            reboot();
+//        }
+
+
+
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
     ++receiveBlank;

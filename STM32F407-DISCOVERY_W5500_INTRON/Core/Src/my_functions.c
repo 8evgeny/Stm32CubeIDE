@@ -98,7 +98,7 @@ void print_3_Channel(uint8_t data[MAX_PACKET_LEN]) {
 }
 
 void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]) {
-    SEGGER_RTT_SetTerminal(7);
+    SEGGER_RTT_SetTerminal(2);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
                       data[0], data[1], data[2], data[3], data[4], data[5],
                       data[6], data[7], data[8], data[9], data[10], data[11]

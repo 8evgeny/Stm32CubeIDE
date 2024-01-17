@@ -1437,25 +1437,29 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
 //Тут вывожу все каналы, полученные от базы  dataFromBase
-            if (SEGGER){
-                print_1_Channel(dataFromBase);  // команды проскакивают в установившемся режиме - F7  D1  C1
-                print_2_Channel(dataFromBase);  // в установившемся режиме - EE
-                print_3_Channel(dataFromBase);  // в установившемся режиме - 2C
-                print_4_Channel(dataFromBase);  // аудиоданные если нет - FF если есть 50 и далее в зависимости от уровня
-                printAllChannel(dataFromBase);
-            }
 //Формируем массив из байтов 3 канала
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
-            print_2_Channel_control(receivedDataFrom_2_Channel);
-//Логика перезагрузки - проверяю 3-й канал если не 2С в течение 45 сек то перезагрузка
+
+            if (SEGGER){
+                print_1_Channel(dataFromBase);  // команды проскакивают в установившемся режиме одно и то же случайное значение
+//                print_2_Channel(dataFromBase);  // в установившемся режиме - EE
+                print_2_Channel_control(receivedDataFrom_2_Channel);
+                print_3_Channel(dataFromBase);  // в установившемся режиме - 2C (почти всегда)
+                print_4_Channel(dataFromBase);  // аудиоданные если нет - FF если есть 50 и далее в зависимости от уровня
+//                printAllChannel(dataFromBase);
+            }
+
+//Логика перезагрузки - проверяю 2-й канал если не EE в течение 45 сек то перезагрузка
 
             if (check_2_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
             //Включаем таймер отсчета
 //                timeStartControl = HAL_GetTick();
 //                control_3_Channel = 1;
-                SEGGER_RTT_SetTerminal(6);
-                SEGGER_RTT_printf(0, "data in 2 channal failed\r\n");
-                SEGGER_RTT_SetTerminal(0);
+                if (SEGGER){
+                    SEGGER_RTT_SetTerminal(6);
+                    SEGGER_RTT_printf(0, "data in 2 channal failed\r\n");
+                    SEGGER_RTT_SetTerminal(0);
+                }
             }
 //            else {
 //                timeStartControl = 0;
@@ -2218,9 +2222,19 @@ int main(void)
         SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
         SEGGER_RTT_SetTerminal(0); // Select terminal 0
         SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
-        SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);
-        SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BLUE);
-        SEGGER_RTT_printf(0, "\r\nTest print from SEGGER!\n");
+//        SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);
+        SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_YELLOW);
+        SEGGER_RTT_SetTerminal(1);
+        SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_GREEN);
+        SEGGER_RTT_SetTerminal(2);
+        SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_CYAN);
+        SEGGER_RTT_SetTerminal(3);
+        SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_GREEN);
+        SEGGER_RTT_SetTerminal(4);
+        SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_GREEN);
+        SEGGER_RTT_SetTerminal(6);
+        SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_RED);
+        SEGGER_RTT_SetTerminal(0);
     }
     while (1)
     {

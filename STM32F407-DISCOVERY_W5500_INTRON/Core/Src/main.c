@@ -89,6 +89,9 @@ uint8_t dataToBase[MAX_PACKET_LEN];
 uint8_t dataFromBase[MAX_PACKET_LEN];
 uint8_t dataToDx[MAX_PACKET_LEN];
 uint8_t dataFromDx[MAX_PACKET_LEN];
+uint8_t commandfromSaseToAbonentReboot[MAX_PACKET_LEN]= {0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+                                                   0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+                                                   0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88};
 
 uint8_t test1[MAX_PACKET_LEN] = {0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
                                  0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
@@ -1429,9 +1432,23 @@ void sendReceiveUDP(uint8_t udpSocket)
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-//Тут анализирую полученное  dataFromBase
-    printAllChannel(dataFromBase);
-    print_1_Channel(dataFromBase);
+//Тут вывожу все каналы, полученные от базы  dataFromBase
+            if (SEGGER){
+                print_1_Channel(dataFromBase);  // команды проскакивают в установившемся режиме - F7  D1  C1
+                print_2_Channel(dataFromBase);  // в установившемся режиме - EE
+                print_3_Channel(dataFromBase);  // в установившемся режиме - 2C
+                print_4_Channel(dataFromBase);  // аудиоданные если нет - FF если есть 50 и далее в зависимости от уровня
+                printAllChannel(dataFromBase);
+            }
+//Логика перезагрузки
+
+// Команда в абонент на перезагрузку
+            if (HAL_GetTick()%1000 == 120){ //Тестовая перезагрузка абонента раз в 120 секунд
+                sendto(udpSocket, (uint8_t *)commandfromSaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
+                red_blink
+                green_blink
+                blue_blink
+            }
 
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);

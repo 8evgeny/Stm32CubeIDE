@@ -168,6 +168,9 @@ int convertHexToDecimal();
 void testSPI_EEPROM();
 void printAllChannel(uint8_t data[MAX_PACKET_LEN]);
 void print_1_Channel(uint8_t data[MAX_PACKET_LEN]);
+void print_2_Channel(uint8_t data[MAX_PACKET_LEN]);
+void print_3_Channel(uint8_t data[MAX_PACKET_LEN]);
+void print_4_Channel(uint8_t data[MAX_PACKET_LEN]);
 
 /* USER CODE END Includes */
 

@@ -68,6 +68,7 @@ uint32_t receiveBlank = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
 uint8_t SEGGER = 0;
+uint32_t numBadPackets2Channel = 0;
 #ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -1452,34 +1453,39 @@ void sendReceiveUDP(uint8_t udpSocket)
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 45 сек то перезагрузка
 
             if (check_2_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
-            //Включаем таймер отсчета
-//                timeStartControl = HAL_GetTick();
-//                control_3_Channel = 1;
+    //Инкрементируем счетчик
+                ++numBadPackets2Channel;
                 if (SEGGER){
                     SEGGER_RTT_SetTerminal(6);
-                    SEGGER_RTT_printf(0, "data in 2 channal failed\r\n");
+                    SEGGER_RTT_printf(0, "bad packets: %d\r\n", numBadPackets2Channel);
                     SEGGER_RTT_SetTerminal(0);
                 }
             }
-//            else {
-//                timeStartControl = 0;
-//                control_3_Channel = 1;
-//            }
+            else {
+    //Сбрасываем счетчик
+                numBadPackets2Channel = 0;
+            }
 
+            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
 // Команда в абонент на перезагрузку
-//            if ((HAL_GetTick()/1000)%90 == 0){ //Тестовая перезагрузка абонента раз в 90 секунд
-//                sendto(udpSocket, (uint8_t *)commandfromSaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
-//                printf("Sending command Reboot to abonent\r\n");
-//                reboot();
-//            }
+                sendto(udpSocket, (uint8_t *)commandfromSaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
+                printf("Sending command Reboot to abonent\r\n");
+                red_blink
+                red_blink
+                red_blink
+                reboot();
+            }
 
-            sendPackets(udpSocket, destip, local_port_udp);
+
 
             if (HAL_GetTick()/1000 < 10){//Для начального запуска
-                if(getSn_RX_RSR(udpSocket) > 0)
+                if(getSn_RX_RSR(udpSocket) > 0) {
                     receivePackets(udpSocket, destip, local_port_udp);
+                }
+                sendPackets(udpSocket, destip, local_port_udp);
             }
             else {
+                sendPackets(udpSocket, destip, local_port_udp);
                 receivePackets(udpSocket, destip, local_port_udp);
             }
         }
@@ -1533,13 +1539,16 @@ void sendReceiveUDP(uint8_t udpSocket)
 //            SEGGER_RTT_SetTerminal(1);
 
             if (HAL_GetTick()/1000 < 10){ //Для начального запуска
-                if(getSn_RX_RSR(udpSocket) > 0)
+                if(getSn_RX_RSR(udpSocket) > 0){
                     receivePackets(udpSocket, destip, local_port_udp);
+                }
+                sendPackets(udpSocket, destip, local_port_udp);
             }
             else {
                 receivePackets(udpSocket, destip, local_port_udp);
+                sendPackets(udpSocket, destip, local_port_udp);
             }
-            sendPackets(udpSocket, destip, local_port_udp);
+
         }
     }//if
 }
@@ -2872,6 +2881,9 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 //Проверяем не команда ли это от базы на перезагрузку
         if ( strcmp ((const char*)dataToDx, (const char*)commandfromSaseToAbonentReboot) == 0){
             //Перезагрузка
+            red_blink
+            red_blink
+            red_blink
             printf("Received command Reboot from Base\r\n");
             reboot();
         }

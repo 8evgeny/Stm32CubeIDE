@@ -14,7 +14,7 @@ set(CMAKE_OBJCOPY ${toolchain}/bin/arm-none-eabi-objcopy)
 
 #add_definitions(-Denable_write_MAC) #Разрешение технологической прошивки / записи MAC
 add_definitions(-Denable_twin_reset_to_restore_default_IP)
-add_definitions(-Denable_SEGGER) #on/off SEGGER
+#add_definitions(-Denable_SEGGER) #on/off SEGGER
 
 add_definitions(-DWOLFSSL_X509_INCLUDED)
 add_definitions(-DOPENSSL_ALL)

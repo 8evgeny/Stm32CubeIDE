@@ -29,6 +29,11 @@ void WIZCHIPInitialize(){
 #else
 	uint8_t memsize[2][4] = { {2,2,2,2},{2,2,2,2}};
 #endif
+
+//Перед инициализацией сбрасываю wiznet
+    ctlwizchip(CW_RESET_PHY,(void*)memsize);
+    ctlwizchip(CW_RESET_WIZCHIP,(void*)memsize);
+
 	if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1)
 	{
 		//myprintf("WIZCHIP Initialized fail.\r\n");

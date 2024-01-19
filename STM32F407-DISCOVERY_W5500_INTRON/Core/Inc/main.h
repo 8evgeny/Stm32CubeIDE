@@ -29,6 +29,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 
 
 #define HTTP_SOCKET     0
+#define UDP_SOCKET      4
 #define ETH_MAX_BUF_SIZE	2048
 #define SERVER_PORT			8883
 /* I/O buffer size - wolfSSL buffers messages internally as well. */

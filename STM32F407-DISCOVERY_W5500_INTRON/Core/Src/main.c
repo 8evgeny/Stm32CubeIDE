@@ -2234,7 +2234,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    uint8_t udpSocket = 4;
+    uint8_t udpSocket = UDP_SOCKET;
     prepearUDP_PLIS(udpSocket);
 
 #ifdef   NEW_HTTP_SERVER //web serverWIZ

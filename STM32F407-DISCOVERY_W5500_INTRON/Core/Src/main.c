@@ -2210,6 +2210,9 @@ int main(void)
 
     net_ini_WIZNET(0); //TCP socket 0
 
+    //Выводим регистры Wiznet(
+    printWiznetReg();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -91,6 +91,17 @@ void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
     }
 }
 
+void printWiznetReg(){
+    printf("wiznet registers:\r\n"
+           "Mode Register: %X\r\n"
+           "Interrupt Register: %X\r\n"
+           "PHY Configuration Register: %X\r\n"
+           ,WIZCHIP_READ(0x0000)
+           ,WIZCHIP_READ(0x0015)
+           ,WIZCHIP_READ(0x002E)
+           );
+}
+
 void printAllChannel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(5);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "

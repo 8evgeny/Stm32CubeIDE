@@ -177,6 +177,7 @@ void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_
 uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]);
 void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]);
 void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
+void printWiznetReg(void);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

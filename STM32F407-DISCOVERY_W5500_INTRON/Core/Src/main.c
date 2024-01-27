@@ -2865,9 +2865,9 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    //После 100 секунд работы пропускаем каждый 15 тыс пакет для избегания рассинхрона
+    //После 100 секунд работы пропускаем пакет для избегания рассинхрона
     ++num_rcvd_SEGGER;
-    if ((HAL_GetTick()/1000 > 100) && (num_rcvd_SEGGER % 15000 == 0)) {
+    if ((HAL_GetTick()/1000 > 100) && (num_rcvd_SEGGER % 10000 == 0)) {
         ++num_skip_packet;
         if (SEGGER)
             SEGGER_RTT_printf(0, "Skip packet %d, System time %d\r\n", num_skip_packet, HAL_GetTick()/1000);

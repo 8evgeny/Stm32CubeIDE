@@ -11,13 +11,9 @@ set(toolchain /home/evg/toolchain/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-ea
 set(CMAKE_OBJCOPY ${toolchain}/bin/arm-none-eabi-objcopy)
 
 #set(LFS ON)
-
 #add_definitions(-Denable_write_MAC) #Разрешение технологической прошивки / записи MAC
-add_definitions(-Denable_twin_reset_to_restore_default_IP)
+#add_definitions(-Denable_twin_reset_to_restore_default_IP)
 add_definitions(-Denable_SEGGER) #on/off SEGGER
-
-add_definitions(-DWOLFSSL_X509_INCLUDED)
-add_definitions(-DOPENSSL_ALL)
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
 #add_definitions(-DTLS_ON)         #Режим http / https
 add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)
@@ -31,12 +27,8 @@ add_definitions(-DPROD)  #Основной файл index.html или приме
 #add_definitions(-DfpgaToCpuAbonTestData)  #Отдаю из FPGA в CPU тестовые данные на абоненте
 #add_definitions(-DcpuToFpgaBaseTestData)  #Отдаю из CPU в FPGA тестовые данные на базе
 #add_definitions(-DcpuToFpgaAbonTestData)  #Отдаю из CPU в FPGA тестовые данные на абоненте
-
-#Эти 4 параметра не используются
-#add_definitions(-DWOLFSSL_ALLOW_TLSV10)
-#add_definitions(-DMBEDTLS_ECDSA_C)
-#add_definitions(-DMBEDTLS_ECP_C)
-#add_definitions(-DMBEDTLS_SHA256_C)
+add_definitions(-DWOLFSSL_X509_INCLUDED)
+add_definitions(-DOPENSSL_ALL)
 add_definitions(-UWOLFSSL_TLS13)
 
 project(Bridge C CXX ASM)

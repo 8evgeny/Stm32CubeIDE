@@ -79,6 +79,18 @@ int _write(int fd, char *str, int len)
     return len;
 }
 
+void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
+    //Проверяем не команда ли это от базы на перезагрузку
+    if ( strcmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentReboot) == 0){
+        //Перезагрузка
+        red_blink
+        red_blink
+        red_blink
+        printf("Received command Reboot from Base\r\n");
+        reboot();
+    }
+}
+
 void printAllChannel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(5);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "

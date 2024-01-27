@@ -29,7 +29,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-
+#include "main.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -61,6 +61,7 @@ void  wizchip_write(uint8_t wb);
 uint8_t wizchip_read(void);
 void Chip_selection_call_back(void);
 void wizchip_initialize(void);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

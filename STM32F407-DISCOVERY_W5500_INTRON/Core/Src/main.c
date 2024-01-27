@@ -87,10 +87,10 @@ uint8_t passwordOK = 0;
 uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
 
-uint8_t dataToBase[MAX_PACKET_LEN];
-uint8_t dataFromBase[MAX_PACKET_LEN];
-uint8_t dataToDx[MAX_PACKET_LEN];
-uint8_t dataFromDx[MAX_PACKET_LEN];
+uint8_t dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
+uint8_t dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
+uint8_t dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
+uint8_t dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
 
 uint8_t receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
 uint8_t trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
@@ -2861,15 +2861,8 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
     if (ABONENT_or_BASE == 1) {  // Абонент
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
-//Проверяем не команда ли это от базы на перезагрузку
-        if ( strcmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentReboot) == 0){
-            //Перезагрузка
-            red_blink
-            red_blink
-            red_blink
-            printf("Received command Reboot from Base\r\n");
-            reboot();
-        }
+
+        checkCommands(dataToDx);
 
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);

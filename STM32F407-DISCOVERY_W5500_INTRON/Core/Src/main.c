@@ -1481,16 +1481,16 @@ void sendReceiveUDP(uint8_t udpSocket)
 
 
 
-            if (HAL_GetTick()/1000 < 10){//Для начального запуска
-                if(getSn_RX_RSR(udpSocket) > 0) {
-                    receivePackets(udpSocket, destip, local_port_udp);
-                }
-                sendPackets(udpSocket, destip, local_port_udp);
-            }
-            else {
+//            if (HAL_GetTick()/1000 < 10){//Для начального запуска
+//                if(getSn_RX_RSR(udpSocket) > 0) {
+//                    receivePackets(udpSocket, destip, local_port_udp);
+//                }
+//                sendPackets(udpSocket, destip, local_port_udp);
+//            }
+//            else {
                 sendPackets(udpSocket, destip, local_port_udp);
                 receivePackets(udpSocket, destip, local_port_udp);
-            }
+//            }
         }
 
         if (ABONENT_or_BASE == 1) {  //Абонентский мост
@@ -1541,16 +1541,16 @@ void sendReceiveUDP(uint8_t udpSocket)
 //                          );
 //            SEGGER_RTT_SetTerminal(1);
 
-            if (HAL_GetTick()/1000 < 10){ //Для начального запуска
-                if(getSn_RX_RSR(udpSocket) > 0){
-                    receivePackets(udpSocket, destip, local_port_udp);
-                }
-                sendPackets(udpSocket, destip, local_port_udp);
-            }
-            else {
+//            if (HAL_GetTick()/1000 < 10){ //Для начального запуска
+//                if(getSn_RX_RSR(udpSocket) > 0){
+//                    receivePackets(udpSocket, destip, local_port_udp);
+//                }
+//                sendPackets(udpSocket, destip, local_port_udp);
+//            }
+//            else {
                 receivePackets(udpSocket, destip, local_port_udp);
                 sendPackets(udpSocket, destip, local_port_udp);
-            }
+//            }
 
         }
     }//if

@@ -141,6 +141,18 @@ const char w5x00web_dio_js[] =
  * HTML Pages (web pages)
  *************************************************************************************/
 #ifdef PROD
+const char fake_page[] =
+    "<!DOCTYPE html> "
+    "<html lang='ru'>"
+    "  <head> "
+    "  <meta charset='utf-8'>"
+    "  <title>Error Password</title>"
+    "  </head>"
+    "  <body onload='clear();'>"
+    "  <h3>Error password</h3>"
+    "</body></html>"
+    ;
+
 const char index_page[] =
 "<!DOCTYPE html> "
 "<html lang='ru'>"

@@ -84,6 +84,7 @@ uint8_t destipHOST[4] = {192,168,1,11}; //для тестов
 
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
+uint8_t numberAttemptEnterPassword = 3;
 uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
 
@@ -1122,6 +1123,7 @@ void wep_define_func(void)
 #ifdef   PROD
     reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page);				// index.html 		: Main page example
     reg_httpServer_webContent((uint8_t *)"main.html", (uint8_t *)main_page);                // main.html
+    reg_httpServer_webContent((uint8_t *)"fake.html", (uint8_t *)fake_page);                // fake.html
     reg_httpServer_webContent((uint8_t *)"host_IP", (uint8_t *)host_IP);
     reg_httpServer_webContent((uint8_t *)"dest_IP", (uint8_t *)dest_IP);
     reg_httpServer_webContent((uint8_t *)"gate_IP", (uint8_t *)gate_IP);
@@ -1705,6 +1707,11 @@ void checkPassword(char* buf)
     else
     {
         Printf("password not OK\r\n");
+        --numberAttemptEnterPassword;
+//        if (numberAttemptEnterPassword == 0){
+//            close(0);
+//            reboot();
+//        }
     }
 }
 
@@ -2208,7 +2215,7 @@ int main(void)
 //    net_ini();
 #endif
 
-    net_ini_WIZNET(0); //TCP socket 0
+    net_ini_WIZNET(HTTP_SOCKET); //TCP socket 0
 
     //Выводим регистры Wiznet(
     printWiznetReg();
@@ -2224,7 +2231,7 @@ int main(void)
     uint8_t i;
     httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
     wep_define_func();
-//    display_reg_webContent_list(); //Зарегистрированный web контент
+    display_reg_webContent_list(); //Зарегистрированный web контент
 #endif
     if (SEGGER){
         SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
@@ -2248,10 +2255,9 @@ int main(void)
     {
 //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET); //Debug 3
 #ifdef   NEW_HTTP_SERVER
-        for(i = 0; i < MAX_HTTPSOCK; i++)
-        {
-            httpServer_run(i);
-        }
+            for(i = 0; i < MAX_HTTPSOCK; i++) {
+                httpServer_run(i);
+            }
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();
@@ -2265,7 +2271,8 @@ int main(void)
         if (HANDSHAKE == 0)
             sendHANDSHAKE(udpSocket);
       } else {
-           HAL_IWDG_Refresh(&hiwdg);
+          if (numberAttemptEnterPassword !=0)
+              HAL_IWDG_Refresh(&hiwdg);
       }
     /* USER CODE END WHILE */
 

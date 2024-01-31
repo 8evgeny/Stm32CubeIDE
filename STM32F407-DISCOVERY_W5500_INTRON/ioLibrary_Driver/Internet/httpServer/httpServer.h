@@ -14,6 +14,7 @@ extern "C" {
 
 #define INITIAL_WEBPAGE				"index.html"
 #define MAIN_WEBPAGE                "main.html"
+#define FAKE_WEBPAGE                "fake.html"
 #define M_INITIAL_WEBPAGE			"m/index.html"
 #define MOBILE_INITIAL_WEBPAGE		"mobile/index.html"
 

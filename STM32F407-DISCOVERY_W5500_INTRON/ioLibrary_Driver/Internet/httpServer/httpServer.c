@@ -19,6 +19,7 @@ extern WOLFSSL*     server_ssl ;
 extern unsigned char client_buffer[BUFFER_SIZE];
 extern unsigned char server_buffer[BUFFER_SIZE];
 extern uint8_t UDP_or_TCP;
+extern uint8_t numberAttemptEnterPassword;
 #ifdef	_USE_SDCARD_
 #include "ff.h" 	// header file for FatFs library (FAT file system)
 #endif
@@ -158,7 +159,7 @@ void httpServer_run(uint8_t seqnum)
 			switch(HTTPSock_Status[seqnum].sock_status)
 			{
 
-				case STATE_HTTP_IDLE :
+                case STATE_HTTP_IDLE :
 					if ((len = getSn_RX_RSR(s)) > 0)
 					{
 //Выключаю обмен по UDP
@@ -182,10 +183,11 @@ UDP_or_TCP = 0;
 //                        *(((uint8_t *)server_buffer) + len) = '\0';
 #endif
 #ifndef TLS_ON
-						parse_http_request(parsed_http_request, (uint8_t *)http_request);
+                        parse_http_request(parsed_http_request, (uint8_t *)http_request);
 #endif
 						getSn_DIPR(s, destip);
 						destport = getSn_DPORT(s);
+
 						printf("\r\n");
 						printf("> HTTPSocket[%d] : HTTP Request received ", s);
 						printf("from %d.%d.%d.%d : %d\r\n", destip[0], destip[1], destip[2], destip[3], destport);
@@ -522,15 +524,21 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 			if (!strcmp((char *)uri_name, "m")) strcpy((char *)uri_name, M_INITIAL_WEBPAGE);
 			if (!strcmp((char *)uri_name, "mobile")) strcpy((char *)uri_name, MOBILE_INITIAL_WEBPAGE);
 
-            if ((passwordOK == 1)&&(loginOK == 1))
-            {
-                if (mainIsLoad == 0)
-                {
+            if ((passwordOK == 1)&&(loginOK == 1)) {
+                if (mainIsLoad == 0) {
                     strcpy((char *)uri_name, MAIN_WEBPAGE);
                     mainIsLoad = 1;
                 }
-
             }
+
+            if ((loginOK == 1) && (numberAttemptEnterPassword == 0)) {
+                if (mainIsLoad == 0) {
+                    printf("Load fakeWEB\r\n");
+                    strcpy((char *)uri_name, FAKE_WEBPAGE);
+                    mainIsLoad = 1;
+                }
+            }
+
             if (strncmp ((char *)uri_name, "SET_HOST_IP", 11) == 0)
                 setNewHostIP((char *)(uri_name) + 11);
 

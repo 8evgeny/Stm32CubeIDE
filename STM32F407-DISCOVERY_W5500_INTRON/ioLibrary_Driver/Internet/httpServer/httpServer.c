@@ -19,7 +19,8 @@ extern WOLFSSL*     server_ssl ;
 extern unsigned char client_buffer[BUFFER_SIZE];
 extern unsigned char server_buffer[BUFFER_SIZE];
 extern uint8_t UDP_or_TCP;
-extern uint8_t numberAttemptEnterPassword;
+extern uint8_t numberAttempt;
+extern uint32_t startHttpTime;
 #ifdef	_USE_SDCARD_
 #include "ff.h" 	// header file for FatFs library (FAT file system)
 #endif
@@ -164,6 +165,7 @@ void httpServer_run(uint8_t seqnum)
 					{
 //Выключаю обмен по UDP
 UDP_or_TCP = 0;
+startHttpTime = HAL_GetTick();
 
 						if (len > DATA_BUF_SIZE) len = DATA_BUF_SIZE;
 #ifdef TLS_ON
@@ -531,13 +533,10 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
                 }
             }
 
-            if ((loginOK == 1) && (numberAttemptEnterPassword == 0)) {
-                if (mainIsLoad == 0) {
+            if (numberAttempt == 0) {
                     printf("Load fakeWEB\r\n");
                     strcpy((char *)uri_name, FAKE_WEBPAGE);
-                    mainIsLoad = 1;
                 }
-            }
 
             if (strncmp ((char *)uri_name, "SET_HOST_IP", 11) == 0)
                 setNewHostIP((char *)(uri_name) + 11);

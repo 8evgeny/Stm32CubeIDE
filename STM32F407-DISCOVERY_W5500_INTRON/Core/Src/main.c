@@ -70,6 +70,7 @@ uint32_t num_skip_packet = 0;
 uint8_t SEGGER = 0;
 uint32_t numBadPackets2Channel = 0;
 uint8_t numGoodPackets2Channel = 0;
+uint32_t startHttpTime = 0;
 #ifdef LFS
 extern lfs_t lfs;
 extern lfs_file_t file;
@@ -84,7 +85,7 @@ uint8_t destipHOST[4] = {192,168,1,11}; //для тестов
 
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
-uint8_t numberAttemptEnterPassword = 3;
+uint8_t numberAttempt = 3;
 uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
 
@@ -1694,6 +1695,7 @@ void checkLogin(char* buf)
     else
     {
         printf("Login not found!!!\n");
+        --numberAttempt;
     }
 }
 
@@ -1707,11 +1709,7 @@ void checkPassword(char* buf)
     else
     {
         Printf("password not OK\r\n");
-        --numberAttemptEnterPassword;
-//        if (numberAttemptEnterPassword == 0){
-//            close(0);
-//            reboot();
-//        }
+        --numberAttempt;
     }
 }
 
@@ -2151,12 +2149,12 @@ int main(void)
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
         printf("work in BASE\r\n");
-        MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 17 секунд
+        MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 30 секунд
     }
     else { //Я в абоненте - сигналл выдает ПЛИС
         ABONENT_or_BASE = 1;
         printf("work in ABONENT\r\n");
-        MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 13 секунд
+        MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 25 секунд
     }
 
     isSdCartOn();       //Проверка вставлена ли SD карта
@@ -2255,9 +2253,16 @@ int main(void)
     {
 //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET); //Debug 3
 #ifdef   NEW_HTTP_SERVER
+        if ((UDP_or_TCP == 0) && (startHttpTime + 300000 < HAL_GetTick())){
+            printf("Long HTTP session - Reboot\r\n");
+            reboot();
+        }
+        else{
             for(i = 0; i < MAX_HTTPSOCK; i++) {
                 httpServer_run(i);
             }
+        }
+
 #endif
 #ifndef   NEW_HTTP_SERVER
       net_poll();
@@ -2271,7 +2276,7 @@ int main(void)
         if (HANDSHAKE == 0)
             sendHANDSHAKE(udpSocket);
       } else {
-          if (numberAttemptEnterPassword !=0)
+          if (numberAttempt != 0)
               HAL_IWDG_Refresh(&hiwdg);
       }
     /* USER CODE END WHILE */
@@ -2803,8 +2808,8 @@ static void MX_GPIO_Init(void)
 static void MX_IWDG_Init_abonent(void)
 {
   hiwdg.Instance = IWDG;
-  hiwdg.Init.Prescaler = IWDG_PRESCALER_128;
-  hiwdg.Init.Reload = 3000;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
+  hiwdg.Init.Reload = 6000;
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
     Error_Handler();
@@ -2814,7 +2819,7 @@ static void MX_IWDG_Init_base(void)
 {
   hiwdg.Instance = IWDG;
   hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
-  hiwdg.Init.Reload = 8000;
+  hiwdg.Init.Reload = 7000;
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
     Error_Handler();

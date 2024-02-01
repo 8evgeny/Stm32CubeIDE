@@ -49,6 +49,21 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #define LOCAL_PORT_WEB 443
 #endif
 #define LOCAL_PORT_UDP 3000
+
+#ifdef DATA_IN_CCM
+#define CCMRAMDATA __attribute__((section (".ccmram")))
+#endif
+#ifndef DATA_IN_CCM
+#define CCMRAMDATA
+#endif
+#ifdef TEXT_IN_CCM
+#define CCMRAMTEXT __attribute__((section (".ccmram")))
+#endif
+#ifndef TEXT_IN_CCM
+#define CCMRAMTEXT
+#endif
+
+
 /*
 EEPROM I2C : ATMEL 24C1024 (24C256)
 32768 byte 0000 - 7FFF

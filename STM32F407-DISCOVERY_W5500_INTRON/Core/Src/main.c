@@ -2143,6 +2143,9 @@ int main(void)
 #ifdef  enable_SEGGER
   SEGGER = 1;
 #endif
+  red_blink //Индикация перезагрузки
+  red_blink
+  red_blink
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
 
@@ -2809,7 +2812,8 @@ static void MX_IWDG_Init_abonent(void)
 {
   hiwdg.Instance = IWDG;
   hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
-  hiwdg.Init.Reload = 6000;
+//  hiwdg.Init.Reload = 6000; //17 секунд
+  hiwdg.Init.Reload = 7000; //26 секунд
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
     Error_Handler();
@@ -2819,7 +2823,7 @@ static void MX_IWDG_Init_base(void)
 {
   hiwdg.Instance = IWDG;
   hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
-  hiwdg.Init.Reload = 7000;
+  hiwdg.Init.Reload = 6500; //22 секунды
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
     Error_Handler();

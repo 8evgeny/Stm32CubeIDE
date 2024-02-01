@@ -50,6 +50,20 @@ MEMORY
   FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 1024K
 }
 
+/*
+MEMORY
+{
+  CCMRAM    (xrw)    : ORIGIN = 0x10000000,   LENGTH = 64K
+  RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
+  FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 48K В области FLASH хранится Bootloader
+  BOOT_DATA (rx) : ORIGIN = 0x800C000, LENGTH = 16K В области BOOT_DATA хранятся данные о прошивке. Особенно важна эта память для того, чтобы определить существует ли вообще прошивка
+  APP (rx) : ORIGIN = 0x8010000, LENGTH = 960K  В области APP хранится основная программа (разметили его здесь, чтобы использовать данные по его расположению в бутлоадере и не задавать какие-то дефайны с адресами)
+}
+_sapp = ORIGIN(APP);Переменная _sapp нужна для определения начального адреса прошивки
+_eapp = ORIGIN(APP) + LENGTH(APP);Переменная _eapp нужна для определения конечного адреса прошивки
+_smem = ORIGIN(BOOT_DATA);Переменная _smem нужна для определения начального адреса данных бутлоадера. Здесь будем хранить данные о прошивке. Они не сотрутся т.к. хранятся во flash памяти (будто они часть программы) это могут быть: версия, контрольная сумма файла прошивки и т.п. При стирании прошивки эту область также нужно стереть, чтобы понимать что прошивки нет.
+*/
+
 /* Sections */
 SECTIONS
 {
@@ -60,6 +74,20 @@ SECTIONS
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
+
+  _siccmram = LOADADDR(.ccmram);
+  .ccmram :
+  {
+    . = ALIGN(4);
+    _sccmram = .;
+    *(.ccmram)
+    *(.ccmram*)
+/*    *my_functions.c.o(.text .text*) так не работает    */
+/*    *libioLibrary_Driver_LIB.a:*(.text .text*)*/
+    . = ALIGN(4);
+    _eccmram = .;
+  } >CCMRAM AT> FLASH
+
 
   /* The program code and other data into "FLASH" Rom type memory */
   .text :
@@ -147,25 +175,6 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
 
   } >RAM AT> FLASH
-
-  _siccmram = LOADADDR(.ccmram);
-
-  /* CCM-RAM section
-  *
-  * IMPORTANT NOTE!
-  * If initialized variables will be placed in this section,
-  * the startup code needs to be modified to copy the init-values.
-  */
-  .ccmram :
-  {
-    . = ALIGN(4);
-    _sccmram = .;       /* create a global symbol at ccmram start */
-    *(.ccmram)
-    *(.ccmram*)
-
-    . = ALIGN(4);
-    _eccmram = .;       /* create a global symbol at ccmram end */
-  } >CCMRAM AT> FLASH
 
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);

@@ -1434,7 +1434,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 //                printAllChannel(dataFromBase);
             }
 
-//Логика перезагрузки - проверяю 2-й канал если не EE в течение 45 сек то перезагрузка
+//Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
 
             if (check_2_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
     //Инкрементируем счетчик

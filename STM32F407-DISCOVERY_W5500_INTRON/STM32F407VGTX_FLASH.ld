@@ -83,6 +83,7 @@ SECTIONS
     *(.ccmram)
     *(.ccmram*)
 /*    *my_functions.c.o(.text .text*) так не работает    */
+/*    *libioLibrary_Driver_LIB.a:*(.text .text*)*/
     . = ALIGN(4);
     _eccmram = .;
   } >CCMRAM AT> FLASH

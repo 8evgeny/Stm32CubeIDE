@@ -2097,7 +2097,9 @@ void ReadProtect(void) // защита от считывания
   }
 }
 
-
+extern uint8_t _sapp;
+extern uint8_t _eapp;
+extern uint8_t _smem;
 /* USER CODE END 0 */
 
 /**
@@ -2146,6 +2148,12 @@ int main(void)
   red_blink //Индикация перезагрузки
   red_blink
   red_blink
+
+  printf("start address APP %d\r\n", (uint32_t*)&_sapp);
+  printf("end address APP %d\r\n", (uint32_t*)&_eapp);
+  printf("start address SHARED_MEMORY %d\r\n", (uint32_t*)&_smem);
+
+
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
 

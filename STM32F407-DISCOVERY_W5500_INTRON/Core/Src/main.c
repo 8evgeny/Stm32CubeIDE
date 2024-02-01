@@ -89,13 +89,13 @@ uint8_t numberAttempt = 3;
 uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
 
-uint8_t dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
-uint8_t dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
-uint8_t dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
-uint8_t dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
+uint8_t  __attribute__((section (".ccmram"))) dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
+uint8_t __attribute__((section (".ccmram"))) dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
+uint8_t __attribute__((section (".ccmram"))) dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
+uint8_t __attribute__((section (".ccmram"))) dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
 
-uint8_t receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
-uint8_t trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
+uint8_t __attribute__((section (".ccmram"))) receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
+uint8_t __attribute__((section (".ccmram"))) trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
 
 extern uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN];
 extern uint8_t test1[MAX_PACKET_LEN];
@@ -142,8 +142,8 @@ uint8_t destip[4];
 uint8_t macaddr[6]={0x00}/*MAC_ADDR*/;
 extern wiz_NetInfo defaultNetInfo;
 #define DATA_BUF_SIZE   2048
-uint8_t RX_BUF_WEB[DATA_BUF_SIZE];
-uint8_t TX_BUF_WEB[DATA_BUF_SIZE];
+uint8_t __attribute__((section (".ccmram"))) RX_BUF_WEB[DATA_BUF_SIZE];
+uint8_t __attribute__((section (".ccmram"))) TX_BUF_WEB[DATA_BUF_SIZE];
 uint8_t socknumlist[] = {0, 1, 2, 3};
 extern char host_IP[16]; //для http Сервера
 extern char dest_IP[16];
@@ -2097,9 +2097,9 @@ void ReadProtect(void) // защита от считывания
   }
 }
 
-extern uint8_t _sapp;
-extern uint8_t _eapp;
-extern uint8_t _smem;
+//extern uint8_t _sapp;
+//extern uint8_t _eapp;
+//extern uint8_t _smem;
 /* USER CODE END 0 */
 
 /**
@@ -2149,9 +2149,9 @@ int main(void)
   red_blink
   red_blink
 
-  printf("start address APP %d\r\n", (uint32_t*)&_sapp);
-  printf("end address APP %d\r\n", (uint32_t*)&_eapp);
-  printf("start address SHARED_MEMORY %d\r\n", (uint32_t*)&_smem);
+//  printf("start address APP %d\r\n", (uint32_t*)&_sapp);
+//  printf("end address APP %d\r\n", (uint32_t*)&_eapp);
+//  printf("start address SHARED_MEMORY %d\r\n", (uint32_t*)&_smem);
 
 
 //    ReadProtect(); //   <---------------------- защита от считывания

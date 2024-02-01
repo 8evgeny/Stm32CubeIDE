@@ -40,7 +40,7 @@
 
 extern void FsForEeprom_test();
 extern void littleFsInit();
-void sendPackets(uint8_t, uint8_t* , uint16_t ) CCMRAMTEXT;
+void sendPackets(uint8_t, uint8_t* , uint16_t ) CCMRAMTEXT; //CCM пока не работает
 void receivePackets(uint8_t, uint8_t* , uint16_t ) CCMRAMTEXT;
 extern int tls_client_serverTest();
 extern void tls_server_Handshake();
@@ -75,9 +75,6 @@ uint32_t startHttpTime = 0;
 extern lfs_t lfs;
 extern lfs_file_t file;
 #endif
-//uint8_t num_block_index = 1;
-//uint8_t num_block_main = 8;
-//char indexLen[8];
 #define WRITE_ONCE_TO_EEPROM 1024
 uint16_t local_port_web = LOCAL_PORT_WEB;
 uint16_t local_port_udp = LOCAL_PORT_UDP;
@@ -89,7 +86,7 @@ uint8_t numberAttempt = 3;
 uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
 
-uint8_t  CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
+uint8_t CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
 uint8_t CCMRAMDATA dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
 uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
 uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
@@ -2160,12 +2157,12 @@ int main(void)
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = 0;
         printf("work in BASE\r\n");
-        MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 30 секунд
+        MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 22 секунды
     }
     else { //Я в абоненте - сигналл выдает ПЛИС
         ABONENT_or_BASE = 1;
         printf("work in ABONENT\r\n");
-        MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 25 секунд
+        MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 26 секунд
     }
 
     isSdCartOn();       //Проверка вставлена ли SD карта

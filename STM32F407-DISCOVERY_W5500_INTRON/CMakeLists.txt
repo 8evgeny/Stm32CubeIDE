@@ -11,7 +11,7 @@ set(toolchain /home/evg/toolchain/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-ea
 set(CMAKE_OBJCOPY ${toolchain}/bin/arm-none-eabi-objcopy)
 
 #set(LFS ON)
-#add_definitions(-DTEXT_IN_CCM)      #Разрешение text в CCM
+#add_definitions(-DTEXT_IN_CCM)      #Разрешение text в CCM - Пока не работает
 add_definitions(-DDATA_IN_CCM)      #Разрешение data в CCM
 #add_definitions(-Denable_write_MAC) #Разрешение технологической прошивки / записи MAC
 #add_definitions(-Denable_twin_reset_to_restore_default_IP)

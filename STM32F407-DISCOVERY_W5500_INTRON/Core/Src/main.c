@@ -40,8 +40,6 @@
 
 extern void FsForEeprom_test();
 extern void littleFsInit();
-void sendPackets(uint8_t, uint8_t* , uint16_t );
-void receivePackets(uint8_t, uint8_t* , uint16_t );
 extern int tls_client_serverTest();
 extern void tls_server_Handshake();
 extern void polarSSLTest();
@@ -64,7 +62,6 @@ uint8_t UDP_or_TCP = 1;
 int8_t numWait = 50; //Количество ожиданий в цикле Handshake
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
-uint32_t receiveBlank = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
 uint8_t SEGGER = 0;
@@ -1480,7 +1477,6 @@ void sendReceiveUDP(uint8_t udpSocket)
 //Тут дальше диагностика от базы
                 netDiagnosticBase();
 
-
             }
 
             sendPackets(udpSocket, destip, local_port_udp);
@@ -2843,14 +2839,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
-    ++num_send;
-    if (num_send == 20){
-        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
-    }
-    if (num_send == 40){
-        num_send = 0;
-        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
-    }
+    indicateSend(20,40);
 }
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
@@ -2885,17 +2874,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
-    ++receiveBlank;
-    ++num_rcvd;
-    if (num_rcvd == 20){
-        HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-    }
-    if (num_rcvd == 40){
-        num_rcvd = 0;
-        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
-        HAL_IWDG_Refresh(&hiwdg);
-    }
+    indicateReceive(20,40);
 }
 
 int convertHexToDecimal(char hexadecimalnumber[2])

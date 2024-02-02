@@ -171,6 +171,8 @@ enum Commands{
     NO_COMMAND
 };
 
+void sendPackets(uint8_t, uint8_t* , uint16_t );
+void receivePackets(uint8_t, uint8_t* , uint16_t );
 void 	wizchip_cs_select(void);
 void  wizchip_cs_deselect(void);
 uint8_t wizchip_spi_readbyte(void);
@@ -204,6 +206,8 @@ void startNetDiagnostic();
 uint8_t checkNetDiagnosticMode();
 void netDiagnosticBase();
 void netDiagnosticAbon();
+void indicateSend(uint16_t numON, uint16_t numOFF);
+void indicateReceive(uint16_t numON, uint16_t numOFF);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

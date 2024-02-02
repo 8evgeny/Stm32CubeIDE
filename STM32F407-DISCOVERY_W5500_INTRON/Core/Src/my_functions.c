@@ -20,6 +20,12 @@ extern uint8_t SEGGER;
 extern uint8_t destip[4];
 extern uint8_t ABONENT_or_BASE;
 extern UART_HandleTypeDef huart6;
+extern IWDG_HandleTypeDef hiwdg;
+
+uint8_t CCMRAMDATA testDataFromBase[MAX_PACKET_LEN];
+uint8_t CCMRAMDATA testDataToBase[MAX_PACKET_LEN];
+uint8_t CCMRAMDATA testDataFromAbon[MAX_PACKET_LEN];
+uint8_t CCMRAMDATA testDataToAbon[MAX_PACKET_LEN];
 
 uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN]= {0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                                    0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
@@ -212,16 +218,58 @@ uint8_t checkNetDiagnosticMode()
         return netDiagnosticOFF;
     }
 }
-
+extern uint32_t num_send;
+extern uint32_t num_rcvd;
 void netDiagnosticBase(){
     printf("Start net diagnostic Base\r\n");
-
-
+    uint16_t destport = LOCAL_PORT_UDP;
+    num_send = 0;
+    while(1){
+        if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
+        {
+            sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
+            recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
+            indicateSend(20,40);
+            indicateReceive(20,40);
+        }
+    }
 }
 
 void netDiagnosticAbon(){
     printf("Start net diagnostic Abonet\r\n");
-
-
+    uint16_t destport = LOCAL_PORT_UDP;
+    num_send = 0;
+    while(1){
+        if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
+        {
+            recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
+            sendto(UDP_SOCKET, (uint8_t *)testDataToBase, MAX_PACKET_LEN, destip, destport);
+            indicateSend(20,40);
+            indicateReceive(20,40);
+        }
+    }
 }
 
+void indicateSend(uint16_t numON, uint16_t numOFF){
+    ++num_send;
+    if (num_send == numON){
+        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
+    }
+    if (num_send == numOFF){
+        num_send = 0;
+        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
+    }
+}
+
+void indicateReceive(uint16_t numON, uint16_t numOFF){
+    ++num_rcvd;
+    if (num_rcvd == numON){
+        HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
+    }
+    if (num_rcvd == numOFF){
+        num_rcvd = 0;
+        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
+        HAL_IWDG_Refresh(&hiwdg);
+    }
+}

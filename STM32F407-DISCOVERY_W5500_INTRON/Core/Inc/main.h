@@ -120,11 +120,12 @@ EEPROM I2C : ATMEL 24C1024 (24C256)
 #define  macAdressInSPIEEPROM       0x0120
 #define  markEEPROMSPIclear         0x01A0
 #define  resetTwiceFlag             0x0200
+#define  netDiagnosticFlag          0x0300
 /*25LC1024：1Mbit= 1024Kbit =128KB  = 512*256B = 131072 X 8bit
- Page 1     Address: 00000-000FF length 256b   IP settings
+ Page 1     Address: 00000-000FF length 256b    IP settings
  Page 2     Address: 00100-001FF length 256b
- Page 3     Address: 00200-002FF length 256b
- Page 4     Address: 00300-003FF length 256b
+ Page 3     Address: 00200-002FF length 256b    resetTwiceFlag
+ Page 4     Address: 00300-003FF length 256b    netDiagnosticFlag
 `
 `
 `
@@ -156,7 +157,10 @@ extern "C" {
 
 #define MAX_PACKET_LEN 48
 #define TEST_DATA test6
-
+enum netDiagnostic{
+    netDiagnosticON,
+    netDiagnosticOFF
+};
 void 	wizchip_cs_select(void);
 void  wizchip_cs_deselect(void);
 uint8_t wizchip_spi_readbyte(void);
@@ -187,6 +191,7 @@ void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]);
 void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
 void printWiznetReg(void);
 void startNetDiagnostic();
+uint8_t checkNetDiagnosticMode();
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

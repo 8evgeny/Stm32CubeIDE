@@ -68,6 +68,7 @@ uint32_t receiveBlank = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
 uint8_t SEGGER = 0;
+uint8_t NET_DIAGNOSTIC = 0;
 uint32_t numBadPackets2Channel = 0;
 uint8_t numGoodPackets2Channel = 0;
 uint32_t startHttpTime = 0;
@@ -95,6 +96,7 @@ uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
 uint8_t CCMRAMDATA trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
 
 extern uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN];
+extern uint8_t commandfromBaseToAbonentNetDiagnostic[MAX_PACKET_LEN];
 extern uint8_t test1[MAX_PACKET_LEN];
 extern uint8_t test2[MAX_PACKET_LEN];
 extern uint8_t test3[MAX_PACKET_LEN];
@@ -1391,6 +1393,18 @@ void convertToAbonData()
 
 void sendReceiveUDP(uint8_t udpSocket)
 {
+    if ((ABONENT_or_BASE == 0) && (NET_DIAGNOSTIC == 0) && (HAL_GetTick() < 5000)) {//Только 5 секунд проверяем
+        if (netDiagnosticON == checkNetDiagnosticMode()){
+            printf("netDiagnosticON\r\n");
+            NET_DIAGNOSTIC = 1; //Тут вся диагностика сети (или по NET_DIAGNOSTIC = 1 далее )
+
+            //Сбрасываю флаг диагностики
+            uint8_t netDiagnostic[1];
+            netDiagnostic[0] = 0xFF;
+            EEPROM_SPI_WriteBuffer(netDiagnostic, netDiagnosticFlag, 1);
+            printf("netDiagnosticFlag set OFF\r\n");
+        }
+    }
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
     {
         if (ABONENT_or_BASE == 0) {   //Cтанционный мост
@@ -2840,6 +2854,13 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     if (ABONENT_or_BASE == 0) {  //База
+
+        if ((num_send == 30) && (NET_DIAGNOSTIC == 1)){
+            //Отправка команды абоненту - перейти в диагностический режим
+            sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN, destip, destport);
+}
+
+
 #ifdef baseSendTestData
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif

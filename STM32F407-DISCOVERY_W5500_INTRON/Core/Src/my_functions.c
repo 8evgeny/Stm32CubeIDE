@@ -14,14 +14,19 @@
 #include "socket.h"
 #include "net.h"
 #include "httpServer.h"
+#include "spi_eeprom.h"
 
 extern uint8_t SEGGER;
+extern uint8_t destip[4];
+extern uint8_t ABONENT_or_BASE;
 extern UART_HandleTypeDef huart6;
 
 uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN]= {0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                                    0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                                    0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88};
-
+uint8_t commandfromBaseToAbonentNetDiagnostic[MAX_PACKET_LEN]= {0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+                                                          0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+                                                          0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77};
 uint8_t test1[MAX_PACKET_LEN] = {0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
                                  0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
                                 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55};
@@ -88,6 +93,10 @@ void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
         red_blink
         printf("Received command Reboot from Base\r\n");
         reboot();
+    }
+    //Проверяем не команда ли это от базы на диагностику сети
+    if ( strcmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentNetDiagnostic) == 0){
+        printf("Received command Net Diagnostics from Base\r\n");
     }
 }
 
@@ -180,6 +189,32 @@ uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_P
     return 1;
 }
 
-void startNetDiagnostic(){
-    printf(" **********   Start Net Diagnostis   **********\r\n");
+void startNetDiagnostic() {
+    if (ABONENT_or_BASE == 0){ //мы в базе
+        printf(" **********   Start Net Diagnostis BASE  **********\r\n");
+
+        uint8_t netDiagnostic[1];
+        netDiagnostic[0] = 0x88;
+        EEPROM_SPI_WriteBuffer(netDiagnostic, netDiagnosticFlag, 1);
+        printf("netDiagnosticFlag set ON\r\n");
+        reboot();
+    }
+    else
+    {
+        printf(" **********   SELECT BASE !!!   **********\r\n");
+    }
+}
+
+uint8_t checkNetDiagnosticMode()
+{
+    // считываем значение по адресу netDiagnosticFlag
+    uint8_t netDiagnostic[1];
+    EEPROM_SPI_ReadBuffer(netDiagnostic, netDiagnosticFlag, 1);
+    if (netDiagnostic[0] == 0x88) {
+       return netDiagnosticON;
+    }
+    else {
+//        printf("netDiagnosticFlag OFF\r\n");
+        return netDiagnosticOFF;
+    }
 }

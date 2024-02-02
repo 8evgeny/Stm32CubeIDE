@@ -186,6 +186,7 @@ uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_P
 void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]);
 void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
 void printWiznetReg(void);
+void startNetDiagnostic();
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

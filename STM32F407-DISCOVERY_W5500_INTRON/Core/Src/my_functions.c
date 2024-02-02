@@ -179,3 +179,7 @@ uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_P
     }
     return 1;
 }
+
+void startNetDiagnostic(){
+    printf(" **********   Start Net Diagnostis   **********\r\n");
+}

@@ -539,7 +539,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 
 void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
 //    printf("copyDefaultParametersToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-    if (ABONENT_or_BASE == BASE) { //База
+    if (ABONENT_or_BASE == BASE) {
         char defaultIP[settingsLenInSPI] =
         {'1','9','2','.','1','6','8','.','0','0','1','.','1','2','2',
          '1','9','2','.','1','6','8','.','0','0','1','.','1','0','0',
@@ -585,7 +585,7 @@ void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
 
 void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr){ //только 16 - ричный
     printf("copyDefaultMACToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-    if (ABONENT_or_BASE == BASE) { //База
+    if (ABONENT_or_BASE == BASE) {
         char defaultMAC[18] =
         {'0','0',':','1','5',':','4','2',':','B','F',':','F','0',':','5','2','\0'};
         printf("default MAC: %s\r\n",defaultMAC);
@@ -1408,7 +1408,7 @@ void sendReceiveUDP(uint8_t udpSocket)
     }
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
     {
-        if (ABONENT_or_BASE == BASE) {   //Cтанционный мост
+        if (ABONENT_or_BASE == BASE) {
             //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             //Обмен с ПЛИС
@@ -1488,7 +1488,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 //            }
         }
 
-        if (ABONENT_or_BASE == ABONENT) {  //Абонентский мост
+        if (ABONENT_or_BASE == ABONENT) {
             //Перед обменом с ПЛИС конверсия данных
             convertToAbonData();
 
@@ -2854,7 +2854,7 @@ static void MX_IWDG_Init_base(void)
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
-    if (ABONENT_or_BASE == BASE) {  //База
+    if (ABONENT_or_BASE == BASE) {
 
         if ((num_send == 30) && (NET_DIAGNOSTIC_BASE == 1) && (NET_DIAGNOSTIC_ABON == 0) ){
             //Отправка команды абоненту - перейти в диагностический режим
@@ -2871,7 +2871,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
 #endif
     }
-    if (ABONENT_or_BASE == ABONENT) {  //Абонентский мост
+    if (ABONENT_or_BASE == ABONENT) {
 #ifdef abonSendTestData
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif

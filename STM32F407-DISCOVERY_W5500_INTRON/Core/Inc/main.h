@@ -56,13 +56,6 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #ifndef DATA_IN_CCM
 #define CCMRAMDATA
 #endif
-#ifdef TEXT_IN_CCM
-#define CCMRAMTEXT __attribute__((section (".ccmram")))
-#endif
-#ifndef TEXT_IN_CCM
-#define CCMRAMTEXT
-#endif
-
 
 /*
 EEPROM I2C : ATMEL 24C1024 (24C256)

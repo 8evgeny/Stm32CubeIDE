@@ -40,8 +40,8 @@
 
 extern void FsForEeprom_test();
 extern void littleFsInit();
-void sendPackets(uint8_t, uint8_t* , uint16_t ) CCMRAMTEXT; //CCM пока не работает
-void receivePackets(uint8_t, uint8_t* , uint16_t ) CCMRAMTEXT;
+void sendPackets(uint8_t, uint8_t* , uint16_t );
+void receivePackets(uint8_t, uint8_t* , uint16_t );
 extern int tls_client_serverTest();
 extern void tls_server_Handshake();
 extern void polarSSLTest();

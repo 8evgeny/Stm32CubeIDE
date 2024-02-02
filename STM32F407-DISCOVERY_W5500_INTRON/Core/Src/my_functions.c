@@ -86,7 +86,7 @@ int _write(int fd, char *str, int len)
 
 void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
     //Проверяем не команда ли это от базы на перезагрузку
-    if ( strcmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentReboot) == 0){
+    if ( strncmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentReboot, MAX_PACKET_LEN) == 0){
         //Перезагрузка
         red_blink
         red_blink
@@ -95,8 +95,8 @@ void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
         reboot();
     }
     //Проверяем не команда ли это от базы на диагностику сети
-    if ( strcmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentNetDiagnostic) == 0){
-        printf("Received command Net Diagnostics from Base\r\n");
+    if ( strncmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN) == 0){
+        printf("Received command from Base: net diagnostic mode \r\n");
     }
 }
 

@@ -165,6 +165,11 @@ enum ABONENTorBASE{
     BASE,
     ABONENT
 };
+enum Commands{
+    REBOOT,
+    NET_DIAGNOSTIC,
+    NO_COMMAND
+};
 
 void 	wizchip_cs_select(void);
 void  wizchip_cs_deselect(void);
@@ -193,10 +198,12 @@ void print_4_Channel(uint8_t data[MAX_PACKET_LEN]);
 void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]);
 uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]);
 void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]);
-void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
+uint8_t checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
 void printWiznetReg(void);
 void startNetDiagnostic();
 uint8_t checkNetDiagnosticMode();
+void netDiagnosticBase();
+void netDiagnosticAbon();
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

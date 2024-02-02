@@ -1447,10 +1447,8 @@ void sendReceiveUDP(uint8_t udpSocket)
             }
 
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
-
             if (check_2_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
-    //Инкрементируем счетчик
-                ++numBadPackets2Channel;
+                ++numBadPackets2Channel; //Инкрементируем счетчик
                 numGoodPackets2Channel = 0;
                 if (SEGGER){
                     SEGGER_RTT_SetTerminal(6);
@@ -1465,27 +1463,28 @@ void sendReceiveUDP(uint8_t udpSocket)
             }
 
             if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
-// Команда в абонент на перезагрузку
+// Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
                 printf("Sending command Reboot to abonent\r\n");
-                red_blink
-                red_blink
-                red_blink
+                red_blink  red_blink  red_blink
                 reboot();
             }
 
+            if ((NET_DIAGNOSTIC_BASE == 1) && (NET_DIAGNOSTIC_ABON == 0) ){
+// Команда абоненту - перейти в диагностический режим
+                sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN, destip, local_port_udp);
+                printf("Send commant to abonent: net diagnostic mode\r\n");
+                red_blink  red_blink  red_blink
+                NET_DIAGNOSTIC_ABON = 1;
+                HAL_Delay(1000);
+//Тут дальше диагностика от базы
+                netDiagnosticBase();
 
 
-//            if (HAL_GetTick()/1000 < 10){//Для начального запуска
-//                if(getSn_RX_RSR(udpSocket) > 0) {
-//                    receivePackets(udpSocket, destip, local_port_udp);
-//                }
-//                sendPackets(udpSocket, destip, local_port_udp);
-//            }
-//            else {
-                sendPackets(udpSocket, destip, local_port_udp);
-                receivePackets(udpSocket, destip, local_port_udp);
-//            }
+            }
+
+            sendPackets(udpSocket, destip, local_port_udp);
+            receivePackets(udpSocket, destip, local_port_udp);
         }
 
         if (ABONENT_or_BASE == ABONENT) {
@@ -1518,39 +1517,11 @@ void sendReceiveUDP(uint8_t udpSocket)
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-//Тут анализирую полученное  dataFromDx Не встает - работаю с базой
-//        SEGGER_RTT_SetTerminal(3);
-//        SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "\r\n",
-//                          dataFromDx[0], dataFromDx[1], dataFromDx[2], dataFromDx[3], dataFromDx[4], dataFromDx[5], dataFromDx[6], dataFromDx[7],
-//                          dataFromDx[8],dataFromDx[9], dataFromDx[10], dataFromDx[11], dataFromDx[12], dataFromDx[13], dataFromDx[14], dataFromDx[15],
-//                          dataFromDx[16], dataFromDx[17], dataFromDx[18], dataFromDx[19], dataFromDx[20], dataFromDx[21], dataFromDx[22], dataFromDx[23],
-//                          dataFromDx[24], dataFromDx[25], dataFromDx[26], dataFromDx[27], dataFromDx[28], dataFromDx[29], dataFromDx[30], dataFromDx[31],
-//                          dataFromDx[32], dataFromDx[33], dataFromDx[34], dataFromDx[35], dataFromDx[36], dataFromDx[37], dataFromDx[38], dataFromDx[39],
-//                          dataFromDx[40], dataFromDx[41], dataFromDx[42], dataFromDx[43], dataFromDx[44], dataFromDx[45], dataFromDx[46], dataFromDx[47]
-//                          );
-//            SEGGER_RTT_SetTerminal(1);
-
-//            if (HAL_GetTick()/1000 < 10){ //Для начального запуска
-//                if(getSn_RX_RSR(udpSocket) > 0){
-//                    receivePackets(udpSocket, destip, local_port_udp);
-//                }
-//                sendPackets(udpSocket, destip, local_port_udp);
-//            }
-//            else {
-                receivePackets(udpSocket, destip, local_port_udp);
-                sendPackets(udpSocket, destip, local_port_udp);
-//            }
-
+            receivePackets(udpSocket, destip, local_port_udp);
+            sendPackets(udpSocket, destip, local_port_udp);
         }
     }//if
 }
-
 
 void sendHANDSHAKE(uint8_t udpSocket) {
 
@@ -1558,7 +1529,6 @@ void sendHANDSHAKE(uint8_t udpSocket) {
     uint32_t delay = 500;
     sendto(udpSocket, (uint8_t *)test1, MAX_PACKET_LEN, destip, local_port_udp);
     if (HAL_GetTick() < currTime + delay){ //Пакет отправился быстро - destip в сети
-//        printf("HANDSHAKE = 1\r\n");
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
         HANDSHAKE = 1;
     }
@@ -2856,14 +2826,6 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     if (ABONENT_or_BASE == BASE) {
 
-        if ((num_send == 30) && (NET_DIAGNOSTIC_BASE == 1) && (NET_DIAGNOSTIC_ABON == 0) ){
-            //Отправка команды абоненту - перейти в диагностический режим
-            printf("Send commant to abonent: net diagnostic mode\r\n");
-            sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN, destip, destport);
-            NET_DIAGNOSTIC_ABON = 1;
-}
-
-
 #ifdef baseSendTestData
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
@@ -2910,7 +2872,16 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     if (ABONENT_or_BASE == ABONENT) {
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
 
-        checkCommands(dataToDx);
+        if (REBOOT == checkCommands(dataToDx)){
+            red_blink  red_blink  red_blink
+            printf("Received command Reboot from Base\r\n");
+            reboot();
+        }
+        if (NET_DIAGNOSTIC == checkCommands(dataToDx)){
+            red_blink  red_blink  red_blink
+            printf("Received command Net Diagnostic from Base\r\n");
+            netDiagnosticAbon();
+        }
 
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);

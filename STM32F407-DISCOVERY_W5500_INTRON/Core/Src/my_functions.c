@@ -84,20 +84,14 @@ int _write(int fd, char *str, int len)
     return len;
 }
 
-void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
-    //Проверяем не команда ли это от базы на перезагрузку
+uint8_t checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
     if ( strncmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentReboot, MAX_PACKET_LEN) == 0){
-        //Перезагрузка
-        red_blink
-        red_blink
-        red_blink
-        printf("Received command Reboot from Base\r\n");
-        reboot();
+        return REBOOT;
     }
-    //Проверяем не команда ли это от базы на диагностику сети
     if ( strncmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN) == 0){
-        printf("Received command from Base: net diagnostic mode \r\n");
+        return NET_DIAGNOSTIC;
     }
+    return NO_COMMAND;
 }
 
 void printWiznetReg(){
@@ -218,3 +212,16 @@ uint8_t checkNetDiagnosticMode()
         return netDiagnosticOFF;
     }
 }
+
+void netDiagnosticBase(){
+    printf("Start net diagnostic Base\r\n");
+
+
+}
+
+void netDiagnosticAbon(){
+    printf("Start net diagnostic Abonet\r\n");
+
+
+}
+

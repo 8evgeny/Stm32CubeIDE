@@ -573,7 +573,7 @@ const char main_page[] =
 "      req.open('GET', command);"
 "      req.send();"
 "      sleep(2000);"
-"      document.getElementById('demo').innerHTML = 'Начата проверка сети';"
+"      document.getElementById('demo').innerHTML = 'Начата проверка сети. Результаты выдаются в UART';"
 "  };"
 "  var md5 = function (str) "
 "  {"

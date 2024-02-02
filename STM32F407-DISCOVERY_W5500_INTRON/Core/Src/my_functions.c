@@ -224,30 +224,44 @@ void netDiagnosticBase(){
     printf("Start net diagnostic Base\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
     num_send = 0;
+    uint32_t startDiagnosticTime = HAL_GetTick();
+
     while(1){
-        if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
-        {
-            sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
-            recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
-            indicateSend(20,40);
-            indicateReceive(20,40);
+        if ((startDiagnosticTime + 300000 < HAL_GetTick())){
+            printf("***** Long Diagnostic session - Reboot *****\r\n");
+            reboot();
         }
-    }
+        else {
+            if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) { // CPU_INT Жду пока плис поднимет флаг
+                sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
+                recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
+                indicateSend(20,40);
+                indicateReceive(20,40);
+            }
+        }
+    } //while
 }
 
 void netDiagnosticAbon(){
     printf("Start net diagnostic Abonet\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
     num_send = 0;
+    uint32_t startDiagnosticTime = HAL_GetTick();
+
     while(1){
-        if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
-        {
-            recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
-            sendto(UDP_SOCKET, (uint8_t *)testDataToBase, MAX_PACKET_LEN, destip, destport);
-            indicateSend(20,40);
-            indicateReceive(20,40);
+        if ((startDiagnosticTime + 300000 < HAL_GetTick())){
+            printf("***** Long Diagnostic session - Reboot *****\r\n");
+            reboot();
         }
-    }
+        else {
+            if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) {// CPU_INT Жду пока плис поднимет флаг
+                recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
+                sendto(UDP_SOCKET, (uint8_t *)testDataToBase, MAX_PACKET_LEN, destip, destport);
+                indicateSend(20,40);
+                indicateReceive(20,40);
+            }
+        }
+    }//while
 }
 
 void indicateSend(uint16_t numON, uint16_t numOFF){

@@ -190,7 +190,7 @@ uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_P
 }
 
 void startNetDiagnostic() {
-    if (ABONENT_or_BASE == 0){ //мы в базе
+    if (ABONENT_or_BASE == BASE){
         printf(" **********   Start Net Diagnostis BASE  **********\r\n");
 
         uint8_t netDiagnostic[1];

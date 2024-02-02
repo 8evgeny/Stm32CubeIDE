@@ -161,6 +161,11 @@ enum netDiagnostic{
     netDiagnosticON,
     netDiagnosticOFF
 };
+enum ABONENTorBASE{
+    BASE,
+    ABONENT
+};
+
 void 	wizchip_cs_select(void);
 void  wizchip_cs_deselect(void);
 uint8_t wizchip_spi_readbyte(void);

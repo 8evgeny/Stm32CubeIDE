@@ -234,6 +234,12 @@ void netDiagnosticBase(){
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) { // CPU_INT Жду пока плис поднимет флаг
                 ++numSendDiagnosticPacket;
                 prepeareDataToAbonent(testDataToAbon, numSendDiagnosticPacket, currentDiagnosticTime);
+
+                if ((numSendDiagnosticPacket == 1) || (numSendDiagnosticPacket % 500 == 0)){
+                    printTestNetData(testDataToAbon);
+                }
+
+
                 sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
                 indicateSend(20,40);
@@ -248,6 +254,7 @@ void netDiagnosticAbon(){
     uint16_t destport = LOCAL_PORT_UDP;
     uint32_t startDiagnosticTime = HAL_GetTick();
     uint32_t currentDiagnosticTime;
+    uint32_t numReceivedDiagnosticPacket = 0;
     while(1){
         currentDiagnosticTime = HAL_GetTick();
         if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){//Длительность сессии 1 мин
@@ -257,6 +264,13 @@ void netDiagnosticAbon(){
         else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) {// CPU_INT Жду пока плис поднимет флаг
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
+
+                ++numReceivedDiagnosticPacket;
+                if ((numReceivedDiagnosticPacket == 1) || (numReceivedDiagnosticPacket % 500 == 0)){
+                    printTestNetData(testDataFromBase);
+                }
+
+
                 sendto(UDP_SOCKET, (uint8_t *)testDataToBase, MAX_PACKET_LEN, destip, destport);
                 indicateSend(20,40);
                 indicateReceive(20,40);
@@ -291,6 +305,15 @@ void indicateReceive(uint16_t numON, uint16_t numOFF){
 
 void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime){
 //В пакет добавляем номер пакета и метку времени базы
-
+    char tmp[48];
+    sprintf((char*)tmp,"***%d***%d***", numPacket, currTime);
+    strcpy((char*)dataToAbon,tmp);
 
 }
+
+
+void printTestNetData(uint8_t data[MAX_PACKET_LEN]) {
+        UART_Printf("%.48s\r\n", data );
+}
+
+

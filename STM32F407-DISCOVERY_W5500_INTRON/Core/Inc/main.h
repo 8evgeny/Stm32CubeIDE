@@ -30,6 +30,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 
 #define HTTP_SOCKET     0
 #define UDP_SOCKET      4
+#define NUM_DIAGNOSTIC_UDP_PACKETS  50000
 #define ETH_MAX_BUF_SIZE	2048
 #define SERVER_PORT			8883
 /* I/O buffer size - wolfSSL buffers messages internally as well. */
@@ -211,6 +212,7 @@ void indicateReceive(uint16_t numON, uint16_t numOFF);
 void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime);
 void printTestNetData(uint8_t data[MAX_PACKET_LEN]);
 void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime);
+void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

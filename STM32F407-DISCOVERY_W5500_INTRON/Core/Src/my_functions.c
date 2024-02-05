@@ -226,15 +226,15 @@ void netDiagnosticBase(){
     uint32_t numSendDiagnosticPacket = 0;
     while(1){
         currentDiagnosticTime = HAL_GetTick();
-        if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){ //Длительность сессии 1 мин
+        if ((startDiagnosticTime + 120000 < currentDiagnosticTime)){ //Длительность сессии 2 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
         else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) { // CPU_INT Жду пока плис поднимет флаг
                 ++numSendDiagnosticPacket;
-                if (numSendDiagnosticPacket == 10000){
-                    printf("send 10000 packets, end test\r\n");
+                if (numSendDiagnosticPacket == NUM_DIAGNOSTIC_UDP_PACKETS){
+                    printf("send %d packets, end test\r\n", NUM_DIAGNOSTIC_UDP_PACKETS);
                     //Результаты теста
 
                     sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, LOCAL_PORT_UDP);
@@ -244,6 +244,8 @@ void netDiagnosticBase(){
 
                 sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
+                currentDiagnosticTime = HAL_GetTick();
+                analiseDataFromAbonent(testDataFromAbon, currentDiagnosticTime);
 
                 if ((numSendDiagnosticPacket == 10) || (numSendDiagnosticPacket % 200 == 0)){
                     printTestNetData(testDataFromAbon);
@@ -265,7 +267,7 @@ void netDiagnosticAbon(){
     uint32_t numReceivedDiagnosticPacket = 0;
     while(1){
         currentDiagnosticTime = HAL_GetTick();
-        if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){//Длительность сессии 1 мин
+        if ((startDiagnosticTime + 120000 < currentDiagnosticTime)){//Длительность сессии 2 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
@@ -327,7 +329,7 @@ void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime){
     //В полученный пакет добавляем метку времени абонента
     char tmp[48];
     uint32_t delta = 3300;// чтобы выровнять время базы и абонента
-    sprintf((char*)tmp,"%d***", currTime + delta);
+    sprintf((char*)tmp,"%d:::", currTime + delta);
 
     char substring[4] = "___";
     char *substring_ptr = strstr((char*)dataFromBase, substring);
@@ -338,4 +340,12 @@ void printTestNetData(uint8_t data[MAX_PACKET_LEN]) {
         UART_Printf("%.48s\r\n", data );
 }
 
+void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
+//В полученный пакет добавляем метку времени базы
+    char tmp[48];
+    sprintf((char*)tmp,"%d", currTime);
 
+    char substring[4] = ":::";
+    char *substring_ptr = strstr((char*)dataFromAbon, substring);
+    strcpy((char*)(substring_ptr + 3), tmp);
+}

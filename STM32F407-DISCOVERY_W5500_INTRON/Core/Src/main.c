@@ -40,8 +40,6 @@
 
 extern void FsForEeprom_test();
 extern void littleFsInit();
-void sendPackets(uint8_t, uint8_t* , uint16_t );
-void receivePackets(uint8_t, uint8_t* , uint16_t );
 extern int tls_client_serverTest();
 extern void tls_server_Handshake();
 extern void polarSSLTest();
@@ -64,10 +62,11 @@ uint8_t UDP_or_TCP = 1;
 int8_t numWait = 50; //Количество ожиданий в цикле Handshake
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
-uint32_t receiveBlank = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
 uint8_t SEGGER = 0;
+uint8_t NET_DIAGNOSTIC_BASE = 0;
+uint8_t NET_DIAGNOSTIC_ABON = 0;
 uint32_t numBadPackets2Channel = 0;
 uint8_t numGoodPackets2Channel = 0;
 uint32_t startHttpTime = 0;
@@ -95,6 +94,7 @@ uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
 uint8_t CCMRAMDATA trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
 
 extern uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN];
+extern uint8_t commandfromBaseToAbonentNetDiagnostic[MAX_PACKET_LEN];
 extern uint8_t test1[MAX_PACKET_LEN];
 extern uint8_t test2[MAX_PACKET_LEN];
 extern uint8_t test3[MAX_PACKET_LEN];
@@ -536,7 +536,7 @@ void copyParametersFromSDToAdressEEPROM(uint16_t Addr)
 
 void copyDefaultParametersToAdressSPIEEPROM(uint16_t Addr){
 //    printf("copyDefaultParametersToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-    if (ABONENT_or_BASE == 0) { //База
+    if (ABONENT_or_BASE == BASE) {
         char defaultIP[settingsLenInSPI] =
         {'1','9','2','.','1','6','8','.','0','0','1','.','1','2','2',
          '1','9','2','.','1','6','8','.','0','0','1','.','1','0','0',
@@ -582,7 +582,7 @@ void copyParametersFromSDToAdressSPIEEPROM(uint16_t Addr){
 
 void copyDefaultMACToAdressSPIEEPROM(uint16_t Addr){ //только 16 - ричный
     printf("copyDefaultMACToAdressSPIEEPROM 0x%.4X \r\n",Addr);
-    if (ABONENT_or_BASE == 0) { //База
+    if (ABONENT_or_BASE == BASE) {
         char defaultMAC[18] =
         {'0','0',':','1','5',':','4','2',':','B','F',':','F','0',':','5','2','\0'};
         printf("default MAC: %s\r\n",defaultMAC);
@@ -1391,9 +1391,21 @@ void convertToAbonData()
 
 void sendReceiveUDP(uint8_t udpSocket)
 {
+    if ((ABONENT_or_BASE == BASE) && (NET_DIAGNOSTIC_BASE == 0) && (HAL_GetTick() < 5000)) {//Только 5 секунд проверяем
+        if (netDiagnosticON == checkNetDiagnosticMode()){
+            printf("netDiagnosticON\r\n");
+            NET_DIAGNOSTIC_BASE = 1; //Тут вся диагностика сети (или по NET_DIAGNOSTIC_BASE = 1 далее )
+
+            //Сбрасываю флаг диагностики
+            uint8_t netDiagnostic[1];
+            netDiagnostic[0] = 0xFF;
+            EEPROM_SPI_WriteBuffer(netDiagnostic, netDiagnosticFlag, 1);
+            printf("netDiagnosticFlag set OFF\r\n");
+        }
+    }
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
     {
-        if (ABONENT_or_BASE == 0) {   //Cтанционный мост
+        if (ABONENT_or_BASE == BASE) {
             //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             //Обмен с ПЛИС
@@ -1432,10 +1444,8 @@ void sendReceiveUDP(uint8_t udpSocket)
             }
 
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
-
             if (check_2_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
-    //Инкрементируем счетчик
-                ++numBadPackets2Channel;
+                ++numBadPackets2Channel; //Инкрементируем счетчик
                 numGoodPackets2Channel = 0;
                 if (SEGGER){
                     SEGGER_RTT_SetTerminal(6);
@@ -1450,30 +1460,30 @@ void sendReceiveUDP(uint8_t udpSocket)
             }
 
             if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
-// Команда в абонент на перезагрузку
+// Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
                 printf("Sending command Reboot to abonent\r\n");
-                red_blink
-                red_blink
-                red_blink
+                red_blink  red_blink  red_blink
                 reboot();
             }
 
+            if ((NET_DIAGNOSTIC_BASE == 1) && (NET_DIAGNOSTIC_ABON == 0) ){
+// Команда абоненту - перейти в диагностический режим
+                sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN, destip, local_port_udp);
+                printf("Send commant to abonent: net diagnostic mode\r\n");
+                red_blink  red_blink  red_blink
+                NET_DIAGNOSTIC_ABON = 1;
+                HAL_Delay(1000);
+//Тут дальше диагностика от базы
+                netDiagnosticBase();
 
+            }
 
-//            if (HAL_GetTick()/1000 < 10){//Для начального запуска
-//                if(getSn_RX_RSR(udpSocket) > 0) {
-//                    receivePackets(udpSocket, destip, local_port_udp);
-//                }
-//                sendPackets(udpSocket, destip, local_port_udp);
-//            }
-//            else {
-                sendPackets(udpSocket, destip, local_port_udp);
-                receivePackets(udpSocket, destip, local_port_udp);
-//            }
+            sendPackets(udpSocket, destip, local_port_udp);
+            receivePackets(udpSocket, destip, local_port_udp);
         }
 
-        if (ABONENT_or_BASE == 1) {  //Абонентский мост
+        if (ABONENT_or_BASE == ABONENT) {
             //Перед обменом с ПЛИС конверсия данных
             convertToAbonData();
 
@@ -1503,39 +1513,11 @@ void sendReceiveUDP(uint8_t udpSocket)
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-//Тут анализирую полученное  dataFromDx Не встает - работаю с базой
-//        SEGGER_RTT_SetTerminal(3);
-//        SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
-//                             "\r\n",
-//                          dataFromDx[0], dataFromDx[1], dataFromDx[2], dataFromDx[3], dataFromDx[4], dataFromDx[5], dataFromDx[6], dataFromDx[7],
-//                          dataFromDx[8],dataFromDx[9], dataFromDx[10], dataFromDx[11], dataFromDx[12], dataFromDx[13], dataFromDx[14], dataFromDx[15],
-//                          dataFromDx[16], dataFromDx[17], dataFromDx[18], dataFromDx[19], dataFromDx[20], dataFromDx[21], dataFromDx[22], dataFromDx[23],
-//                          dataFromDx[24], dataFromDx[25], dataFromDx[26], dataFromDx[27], dataFromDx[28], dataFromDx[29], dataFromDx[30], dataFromDx[31],
-//                          dataFromDx[32], dataFromDx[33], dataFromDx[34], dataFromDx[35], dataFromDx[36], dataFromDx[37], dataFromDx[38], dataFromDx[39],
-//                          dataFromDx[40], dataFromDx[41], dataFromDx[42], dataFromDx[43], dataFromDx[44], dataFromDx[45], dataFromDx[46], dataFromDx[47]
-//                          );
-//            SEGGER_RTT_SetTerminal(1);
-
-//            if (HAL_GetTick()/1000 < 10){ //Для начального запуска
-//                if(getSn_RX_RSR(udpSocket) > 0){
-//                    receivePackets(udpSocket, destip, local_port_udp);
-//                }
-//                sendPackets(udpSocket, destip, local_port_udp);
-//            }
-//            else {
-                receivePackets(udpSocket, destip, local_port_udp);
-                sendPackets(udpSocket, destip, local_port_udp);
-//            }
-
+            receivePackets(udpSocket, destip, local_port_udp);
+            sendPackets(udpSocket, destip, local_port_udp);
         }
     }//if
 }
-
 
 void sendHANDSHAKE(uint8_t udpSocket) {
 
@@ -1543,7 +1525,6 @@ void sendHANDSHAKE(uint8_t udpSocket) {
     uint32_t delay = 500;
     sendto(udpSocket, (uint8_t *)test1, MAX_PACKET_LEN, destip, local_port_udp);
     if (HAL_GetTick() < currTime + delay){ //Пакет отправился быстро - destip в сети
-//        printf("HANDSHAKE = 1\r\n");
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
         HANDSHAKE = 1;
     }
@@ -2155,12 +2136,12 @@ int main(void)
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
 
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
-        ABONENT_or_BASE = 0;
+        ABONENT_or_BASE = BASE;
         printf("work in BASE\r\n");
         MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 22 секунды
     }
     else { //Я в абоненте - сигналл выдает ПЛИС
-        ABONENT_or_BASE = 1;
+        ABONENT_or_BASE = ABONENT;
         printf("work in ABONENT\r\n");
         MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 26 секунд
     }
@@ -2839,7 +2820,8 @@ static void MX_IWDG_Init_base(void)
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
-    if (ABONENT_or_BASE == 0) {  //База
+    if (ABONENT_or_BASE == BASE) {
+
 #ifdef baseSendTestData
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
@@ -2847,7 +2829,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
 #endif
     }
-    if (ABONENT_or_BASE == 1) {  //Абонентский мост
+    if (ABONENT_or_BASE == ABONENT) {
 #ifdef abonSendTestData
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
@@ -2857,50 +2839,48 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
-    ++num_send;
-    if (num_send == 20){
-        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
-    }
-    if (num_send == 40){
-        num_send = 0;
-        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
-    }
+    indicateSend(20,40);
 }
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    //После 100 секунд работы пропускаем пакет для избегания рассинхрона
+    uint32_t currTime = HAL_GetTick();
+    //После 100 секунд работы каждые 15 секунд пропускаем пакет для избегания рассинхрона
     ++num_rcvd_SEGGER;
-    if ((HAL_GetTick()/1000 > 100) && (num_rcvd_SEGGER % 10000 == 0)) {
+    if ((currTime > 100000) && (num_rcvd_SEGGER % 10000 == 0)) {
+
         ++num_skip_packet;
         if (SEGGER)
-            SEGGER_RTT_printf(0, "Skip packet %d, System time %d\r\n", num_skip_packet, HAL_GetTick()/1000);
+            SEGGER_RTT_printf(0, "Skip packet %d, System time %dd %dh %dm %ds \r\n", num_skip_packet,
+                              currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
+        //uart в DMA режиме
+        UART_Printf("Received packet %d, System time %dd %dh %dm %ds \r\n", num_rcvd_SEGGER,
+                    currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
         ++num_rcvd_SEGGER;
         return;
     }
 
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
-    if (ABONENT_or_BASE == 0) {  //База
+    if (ABONENT_or_BASE == BASE) {
         recvfrom(sn, (uint8_t *)dataToBase, MAX_PACKET_LEN, destip, &destport);
     }
-    if (ABONENT_or_BASE == 1) {  // Абонент
+    if (ABONENT_or_BASE == ABONENT) {
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
 
-        checkCommands(dataToDx);
+        if (REBOOT == checkCommands(dataToDx)){
+            red_blink  red_blink  red_blink
+            printf("Received command Reboot from Base\r\n");
+            reboot();
+        }
+        if (NET_DIAGNOSTIC == checkCommands(dataToDx)){
+            red_blink  red_blink  red_blink
+            printf("Received command Net Diagnostic from Base\r\n");
+            netDiagnosticAbon();
+        }
 
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
-    ++receiveBlank;
-    ++num_rcvd;
-    if (num_rcvd == 20){
-        HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
-    }
-    if (num_rcvd == 40){
-        num_rcvd = 0;
-        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
-        HAL_IWDG_Refresh(&hiwdg);
-    }
+    indicateReceive(20,40);
 }
 
 int convertHexToDecimal(char hexadecimalnumber[2])

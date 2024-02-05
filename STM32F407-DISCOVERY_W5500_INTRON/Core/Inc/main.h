@@ -120,11 +120,12 @@ EEPROM I2C : ATMEL 24C1024 (24C256)
 #define  macAdressInSPIEEPROM       0x0120
 #define  markEEPROMSPIclear         0x01A0
 #define  resetTwiceFlag             0x0200
+#define  netDiagnosticFlag          0x0300
 /*25LC1024：1Mbit= 1024Kbit =128KB  = 512*256B = 131072 X 8bit
- Page 1     Address: 00000-000FF length 256b   IP settings
+ Page 1     Address: 00000-000FF length 256b    IP settings
  Page 2     Address: 00100-001FF length 256b
- Page 3     Address: 00200-002FF length 256b
- Page 4     Address: 00300-003FF length 256b
+ Page 3     Address: 00200-002FF length 256b    resetTwiceFlag
+ Page 4     Address: 00300-003FF length 256b    netDiagnosticFlag
 `
 `
 `
@@ -156,7 +157,22 @@ extern "C" {
 
 #define MAX_PACKET_LEN 48
 #define TEST_DATA test6
+enum netDiagnostic{
+    netDiagnosticON,
+    netDiagnosticOFF
+};
+enum ABONENTorBASE{
+    BASE,
+    ABONENT
+};
+enum Commands{
+    REBOOT,
+    NET_DIAGNOSTIC,
+    NO_COMMAND
+};
 
+void sendPackets(uint8_t, uint8_t* , uint16_t );
+void receivePackets(uint8_t, uint8_t* , uint16_t );
 void 	wizchip_cs_select(void);
 void  wizchip_cs_deselect(void);
 uint8_t wizchip_spi_readbyte(void);
@@ -184,8 +200,15 @@ void print_4_Channel(uint8_t data[MAX_PACKET_LEN]);
 void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]);
 uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]);
 void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]);
-void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
+uint8_t checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
 void printWiznetReg(void);
+void commandFromWebNetDiagnostic();
+uint8_t checkNetDiagnosticMode();
+void netDiagnosticBase();
+void netDiagnosticAbon();
+void indicateSend(uint16_t numON, uint16_t numOFF);
+void indicateReceive(uint16_t numON, uint16_t numOFF);
+void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

@@ -14,14 +14,27 @@
 #include "socket.h"
 #include "net.h"
 #include "httpServer.h"
+#include "spi_eeprom.h"
 
 extern uint8_t SEGGER;
+extern uint8_t destip[4];
+extern uint8_t ABONENT_or_BASE;
 extern UART_HandleTypeDef huart6;
+extern IWDG_HandleTypeDef hiwdg;
+extern uint32_t num_send;
+extern uint32_t num_rcvd;
+
+uint8_t CCMRAMDATA testDataFromBase[MAX_PACKET_LEN];
+uint8_t CCMRAMDATA testDataToBase[MAX_PACKET_LEN];
+uint8_t CCMRAMDATA testDataFromAbon[MAX_PACKET_LEN];
+uint8_t CCMRAMDATA testDataToAbon[MAX_PACKET_LEN];
 
 uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN]= {0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                                    0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                                    0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88};
-
+uint8_t commandfromBaseToAbonentNetDiagnostic[MAX_PACKET_LEN]= {0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+                                                          0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77,
+                                                          0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77, 0x77};
 uint8_t test1[MAX_PACKET_LEN] = {0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
                                  0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
                                 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55};
@@ -52,9 +65,7 @@ void UART_Printf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vsnprintf(buff, sizeof(buff), fmt, args);
-    HAL_UART_Transmit_DMA(&huart6, (uint8_t*)buff, strlen(buff)
-//                          ,HAL_MAX_DELAY
-                          );
+    HAL_UART_Transmit_DMA(&huart6, (uint8_t*)buff, strlen(buff));
     va_end(args);
 }
 
@@ -63,8 +74,7 @@ void Printf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vsnprintf(buff, sizeof(buff), fmt, args);
-    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff)
-                          ,HAL_MAX_DELAY                          );
+    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff) ,HAL_MAX_DELAY );
     va_end(args);
 }
 
@@ -79,16 +89,14 @@ int _write(int fd, char *str, int len)
     return len;
 }
 
-void checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
-    //Проверяем не команда ли это от базы на перезагрузку
-    if ( strcmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentReboot) == 0){
-        //Перезагрузка
-        red_blink
-        red_blink
-        red_blink
-        printf("Received command Reboot from Base\r\n");
-        reboot();
+uint8_t checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
+    if ( strncmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentReboot, MAX_PACKET_LEN) == 0){
+        return REBOOT;
     }
+    if ( strncmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN) == 0){
+        return NET_DIAGNOSTIC;
+    }
+    return NO_COMMAND;
 }
 
 void printWiznetReg(){
@@ -178,4 +186,111 @@ uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_P
         return 0;
     }
     return 1;
+}
+
+void commandFromWebNetDiagnostic() {
+    if (ABONENT_or_BASE == BASE){
+        printf(" **********   Start Net Diagnostis BASE  **********\r\n");
+
+        uint8_t netDiagnostic[1];
+        netDiagnostic[0] = 0x88;
+        EEPROM_SPI_WriteBuffer(netDiagnostic, netDiagnosticFlag, 1);
+        printf("netDiagnosticFlag set ON\r\n");
+        reboot();
+    }
+    else
+    {
+        printf(" **********   SELECT BASE !!!   **********\r\n");
+    }
+}
+
+uint8_t checkNetDiagnosticMode()
+{
+    // считываем значение по адресу netDiagnosticFlag
+    uint8_t netDiagnostic[1];
+    EEPROM_SPI_ReadBuffer(netDiagnostic, netDiagnosticFlag, 1);
+    if (netDiagnostic[0] == 0x88) {
+       return netDiagnosticON;
+    }
+    else {
+//        printf("netDiagnosticFlag OFF\r\n");
+        return netDiagnosticOFF;
+    }
+}
+
+void netDiagnosticBase(){
+    printf("Start net diagnostic Base\r\n");
+    uint16_t destport = LOCAL_PORT_UDP;
+    uint32_t startDiagnosticTime = HAL_GetTick();
+    uint32_t currentDiagnosticTime;
+    uint32_t numSendDiagnosticPacket = 0;
+    while(1){
+        currentDiagnosticTime = HAL_GetTick();
+        if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){ //Длительность сессии 1 мин
+            printf("***** Long Diagnostic session - Reboot *****\r\n");
+            reboot();
+        }
+        else {//Минута еще не прошла - работает тест сети
+            if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) { // CPU_INT Жду пока плис поднимет флаг
+                ++numSendDiagnosticPacket;
+                prepeareDataToAbonent(testDataToAbon, numSendDiagnosticPacket, currentDiagnosticTime);
+                sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
+                recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
+                indicateSend(20,40);
+                indicateReceive(20,40);
+            }
+        }
+    } //while
+}
+
+void netDiagnosticAbon(){
+    printf("Start net diagnostic Abonet\r\n");
+    uint16_t destport = LOCAL_PORT_UDP;
+    uint32_t startDiagnosticTime = HAL_GetTick();
+    uint32_t currentDiagnosticTime;
+    while(1){
+        currentDiagnosticTime = HAL_GetTick();
+        if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){//Длительность сессии 1 мин
+            printf("***** Long Diagnostic session - Reboot *****\r\n");
+            reboot();
+        }
+        else {//Минута еще не прошла - работает тест сети
+            if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) {// CPU_INT Жду пока плис поднимет флаг
+                recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
+                sendto(UDP_SOCKET, (uint8_t *)testDataToBase, MAX_PACKET_LEN, destip, destport);
+                indicateSend(20,40);
+                indicateReceive(20,40);
+            }
+        }
+    }//while
+}
+
+void indicateSend(uint16_t numON, uint16_t numOFF){
+    ++num_send;
+    if (num_send == numON){
+        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_RESET);
+    }
+    if (num_send == numOFF){
+        num_send = 0;
+        HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
+    }
+}
+
+void indicateReceive(uint16_t numON, uint16_t numOFF){
+    ++num_rcvd;
+    if (num_rcvd == numON){
+        HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_RESET);
+    }
+    if (num_rcvd == numOFF){
+        num_rcvd = 0;
+        HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
+        HAL_IWDG_Refresh(&hiwdg);
+    }
+}
+
+void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime){
+//В пакет добавляем номер пакета и метку времени базы
+
+
 }

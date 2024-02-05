@@ -25,7 +25,6 @@ extern uint32_t num_send;
 extern uint32_t num_rcvd;
 
 uint8_t CCMRAMDATA testDataFromBase[MAX_PACKET_LEN];
-uint8_t CCMRAMDATA testDataToBase[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataFromAbon[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataToAbon[MAX_PACKET_LEN];
 
@@ -242,6 +241,7 @@ void netDiagnosticBase(){
 
                 sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
+
                 indicateSend(20,40);
                 indicateReceive(20,40);
             }
@@ -265,13 +265,18 @@ void netDiagnosticAbon(){
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) {// CPU_INT Жду пока плис поднимет флаг
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
 
+//                ++numReceivedDiagnosticPacket;
+//                if ((numReceivedDiagnosticPacket == 1) || (numReceivedDiagnosticPacket % 500 == 0)){
+//                    printTestNetData(testDataFromBase);
+//                }
+                prepeareAnswerToBase(testDataFromBase, currentDiagnosticTime);
+                sendto(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, destport);
                 ++numReceivedDiagnosticPacket;
                 if ((numReceivedDiagnosticPacket == 1) || (numReceivedDiagnosticPacket % 500 == 0)){
                     printTestNetData(testDataFromBase);
                 }
 
 
-                sendto(UDP_SOCKET, (uint8_t *)testDataToBase, MAX_PACKET_LEN, destip, destport);
                 indicateSend(20,40);
                 indicateReceive(20,40);
             }
@@ -306,9 +311,20 @@ void indicateReceive(uint16_t numON, uint16_t numOFF){
 void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime){
 //В пакет добавляем номер пакета и метку времени базы
     char tmp[48];
-    sprintf((char*)tmp,"***%d***%d***", numPacket, currTime);
-    strcpy((char*)dataToAbon,tmp);
+    sprintf((char*)tmp,"***%d***%d___", numPacket, currTime);
+    strcpy((char*)dataToAbon, tmp);
 
+}
+
+void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime){
+    //В полученный пакет добавляем метку времени абонента
+    char tmp[48];
+    sprintf((char*)tmp,"%d***", currTime);
+//    strcpy((char*)dataToAbon,tmp);
+
+    char substring[4] = "___";
+    char *substring_ptr = strstr((char*)dataFromBase, substring);
+    strcpy((char*)(substring_ptr + 3), tmp);
 }
 
 

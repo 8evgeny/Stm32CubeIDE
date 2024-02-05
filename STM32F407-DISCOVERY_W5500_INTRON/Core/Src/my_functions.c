@@ -188,7 +188,7 @@ uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_P
     return 1;
 }
 
-void startNetDiagnostic() {
+void commandFromWebNetDiagnostic() {
     if (ABONENT_or_BASE == BASE){
         printf(" **********   Start Net Diagnostis BASE  **********\r\n");
 
@@ -226,11 +226,11 @@ void netDiagnosticBase(){
     uint32_t startDiagnosticTime = HAL_GetTick();
 
     while(1){
-        if ((startDiagnosticTime + 300000 < HAL_GetTick())){ //Длительность сессии 5 мин
+        if ((startDiagnosticTime + 60000 < HAL_GetTick())){ //Длительность сессии 1 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
-        else {
+        else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) { // CPU_INT Жду пока плис поднимет флаг
                 sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
@@ -249,11 +249,11 @@ void netDiagnosticAbon(){
     uint32_t startDiagnosticTime = HAL_GetTick();
 
     while(1){
-        if ((startDiagnosticTime + 300000 < HAL_GetTick())){//Длительность сессии 5 мин
+        if ((startDiagnosticTime + 60000 < HAL_GetTick())){//Длительность сессии 1 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
-        else {
+        else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) {// CPU_INT Жду пока плис поднимет флаг
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
                 sendto(UDP_SOCKET, (uint8_t *)testDataToBase, MAX_PACKET_LEN, destip, destport);

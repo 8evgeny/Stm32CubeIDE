@@ -221,17 +221,19 @@ uint8_t checkNetDiagnosticMode()
 void netDiagnosticBase(){
     printf("Start net diagnostic Base\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
-    num_send = 0;
-    num_rcvd = 0;
     uint32_t startDiagnosticTime = HAL_GetTick();
-
+    uint32_t currentDiagnosticTime;
+    uint32_t numSendDiagnosticPacket = 0;
     while(1){
-        if ((startDiagnosticTime + 60000 < HAL_GetTick())){ //Длительность сессии 1 мин
+        currentDiagnosticTime = HAL_GetTick();
+        if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){ //Длительность сессии 1 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
         else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) { // CPU_INT Жду пока плис поднимет флаг
+                ++numSendDiagnosticPacket;
+                prepeareDataToAbonent(testDataToAbon, numSendDiagnosticPacket, currentDiagnosticTime);
                 sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
                 indicateSend(20,40);
@@ -244,12 +246,11 @@ void netDiagnosticBase(){
 void netDiagnosticAbon(){
     printf("Start net diagnostic Abonet\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
-    num_send = 0;
-    num_rcvd = 0;
     uint32_t startDiagnosticTime = HAL_GetTick();
-
+    uint32_t currentDiagnosticTime;
     while(1){
-        if ((startDiagnosticTime + 60000 < HAL_GetTick())){//Длительность сессии 1 мин
+        currentDiagnosticTime = HAL_GetTick();
+        if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){//Длительность сессии 1 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
@@ -286,4 +287,10 @@ void indicateReceive(uint16_t numON, uint16_t numOFF){
         HAL_GPIO_WritePin(GPIOD, Blue_Led_Pin, GPIO_PIN_SET);
         HAL_IWDG_Refresh(&hiwdg);
     }
+}
+
+void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime){
+//В пакет добавляем номер пакета и метку времени базы
+
+
 }

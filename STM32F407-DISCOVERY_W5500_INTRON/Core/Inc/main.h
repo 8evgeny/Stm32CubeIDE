@@ -208,6 +208,7 @@ void netDiagnosticBase();
 void netDiagnosticAbon();
 void indicateSend(uint16_t numON, uint16_t numOFF);
 void indicateReceive(uint16_t numON, uint16_t numOFF);
+void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

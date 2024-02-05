@@ -224,6 +224,7 @@ void netDiagnosticBase(){
     printf("Start net diagnostic Base\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
     num_send = 0;
+    num_rcvd = 0;
     uint32_t startDiagnosticTime = HAL_GetTick();
 
     while(1){
@@ -246,6 +247,7 @@ void netDiagnosticAbon(){
     printf("Start net diagnostic Abonet\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
     num_send = 0;
+    num_rcvd = 0;
     uint32_t startDiagnosticTime = HAL_GetTick();
 
     while(1){

@@ -2844,13 +2844,19 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    //После 100 секунд работы пропускаем пакет для избегания рассинхрона
+    uint32_t currTime = HAL_GetTick();
+    //После 100 секунд работы каждые 15 секунд пропускаем пакет для избегания рассинхрона
     ++num_rcvd_SEGGER;
-    if ((HAL_GetTick()/1000 > 100) && (num_rcvd_SEGGER % 10000 == 0)) {
+    if ((currTime > 100000) && (num_rcvd_SEGGER % 10000 == 0)) {
+
         ++num_skip_packet;
         if (SEGGER)
-            SEGGER_RTT_printf(0, "Skip packet %d, System time %d\r\n", num_skip_packet, HAL_GetTick()/1000);
+            SEGGER_RTT_printf(0, "Skip packet %d, System time %dd %dh %dm %ds \r\n", num_skip_packet,
+                              currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
         ++num_rcvd_SEGGER;
+        //uart в DMA режиме
+        UART_Printf("Skip packet %d, System time %dd %dh %dm %ds \r\n", num_skip_packet,
+                    currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
         return;
     }
 

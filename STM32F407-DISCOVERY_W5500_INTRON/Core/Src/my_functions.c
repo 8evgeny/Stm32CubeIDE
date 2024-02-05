@@ -227,7 +227,7 @@ void netDiagnosticBase(){
     uint32_t startDiagnosticTime = HAL_GetTick();
 
     while(1){
-        if ((startDiagnosticTime + 300000 < HAL_GetTick())){
+        if ((startDiagnosticTime + 300000 < HAL_GetTick())){ //Длительность сессии 5 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
@@ -249,7 +249,7 @@ void netDiagnosticAbon(){
     uint32_t startDiagnosticTime = HAL_GetTick();
 
     while(1){
-        if ((startDiagnosticTime + 300000 < HAL_GetTick())){
+        if ((startDiagnosticTime + 300000 < HAL_GetTick())){//Длительность сессии 5 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }

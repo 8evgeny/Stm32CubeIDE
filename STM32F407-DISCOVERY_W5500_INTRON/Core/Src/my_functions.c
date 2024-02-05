@@ -21,6 +21,8 @@ extern uint8_t destip[4];
 extern uint8_t ABONENT_or_BASE;
 extern UART_HandleTypeDef huart6;
 extern IWDG_HandleTypeDef hiwdg;
+extern uint32_t num_send;
+extern uint32_t num_rcvd;
 
 uint8_t CCMRAMDATA testDataFromBase[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataToBase[MAX_PACKET_LEN];
@@ -63,9 +65,7 @@ void UART_Printf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vsnprintf(buff, sizeof(buff), fmt, args);
-    HAL_UART_Transmit_DMA(&huart6, (uint8_t*)buff, strlen(buff)
-//                          ,HAL_MAX_DELAY
-                          );
+    HAL_UART_Transmit_DMA(&huart6, (uint8_t*)buff, strlen(buff));
     va_end(args);
 }
 
@@ -74,8 +74,7 @@ void Printf(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vsnprintf(buff, sizeof(buff), fmt, args);
-    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff)
-                          ,HAL_MAX_DELAY                          );
+    HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff) ,HAL_MAX_DELAY );
     va_end(args);
 }
 
@@ -218,8 +217,7 @@ uint8_t checkNetDiagnosticMode()
         return netDiagnosticOFF;
     }
 }
-extern uint32_t num_send;
-extern uint32_t num_rcvd;
+
 void netDiagnosticBase(){
     printf("Start net diagnostic Base\r\n");
     uint16_t destport = LOCAL_PORT_UDP;

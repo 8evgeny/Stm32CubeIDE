@@ -2853,10 +2853,10 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         if (SEGGER)
             SEGGER_RTT_printf(0, "Skip packet %d, System time %dd %dh %dm %ds \r\n", num_skip_packet,
                               currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
-        ++num_rcvd_SEGGER;
         //uart в DMA режиме
-        UART_Printf("Skip packet %d, System time %dd %dh %dm %ds \r\n", num_skip_packet,
+        UART_Printf("Received packet %d, System time %dd %dh %dm %ds \r\n", num_rcvd_SEGGER,
                     currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
+        ++num_rcvd_SEGGER;
         return;
     }
 

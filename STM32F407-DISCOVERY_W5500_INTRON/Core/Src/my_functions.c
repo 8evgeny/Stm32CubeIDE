@@ -24,7 +24,7 @@ extern UART_HandleTypeDef huart6;
 extern IWDG_HandleTypeDef hiwdg;
 extern uint32_t num_send;
 extern uint32_t num_rcvd;
-
+uint32_t numSendDiagnosticPacket = 0;
 uint8_t CCMRAMDATA testDataFromBase[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataFromAbon[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataToAbon[MAX_PACKET_LEN];
@@ -223,7 +223,6 @@ void netDiagnosticBase(){
     uint16_t destport = LOCAL_PORT_UDP;
     uint32_t startDiagnosticTime = HAL_GetTick();
     uint32_t currentDiagnosticTime;
-    uint32_t numSendDiagnosticPacket = 0;
     while(1){
         currentDiagnosticTime = HAL_GetTick();
         if ((startDiagnosticTime + 120000 < currentDiagnosticTime)){ //Длительность сессии 2 мин
@@ -321,7 +320,7 @@ void indicateReceive(uint16_t numON, uint16_t numOFF){
 void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime){
 //В пакет добавляем номер пакета и метку времени базы
     char tmp[48];
-    sprintf((char*)tmp,"***%d***%d___", numPacket, currTime);
+    sprintf((char*)tmp,"...%d***%d___", numPacket, currTime);
     strcpy((char*)dataToAbon, tmp);
 }
 
@@ -340,6 +339,7 @@ void printTestNetData(uint8_t data[MAX_PACKET_LEN]) {
         UART_Printf("%.48s\r\n", data );
 }
 
+char timeSend[20];
 void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
 //В полученный пакет добавляем метку времени базы
     char tmp[48];
@@ -348,4 +348,20 @@ void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
     char substring[4] = ":::";
     char *substring_ptr = strstr((char*)dataFromAbon, substring);
     strcpy((char*)(substring_ptr + 3), tmp);
+
+// Указатель на 1 символ времени отправки
+    char substring2[4] = "***";
+    char *substring_ptr2 = strstr((char*)dataFromAbon, substring2) + 3;
+// Указатель на 1 символ _
+    char substring3[4] = "___";
+    char *substring_ptr3 = strstr((char*)dataFromAbon, substring3);
+// Длина строки с временем отправки
+    uint8_t len = substring_ptr3 - substring_ptr2;
+
+    strncpy(timeSend, substring_ptr2, len);
+    timeSend[len] = 0x00;
+    if ((numSendDiagnosticPacket % 225 == 0)){
+         UART_Printf("timeSend: %s\r\n",timeSend);
+    }
+
 }

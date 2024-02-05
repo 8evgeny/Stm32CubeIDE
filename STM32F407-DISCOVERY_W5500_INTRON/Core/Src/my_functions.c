@@ -242,13 +242,13 @@ void netDiagnosticBase(){
                 }
                 prepeareDataToAbonent(testDataToAbon, numSendDiagnosticPacket, currentDiagnosticTime);
 
-                if ((numSendDiagnosticPacket == 1) || (numSendDiagnosticPacket % 500 == 0)){
-                    printTestNetData(testDataToAbon);
-                }
-
-
                 sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
+
+                if ((numSendDiagnosticPacket == 10) || (numSendDiagnosticPacket % 200 == 0)){
+                    printTestNetData(testDataFromAbon);
+                }
+
 
                 indicateSend(20,40);
                 indicateReceive(20,40);
@@ -321,21 +321,18 @@ void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t cu
     char tmp[48];
     sprintf((char*)tmp,"***%d***%d___", numPacket, currTime);
     strcpy((char*)dataToAbon, tmp);
-
 }
 
 void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime){
     //В полученный пакет добавляем метку времени абонента
     char tmp[48];
-    uint32_t delta = 3300;
+    uint32_t delta = 3300;// чтобы выровнять время базы и абонента
     sprintf((char*)tmp,"%d***", currTime + delta);
-//    strcpy((char*)dataToAbon,tmp);
 
     char substring[4] = "___";
     char *substring_ptr = strstr((char*)dataFromBase, substring);
     strcpy((char*)(substring_ptr + 3), tmp);
 }
-
 
 void printTestNetData(uint8_t data[MAX_PACKET_LEN]) {
         UART_Printf("%.48s\r\n", data );

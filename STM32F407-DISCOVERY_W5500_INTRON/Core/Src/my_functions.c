@@ -18,6 +18,7 @@
 
 extern uint8_t SEGGER;
 extern uint8_t destip[4];
+
 extern uint8_t ABONENT_or_BASE;
 extern UART_HandleTypeDef huart6;
 extern IWDG_HandleTypeDef hiwdg;
@@ -232,6 +233,13 @@ void netDiagnosticBase(){
         else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) { // CPU_INT Жду пока плис поднимет флаг
                 ++numSendDiagnosticPacket;
+                if (numSendDiagnosticPacket == 10000){
+                    printf("send 10000 packets, end test\r\n");
+                    //Результаты теста
+
+                    sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, LOCAL_PORT_UDP);
+                    reboot();
+                }
                 prepeareDataToAbonent(testDataToAbon, numSendDiagnosticPacket, currentDiagnosticTime);
 
                 if ((numSendDiagnosticPacket == 1) || (numSendDiagnosticPacket % 500 == 0)){
@@ -264,11 +272,11 @@ void netDiagnosticAbon(){
         else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) {// CPU_INT Жду пока плис поднимет флаг
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
-
-//                ++numReceivedDiagnosticPacket;
-//                if ((numReceivedDiagnosticPacket == 1) || (numReceivedDiagnosticPacket % 500 == 0)){
-//                    printTestNetData(testDataFromBase);
-//                }
+                if (REBOOT == checkCommands(testDataFromBase)){
+                    red_blink  red_blink  red_blink
+                        printf("Received command Reboot from Base\r\n");
+                    reboot();
+                }
                 prepeareAnswerToBase(testDataFromBase, currentDiagnosticTime);
                 sendto(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, destport);
                 ++numReceivedDiagnosticPacket;
@@ -319,7 +327,8 @@ void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t cu
 void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime){
     //В полученный пакет добавляем метку времени абонента
     char tmp[48];
-    sprintf((char*)tmp,"%d***", currTime);
+    uint32_t delta = 3300;
+    sprintf((char*)tmp,"%d***", currTime + delta);
 //    strcpy((char*)dataToAbon,tmp);
 
     char substring[4] = "___";

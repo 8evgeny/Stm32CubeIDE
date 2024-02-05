@@ -415,7 +415,7 @@ const char main_page[] =
 "    <input type='text' readonly id='mac' name='mac' value='' style='width: 120px;'>"
 "  </form><br>"
 "<button onclick='reboot()' style='border-left-width: 2px;border-left-style: solid;margin-left: 20px;'>Перезагрузка хоста</button><button  onclick='change_pass()' style='border-left-width: 2px;border-left-style: solid;margin-left: 600px; width: 130px'>Сменить пароль</button>"
-"<button onclick='debug_net()' style='border-left-width: 2px;border-left-style: solid;margin-left: 20px;'>Проверка сети 1 мин</button>"
+"<button onclick='debug_net()' style='border-left-width: 2px;border-left-style: solid;margin-left: 20px;'>Проверка сети (10 000 UDP пакетов)</button>"
 "<p id='demo' value='  '></p>"
 "<script>"
 "  function sleep(milliseconds) "

@@ -246,9 +246,9 @@ void netDiagnosticBase(){
                 currentDiagnosticTime = HAL_GetTick();
                 analiseDataFromAbonent(testDataFromAbon, currentDiagnosticTime);
 
-                if ((numSendDiagnosticPacket == 10) || (numSendDiagnosticPacket % 200 == 0)){
-                    printTestNetData(testDataFromAbon);
-                }
+//                if ((numSendDiagnosticPacket == 10) || (numSendDiagnosticPacket % 200 == 0)){
+//                    printTestNetData(testDataFromAbon);
+//                }
 
 
                 indicateSend(20,40);
@@ -360,8 +360,9 @@ void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
 
     strncpy(timeSend, substring_ptr2, len);
     timeSend[len] = 0x00;
-    if ((numSendDiagnosticPacket % 225 == 0)){
-         UART_Printf("timeSend: %s\r\n",timeSend);
+    uint32_t time_send = atol(timeSend);
+    if ((numSendDiagnosticPacket % 500 == 0)){
+        UART_Printf("timeSend: %d timeReceive: %d\r\n",time_send, HAL_GetTick());
     }
 
 }

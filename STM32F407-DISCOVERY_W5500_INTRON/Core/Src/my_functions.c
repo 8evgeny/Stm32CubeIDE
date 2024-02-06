@@ -18,14 +18,14 @@
 
 extern uint8_t SEGGER;
 extern uint8_t destip[4];
+
 extern uint8_t ABONENT_or_BASE;
 extern UART_HandleTypeDef huart6;
 extern IWDG_HandleTypeDef hiwdg;
 extern uint32_t num_send;
 extern uint32_t num_rcvd;
-
+uint32_t numSendDiagnosticPacket = 0;
 uint8_t CCMRAMDATA testDataFromBase[MAX_PACKET_LEN];
-uint8_t CCMRAMDATA testDataToBase[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataFromAbon[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataToAbon[MAX_PACKET_LEN];
 
@@ -223,19 +223,34 @@ void netDiagnosticBase(){
     uint16_t destport = LOCAL_PORT_UDP;
     uint32_t startDiagnosticTime = HAL_GetTick();
     uint32_t currentDiagnosticTime;
-    uint32_t numSendDiagnosticPacket = 0;
     while(1){
         currentDiagnosticTime = HAL_GetTick();
-        if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){ //Длительность сессии 1 мин
+        if ((startDiagnosticTime + 120000 < currentDiagnosticTime)){ //Длительность сессии 2 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
         else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) { // CPU_INT Жду пока плис поднимет флаг
                 ++numSendDiagnosticPacket;
+                if (numSendDiagnosticPacket == NUM_DIAGNOSTIC_UDP_PACKETS){
+                    printf("send %d packets, end test\r\n", NUM_DIAGNOSTIC_UDP_PACKETS);
+                    //Результаты теста
+
+                    sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, LOCAL_PORT_UDP);
+                    reboot();
+                }
                 prepeareDataToAbonent(testDataToAbon, numSendDiagnosticPacket, currentDiagnosticTime);
+
                 sendto(UDP_SOCKET, (uint8_t *)testDataToAbon, MAX_PACKET_LEN, destip, destport);
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromAbon, MAX_PACKET_LEN, destip, &destport);
+                currentDiagnosticTime = HAL_GetTick();
+                analiseDataFromAbonent(testDataFromAbon, currentDiagnosticTime);
+
+//                if ((numSendDiagnosticPacket == 10) || (numSendDiagnosticPacket % 200 == 0)){
+//                    printTestNetData(testDataFromAbon);
+//                }
+
+
                 indicateSend(20,40);
                 indicateReceive(20,40);
             }
@@ -248,16 +263,29 @@ void netDiagnosticAbon(){
     uint16_t destport = LOCAL_PORT_UDP;
     uint32_t startDiagnosticTime = HAL_GetTick();
     uint32_t currentDiagnosticTime;
+    uint32_t numReceivedDiagnosticPacket = 0;
     while(1){
         currentDiagnosticTime = HAL_GetTick();
-        if ((startDiagnosticTime + 60000 < currentDiagnosticTime)){//Длительность сессии 1 мин
+        if ((startDiagnosticTime + 120000 < currentDiagnosticTime)){//Длительность сессии 2 мин
             printf("***** Long Diagnostic session - Reboot *****\r\n");
             reboot();
         }
         else {//Минута еще не прошла - работает тест сети
             if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) {// CPU_INT Жду пока плис поднимет флаг
                 recvfrom(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, &destport);
-                sendto(UDP_SOCKET, (uint8_t *)testDataToBase, MAX_PACKET_LEN, destip, destport);
+                if (REBOOT == checkCommands(testDataFromBase)){
+                    red_blink  red_blink  red_blink
+                        printf("Received command Reboot from Base\r\n");
+                    reboot();
+                }
+                prepeareAnswerToBase(testDataFromBase, currentDiagnosticTime);
+                sendto(UDP_SOCKET, (uint8_t *)testDataFromBase, MAX_PACKET_LEN, destip, destport);
+                ++numReceivedDiagnosticPacket;
+                if ((numReceivedDiagnosticPacket == 1) || (numReceivedDiagnosticPacket % 500 == 0)){
+                    printTestNetData(testDataFromBase);
+                }
+
+
                 indicateSend(20,40);
                 indicateReceive(20,40);
             }
@@ -291,6 +319,50 @@ void indicateReceive(uint16_t numON, uint16_t numOFF){
 
 void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime){
 //В пакет добавляем номер пакета и метку времени базы
+    char tmp[48];
+    sprintf((char*)tmp,"...%d***%d___", numPacket, currTime);
+    strcpy((char*)dataToAbon, tmp);
+}
 
+void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime){
+    //В полученный пакет добавляем метку времени абонента
+    char tmp[48];
+    uint32_t delta = 3300;// чтобы выровнять время базы и абонента
+    sprintf((char*)tmp,"%d:::", currTime + delta);
+
+    char substring[4] = "___";
+    char *substring_ptr = strstr((char*)dataFromBase, substring);
+    strcpy((char*)(substring_ptr + 3), tmp);
+}
+
+void printTestNetData(uint8_t data[MAX_PACKET_LEN]) {
+        UART_Printf("%.48s\r\n", data );
+}
+
+char timeSend[20];
+void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
+//В полученный пакет добавляем метку времени базы
+    char tmp[48];
+    sprintf((char*)tmp,"%d", currTime);
+
+    char substring[4] = ":::";
+    char *substring_ptr = strstr((char*)dataFromAbon, substring);
+    strcpy((char*)(substring_ptr + 3), tmp);
+
+// Указатель на 1 символ времени отправки
+    char substring2[4] = "***";
+    char *substring_ptr2 = strstr((char*)dataFromAbon, substring2) + 3;
+// Указатель на 1 символ _
+    char substring3[4] = "___";
+    char *substring_ptr3 = strstr((char*)dataFromAbon, substring3);
+// Длина строки с временем отправки
+    uint8_t len = substring_ptr3 - substring_ptr2;
+
+    strncpy(timeSend, substring_ptr2, len);
+    timeSend[len] = 0x00;
+    uint32_t time_send = atol(timeSend);
+    if ((numSendDiagnosticPacket % 500 == 0)){
+        UART_Printf("timeSend: %d timeReceive: %d\r\n",time_send, HAL_GetTick());
+    }
 
 }

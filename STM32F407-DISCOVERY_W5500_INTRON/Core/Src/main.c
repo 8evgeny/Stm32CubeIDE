@@ -1394,7 +1394,19 @@ void sendReceiveUDP(uint8_t udpSocket)
     if ((ABONENT_or_BASE == BASE) && (NET_DIAGNOSTIC_BASE == 0) && (HAL_GetTick() < 5000)) {//Только 5 секунд проверяем
         if (netDiagnosticON == checkNetDiagnosticMode()){
             printf("netDiagnosticON\r\n");
-            NET_DIAGNOSTIC_BASE = 1; //Тут вся диагностика сети (или по NET_DIAGNOSTIC_BASE = 1 далее )
+            NET_DIAGNOSTIC_BASE = 1;
+
+            //Сбрасываю флаг диагностики
+            uint8_t netDiagnostic[1];
+            netDiagnostic[0] = 0xFF;
+            EEPROM_SPI_WriteBuffer(netDiagnostic, netDiagnosticFlag, 1);
+            printf("netDiagnosticFlag set OFF\r\n");
+        }
+    }
+    if ((ABONENT_or_BASE == ABONENT) && (NET_DIAGNOSTIC_ABON == 0) && (HAL_GetTick() < 5000)) {//Только 5 секунд проверяем
+        if (netDiagnosticON == checkNetDiagnosticMode()){
+            printf("netDiagnosticON\r\n");
+            NET_DIAGNOSTIC_ABON = 1;
 
             //Сбрасываю флаг диагностики
             uint8_t netDiagnostic[1];
@@ -1513,6 +1525,11 @@ void sendReceiveUDP(uint8_t udpSocket)
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
+            if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
+                // После перезагрузки
+                printf("After reboot start net diagnostic mode\r\n");
+                netDiagnosticAbon();
+            }
             receivePackets(udpSocket, destip, local_port_udp);
             sendPackets(udpSocket, destip, local_port_udp);
         }
@@ -2875,7 +2892,12 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         if (NET_DIAGNOSTIC == checkCommands(dataToDx)){
             red_blink  red_blink  red_blink
             printf("Received command Net Diagnostic from Base\r\n");
-            netDiagnosticAbon();
+            //Записываем флаг диагностики в EEPROM
+            uint8_t netDiagnostic[1];
+            netDiagnostic[0] = 0x88;
+            EEPROM_SPI_WriteBuffer(netDiagnostic, netDiagnosticFlag, 1);
+            printf("netDiagnosticFlag set ON\r\n");
+            reboot();
         }
 
     }

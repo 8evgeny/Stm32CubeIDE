@@ -340,3 +340,18 @@ uint8_t ping_reply(uint8_t sn, uint8_t *addr, uint16_t rlen)
     }
     return 0;
 }
+
+uint32_t htonl(uint32_t net)
+{
+    return __builtin_bswap32(net);
+}
+
+uint16_t htons(uint16_t net)
+{
+    return __builtin_bswap16(net);
+}
+
+uint64_t htonll(uint64_t net)
+{
+    return __builtin_bswap64(net);
+}

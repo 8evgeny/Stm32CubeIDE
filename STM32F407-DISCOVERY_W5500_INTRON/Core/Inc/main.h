@@ -232,6 +232,9 @@ void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime);
 void commandFromWebPing();
 void pingCheck();
 void workInPingMode();
+uint32_t htonl(uint32_t net);
+uint16_t htons(uint16_t net);
+uint64_t htonll(uint64_t net);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

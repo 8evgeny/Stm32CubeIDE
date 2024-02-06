@@ -1,27 +1,36 @@
 #include "main.h"
+#include "ping.h"
 #include "spi_eeprom.h"
 #include "w5500.h"
 #include "socket.h"
-#define BUF_LEN 32
-#define PING_REQUEST 8
-#define PING_REPLY 0
-#define CODE_ZERO 0
-typedef struct pingmsg
-{
-    uint8_t Type; // 0 - Ping Reply, 8 - Ping Request
-    uint8_t Code; // Always 0
-    int16_t CheckSum; // Check sum
-    int16_t ID; // Identification
-    int16_t SeqNum; // Sequence Number
-    // Ping Data : 1452 = IP RAW MTU - sizeof(Type + Code + CheckSum + ID + SeqNum)
-    int8_t Data[BUF_LEN];
-} PINGMSGR;
 
+#define Sn_PROTO(ch) (0x001408 + (ch << 5))
+#define PING_BIND_PORT 3000
+
+PINGMSGR PingRequest = {0};
+PINGMSGR PingReply = {0};
+static uint16_t ping_RandomID = 0x1234;
+static uint16_t ping_RandomSeqNum = 0x4321;
+uint8_t ping_reply_received = 0;
+uint8_t ping_req = 0;
+uint8_t ping_rep = 0;
+uint8_t ping_cnt = 0;
+uint8_t ping_rep_buf[150] = {0};
+
+// ping state machine
+#define PING_STA_FREE 0
+#define PING_STA_OPEN 1
+#define PING_STA_SEND 2
+#define PING_STA_WAIT 3
+#define PING_STA_CLOSE 4
+
+uint8_t ping_sta = PING_STA_FREE;
+
+// Currenual number of devices of ping
+uint8_t ping_device_serial = 0;
+
+// ping target
 extern uint8_t destip[4];
-//uint8_t PingRequest[MAX_PACKET_LEN] = {0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
-//                                       0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
-//                                       0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55};
-uint8_t pingDataBuf[MAX_PACKET_LEN];
 
 void pingCheck(){
     if (pingON == checkPingMode()){
@@ -93,3 +102,140 @@ void workInPingMode() {
 //    }
 
 }
+
+// ping service processing, about 50ms performed once
+void Ethernet_ping_service_deal(uint8_t sn)
+{
+    static uint16_t ping_cycle = 0;
+    uint16_t rlen;
+    uint8_t i, res = 0;
+        // Current channel status
+    uint8_t sn_sr = 0;
+
+    switch (ping_sta)
+    {
+        case PING_STA_FREE: // idle state
+        {
+            ping_cycle++;
+            if (ping_cycle > 50 * 20)
+            {
+                ping_cycle = 0;
+                ping_sta = PING_STA_OPEN;
+            }
+            break;
+        }
+        case PING_STA_OPEN: // Open the channel
+        {
+            sn_sr = getSn_SR(sn);
+            if (sn_sr == SOCK_CLOSED)
+            {
+                close(sn);
+                /* Create Socket */
+                WIZCHIP_WRITE(Sn_PROTO(sn), IPPROTO_ICMP); /* Set ICMP Protocol */
+                    if (socket (sn, Sn_MR_IPRAW, PING_BIND_PORT, 0) != 0) /* Determine if the IP RAW mode socket is turned on */
+                {
+                }
+            }
+            else if (sn_sr == SOCK_IPRAW)
+            {
+                printf("Ping socket open\r\n");
+                ping_device_serial = 0;
+                ping_req = 0;
+                ping_rep = 0;
+                ping_sta = PING_STA_SEND;
+            }
+            break;
+        }
+        Case ping_sta_send: // Send data
+        {
+            // After the query is 1 round, disconnect
+            if (ping_device_serial > 15)
+            {
+                ping_sta = PING_STA_CLOSE;
+                break;
+            }
+            // Judgment if the query is completed
+            for (i = ping_device_serial; i < 16; i++)
+            {
+                if (System_Para.ethernet_ping_ip[i][0] != 0)
+                {
+                    ping_device_serial = i;
+                    if (ping_req == 0)
+                    {
+                        ping_rep = 0;
+                        memcpy(ping_ip_dest, System_Para.ethernet_ping_ip[i], 4);
+                        ol_print(DEBUG_CHN, 0, "Ping:%d.%d.%d.%d\r\n", (ping_ip_dest[0]), (ping_ip_dest[1]), (ping_ip_dest[2]), (ping_ip_dest[3]));
+                    }
+                    ping_req++;
+                    Ping_Request (Sn, Ping_IP_DEST); / * Send PING Request * /
+                        ping_sta = PING_STA_WAIT;
+                    ping_cnt = 0;
+                    break;
+                }
+            }
+            // Query
+            if(i == 16)
+            {
+                ping_sta = PING_STA_CLOSE;
+                break;
+            }
+        }
+        Case ping_sta_wait: // Waiting results
+        {
+            if ((rlen = getSn_RX_RSR(sn)) > 0)
+            {
+                Rlen = ping_reply (SN, Ping_IP_DEST, RLEN); / * Get reply information * /
+                    ping_rep++;
+                if (ping_reply_received)
+                {
+                    ol_print(DEBUG_CHN, 0, "rep%d t=%d,len=%d\n",ping_req,ping_cnt, rlen);
+                    ping_sta = PING_STA_SEND;
+                    if(ping_req == 4)
+                    {
+                        ping_req = 5;
+                    }
+                }
+            }
+            IF ((ping_cnt> 50)) // More 4 times, end query
+            {
+                ol_print(DEBUG_CHN, 0, "rep time out\r\n\r\n");
+                ping_cnt = 0;
+                ping_sta = PING_STA_SEND;
+                if(ping_req == 4)
+                {
+                    ping_req = 5;
+                }
+            }
+            else
+            {
+                ping_cnt++;
+            }
+            // ping after 4 times, ping Next device
+            if (ping_req == 5)
+            {
+                ol_print(DEBUG_CHN, 0, "ping %d.%d.%d.%d, s=4, r=%d, l=%d\n",
+                         ping_ip_dest[0], ping_ip_dest[1], ping_ip_dest[2], ping_ip_dest[3], ping_rep, 4 - ping_rep);
+                if (ping_rep == 0)
+                {
+                    System_Sta.ping_list_sta &= ~(0x0001 << ping_device_serial);
+                }
+                else
+                {
+                    System_Sta.ping_list_sta |= (0x0001 << ping_device_serial);
+                }
+                ping_rep = 0;
+                ping_req = 0;
+                ping_device_serial++;
+            }
+            break;
+        }
+        Case ping_sta_close: // Turn off the channel
+        {
+            ol_print(DEBUG_CHN, 0, "Ping socket close\n");
+            w5500_close(sn);
+            ping_sta = PING_STA_FREE;
+            break;
+        }
+    }
+}
+

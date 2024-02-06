@@ -99,10 +99,10 @@ void printWiznetReg(){
     printf("wiznet registers:\r\n"
            "Mode Register: %X\r\n"
            "Interrupt Register: %X\r\n"
-           "PHY Configuration Register: %X\r\n"
-           ,WIZCHIP_READ(0x0000)
-           ,WIZCHIP_READ(0x0015)
-           ,WIZCHIP_READ(0x002E)
+           "PHY Status Register: %X\r\n"
+           ,WIZCHIP_READ(MR)
+           ,WIZCHIP_READ(IR)
+           ,WIZCHIP_READ(PHYCFGR)
            );
 }
 void printAllChannel(uint8_t data[MAX_PACKET_LEN]) {
@@ -379,6 +379,12 @@ void pingCheck(){
 }
 void workInPingMode(){
     printf("Work in PING mode\r\n");
+
+    socket(PING_SOCKET, Sn_MR_IPRAW, LOCAL_PORT_UDP, 0);
+    while(getSn_SR(PING_SOCKET)!=SOCK_IPRAW);
+    printf("open PING socket %d\r\n", PING_SOCKET);
+
+
 
 
 

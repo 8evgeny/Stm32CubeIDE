@@ -30,6 +30,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 
 #define HTTP_SOCKET     0
 #define UDP_SOCKET      4
+#define PING_SOCKET     6
 #define NUM_DIAGNOSTIC_UDP_PACKETS  50000
 #define ETH_MAX_BUF_SIZE	2048
 #define SERVER_PORT			8883

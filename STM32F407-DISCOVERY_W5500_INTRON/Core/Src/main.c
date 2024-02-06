@@ -43,10 +43,6 @@ extern int tls_client_serverTest();
 extern void tls_server_Handshake();
 extern void polarSSLTest();
 extern void bearSSLTest();
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
 #define I2C_REQUEST_WRITE                       0x00
 #define I2C_REQUEST_READ                        0x01
 #define SLAVE_OWN_ADDRESS                       0xA0
@@ -102,6 +98,28 @@ extern uint8_t test5[MAX_PACKET_LEN];
 extern uint8_t test6[MAX_PACKET_LEN];
 extern uint8_t test7[MAX_PACKET_LEN];
 extern uint8_t zeroStr[MAX_PACKET_LEN];
+
+I2C_HandleTypeDef hi2c1;
+
+IWDG_HandleTypeDef hiwdg;
+
+RNG_HandleTypeDef hrng;
+
+RTC_HandleTypeDef hrtc;
+
+SPI_HandleTypeDef hspi1;
+SPI_HandleTypeDef hspi2;
+SPI_HandleTypeDef hspi3;
+
+UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart6;
+DMA_HandleTypeDef hdma_usart6_tx;
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;

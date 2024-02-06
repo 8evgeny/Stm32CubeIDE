@@ -357,17 +357,30 @@ void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
 }
 void commandFromWebPing(){
     printf("Received command PING from WEB\r\n");
-
     uint8_t ping[1];
     ping[0] = 0x88;
     EEPROM_SPI_WriteBuffer(ping, pingFlag, 1);
     printf("pingFlag set ON\r\n");
     reboot();
 }
+void pingCheck(){
+    if (pingON == checkPingMode()){
+        printf("pingON\r\n");
+
+        //Сбрасываю флаг диагностики
+        uint8_t ping[1];
+        ping[0] = 0xFF;
+        EEPROM_SPI_WriteBuffer(ping, pingFlag, 1);
+        printf("pingFlag set OFF\r\n");
+
+        workInPingMode();
+        reboot();
+    }
+}
 void workInPingMode(){
     printf("Work in PING mode\r\n");
 
 
 
-    reboot();
+
 }

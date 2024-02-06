@@ -221,6 +221,7 @@ void printTestNetData(uint8_t data[MAX_PACKET_LEN]);
 void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime);
 void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime);
 void commandFromWebPing();
+void pingCheck();
 void workInPingMode();
 /* USER CODE END Includes */
 

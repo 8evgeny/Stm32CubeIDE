@@ -2220,18 +2220,6 @@ int main(void)
 //    net_ini();
 #endif
 
-    if (pingON == checkPingMode()){
-        printf("pingON\r\n");
-
-        //Сбрасываю флаг диагностики
-        uint8_t ping[1];
-        ping[0] = 0xFF;
-        EEPROM_SPI_WriteBuffer(ping, pingFlag, 1);
-        printf("pingFlag set OFF\r\n");
-
-        workInPingMode();
-    }
-
     net_ini_WIZNET(HTTP_SOCKET); //TCP socket 0
 
     //Выводим регистры Wiznet(
@@ -2241,6 +2229,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+    pingCheck();
     uint8_t udpSocket = UDP_SOCKET;
     prepearUDP_PLIS(udpSocket);
 

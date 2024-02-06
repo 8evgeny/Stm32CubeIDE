@@ -559,6 +559,9 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
             if (strncmp ((char *)uri_name, "DEBUG_NET", 9) == 0) //Запуск диагностики сети
                 commandFromWebNetDiagnostic();
 
+            if (strncmp ((char *)uri_name, "PING", 4) == 0) //Пинг получателя
+                commandFromWebPing();
+
             if (strncmp ((char *)uri_name, "LOGIN", 5) == 0)
                 checkLogin((char *)uri_name);
 

@@ -1415,6 +1415,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             printf("netDiagnosticFlag set OFF\r\n");
         }
     }
+
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
     {
         if (ABONENT_or_BASE == BASE) {
@@ -1670,7 +1671,7 @@ void reboot()
 {
     printf("*****  REBOOT  *****\r\n");
 #ifdef   NEW_HTTP_SERVER
-    http_disconnect(0);
+    http_disconnect(HTTP_SOCKET);
 #endif
     HAL_NVIC_SystemReset();
 }
@@ -2218,6 +2219,18 @@ int main(void)
 #ifndef   NEW_HTTP_SERVER
 //    net_ini();
 #endif
+
+    if (pingON == checkPingMode()){
+        printf("pingON\r\n");
+
+        //Сбрасываю флаг диагностики
+        uint8_t ping[1];
+        ping[0] = 0xFF;
+        EEPROM_SPI_WriteBuffer(ping, pingFlag, 1);
+        printf("pingFlag set OFF\r\n");
+
+        workInPingMode();
+    }
 
     net_ini_WIZNET(HTTP_SOCKET); //TCP socket 0
 

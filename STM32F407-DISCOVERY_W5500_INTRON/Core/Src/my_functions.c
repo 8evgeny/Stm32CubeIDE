@@ -203,6 +203,18 @@ uint8_t checkNetDiagnosticMode()
         return netDiagnosticOFF;
     }
 }
+uint8_t checkPingMode()
+{
+    // считываем значение по адресу pingFlag
+    uint8_t ping[1];
+    EEPROM_SPI_ReadBuffer(ping, pingFlag, 1);
+    if (ping[0] == 0x88) {
+        return pingON;
+    }
+    else {
+        return pingOFF;
+    }
+}
 void netDiagnosticBase(){
     printf("Start net diagnostic Base\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
@@ -342,4 +354,20 @@ void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
         UART_Printf("timeSend: %d timeReceive: %d\r\n",time_send, HAL_GetTick());
     }
 
+}
+void commandFromWebPing(){
+    printf("Received command PING from WEB\r\n");
+
+    uint8_t ping[1];
+    ping[0] = 0x88;
+    EEPROM_SPI_WriteBuffer(ping, pingFlag, 1);
+    printf("pingFlag set ON\r\n");
+    reboot();
+}
+void workInPingMode(){
+    printf("Work in PING mode\r\n");
+
+
+
+    reboot();
 }

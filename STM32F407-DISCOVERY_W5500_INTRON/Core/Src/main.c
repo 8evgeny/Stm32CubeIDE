@@ -4,7 +4,6 @@
 #include "w5500.h"
 #include "net.h"
 #include "loopback.h"
-#include "my_function.h"
 #include "wizchip_init.h"
 //#include "SSLInterface.h"
 #include "httpServer.h"
@@ -2151,6 +2150,7 @@ int main(void)
 
 
 //    ReadProtect(); //   <---------------------- защита от считывания
+    printf("\r\n************************************************\r\n");
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
 
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС

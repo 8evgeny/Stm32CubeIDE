@@ -157,7 +157,6 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
-#include "my_function.h"
 
 #define MAX_PACKET_LEN 48
 #define TEST_DATA test6
@@ -189,6 +188,15 @@ void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_cris_enter(void);
 void 	wizchip_cris_exit(void);
+void UART_Printf(const char* fmt, ...);
+void Printf(const char* fmt, ...);
+void network_init(void);
+void  wizchip_select(void);
+void  wizchip_deselect(void);
+void  wizchip_write(uint8_t wb);
+uint8_t wizchip_read(void);
+void Chip_selection_call_back(void);
+void wizchip_initialize(void);
 void reboot();
 void checkLogin(char* buf);
 void checkPassword(char* buf);

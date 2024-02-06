@@ -8,7 +8,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdbool.h>
-#include "my_function.h"
 #include "wizchip_init.h"
 #include "SEGGER_RTT.h"
 #include "socket.h"
@@ -363,30 +362,4 @@ void commandFromWebPing(){
     printf("pingFlag set ON\r\n");
     reboot();
 }
-void pingCheck(){
-    if (pingON == checkPingMode()){
-        printf("pingON\r\n");
 
-        //Сбрасываю флаг диагностики
-        uint8_t ping[1];
-        ping[0] = 0xFF;
-        EEPROM_SPI_WriteBuffer(ping, pingFlag, 1);
-        printf("pingFlag set OFF\r\n");
-
-        workInPingMode();
-        reboot();
-    }
-}
-void workInPingMode(){
-    printf("Work in PING mode\r\n");
-
-    socket(PING_SOCKET, Sn_MR_IPRAW, LOCAL_PORT_UDP, 0);
-    while(getSn_SR(PING_SOCKET)!=SOCK_IPRAW);
-    printf("open PING socket %d\r\n", PING_SOCKET);
-
-
-
-
-
-
-}

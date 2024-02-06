@@ -25,13 +25,14 @@ uint8_t ping_rep_buf[150] = {0};
 #define PING_STA_CLOSE 4
 
 uint8_t ping_sta = PING_STA_FREE;
+//uint8_t ping_sta = PING_STA_OPEN;
 
 // Currenual number of devices of ping
 uint8_t ping_device_serial = 0;
 
 // ping target
 extern uint8_t destip[4];
-
+extern CRC_HandleTypeDef hcrc;
 void pingCheck(){
     if (pingON == checkPingMode()){
         printf("pingON\r\n");
@@ -55,125 +56,133 @@ void workInPingMode() {
 // ping service processing, about 50ms performed once
 void Ethernet_ping_service_deal(uint8_t sn)
 {
+    printf("Ethernet_ping_service_deal\r\n");
     static uint16_t ping_cycle = 0;
     uint16_t rlen;
     uint8_t i = 0;
         // Current channel status
     uint8_t sn_sr = 0;
-
-    switch (ping_sta)
-    {
-        case PING_STA_FREE: // idle state
+    for (uint8_t m = 0;m<4;++m){
+        switch (ping_sta)
         {
-            ping_cycle++;
-            if (ping_cycle > 50 * 20)
+            case PING_STA_FREE: // idle state
             {
-                ping_cycle = 0;
-                ping_sta = PING_STA_OPEN;
-            }
-            break;
-        }
-        case PING_STA_OPEN: // Open the channel
-        {
-            sn_sr = getSn_SR(sn);
-            if (sn_sr == SOCK_CLOSED)
-            {
-                close(sn);
-                /* Create Socket */
-                WIZCHIP_WRITE(Sn_PROTO(sn), IPPROTO_ICMP); /* Set ICMP Protocol */
-                    if (socket (sn, Sn_MR_IPRAW, PING_BIND_PORT, 0) != 0) /* Determine if the IP RAW mode socket is turned on */
+            printf("idle state\r\n");
+                ping_cycle++;
+                if (ping_cycle > 50 * 20)
                 {
+                    ping_cycle = 0;
+                    ping_sta = PING_STA_OPEN;
                 }
-            }
-            else if (sn_sr == SOCK_IPRAW)
-            {
-                printf("Ping socket open\r\n");
-                ping_device_serial = 0;
-                ping_req = 0;
-                ping_rep = 0;
-                ping_sta = PING_STA_SEND;
-            }
-            break;
-        }
-        case PING_STA_SEND: // Send data
-        {
-            // After the query is 1 round, disconnect
-            if (ping_device_serial > 15)
-            {
-                ping_sta = PING_STA_CLOSE;
                 break;
             }
-            // Judgment if the query is completed
-            for (i = ping_device_serial; i < 16; i++)
+            case PING_STA_OPEN: // Open the channel
             {
-                ping_device_serial = i;
-                if (ping_req == 0)
+            printf("Open the channel\r\n");
+                sn_sr = getSn_SR(sn);
+                if (sn_sr == SOCK_CLOSED)
                 {
+                    close(sn);
+                    /* Create Socket */
+                    WIZCHIP_WRITE(Sn_PROTO(sn), IPPROTO_ICMP); /* Set ICMP Protocol */
+                        if (socket (sn, Sn_MR_IPRAW, PING_BIND_PORT, 0) != 0) /* Determine if the IP RAW mode socket is turned on */
+                    {
+                        printf("error open socket in IPRAW\r\n");
+                    }
+                }
+                else if (sn_sr == SOCK_IPRAW)
+                {
+                    printf("Ping socket open\r\n");
+                    ping_device_serial = 0;
+                    ping_req = 0;
                     ping_rep = 0;
-                    printf( "Ping:%d.%d.%d.%d\r\n", destip[0], destip[1], destip[2], destip[3]);
+                    ping_sta = PING_STA_SEND;
                 }
-                ping_req++;
-                ping_request (sn, destip); /* Send PING Request */
-                ping_sta = PING_STA_WAIT;
-                ping_cnt = 0;
                 break;
             }
-            // Query
-            if(i == 16)
+            case PING_STA_SEND: // Send data
             {
-                ping_sta = PING_STA_CLOSE;
-                break;
-            }
-        }
-        case PING_STA_WAIT: // Waiting results
-        {
-            if ((rlen = getSn_RX_RSR(sn)) > 0)
-            {
-                rlen = ping_reply (sn, destip, rlen); /* Get reply information */
-                    ping_rep++;
-                if (ping_reply_received)
+            printf("Send data\r\n");
+                // After the query is 1 round, disconnect
+                if (ping_device_serial > 15)
                 {
-                    printf("rep%d t=%d,len=%d\r\n",ping_req, ping_cnt, rlen);
+                    ping_sta = PING_STA_CLOSE;
+                    break;
+                }
+                // Judgment if the query is completed
+                for (i = ping_device_serial; i < 16; i++)
+                {
+                    ping_device_serial = i;
+                    if (ping_req == 0)
+                    {
+                        ping_rep = 0;
+                        printf( "Ping:%d.%d.%d.%d\r\n", destip[0], destip[1], destip[2], destip[3]);
+                    }
+                    ping_req++;
+                    ping_request (sn, destip); /* Send PING Request */
+                    ping_sta = PING_STA_WAIT;
+                    ping_cnt = 0;
+                    break;
+                }
+                // Query
+                if(i == 16)
+                {
+                    ping_sta = PING_STA_CLOSE;
+                    break;
+                }
+            }
+            case PING_STA_WAIT: // Waiting results
+            {
+            printf("Waiting results\r\n");
+                if ((rlen = getSn_RX_RSR(sn)) > 0)
+                {
+                    rlen = ping_reply (sn, destip, rlen); /* Get reply information */
+                        ping_rep++;
+                    if (ping_reply_received)
+                    {
+                        printf("rep%d t=%d,len=%d\r\n",ping_req, ping_cnt, rlen);
+                        ping_sta = PING_STA_SEND;
+                        if(ping_req == 4)
+                        {
+                            ping_req = 5;
+                        }
+                    }
+                }
+                if ((ping_cnt> 50)) // More 4 times, end query
+                {
+                    printf("rep time out\r\n\r\n");
+                    ping_cnt = 0;
                     ping_sta = PING_STA_SEND;
                     if(ping_req == 4)
                     {
                         ping_req = 5;
                     }
                 }
-            }
-            if ((ping_cnt> 50)) // More 4 times, end query
-            {
-                printf("rep time out\r\n\r\n");
-                ping_cnt = 0;
-                ping_sta = PING_STA_SEND;
-                if(ping_req == 4)
+                else
                 {
-                    ping_req = 5;
+                    ping_cnt++;
                 }
+                // ping after 4 times, ping Next device
+                if (ping_req == 5)
+                {
+                    printf("ping %d.%d.%d.%d, s=4, r=%d, l=%d\r\n",
+                             destip[0], destip[1], destip[2], destip[3], ping_rep, 4 - ping_rep);
+                    ping_rep = 0;
+                    ping_req = 0;
+                    ping_device_serial++;
+                }
+                break;
             }
-            else
+            case PING_STA_CLOSE: // Turn off the channel
             {
-                ping_cnt++;
+            printf("Turn off the channel\r\n");
+                printf("Ping socket close\r\n");
+                close(sn);
+                ping_sta = PING_STA_FREE;
+                break;
             }
-            // ping after 4 times, ping Next device
-            if (ping_req == 5)
-            {
-                printf("ping %d.%d.%d.%d, s=4, r=%d, l=%d\r\n",
-                         destip[0], destip[1], destip[2], destip[3], ping_rep, 4 - ping_rep);
-                ping_rep = 0;
-                ping_req = 0;
-                ping_device_serial++;
-            }
-            break;
         }
-        case PING_STA_CLOSE: // Turn off the channel
-        {
-            printf("Ping socket close\r\n");
-            close(sn);
-            ping_sta = PING_STA_FREE;
-            break;
-        }
-    }
+    }//for
 }
 
 uint8_t ping_count(uint8_t sn, uint16_t pCount, uint8_t *addr)
@@ -261,7 +270,8 @@ uint8_t ping_request(uint8_t sn, uint8_t *addr)
     }
     PingRequest.CheckSum = 0;
     /* Calculated response */
-        PingRequest.CheckSum = htons(checksum((uint8_t *)&PingRequest, sizeof(PingRequest)));
+    uint32_t CRCVal = HAL_CRC_Calculate(&hcrc, (uint32_t *)&PingRequest, sizeof(PingRequest));
+    PingRequest.CheckSum = htons(CRCVal);
 
     /* Send ping response to destination */
         if (sendto(sn, (uint8_t *)&PingRequest, sizeof(PingRequest), addr, PING_BIND_PORT) == 0)
@@ -274,7 +284,6 @@ uint8_t ping_request(uint8_t sn, uint8_t *addr)
     }
     return 0;
 }
-
 uint8_t ping_reply(uint8_t sn, uint8_t *addr, uint16_t rlen)
 {
     uint16_t tmp_checksum;
@@ -299,7 +308,8 @@ uint8_t ping_reply(uint8_t sn, uint8_t *addr, uint16_t rlen)
         {
             PingReply.Data[i] = ping_rep_buf[8 + i];
         }
-        tmp_checksum = ~ checksum (ping_rep_buf, len); /* Check the number of ping replies */
+        uint32_t CRCVal = HAL_CRC_Calculate(&hcrc, (uint32_t *)ping_rep_buf, len);
+        tmp_checksum = ~ CRCVal; /* Check the number of ping replies */
             if (tmp_checksum != 0xffff)
         {
             printf( "tmp_checksum = %x\r\n", tmp_checksum);
@@ -340,17 +350,14 @@ uint8_t ping_reply(uint8_t sn, uint8_t *addr, uint16_t rlen)
     }
     return 0;
 }
-
 uint32_t htonl(uint32_t net)
 {
     return __builtin_bswap32(net);
 }
-
 uint16_t htons(uint16_t net)
 {
     return __builtin_bswap16(net);
 }
-
 uint64_t htonll(uint64_t net)
 {
     return __builtin_bswap64(net);

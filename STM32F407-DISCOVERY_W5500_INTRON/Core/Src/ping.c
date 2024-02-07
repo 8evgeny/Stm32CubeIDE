@@ -57,7 +57,6 @@ void workInPingMode() {
 void Ethernet_ping_service_deal(uint8_t sn)
 {
     printf("Ethernet_ping_service_deal\r\n");
-    static uint16_t ping_cycle = 0;
     uint16_t rlen;
     uint8_t i = 0;
         // Current channel status
@@ -67,13 +66,8 @@ void Ethernet_ping_service_deal(uint8_t sn)
         {
             case PING_STA_FREE: // idle state
             {
-            printf("idle state\r\n");
-                ping_cycle++;
-                if (ping_cycle > 50 * 20)
-                {
-                    ping_cycle = 0;
-                    ping_sta = PING_STA_OPEN;
-                }
+                printf("idle state\r\n");
+                ping_sta = PING_STA_OPEN;
                 break;
             }
             case PING_STA_OPEN: // Open the channel

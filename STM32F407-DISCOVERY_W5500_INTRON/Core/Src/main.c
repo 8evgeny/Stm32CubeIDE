@@ -74,8 +74,8 @@ uint16_t local_port_web = LOCAL_PORT_WEB;
 uint16_t local_port_udp = LOCAL_PORT_UDP;
 uint8_t destipHOST[4] = {192,168,1,11}; //для тестов
 
-uint8_t loginOK = 0;
-uint8_t passwordOK = 0;
+uint8_t loginState = loginOFF;
+uint8_t passwordState = PasswordOFF;
 uint8_t web = webON;
 uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
@@ -1708,7 +1708,7 @@ void checkLogin(char* buf)
         (strcmp(buf + 5,login3) == 0))
     {
         printf("Login OK\n");
-        loginOK = 1;
+        loginState = loginON;
     }
     else
     {
@@ -1722,7 +1722,7 @@ void checkPassword(char* buf)
     if (strncmp(buf + 8, MD5 , 32) == 0)
     {
         Printf("password OK\r\n");
-        passwordOK = 1;
+        passwordState = PasswordON;
     }
     else
     {

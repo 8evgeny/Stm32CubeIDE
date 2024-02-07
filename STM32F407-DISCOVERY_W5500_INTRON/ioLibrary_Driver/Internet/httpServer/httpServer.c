@@ -37,8 +37,8 @@ static st_http_request * http_request;				/**< Pointer to received HTTP request 
 static st_http_request * parsed_http_request;		/**< Pointer to parsed HTTP request */
 static uint8_t * http_response;						/**< Pointer to HTTP response */
 extern uint16_t local_port_web;
-extern uint8_t loginOK;
-extern uint8_t passwordOK;
+extern uint8_t loginState;
+extern uint8_t passwordState;
 uint8_t mainIsLoad = 0;
 // ## For Debugging
 //static uint8_t uri_buf[128];
@@ -164,7 +164,7 @@ void httpServer_run(uint8_t seqnum)
 					if ((len = getSn_RX_RSR(s)) > 0)
 					{
 //Выключаю обмен по UDP
-UDP_or_TCP = 0;
+UDP_or_TCP = TCP;
 startHttpTime = HAL_GetTick();
 
 						if (len > DATA_BUF_SIZE) len = DATA_BUF_SIZE;
@@ -526,7 +526,7 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 			if (!strcmp((char *)uri_name, "m")) strcpy((char *)uri_name, M_INITIAL_WEBPAGE);
 			if (!strcmp((char *)uri_name, "mobile")) strcpy((char *)uri_name, MOBILE_INITIAL_WEBPAGE);
 
-            if ((passwordOK == 1)&&(loginOK == 1)) {
+            if ((passwordState == PasswordON)&&(loginState == loginON)) {
                 if (mainIsLoad == 0) {
                     strcpy((char *)uri_name, MAIN_WEBPAGE);
                     mainIsLoad = 1;

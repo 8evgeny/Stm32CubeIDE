@@ -2,7 +2,7 @@
 #include "httpd.h"
 #include "lfs.h"
 #include "eeprom.h"
-extern uint8_t loginOK;
+extern uint8_t loginState;
 extern uint8_t passwordOK;
 extern UART_HandleTypeDef huart6;
 extern char str1[60];
@@ -350,7 +350,7 @@ void http_request(void)
 	RXbyte = w5500_readSockBufByte(tcpprop.cur_sock,point);
 	if(RXbyte==(uint8_t)' ')
     {
-        if ((passwordOK == 1)&&(loginOK == 1))
+        if ((passwordState == passwordON)&&(loginState == loginON))
         {
             strcpy(httpsockprop[tcpprop.cur_sock].fname,"main.html");
         }

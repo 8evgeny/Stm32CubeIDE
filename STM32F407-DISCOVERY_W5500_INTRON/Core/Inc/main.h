@@ -180,6 +180,14 @@ enum webState{
     webON,
     webOFF
 };
+enum LOGIN_STATE{
+    loginON,
+    loginOFF
+};
+enum PASSWORD_STATE{
+    PasswordON,
+    PasswordOFF
+};
 enum netMode{
     UDP,
     TCP

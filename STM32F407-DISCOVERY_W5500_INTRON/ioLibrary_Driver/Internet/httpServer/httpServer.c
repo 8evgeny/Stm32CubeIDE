@@ -529,10 +529,12 @@ static void http_process_handler(uint8_t s, st_http_request * p_http_request)
 			if (!strcmp((char *)uri_name, "mobile")) strcpy((char *)uri_name, MOBILE_INITIAL_WEBPAGE);
 
             if ((passwordState == PasswordON)&&(loginState == loginON)) {
-                if (mainIsLoad == 0) {
+//                if (mainIsLoad == 0) {
                     strcpy((char *)uri_name, MAIN_WEBPAGE);
-                    mainIsLoad = 1;
-                }
+//                    mainIsLoad = 1;
+//                }
+                passwordState = PasswordOFF;
+                loginState = loginOFF;
             }
 
             if (web == webOFF) {

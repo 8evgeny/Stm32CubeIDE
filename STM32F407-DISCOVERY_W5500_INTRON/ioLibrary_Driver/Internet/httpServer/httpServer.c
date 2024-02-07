@@ -224,6 +224,8 @@ startHttpTime = HAL_GetTick();
 
 				case STATE_HTTP_RES_DONE :
 					printf("> HTTPSocket[%d] : [State] STATE_HTTP_RES_DONE\r\n", s);
+//    if (web == webOFF)
+//        reboot();
 					// Socket file info structure re-initialize
 					HTTPSock_Status[seqnum].file_len = 0;
 					HTTPSock_Status[seqnum].file_offset = 0;

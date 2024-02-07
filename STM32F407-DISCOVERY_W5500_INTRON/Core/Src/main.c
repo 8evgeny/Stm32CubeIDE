@@ -52,8 +52,8 @@ char *pindex;
 char *pmain;
 char *psettingsIP;
 uint8_t ABONENT_or_BASE;
-uint8_t HANDSHAKE = 0;
-uint8_t UDP_or_TCP = 1;
+uint8_t HANDSHAKE = hanshakeOFF;
+uint8_t UDP_or_TCP = UDP;
 int8_t numWait = 50; //Количество ожиданий в цикле Handshake
 uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
@@ -76,7 +76,7 @@ uint8_t destipHOST[4] = {192,168,1,11}; //для тестов
 
 uint8_t loginOK = 0;
 uint8_t passwordOK = 0;
-uint8_t numberAttempt = 3;
+uint8_t web = webON;
 uint8_t setResetTwice = 0;
 extern int8_t http_disconnect(uint8_t sn);
 
@@ -1566,7 +1566,7 @@ void sendHANDSHAKE(uint8_t udpSocket) {
     sendto(udpSocket, (uint8_t *)test1, MAX_PACKET_LEN, destip, local_port_udp);
     if (HAL_GetTick() < currTime + delay){ //Пакет отправился быстро - destip в сети
         HAL_GPIO_WritePin(GPIOD, Red_Led_Pin, GPIO_PIN_RESET);
-        HANDSHAKE = 1;
+        HANDSHAKE = hanshakeON;
     }
     else {
         printf("Waiting for destination connection %d ...\r\n", numWait);
@@ -1713,7 +1713,7 @@ void checkLogin(char* buf)
     else
     {
         printf("Login not found!!!\n");
-        --numberAttempt;
+        web = webOFF;
     }
 }
 
@@ -1726,8 +1726,8 @@ void checkPassword(char* buf)
     }
     else
     {
-        Printf("password not OK\r\n");
-        --numberAttempt;
+        Printf("invalid password\r\n");
+        web = webOFF;
     }
 }
 
@@ -2285,7 +2285,7 @@ int main(void)
     {
 //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET); //Debug 3
 #ifdef   NEW_HTTP_SERVER
-        if ((UDP_or_TCP == 0) && (startHttpTime + 300000 < HAL_GetTick())){
+        if ((UDP_or_TCP == TCP) && (startHttpTime + 300000 < HAL_GetTick())){
             printf("Long HTTP session - Reboot\r\n");
             reboot();
         }
@@ -2300,15 +2300,15 @@ int main(void)
       net_poll();
 #endif
 
-      if (UDP_or_TCP == 1)
+      if (UDP_or_TCP == UDP)
       {
-        if (HANDSHAKE == 1){
+        if (HANDSHAKE == hanshakeON){
             sendReceiveUDP(udpSocket);
         }
-        if (HANDSHAKE == 0)
+        if (HANDSHAKE == hanshakeOFF)
             sendHANDSHAKE(udpSocket);
       } else {
-          if (numberAttempt != 0)
+          if (web == webON)
               HAL_IWDG_Refresh(&hiwdg);
       }
     /* USER CODE END WHILE */

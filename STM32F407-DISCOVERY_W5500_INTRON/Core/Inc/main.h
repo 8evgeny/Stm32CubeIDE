@@ -172,6 +172,18 @@ enum ABONENTorBASE{
     BASE,
     ABONENT
 };
+enum handshakeState{
+    hanshakeON,
+    hanshakeOFF
+};
+enum webState{
+    webON,
+    webOFF
+};
+enum netMode{
+    UDP,
+    TCP
+};
 enum Commands{
     REBOOT,
     NET_DIAGNOSTIC,

@@ -127,8 +127,8 @@ void parse_http_request(
 	uint8_t * buf				/**< pointer to be parsed */
 	)
 {
-  printf("-- parse_http_request --\n");
-  printf("request: %s\n",request->URI);
+  printf("-- parse_http_request --\r\n");
+  printf("request: %s\r\n",request->URI);
   char * nexttok;
   nexttok = strtok((char*)buf," ");
   if(!nexttok)
@@ -139,7 +139,7 @@ void parse_http_request(
   if(!strcmp(nexttok, "GET") || !strcmp(nexttok,"get"))
   {
     request->METHOD = METHOD_GET;
-    printf("GET....\n");
+    printf("GET....\r\n");
     nexttok = strtok(NULL," ");
 
   }

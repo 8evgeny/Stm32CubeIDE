@@ -3,7 +3,6 @@
 #include "socket.h"
 #include "wizchip_conf.h"
 #include "main.h"
-#include "my_function.h"
 
 #if LOOPBACK_MODE == LOOPBACK_MAIN_NOBLCOK
 

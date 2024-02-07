@@ -4,7 +4,6 @@
 #include "w5500.h"
 #include "net.h"
 #include "loopback.h"
-#include "my_function.h"
 #include "wizchip_init.h"
 //#include "SSLInterface.h"
 #include "httpServer.h"
@@ -44,10 +43,6 @@ extern int tls_client_serverTest();
 extern void tls_server_Handshake();
 extern void polarSSLTest();
 extern void bearSSLTest();
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
 #define I2C_REQUEST_WRITE                       0x00
 #define I2C_REQUEST_READ                        0x01
 #define SLAVE_OWN_ADDRESS                       0xA0
@@ -104,7 +99,31 @@ extern uint8_t test6[MAX_PACKET_LEN];
 extern uint8_t test7[MAX_PACKET_LEN];
 extern uint8_t zeroStr[MAX_PACKET_LEN];
 
+I2C_HandleTypeDef hi2c1;
+
+IWDG_HandleTypeDef hiwdg;
+
+RNG_HandleTypeDef hrng;
+
+RTC_HandleTypeDef hrtc;
+
+SPI_HandleTypeDef hspi1;
+SPI_HandleTypeDef hspi2;
+SPI_HandleTypeDef hspi3;
+
+UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart6;
+DMA_HandleTypeDef hdma_usart6_tx;
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
+CRC_HandleTypeDef hcrc;
+
 I2C_HandleTypeDef hi2c1;
 
 IWDG_HandleTypeDef hiwdg;
@@ -164,6 +183,7 @@ static void MX_RTC_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_IWDG_Init(void);
+static void MX_CRC_Init(void);
 /* USER CODE BEGIN PFP */
 static void MX_IWDG_Init_abonent(void);
 static void MX_IWDG_Init_base(void);
@@ -1337,6 +1357,8 @@ HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET); //60 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET); //Синий
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET); //Зеленый
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET); //Красный
+
+PE15  - cs Wifi
 #endif
 
 void prepearUDP_PLIS(uint8_t udpSocket)
@@ -1415,6 +1437,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             printf("netDiagnosticFlag set OFF\r\n");
         }
     }
+
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
     {
         if (ABONENT_or_BASE == BASE) {
@@ -1670,7 +1693,7 @@ void reboot()
 {
     printf("*****  REBOOT  *****\r\n");
 #ifdef   NEW_HTTP_SERVER
-    http_disconnect(0);
+    http_disconnect(HTTP_SOCKET);
 #endif
     HAL_NVIC_SystemReset();
 }
@@ -2136,6 +2159,7 @@ int main(void)
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   MX_IWDG_Init();
+  MX_CRC_Init();
   /* USER CODE BEGIN 2 */
 #ifdef  enable_SEGGER
   SEGGER = 1;
@@ -2150,6 +2174,7 @@ int main(void)
 
 
 //    ReadProtect(); //   <---------------------- защита от считывания
+    printf("\r\n************************************************\r\n");
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
 
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
@@ -2228,6 +2253,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+    pingCheck();
     uint8_t udpSocket = UDP_SOCKET;
     prepearUDP_PLIS(udpSocket);
 
@@ -2338,6 +2364,32 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief CRC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CRC_Init(void)
+{
+
+  /* USER CODE BEGIN CRC_Init 0 */
+
+  /* USER CODE END CRC_Init 0 */
+
+  /* USER CODE BEGIN CRC_Init 1 */
+
+  /* USER CODE END CRC_Init 1 */
+  hcrc.Instance = CRC;
+  if (HAL_CRC_Init(&hcrc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CRC_Init 2 */
+
+  /* USER CODE END CRC_Init 2 */
+
 }
 
 /**

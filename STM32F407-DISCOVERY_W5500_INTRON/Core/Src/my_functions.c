@@ -8,7 +8,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdbool.h>
-#include "my_function.h"
 #include "wizchip_init.h"
 #include "SEGGER_RTT.h"
 #include "socket.h"
@@ -18,7 +17,6 @@
 
 extern uint8_t SEGGER;
 extern uint8_t destip[4];
-
 extern uint8_t ABONENT_or_BASE;
 extern UART_HandleTypeDef huart6;
 extern IWDG_HandleTypeDef hiwdg;
@@ -28,6 +26,7 @@ uint32_t numSendDiagnosticPacket = 0;
 uint8_t CCMRAMDATA testDataFromBase[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataFromAbon[MAX_PACKET_LEN];
 uint8_t CCMRAMDATA testDataToAbon[MAX_PACKET_LEN];
+char timeSend[20];
 
 uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN]= {0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                                    0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
@@ -68,7 +67,6 @@ void UART_Printf(const char* fmt, ...) {
     HAL_UART_Transmit_DMA(&huart6, (uint8_t*)buff, strlen(buff));
     va_end(args);
 }
-
 void Printf(const char* fmt, ...) {
     char buff[512];
     va_list args;
@@ -77,7 +75,6 @@ void Printf(const char* fmt, ...) {
     HAL_UART_Transmit(&huart6, (uint8_t*)buff, strlen(buff) ,HAL_MAX_DELAY );
     va_end(args);
 }
-
 int _write(int fd, char *str, int len)
 {
     for(int i=0; i<len; i++)
@@ -88,7 +85,6 @@ int _write(int fd, char *str, int len)
     }
     return len;
 }
-
 uint8_t checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
     if ( strncmp ((const char*)dataToDx, (const char*)commandfromBaseToAbonentReboot, MAX_PACKET_LEN) == 0){
         return REBOOT;
@@ -98,18 +94,16 @@ uint8_t checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]){
     }
     return NO_COMMAND;
 }
-
 void printWiznetReg(){
     printf("wiznet registers:\r\n"
            "Mode Register: %X\r\n"
            "Interrupt Register: %X\r\n"
-           "PHY Configuration Register: %X\r\n"
-           ,WIZCHIP_READ(0x0000)
-           ,WIZCHIP_READ(0x0015)
-           ,WIZCHIP_READ(0x002E)
+           "PHY Status Register: %X\r\n"
+           ,WIZCHIP_READ(MR)
+           ,WIZCHIP_READ(IR)
+           ,WIZCHIP_READ(PHYCFGR)
            );
 }
-
 void printAllChannel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(5);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
@@ -129,7 +123,6 @@ void printAllChannel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(0);
 
 }
-
 void print_1_Channel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(1);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
@@ -138,7 +131,6 @@ void print_1_Channel(uint8_t data[MAX_PACKET_LEN]) {
                       );
     SEGGER_RTT_SetTerminal(0);
 }
-
 void print_2_Channel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(2);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
@@ -147,7 +139,6 @@ void print_2_Channel(uint8_t data[MAX_PACKET_LEN]) {
                       );
     SEGGER_RTT_SetTerminal(0);
 }
-
 void print_3_Channel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(3);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
@@ -156,7 +147,6 @@ void print_3_Channel(uint8_t data[MAX_PACKET_LEN]) {
                       );
     SEGGER_RTT_SetTerminal(0);
 }
-
 void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]) {
     SEGGER_RTT_SetTerminal(2);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
@@ -165,7 +155,6 @@ void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]) {
                       );
     SEGGER_RTT_SetTerminal(0);
 }
-
 void print_4_Channel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(4);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
@@ -174,20 +163,17 @@ void print_4_Channel(uint8_t data[MAX_PACKET_LEN]) {
                       );
     SEGGER_RTT_SetTerminal(0);
 }
-
 void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]){
     for (int i = 0; i < 12; ++i) {
         strncpy((char *)dataForControl + i , (const char*)dataFromBase + 1 + i * 4 , 1);
     }
 }
-
 uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]) {
     if ( strncmp ((const char*)data, (const char*)trueData, 12) == 0){
         return 0;
     }
     return 1;
 }
-
 void commandFromWebNetDiagnostic() {
     if (ABONENT_or_BASE == BASE){
         printf(" **********   Start Net Diagnostis BASE  **********\r\n");
@@ -203,7 +189,6 @@ void commandFromWebNetDiagnostic() {
         printf(" **********   SELECT BASE !!!   **********\r\n");
     }
 }
-
 uint8_t checkNetDiagnosticMode()
 {
     // считываем значение по адресу netDiagnosticFlag
@@ -217,7 +202,18 @@ uint8_t checkNetDiagnosticMode()
         return netDiagnosticOFF;
     }
 }
-
+uint8_t checkPingMode()
+{
+    // считываем значение по адресу pingFlag
+    uint8_t ping[1];
+    EEPROM_SPI_ReadBuffer(ping, pingFlag, 1);
+    if (ping[0] == 0x88) {
+        return pingON;
+    }
+    else {
+        return pingOFF;
+    }
+}
 void netDiagnosticBase(){
     printf("Start net diagnostic Base\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
@@ -257,7 +253,6 @@ void netDiagnosticBase(){
         }
     } //while
 }
-
 void netDiagnosticAbon(){
     printf("Start net diagnostic Abonet\r\n");
     uint16_t destport = LOCAL_PORT_UDP;
@@ -292,7 +287,6 @@ void netDiagnosticAbon(){
         }
     }//while
 }
-
 void indicateSend(uint16_t numON, uint16_t numOFF){
     ++num_send;
     if (num_send == numON){
@@ -303,7 +297,6 @@ void indicateSend(uint16_t numON, uint16_t numOFF){
         HAL_GPIO_WritePin(GPIOD, Green_Led_Pin, GPIO_PIN_SET);
     }
 }
-
 void indicateReceive(uint16_t numON, uint16_t numOFF){
     ++num_rcvd;
     if (num_rcvd == numON){
@@ -316,14 +309,12 @@ void indicateReceive(uint16_t numON, uint16_t numOFF){
         HAL_IWDG_Refresh(&hiwdg);
     }
 }
-
 void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t currTime){
 //В пакет добавляем номер пакета и метку времени базы
     char tmp[48];
     sprintf((char*)tmp,"...%d***%d___", numPacket, currTime);
     strcpy((char*)dataToAbon, tmp);
 }
-
 void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime){
     //В полученный пакет добавляем метку времени абонента
     char tmp[48];
@@ -334,12 +325,9 @@ void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime){
     char *substring_ptr = strstr((char*)dataFromBase, substring);
     strcpy((char*)(substring_ptr + 3), tmp);
 }
-
 void printTestNetData(uint8_t data[MAX_PACKET_LEN]) {
         UART_Printf("%.48s\r\n", data );
 }
-
-char timeSend[20];
 void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
 //В полученный пакет добавляем метку времени базы
     char tmp[48];
@@ -366,3 +354,12 @@ void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
     }
 
 }
+void commandFromWebPing(){
+    printf("Received command PING from WEB\r\n");
+    uint8_t ping[1];
+    ping[0] = 0x88;
+    EEPROM_SPI_WriteBuffer(ping, pingFlag, 1);
+    printf("pingFlag set ON\r\n");
+    reboot();
+}
+

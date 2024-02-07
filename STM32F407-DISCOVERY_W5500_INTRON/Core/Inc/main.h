@@ -30,6 +30,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 
 #define HTTP_SOCKET     0
 #define UDP_SOCKET      4
+#define PING_SOCKET     6
 #define NUM_DIAGNOSTIC_UDP_PACKETS  50000
 #define ETH_MAX_BUF_SIZE	2048
 #define SERVER_PORT			8883
@@ -122,11 +123,13 @@ EEPROM I2C : ATMEL 24C1024 (24C256)
 #define  markEEPROMSPIclear         0x01A0
 #define  resetTwiceFlag             0x0200
 #define  netDiagnosticFlag          0x0300
+#define  pingFlag                   0x0400
 /*25LC1024：1Mbit= 1024Kbit =128KB  = 512*256B = 131072 X 8bit
  Page 1     Address: 00000-000FF length 256b    IP settings
  Page 2     Address: 00100-001FF length 256b
  Page 3     Address: 00200-002FF length 256b    resetTwiceFlag
  Page 4     Address: 00300-003FF length 256b    netDiagnosticFlag
+ Page 5     Address: 00400-004FF length 256b    pingFlag
 `
 `
 `
@@ -154,13 +157,16 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
-#include "my_function.h"
 
 #define MAX_PACKET_LEN 48
 #define TEST_DATA test6
 enum netDiagnostic{
     netDiagnosticON,
     netDiagnosticOFF
+};
+enum pingMode{
+    pingON,
+    pingOFF
 };
 enum ABONENTorBASE{
     BASE,
@@ -182,6 +188,15 @@ void 	wizchip_spi_readburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len);
 void 	wizchip_cris_enter(void);
 void 	wizchip_cris_exit(void);
+void UART_Printf(const char* fmt, ...);
+void Printf(const char* fmt, ...);
+void network_init(void);
+void  wizchip_select(void);
+void  wizchip_deselect(void);
+void  wizchip_write(uint8_t wb);
+uint8_t wizchip_read(void);
+void Chip_selection_call_back(void);
+void wizchip_initialize(void);
 void reboot();
 void checkLogin(char* buf);
 void checkPassword(char* buf);
@@ -205,6 +220,7 @@ uint8_t checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
 void printWiznetReg(void);
 void commandFromWebNetDiagnostic();
 uint8_t checkNetDiagnosticMode();
+uint8_t checkPingMode();
 void netDiagnosticBase();
 void netDiagnosticAbon();
 void indicateSend(uint16_t numON, uint16_t numOFF);
@@ -213,6 +229,12 @@ void prepeareDataToAbonent(uint8_t * dataToAbon, uint32_t numPacket, uint32_t cu
 void printTestNetData(uint8_t data[MAX_PACKET_LEN]);
 void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime);
 void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime);
+void commandFromWebPing();
+void pingCheck();
+void workInPingMode();
+uint32_t htonl(uint32_t net);
+uint16_t htons(uint16_t net);
+uint64_t htonll(uint64_t net);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

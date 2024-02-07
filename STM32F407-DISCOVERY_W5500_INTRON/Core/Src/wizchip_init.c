@@ -25,7 +25,7 @@ void WIZCHIPInitialize(){
 	uint8_t tmp;
 	//w5500, w5200
 #if _WIZCHIP_SOCK_NUM_ == 8
-	uint8_t memsize[2][8] = { {2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};
+    uint8_t memsize[2][8] = { {4,1,1,1,4,1,3,1},{4,1,1,1,4,1,3,1}};
 #else
 	uint8_t memsize[2][4] = { {2,2,2,2},{2,2,2,2}};
 #endif

@@ -149,7 +149,7 @@ const char fake_page[] =
     "  <title>Error login or password</title>"
     "  </head>"
     "  <body onload='clear();'>"
-    "  <h3>Error login or password, The device will be rebooted in 30 seconds</h3>"
+    "  <h3>Ошибка ввода логина или пароля - устройство будет перезагружено через 30 секунд</h3>"
     "</body></html>"
     ;
 

@@ -67,27 +67,13 @@ _smem = ORIGIN(BOOT_DATA);Переменная _smem нужна для опре�
 /* Sections */
 SECTIONS
 {
-  /* The startup code into "FLASH" Rom type memory */
-  .isr_vector :
-  {
-    . = ALIGN(4);
-    KEEP(*(.isr_vector)) /* Startup code */
-    . = ALIGN(4);
-  } >FLASH
-
-  _siccmram = LOADADDR(.ccmram);
-  .ccmram :
-  {
-    . = ALIGN(4);
-    _sccmram = .;
-    *(.ccmram)
-    *(.ccmram*)
-/*    *my_functions.c.o(.text .text*) так не работает    */
-/*    *libioLibrary_Driver_LIB.a:*(.text .text*)*/
-    . = ALIGN(4);
-    _eccmram = .;
-  } >CCMRAM
-
+/* The startup code into "FLASH" Rom type memory */
+.isr_vector :
+{
+  . = ALIGN(4);
+  KEEP(*(.isr_vector)) /* Startup code */
+  . = ALIGN(4);
+} >RAM
 
   /* The program code and other data into "FLASH" Rom type memory */
   .text :
@@ -175,6 +161,20 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
 
   } >RAM
+
+
+    _siccmram = LOADADDR(.ccmram);
+    .ccmram :
+    {
+      . = ALIGN(4);
+      _sccmram = .;
+      *(.ccmram)
+      *(.ccmram*)
+    /*    *my_functions.c.o(.text .text*) так не работает    */
+    /*    *libioLibrary_Driver_LIB.a:*(.text .text*)*/
+      . = ALIGN(4);
+      _eccmram = .;
+    } >CCMRAM
 
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);

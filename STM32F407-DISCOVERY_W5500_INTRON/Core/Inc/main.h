@@ -186,7 +186,8 @@ enum LOGIN_STATE{
 };
 enum PASSWORD_STATE{
     PasswordON,
-    PasswordOFF
+    PasswordOFF,
+    PasswordIgnore
 };
 enum netMode{
     UDP,

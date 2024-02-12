@@ -115,11 +115,40 @@ SECTIONS
     . = ALIGN(4);
   } >RAM
 
+    .preinit_array     :
+    {
+      . = ALIGN(4);
+      PROVIDE_HIDDEN (__preinit_array_start = .);
+      KEEP (*(.preinit_array*))
+      PROVIDE_HIDDEN (__preinit_array_end = .);
+      . = ALIGN(4);
+    } >RAM
+
+    .init_array :
+    {
+      . = ALIGN(4);
+      PROVIDE_HIDDEN (__init_array_start = .);
+      KEEP (*(SORT(.init_array.*)))
+      KEEP (*(.init_array*))
+      PROVIDE_HIDDEN (__init_array_end = .);
+      . = ALIGN(4);
+    } >RAM
+
+    .fini_array :
+    {
+      . = ALIGN(4);
+      PROVIDE_HIDDEN (__fini_array_start = .);
+      KEEP (*(SORT(.fini_array.*)))
+      KEEP (*(.fini_array*))
+      PROVIDE_HIDDEN (__fini_array_end = .);
+      . = ALIGN(4);
+    } >RAM
+
   .ARM.extab   : {
     . = ALIGN(4);
     *(.ARM.extab* .gnu.linkonce.armextab.*)
     . = ALIGN(4);
-  } >FLASH
+  } >RAM
 
   .ARM : {
     . = ALIGN(4);
@@ -127,36 +156,7 @@ SECTIONS
     *(.ARM.exidx*)
     __exidx_end = .;
     . = ALIGN(4);
-  } >FLASH
-
-  .preinit_array     :
-  {
-    . = ALIGN(4);
-    PROVIDE_HIDDEN (__preinit_array_start = .);
-    KEEP (*(.preinit_array*))
-    PROVIDE_HIDDEN (__preinit_array_end = .);
-    . = ALIGN(4);
-  } >FLASH
-
-  .init_array :
-  {
-    . = ALIGN(4);
-    PROVIDE_HIDDEN (__init_array_start = .);
-    KEEP (*(SORT(.init_array.*)))
-    KEEP (*(.init_array*))
-    PROVIDE_HIDDEN (__init_array_end = .);
-    . = ALIGN(4);
-  } >FLASH
-
-  .fini_array :
-  {
-    . = ALIGN(4);
-    PROVIDE_HIDDEN (__fini_array_start = .);
-    KEEP (*(SORT(.fini_array.*)))
-    KEEP (*(.fini_array*))
-    PROVIDE_HIDDEN (__fini_array_end = .);
-    . = ALIGN(4);
-  } >FLASH
+  } >RAM
 
   /* Used by the startup to initialize data */
   _sidata = LOADADDR(.data);

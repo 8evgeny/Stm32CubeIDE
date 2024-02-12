@@ -86,7 +86,7 @@ SECTIONS
 /*    *libioLibrary_Driver_LIB.a:*(.text .text*)*/
     . = ALIGN(4);
     _eccmram = .;
-  } >CCMRAM AT> FLASH
+  } >CCMRAM
 
 
   /* The program code and other data into "FLASH" Rom type memory */
@@ -174,7 +174,7 @@ SECTIONS
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
 
-  } >RAM AT> FLASH
+  } >RAM
 
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);

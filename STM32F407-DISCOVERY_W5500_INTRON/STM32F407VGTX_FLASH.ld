@@ -104,7 +104,7 @@ SECTIONS
 
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
-  } >FLASH
+  } >RAM
 
   /* Constant data into "FLASH" Rom type memory */
   .rodata :

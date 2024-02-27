@@ -2272,7 +2272,7 @@ int main(void)
     display_reg_webContent_list(); //Зарегистрированный web контент
 #endif
     if (SEGGER){
-        SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
+//        SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);//При отключении JLINK - блокируется MK
         SEGGER_RTT_SetTerminal(0); // Select terminal 0
         SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
 //        SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);

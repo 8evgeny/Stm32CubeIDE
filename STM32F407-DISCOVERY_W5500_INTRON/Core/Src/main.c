@@ -1545,6 +1545,10 @@ void sendReceiveUDP(uint8_t udpSocket)
             //После обмена с ПЛИС конверсия данных
             convertToBaseData();
 
+//            if (SEGGER){
+//                print_2_Channel(dataFromDx);
+//            }
+
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 

@@ -14,7 +14,7 @@ set(CMAKE_OBJCOPY ${toolchain}/bin/arm-none-eabi-objcopy)
 add_definitions(-DDATA_IN_CCM)      #Разрешение data в CCM
 #add_definitions(-Denable_write_MAC) #Разрешение технологической прошивки / записи MAC
 #add_definitions(-Denable_twin_reset_to_restore_default_IP)
-#add_definitions(-Denable_SEGGER) #on/off SEGGER
+add_definitions(-Denable_SEGGER) #on/off SEGGER
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
 #add_definitions(-DTLS_ON)         #Режим http / https
 add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)

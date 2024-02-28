@@ -1374,19 +1374,17 @@ void convertToBaseData()
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
-        dataFromDx[i] &= 0xF0;
-        dataFromDx[i] |= 0x05; //Последнее E меняем на 5
-        uint8_t tmp = dataFromDx[i]; //Первый октет инвертируем
-        tmp = ~tmp;
-        tmp &= 0xF0;
-        dataFromDx[i] &= 0x0F;
-        dataFromDx[i] |= tmp;
+//        dataFromDx[i] &= 0xF0;
+//        dataFromDx[i] |= 0x05; //Последнее E меняем на 5
+//        uint8_t tmp = dataFromDx[i]; //Первый октет инвертируем
+//        tmp = ~tmp;
+//        tmp &= 0xF0;
+//        dataFromDx[i] &= 0x0F;
+//        dataFromDx[i] |= tmp;
 
-//        printf("\tBASE - "
-//         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X\r\n",
-//            rxCyclon[1], rxCyclon[5], rxCyclon[9], rxCyclon[13], rxCyclon[17], rxCyclon[21],
-//            rxCyclon[25], rxCyclon[29], rxCyclon[33], rxCyclon[37], rxCyclon[41], rxCyclon[45] );
-
+        //Без tmp
+        dataFromDx[i] = ~dataFromDx[i];
+        dataFromDx[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
 }
@@ -1395,18 +1393,17 @@ void convertToAbonData()
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
-        dataToDx[i] &= 0xF0;
-        dataToDx[i] |= 0x05; //Последнее E меняем на 5
-        uint8_t tmp = dataToDx[i]; //Первый октет инвертируем
-        tmp = ~tmp;
-        tmp &= 0xF0;
-        dataToDx[i] &= 0x0F;
-        dataToDx[i] |= tmp;
+//        dataToDx[i] &= 0xF0;
+//        dataToDx[i] |= 0x05; //Последнее E меняем на 5
+//        uint8_t tmp = dataToDx[i]; //Первый октет инвертируем
+//        tmp = ~tmp;
+//        tmp &= 0xF0;
+//        dataToDx[i] &= 0x0F;
+//        dataToDx[i] |= tmp;
 
-//        printf("\tABON - "
-//         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X\r\n",
-//            txCyclon[1], txCyclon[5], txCyclon[9], txCyclon[13], txCyclon[17], txCyclon[21],
-//            txCyclon[25], txCyclon[29], txCyclon[33], txCyclon[37], txCyclon[41], txCyclon[45] );
+//Без tmp
+        dataToDx[i] = ~dataToDx[i];
+        dataToDx[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
     }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
 }

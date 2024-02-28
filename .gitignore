@@ -9,3 +9,5 @@ GV_infoboard/Release/
 *.prefs
 
 test_STM32F103C8/.settings/language.settings.xml
+
+STM32F407-DISCOVERY_W5500_INTRON/Docs/.~lock.Flash.ods#

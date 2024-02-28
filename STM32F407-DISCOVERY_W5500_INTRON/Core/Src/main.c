@@ -1206,7 +1206,7 @@ void isSdCartOn()
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);     //EEPROM SPI
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);   //SD
-//        printf("not found SD\r\n");
+        printf("not found SD\r\n");
     }
     f_close(&fil);
 }

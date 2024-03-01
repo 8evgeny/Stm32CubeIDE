@@ -43,6 +43,6 @@ VERSION:
 
 01_09               01.03.2024  Теперь все прошивки работают через Bootloader 
                                 Начало прошивки 0x8010000  (файлы system_stm32f4xx.c  STM32F407VGTX_FLASH.ld)
-                                RTT Segger отключен
+                                RTT Segger включен
 
                                 

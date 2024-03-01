@@ -1192,21 +1192,36 @@ void net_ini_WIZNET(uint8_t socketTCP)
         printf("socket %d (WEB) listening\r\n", sn_TCP);
 }
 
+FRESULT checkFileOnSD(FIL* fp, const TCHAR* path){
+    f_open(fp, path, FA_READ );
+    uint32_t numByte = fp->obj.objsize;
+    f_close(fp);
+    if (numByte > 0) {
+        return FR_OK;
+    }
+    else {
+        return FR_NO_FILE;
+    }
+}
+
 void isSdCartOn()
 {
-    f_mount(&fs, "", 0);
-    FRESULT result = f_open(&fil, "host_IP", FA_OPEN_ALWAYS | FA_READ );
-
-    if (result == FR_OK)
+    if (
+        (checkFileOnSD(&fil,"host_IP") == FR_OK) &&
+        (checkFileOnSD(&fil,"dest_IP") == FR_OK) &&
+        (checkFileOnSD(&fil,"mask_IP") == FR_OK) &&
+        (checkFileOnSD(&fil,"gate_IP") == FR_OK) &&
+        (checkFileOnSD(&fil,"md5") == FR_OK)
+        )
     {
-        Printf("SD active\r\n");
+        printf("\r\n*********** found IP settings on SD ************\r\n");
     }
     else
     {
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);     //EEPROM SPI
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);   //SD
-        printf("not found SD\r\n");
+        printf("\r\n********** SD not contain IP settings **********\r\n");
     }
     f_close(&fil);
 }
@@ -2198,7 +2213,7 @@ int main(void)
         printf("work in ABONENT\r\n");
         MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 26 секунд
     }
-
+    f_mount(&fs, "", 0);
     isSdCartOn();       //Проверка вставлена ли SD карта
     workI2C_EEPROM();   //Только MAC
     initSPI_EEPROM();   //IP настройки

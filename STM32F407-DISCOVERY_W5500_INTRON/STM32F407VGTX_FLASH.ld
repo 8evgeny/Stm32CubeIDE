@@ -61,6 +61,15 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+.firmware_data_for_bootloader :
+{
+. = ALIGN(4);
+*(.firmware_data_for_bootloader)           /* .text sections (code) */
+*(.firmware_data_for_bootloader*)          /* .text* sections (code) */
+/*KEEP(*(.firmware_data_for_bootloader))*/
+/*. = ALIGN(4);*/
+} >FLASH
+
   _siccmram = LOADADDR(.ccmram);
   .ccmram :
   {
@@ -73,13 +82,6 @@ SECTIONS
     . = ALIGN(4);
     _eccmram = .;
   } >CCMRAM AT> FLASH
-
-.firmware_data_for_bootloader :
-{
-. = ALIGN(4);
-KEEP(*(.firmware_data_for_bootloader))
-. = ALIGN(4);
-} >FLASH
 
   /* The program code and other data into "FLASH" Rom type memory */
   .text :

@@ -87,12 +87,8 @@ uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для баз�
 uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
 uint8_t CCMRAMDATA trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
 
-FIRMWARESECTION char dataForBootloader[128];
-
-//struct  dataForBootloader_
-//{
-
-//} ;
+FIRMWARESECTION uint32_t dataToNewSectionInFlash [100] = {main_FW, patch_FW};
+//Далее в коде делаем фиктивный вызов dataToNewSectionInFlash[0] = 8888
 
 extern uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN];
 extern uint8_t commandfromBaseToAbonentNetDiagnostic[MAX_PACKET_LEN];
@@ -2208,8 +2204,7 @@ int main(void)
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("\r\n************************************************\r\n");
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
-    sprintf(dataForBootloader, "version firmware: %.2d_%.2d\r\n",main_FW, patch_FW);
-
+    dataToNewSectionInFlash[0] = 8888; //Фиктивный вызов чтобы возникла секция
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = BASE;
         printf("work in BASE\r\n");

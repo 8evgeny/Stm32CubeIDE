@@ -84,9 +84,15 @@ uint8_t CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абон�
 uint8_t CCMRAMDATA dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
 uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
 uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
-
 uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
 uint8_t CCMRAMDATA trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
+
+FIRMWARESECTION char dataForBootloader[128];
+
+//struct  dataForBootloader_
+//{
+
+//} ;
 
 extern uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN];
 extern uint8_t commandfromBaseToAbonentNetDiagnostic[MAX_PACKET_LEN];
@@ -2202,6 +2208,7 @@ int main(void)
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("\r\n************************************************\r\n");
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
+    sprintf(dataForBootloader, "version firmware: %.2d_%.2d\r\n",main_FW, patch_FW);
 
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = BASE;

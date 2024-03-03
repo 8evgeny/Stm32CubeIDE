@@ -74,6 +74,12 @@ SECTIONS
     _eccmram = .;
   } >CCMRAM AT> FLASH
 
+.firmware_data_for_bootloader :
+{
+. = ALIGN(4);
+KEEP(*(.firmware_data_for_bootloader))
+. = ALIGN(4);
+} >FLASH
 
   /* The program code and other data into "FLASH" Rom type memory */
   .text :

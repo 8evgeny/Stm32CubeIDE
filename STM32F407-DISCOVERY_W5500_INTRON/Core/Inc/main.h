@@ -58,7 +58,7 @@ asm volatile ("MOV R0,%[loops]\n                       \
 #ifndef DATA_IN_CCM
 #define CCMRAMDATA
 #endif
-
+#define FIRMWARESECTION __attribute__((section (".firmware_data_for_bootloader")))
 /*
 EEPROM I2C : ATMEL 24C1024 (24C256)
 32768 byte 0000 - 7FFF

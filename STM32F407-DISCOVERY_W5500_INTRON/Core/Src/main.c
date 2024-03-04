@@ -87,7 +87,19 @@ uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для баз�
 uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
 uint8_t CCMRAMDATA trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
 
-FIRMWARESECTION char dataToNewSectionInFlash [4][8] = {{main_FW}, {patch_FW}, {"        "}, {"12345678"}};
+FIRMWARESECTION char dataToNewSectionInFlash [10][4] = //В новой секции 10 ячеек по 32 бита
+    {
+        {main_FW},
+        {patch_FW},
+        {"data"}, //Тут будет дата в формате ms from epoch
+        {"4444"},
+        {"5555"},
+        {"6666"},
+        {"7777"},
+        {"8888"},
+        {"9999"},
+        {"AAAA"},
+    };
 //Далее в коде делаем фиктивный вызов dataToNewSectionInFlash[0] = 8888
 
 extern uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN];

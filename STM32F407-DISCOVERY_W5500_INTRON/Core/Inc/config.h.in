@@ -3,6 +3,11 @@
  
 #define main_FW @MAIN_FW@
 #define patch_FW @PATCH_FW@
+#define year_FW @YEAR_FW@
+#define month_FW @MONTH_FW@
+#define day_FW @DAY_FW@
+#define hour_FW @HOUR_FW@
+#define minute_FW @MINUTE_FW@
+#define second_FW @SECOND_FW@
 
- 
 #endif // CONFIG_H_IN

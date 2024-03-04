@@ -91,16 +91,16 @@ FIRMWARESECTION char dataToNewSectionInFlash [10][4] = //В новой секц�
     {
         {main_FW},
         {patch_FW},
-        {"data"}, //Тут будет дата в формате ms from epoch
-        {"4444"},
-        {"5555"},
-        {"6666"},
-        {"7777"},
-        {"8888"},
-        {"9999"},
-        {"AAAA"},
-    };
-//Далее в коде делаем фиктивный вызов dataToNewSectionInFlash[0] = 8888
+        {year_FW},
+        {month_FW},
+        {day_FW},
+        {hour_FW},
+        {minute_FW},
+        {second_FW},
+        {"    "},
+        {"    "},
+    };//Далее в коде делаем фиктивный вызов dataToNewSectionInFlash[0] = 8888
+
 
 extern uint8_t commandfromBaseToAbonentReboot[MAX_PACKET_LEN];
 extern uint8_t commandfromBaseToAbonentNetDiagnostic[MAX_PACKET_LEN];
@@ -2217,6 +2217,8 @@ int main(void)
     printf("\r\n************************************************\r\n");
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
     dataToNewSectionInFlash[0][0] = ' '; //Фиктивный вызов чтобы возникла секция
+    printf("build: %.4d-%.2d-%.2d %.2dh:%.2dm:%.2ds\r\n", 2000 + year_FW, month_FW, day_FW, hour_FW, minute_FW, second_FW);
+
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = BASE;
         printf("work in BASE\r\n");

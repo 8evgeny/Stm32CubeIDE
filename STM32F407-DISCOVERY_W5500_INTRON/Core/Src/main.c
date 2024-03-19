@@ -1235,7 +1235,7 @@ void isSdCartOn()
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);     //EEPROM SPI
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);   //SD
-        printf("\r\n********** SD not contain IP settings **********\r\n");
+        printf("********** SD not contain IP settings **********\r\n");
     }
     f_close(&fil);
 }
@@ -2214,7 +2214,7 @@ int main(void)
 
 
 //    ReadProtect(); //   <---------------------- защита от считывания
-    printf("\r\n************************************************\r\n");
+    printf("************************************************\r\n");
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
     dataToNewSectionInFlash[0][0] = ' '; //Фиктивный вызов чтобы возникла секция
     printf("build: %.4d-%.2d-%.2d %.2dh:%.2dm:%.2ds\r\n", 2000 + year_FW, month_FW, day_FW, hour_FW, minute_FW, second_FW);

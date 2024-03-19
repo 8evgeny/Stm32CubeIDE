@@ -1200,7 +1200,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
     }
 
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
-//    print_network_information();
+    print_network_information();
     socket(sn_TCP, Sn_MR_TCP, local_port_web, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
     if (SOCK_OK == listen(sn_TCP))
         printf("socket %d (WEB) listening\r\n", sn_TCP);

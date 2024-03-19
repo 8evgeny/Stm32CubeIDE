@@ -60,17 +60,26 @@ void wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len)
 {
     HAL_SPI_Transmit(&hspi1, pBuf, len , 1000);
 }
-
+#ifndef CS_WIZNET_PE4
 void wizchip_cs_deselect(void)
 {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
 }
-
 void wizchip_cs_select(void)
 {
      HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
 }
-
+#endif
+#ifdef CS_WIZNET_PE4
+void wizchip_cs_deselect(void)
+{
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
+}
+void wizchip_cs_select(void)
+{
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_RESET);
+}
+#endif
 uint8_t wizchip_spi_readbyte(void)
 {
     uint8_t wb=0xFF;

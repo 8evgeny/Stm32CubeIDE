@@ -2801,7 +2801,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, CS_EEPROM_Pin|HOLD_EEPROM_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(WP_EEPROM_GPIO_Port, WP_EEPROM_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, WP_EEPROM_Pin|GPIO_PIN_4, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_9, GPIO_PIN_SET);
@@ -2828,8 +2828,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(CS_EEPROM_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : WP_EEPROM_Pin HOLD_EEPROM_Pin */
-  GPIO_InitStruct.Pin = WP_EEPROM_Pin|HOLD_EEPROM_Pin;
+  /*Configure GPIO pins : WP_EEPROM_Pin PE4 HOLD_EEPROM_Pin */
+  GPIO_InitStruct.Pin = WP_EEPROM_Pin|GPIO_PIN_4|HOLD_EEPROM_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

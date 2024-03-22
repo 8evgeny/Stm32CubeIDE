@@ -283,8 +283,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define CS_EEPROM_Pin GPIO_PIN_2
 #define CS_EEPROM_GPIO_Port GPIOE
-#define WP_EEPROM_Pin GPIO_PIN_3
-#define WP_EEPROM_GPIO_Port GPIOE
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PH0_OSC_IN_Pin GPIO_PIN_0
@@ -295,8 +293,6 @@ void Error_Handler(void);
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
 #define write_MAC_Pin GPIO_PIN_4
 #define write_MAC_GPIO_Port GPIOC
-#define BOOT1_Pin GPIO_PIN_2
-#define BOOT1_GPIO_Port GPIOB
 #define INT_Pin GPIO_PIN_8
 #define INT_GPIO_Port GPIOD
 #define Green_Led_Pin GPIO_PIN_12

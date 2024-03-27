@@ -1,0 +1,127 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 1991-2011 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+*/
+(header "symbol" (version "1.2"))
+(symbol
+	(rect 64 64 272 256)
+	(text "shrg_ctrl2" (rect 5 0 62 14)(font "Arial" (font_size 8)))
+	(text "inst" (rect 8 176 25 188)(font "Arial" ))
+	(port
+		(pt 0 32)
+		(input)
+		(text "SEL" (rect 0 0 22 14)(font "Arial" (font_size 8)))
+		(text "SEL" (rect 21 27 43 41)(font "Arial" (font_size 8)))
+		(line (pt 0 32)(pt 16 32))
+	)
+	(port
+		(pt 0 80)
+		(input)
+		(text "C4" (rect 0 0 15 14)(font "Arial" (font_size 8)))
+		(text "C4" (rect 21 75 36 89)(font "Arial" (font_size 8)))
+		(line (pt 0 80)(pt 16 80))
+	)
+	(port
+		(pt 0 96)
+		(input)
+		(text "ENA" (rect 0 0 24 14)(font "Arial" (font_size 8)))
+		(text "ENA" (rect 21 91 45 105)(font "Arial" (font_size 8)))
+		(line (pt 0 96)(pt 16 96))
+	)
+	(port
+		(pt 0 64)
+		(input)
+		(text "F0" (rect 0 0 14 14)(font "Arial" (font_size 8)))
+		(text "F0" (rect 21 59 35 73)(font "Arial" (font_size 8)))
+		(line (pt 0 64)(pt 16 64))
+	)
+	(port
+		(pt 0 112)
+		(input)
+		(text "RST" (rect 0 0 23 14)(font "Arial" (font_size 8)))
+		(text "RST" (rect 21 107 44 121)(font "Arial" (font_size 8)))
+		(line (pt 0 112)(pt 16 112))
+	)
+	(port
+		(pt 0 144)
+		(input)
+		(text "CLK_High" (rect 24 136 79 150)(font "Arial" (font_size 8)))
+		(text "CLK_High" (rect 24 136 79 150)(font "Arial" (font_size 8)))
+		(line (pt 0 144)(pt 16 144))
+	)
+	(port
+		(pt 208 168)
+		(output)
+		(text "P" (rect 0 0 7 14)(font "Arial" (font_size 8)))
+		(text "P" (rect 176 160 183 174)(font "Arial" (font_size 8)))
+		(line (pt 208 168)(pt 192 168))
+	)
+	(port
+		(pt 208 80)
+		(output)
+		(text "CLK_SHFTRG_2_ENA" (rect 0 0 125 14)(font "Arial" (font_size 8)))
+		(text "CLK_SHFTRG_2_ENA" (rect 62 75 187 89)(font "Arial" (font_size 8)))
+		(line (pt 208 80)(pt 192 80))
+	)
+	(port
+		(pt 208 112)
+		(output)
+		(text "SHFTRG_2_OUT_ENA" (rect 0 0 126 14)(font "Arial" (font_size 8)))
+		(text "SHFTRG_2_OUT_ENA" (rect 61 107 187 121)(font "Arial" (font_size 8)))
+		(line (pt 208 112)(pt 192 112))
+	)
+	(port
+		(pt 208 136)
+		(output)
+		(text "T1" (rect 0 0 14 14)(font "Arial" (font_size 8)))
+		(text "T1" (rect 176 128 190 142)(font "Arial" (font_size 8)))
+		(line (pt 208 136)(pt 192 136))
+	)
+	(port
+		(pt 208 64)
+		(output)
+		(text "CLK_SHFTRG_1" (rect 0 0 93 14)(font "Arial" (font_size 8)))
+		(text "CLK_SHFTRG_1" (rect 94 59 187 73)(font "Arial" (font_size 8)))
+		(line (pt 208 64)(pt 192 64))
+	)
+	(port
+		(pt 208 48)
+		(output)
+		(text "CLK_SHFTRG_2" (rect 0 0 93 14)(font "Arial" (font_size 8)))
+		(text "CLK_SHFTRG_2" (rect 94 43 187 57)(font "Arial" (font_size 8)))
+		(line (pt 208 48)(pt 192 48))
+	)
+	(port
+		(pt 208 96)
+		(output)
+		(text "CLK_SHFTRG_1_ENA" (rect 0 0 125 14)(font "Arial" (font_size 8)))
+		(text "CLK_SHFTRG_1_ENA" (rect 62 91 187 105)(font "Arial" (font_size 8)))
+		(line (pt 208 96)(pt 192 96))
+	)
+	(port
+		(pt 208 152)
+		(output)
+		(text "T2" (rect 0 0 14 14)(font "Arial" (font_size 8)))
+		(text "T2" (rect 176 144 190 158)(font "Arial" (font_size 8)))
+		(line (pt 208 152)(pt 192 152))
+	)
+	(drawing
+		(rectangle (rect 16 16 192 176))
+	)
+)

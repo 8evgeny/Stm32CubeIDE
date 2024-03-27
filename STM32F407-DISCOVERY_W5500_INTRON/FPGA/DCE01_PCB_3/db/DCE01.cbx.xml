@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<LOG_ROOT>
+	<PROJECT NAME="DCE01">
+		<CBX_INST_ENTRY INSTANCE_NAME="|DCE01|ALTSHIFT_TAPS:inst182" CBX_FILE_NAME="shift_taps_fln.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|DCE01|ALTSHIFT_TAPS:inst191" CBX_FILE_NAME="shift_taps_24n.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|DCE01|altpll2:inst176|altpll:altpll_component" CBX_FILE_NAME="altpll2_altpll.v"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|DCE01|ALTSHIFT_TAPS:inst109" CBX_FILE_NAME="shift_taps_a7m.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|DCE01|ALTSHIFT_TAPS:inst118" CBX_FILE_NAME="shift_taps_fln.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|DCE01|altpll1:inst169|altpll:altpll_component" CBX_FILE_NAME="altpll1_altpll.v"/>
+	</PROJECT>
+</LOG_ROOT>

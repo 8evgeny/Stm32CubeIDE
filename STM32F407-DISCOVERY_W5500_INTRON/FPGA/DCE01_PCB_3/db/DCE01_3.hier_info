@@ -1,0 +1,813 @@
+|DCE01_3
+MISO <= ALTSHIFT_TAPS:inst208.shiftout[0]
+CLR_SHFTRG_MISO => inst139.IN0
+PWR_ON => inst38.ACLR
+PWR_ON => inst6.ACLR
+PWR_ON => inst7.ACLR
+PWR_ON => inst8.ACLR
+PWR_ON => inst12.ACLR
+PWR_ON => inst13.ACLR
+PWR_ON => inst14.ACLR
+PWR_ON => inst19.ACLR
+PWR_ON => inst22.ACLR
+PWR_ON => inst23.ACLR
+PWR_ON => inst24.ACLR
+PWR_ON => inst29.ACLR
+PWR_ON => inst32.ACLR
+PWR_ON => inst33.ACLR
+PWR_ON => inst34.ACLR
+PWR_ON => inst39.ACLR
+PWR_ON => inst42.ACLR
+PWR_ON => inst43.ACLR
+PWR_ON => inst44.ACLR
+PWR_ON => inst49.ACLR
+PWR_ON => inst52.ACLR
+PWR_ON => inst53.ACLR
+PWR_ON => inst54.ACLR
+PWR_ON => inst20.ACLR
+PWR_ON => inst112.PRESET
+PWR_ON => inst111.PRESET
+PWR_ON => unifilter4:inst128.RST
+PWR_ON => div5-1123:inst197.RST
+PWR_ON => div5-1123:inst120.RST
+PWR_ON => unifilter4:inst129.RST
+PWR_ON => f0_former:inst106.RST
+PWR_ON => shrg_ctrl6:inst.RST
+PWR_ON => stbus_ctrl2:inst1.RST
+PWR_ON => div5-1123:inst205.RST
+PWR_ON => unifilter4:inst184.RST
+PWR_ON => inst177.ACLR
+PWR_ON => inst40.ACLR
+PWR_ON => inst86.ACLR
+PWR_ON => inst18.ACLR
+PWR_ON => inst61.ACLR
+PWR_ON => inst62.ACLR
+PWR_ON => inst66.ACLR
+PWR_ON => inst68.ACLR
+PWR_ON => inst69.ACLR
+PWR_ON => inst70.ACLR
+PWR_ON => inst74.ACLR
+PWR_ON => inst76.ACLR
+PWR_ON => inst77.ACLR
+PWR_ON => inst78.ACLR
+PWR_ON => inst82.ACLR
+PWR_ON => inst84.ACLR
+PWR_ON => inst85.ACLR
+CLK_50MHz => inst6.CLK
+CLK_50MHz => inst7.CLK
+CLK_50MHz => inst8.CLK
+CLK_50MHz => inst12.CLK
+CLK_50MHz => inst13.CLK
+CLK_50MHz => inst14.CLK
+CLK_50MHz => inst19.CLK
+CLK_50MHz => inst22.CLK
+CLK_50MHz => inst23.CLK
+CLK_50MHz => inst24.CLK
+CLK_50MHz => inst29.CLK
+CLK_50MHz => inst32.CLK
+CLK_50MHz => inst33.CLK
+CLK_50MHz => inst34.CLK
+CLK_50MHz => inst39.CLK
+CLK_50MHz => inst42.CLK
+CLK_50MHz => inst43.CLK
+CLK_50MHz => inst44.CLK
+CLK_50MHz => inst49.CLK
+CLK_50MHz => inst52.CLK
+CLK_50MHz => inst53.CLK
+CLK_50MHz => inst54.CLK
+CLK_50MHz => inst20.CLK
+CLK_50MHz => inst38.CLK
+CLK_50MHz => altpll1:inst169.inclk0
+CLK_50MHz => shrg_ctrl6:inst.CLK_High
+CLK_50MHz => inst40.CLK
+JUMP_1 => inst127.IN0
+JUMP_1 => inst171.IN0
+JUMP_1 => inst133.IN0
+JUMP_1 => inst125.IN1
+JUMP_1 => inst200.OE
+JUMP_1 => inst124.IN0
+JUMP_1 => DIR_ISDN.DATAIN
+JUMP_1 => MODE.DATAIN
+JUMP_1 => inst156.OE
+JUMP_1 => inst178.OE
+C4 <> inst156
+F0 <> inst178
+SCK => stbus_ctrl2:inst1.SPI_CLK
+EXT_In => inst3.IN0
+CPU_INT <= stbus_ctrl2:inst1.CPU_INT
+EXT_Out <= inst207.DB_MAX_OUTPUT_PORT_TYPE
+CLR_SHFTRG_MOSI => inst136.IN0
+MOSI => ALTSHIFT_TAPS:inst209.shiftin[0]
+MOSI => TEST_PIN_C2.DATAIN
+PMODE0 <= <VCC>
+PMODE1 <= <VCC>
+PMODE2 <= <GND>
+CLK_10_24MHz <= inst200.DB_MAX_OUTPUT_PORT_TYPE
+LOUT_DIS_DTS <= <GND>
+WP_FLASH <= JUMP_3.DB_MAX_OUTPUT_PORT_TYPE
+JUMP_3 => WP_FLASH.DATAIN
+JUMP_3 => inst119.IN0
+JUMP_3 => inst181.DATAIN
+LED_G_138 <= inst175.DB_MAX_OUTPUT_PORT_TYPE
+LED_R_125 <= inst179.DB_MAX_OUTPUT_PORT_TYPE
+LED_R_133 <= inst180.DB_MAX_OUTPUT_PORT_TYPE
+LED_R_135 <= inst181.DB_MAX_OUTPUT_PORT_TYPE
+WP_SPI_EEPROM <= <VCC>
+CLK_WIZNET <= inst6.DB_MAX_OUTPUT_PORT_TYPE
+ALERT <= inst119.DB_MAX_OUTPUT_PORT_TYPE
+MS0 <= <GND>
+MS1 <= <GND>
+MS2 <= inst124.DB_MAX_OUTPUT_PORT_TYPE
+DIR_ISDN <= JUMP_1.DB_MAX_OUTPUT_PORT_TYPE
+MODE <= JUMP_1.DB_MAX_OUTPUT_PORT_TYPE
+TEST_PIN_A2 <= inst207.DB_MAX_OUTPUT_PORT_TYPE
+TEST_PIN_A3 <= unifilter4:inst184.Out
+TEST_PIN_A1 <= inst183.DB_MAX_OUTPUT_PORT_TYPE
+HF_TEST <= inst86.DB_MAX_OUTPUT_PORT_TYPE
+TEST_PIN_B1 <= shrg_ctrl6:inst.CLK_EXT_OUT_ENA
+TEST_PIN_B2 <= CLK_78125Hz.DB_MAX_OUTPUT_PORT_TYPE
+TEST_PIN_B3 <= stbus_ctrl2:inst1.T1
+TEST_PIN_B4 <= stbus_ctrl2:inst1.CPU_INT
+TEST_PIN_C4 <= stbus_ctrl2:inst1.CLK_SHFTRG_IN
+TEST_PIN_C1 <= stbus_ctrl2:inst1.CLK_SHFTRG_OUT
+TEST_PIN_C2 <= MOSI.DB_MAX_OUTPUT_PORT_TYPE
+TEST_PIN_C3 <= ALTSHIFT_TAPS:inst208.shiftout[0]
+TEST_PIN_A4 <= shrg_ctrl6:inst.SHFTRG_LOCK
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst208
+shiftin[0] => shift_taps_fln:auto_generated.shiftin[0]
+clock => shift_taps_fln:auto_generated.clock
+clken => shift_taps_fln:auto_generated.clken
+shiftout[0] <= shift_taps_fln:auto_generated.shiftout[0]
+taps[0] <= <GND>
+aclr => shift_taps_fln:auto_generated.aclr
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst208|shift_taps_fln:auto_generated
+aclr => dffe4.IN0
+aclr => cntr_dch:cntr3.aset
+clken => altsyncram_m5b1:altsyncram2.clocken0
+clken => cntr_nsf:cntr1.clk_en
+clken => cntr_dch:cntr3.clk_en
+clken => dffe4.ENA
+clock => altsyncram_m5b1:altsyncram2.clock0
+clock => cntr_nsf:cntr1.clock
+clock => cntr_dch:cntr3.clock
+clock => dffe4.CLK
+shiftin[0] => altsyncram_m5b1:altsyncram2.data_a[0]
+shiftout[0] <= altsyncram_m5b1:altsyncram2.q_b[0]
+taps[0] <= altsyncram_m5b1:altsyncram2.q_b[0]
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst208|shift_taps_fln:auto_generated|altsyncram_m5b1:altsyncram2
+aclr0 => ram_block5a0.CLR0
+address_a[0] => ram_block5a0.PORTAADDR
+address_a[1] => ram_block5a0.PORTAADDR1
+address_a[2] => ram_block5a0.PORTAADDR2
+address_a[3] => ram_block5a0.PORTAADDR3
+address_a[4] => ram_block5a0.PORTAADDR4
+address_a[5] => ram_block5a0.PORTAADDR5
+address_a[6] => ram_block5a0.PORTAADDR6
+address_a[7] => ram_block5a0.PORTAADDR7
+address_a[8] => ram_block5a0.PORTAADDR8
+address_b[0] => ram_block5a0.PORTBADDR
+address_b[1] => ram_block5a0.PORTBADDR1
+address_b[2] => ram_block5a0.PORTBADDR2
+address_b[3] => ram_block5a0.PORTBADDR3
+address_b[4] => ram_block5a0.PORTBADDR4
+address_b[5] => ram_block5a0.PORTBADDR5
+address_b[6] => ram_block5a0.PORTBADDR6
+address_b[7] => ram_block5a0.PORTBADDR7
+address_b[8] => ram_block5a0.PORTBADDR8
+clock0 => ram_block5a0.CLK0
+clocken0 => ram_block5a0.ENA0
+data_a[0] => ram_block5a0.PORTADATAIN
+q_b[0] <= ram_block5a0.PORTBDATAOUT
+wren_a => ram_block5a0.PORTAWE
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst208|shift_taps_fln:auto_generated|cntr_nsf:cntr1
+clk_en => counter_reg_bit[8].IN0
+clock => counter_reg_bit[8].CLK
+clock => counter_reg_bit[7].CLK
+clock => counter_reg_bit[6].CLK
+clock => counter_reg_bit[5].CLK
+clock => counter_reg_bit[4].CLK
+clock => counter_reg_bit[3].CLK
+clock => counter_reg_bit[2].CLK
+clock => counter_reg_bit[1].CLK
+clock => counter_reg_bit[0].CLK
+q[0] <= counter_reg_bit[0].DB_MAX_OUTPUT_PORT_TYPE
+q[1] <= counter_reg_bit[1].DB_MAX_OUTPUT_PORT_TYPE
+q[2] <= counter_reg_bit[2].DB_MAX_OUTPUT_PORT_TYPE
+q[3] <= counter_reg_bit[3].DB_MAX_OUTPUT_PORT_TYPE
+q[4] <= counter_reg_bit[4].DB_MAX_OUTPUT_PORT_TYPE
+q[5] <= counter_reg_bit[5].DB_MAX_OUTPUT_PORT_TYPE
+q[6] <= counter_reg_bit[6].DB_MAX_OUTPUT_PORT_TYPE
+q[7] <= counter_reg_bit[7].DB_MAX_OUTPUT_PORT_TYPE
+q[8] <= counter_reg_bit[8].DB_MAX_OUTPUT_PORT_TYPE
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst208|shift_taps_fln:auto_generated|cntr_nsf:cntr1|cmpr_vgc:cmpr6
+aeb <= aeb_result_wire[0].DB_MAX_OUTPUT_PORT_TYPE
+dataa[0] => data_wire[2].IN0
+dataa[1] => data_wire[2].IN0
+dataa[2] => data_wire[3].IN0
+dataa[3] => data_wire[3].IN0
+dataa[4] => data_wire[4].IN0
+dataa[5] => data_wire[4].IN0
+dataa[6] => data_wire[5].IN0
+dataa[7] => data_wire[5].IN0
+dataa[8] => data_wire[6].IN0
+datab[0] => data_wire[2].IN1
+datab[1] => data_wire[2].IN1
+datab[2] => data_wire[3].IN1
+datab[3] => data_wire[3].IN1
+datab[4] => data_wire[4].IN1
+datab[5] => data_wire[4].IN1
+datab[6] => data_wire[5].IN1
+datab[7] => data_wire[5].IN1
+datab[8] => data_wire[6].IN1
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst208|shift_taps_fln:auto_generated|cntr_dch:cntr3
+aset => counter_reg_bit[8].IN0
+clk_en => counter_reg_bit[8].IN0
+clock => counter_reg_bit[8].CLK
+clock => counter_reg_bit[7].CLK
+clock => counter_reg_bit[6].CLK
+clock => counter_reg_bit[5].CLK
+clock => counter_reg_bit[4].CLK
+clock => counter_reg_bit[3].CLK
+clock => counter_reg_bit[2].CLK
+clock => counter_reg_bit[1].CLK
+clock => counter_reg_bit[0].CLK
+cnt_en => _.IN0
+cout <= cout_actual.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|DCE01_3|shrg_ctrl6:inst
+TST_0 <= 175.DB_MAX_OUTPUT_PORT_TYPE
+CLK => 175.IN0
+CLK => 73.IN0
+CLK => 118.CLK
+CLK => 106.IN0
+CLK => inst.CLK
+F0 => 69.IN0
+F0 => 67.IN0
+F0 => 65.DATAIN
+F0 => 51.IN0
+F0 => 178.IN0
+RST => 66.ACLR
+RST => 65.ACLR
+RST => 78.IN1
+CLK_High => 66.CLK
+CLK_High => 65.CLK
+ENA => 154.IN0
+CLK_EXT_OUT_ENA <= 177.DB_MAX_OUTPUT_PORT_TYPE
+TST_2 <= <GND>
+SHFTRG_LOCK <= 86.DB_MAX_OUTPUT_PORT_TYPE
+EXT_OUT_SHFTRG_ENA <= 83.DB_MAX_OUTPUT_PORT_TYPE
+CLK_EXT_OUT <= 178.DB_MAX_OUTPUT_PORT_TYPE
+REINIT <= 69.DB_MAX_OUTPUT_PORT_TYPE
+CLK_IN_DIV_ENA <= 143.DB_MAX_OUTPUT_PORT_TYPE
+CLK_EXT_IN_ENA <= 144.DB_MAX_OUTPUT_PORT_TYPE
+CLK_EXT_IN <= inst.DB_MAX_OUTPUT_PORT_TYPE
+CLK_TEST <= 73.DB_MAX_OUTPUT_PORT_TYPE
+CLK_OUT_DIV_ENA <= 118.DB_MAX_OUTPUT_PORT_TYPE
+E[0] <= <GND>
+E[1] <= <GND>
+E[2] <= <GND>
+E[3] <= <GND>
+E[4] <= <GND>
+E[5] <= <GND>
+E[6] <= <GND>
+
+
+|DCE01_3|unifilter4:inst128
+Out <= 92.DB_MAX_OUTPUT_PORT_TYPE
+D0 => 109.IN0
+D0 => 113.IN0
+RST => 125.IN0
+RST => 59.PRESET
+RST => 131.IN0
+RST => 130.IN1
+RST => 67.ACLR
+In => 74.IN0
+In => 133.IN0
+In => 130.IN0
+In => 92.DATAIN
+CLK => 67.DATAIN
+CLK => 70.IN1
+D1 => 107.IN0
+D1 => 112.IN0
+D2 => 105.IN0
+D2 => 111.IN0
+D3 => 104.IN0
+D3 => 102.IN0
+
+
+|DCE01_3|altpll1:inst169
+areset => altpll:altpll_component.areset
+inclk0 => altpll:altpll_component.inclk[0]
+c0 <= altpll:altpll_component.clk[0]
+
+
+|DCE01_3|altpll1:inst169|altpll:altpll_component
+inclk[0] => altpll1_altpll:auto_generated.inclk[0]
+inclk[1] => altpll1_altpll:auto_generated.inclk[1]
+fbin => ~NO_FANOUT~
+pllena => ~NO_FANOUT~
+clkswitch => ~NO_FANOUT~
+areset => altpll1_altpll:auto_generated.areset
+pfdena => ~NO_FANOUT~
+clkena[0] => ~NO_FANOUT~
+clkena[1] => ~NO_FANOUT~
+clkena[2] => ~NO_FANOUT~
+clkena[3] => ~NO_FANOUT~
+clkena[4] => ~NO_FANOUT~
+clkena[5] => ~NO_FANOUT~
+extclkena[0] => ~NO_FANOUT~
+extclkena[1] => ~NO_FANOUT~
+extclkena[2] => ~NO_FANOUT~
+extclkena[3] => ~NO_FANOUT~
+scanclk => ~NO_FANOUT~
+scanclkena => ~NO_FANOUT~
+scanaclr => ~NO_FANOUT~
+scanread => ~NO_FANOUT~
+scanwrite => ~NO_FANOUT~
+scandata => ~NO_FANOUT~
+phasecounterselect[0] => ~NO_FANOUT~
+phasecounterselect[1] => ~NO_FANOUT~
+phasecounterselect[2] => ~NO_FANOUT~
+phasecounterselect[3] => ~NO_FANOUT~
+phaseupdown => ~NO_FANOUT~
+phasestep => ~NO_FANOUT~
+configupdate => ~NO_FANOUT~
+fbmimicbidir <> <GND>
+clk[0] <= clk[0].DB_MAX_OUTPUT_PORT_TYPE
+clk[1] <= clk[1].DB_MAX_OUTPUT_PORT_TYPE
+clk[2] <= clk[2].DB_MAX_OUTPUT_PORT_TYPE
+clk[3] <= clk[3].DB_MAX_OUTPUT_PORT_TYPE
+clk[4] <= clk[4].DB_MAX_OUTPUT_PORT_TYPE
+extclk[0] <= <GND>
+extclk[1] <= <GND>
+extclk[2] <= <GND>
+extclk[3] <= <GND>
+clkbad[0] <= <GND>
+clkbad[1] <= <GND>
+enable1 <= <GND>
+enable0 <= <GND>
+activeclock <= <GND>
+clkloss <= <GND>
+locked <= <GND>
+scandataout <= <GND>
+scandone <= <GND>
+sclkout0 <= <GND>
+sclkout1 <= <GND>
+phasedone <= <GND>
+vcooverrange <= <GND>
+vcounderrange <= <GND>
+fbout <= <GND>
+fref <= <GND>
+icdrclk <= <GND>
+
+
+|DCE01_3|altpll1:inst169|altpll:altpll_component|altpll1_altpll:auto_generated
+areset => pll1.ARESET
+clk[0] <= pll1.CLK
+clk[1] <= pll1.CLK1
+clk[2] <= pll1.CLK2
+clk[3] <= pll1.CLK3
+clk[4] <= pll1.CLK4
+inclk[0] => pll1.CLK
+inclk[1] => pll1.CLK1
+
+
+|DCE01_3|div5-1123:inst120
+CLK_OUT <= 82.DB_MAX_OUTPUT_PORT_TYPE
+ENA => 40.IN1
+ENA => 30.IN1
+ENA => 6.ENA
+ENA => 7.ENA
+ENA => 8.ENA
+ENA => 41.ENA
+CLK_IN => 6.CLK
+CLK_IN => 7.CLK
+CLK_IN => 8.CLK
+CLK_IN => 68.IN0
+CLK_IN => 77.IN2
+RST => 6.ACLR
+RST => 7.ACLR
+RST => 8.ACLR
+RST => 41.ACLR
+TST1 <= 80.DB_MAX_OUTPUT_PORT_TYPE
+TST0 <= 77.DB_MAX_OUTPUT_PORT_TYPE
+TST3 <= <GND>
+TST_2 <= <GND>
+
+
+|DCE01_3|div5-1123:inst197
+CLK_OUT <= 82.DB_MAX_OUTPUT_PORT_TYPE
+ENA => 40.IN1
+ENA => 30.IN1
+ENA => 6.ENA
+ENA => 7.ENA
+ENA => 8.ENA
+ENA => 41.ENA
+CLK_IN => 6.CLK
+CLK_IN => 7.CLK
+CLK_IN => 8.CLK
+CLK_IN => 68.IN0
+CLK_IN => 77.IN2
+RST => 6.ACLR
+RST => 7.ACLR
+RST => 8.ACLR
+RST => 41.ACLR
+TST1 <= 80.DB_MAX_OUTPUT_PORT_TYPE
+TST0 <= 77.DB_MAX_OUTPUT_PORT_TYPE
+TST3 <= <GND>
+TST_2 <= <GND>
+
+
+|DCE01_3|altpll2:inst176
+areset => altpll:altpll_component.areset
+inclk0 => altpll:altpll_component.inclk[0]
+c0 <= altpll:altpll_component.clk[0]
+
+
+|DCE01_3|altpll2:inst176|altpll:altpll_component
+inclk[0] => altpll2_altpll:auto_generated.inclk[0]
+inclk[1] => altpll2_altpll:auto_generated.inclk[1]
+fbin => ~NO_FANOUT~
+pllena => ~NO_FANOUT~
+clkswitch => ~NO_FANOUT~
+areset => altpll2_altpll:auto_generated.areset
+pfdena => ~NO_FANOUT~
+clkena[0] => ~NO_FANOUT~
+clkena[1] => ~NO_FANOUT~
+clkena[2] => ~NO_FANOUT~
+clkena[3] => ~NO_FANOUT~
+clkena[4] => ~NO_FANOUT~
+clkena[5] => ~NO_FANOUT~
+extclkena[0] => ~NO_FANOUT~
+extclkena[1] => ~NO_FANOUT~
+extclkena[2] => ~NO_FANOUT~
+extclkena[3] => ~NO_FANOUT~
+scanclk => ~NO_FANOUT~
+scanclkena => ~NO_FANOUT~
+scanaclr => ~NO_FANOUT~
+scanread => ~NO_FANOUT~
+scanwrite => ~NO_FANOUT~
+scandata => ~NO_FANOUT~
+phasecounterselect[0] => ~NO_FANOUT~
+phasecounterselect[1] => ~NO_FANOUT~
+phasecounterselect[2] => ~NO_FANOUT~
+phasecounterselect[3] => ~NO_FANOUT~
+phaseupdown => ~NO_FANOUT~
+phasestep => ~NO_FANOUT~
+configupdate => ~NO_FANOUT~
+fbmimicbidir <> <GND>
+clk[0] <= clk[0].DB_MAX_OUTPUT_PORT_TYPE
+clk[1] <= clk[1].DB_MAX_OUTPUT_PORT_TYPE
+clk[2] <= clk[2].DB_MAX_OUTPUT_PORT_TYPE
+clk[3] <= clk[3].DB_MAX_OUTPUT_PORT_TYPE
+clk[4] <= clk[4].DB_MAX_OUTPUT_PORT_TYPE
+extclk[0] <= <GND>
+extclk[1] <= <GND>
+extclk[2] <= <GND>
+extclk[3] <= <GND>
+clkbad[0] <= <GND>
+clkbad[1] <= <GND>
+enable1 <= <GND>
+enable0 <= <GND>
+activeclock <= <GND>
+clkloss <= <GND>
+locked <= <GND>
+scandataout <= <GND>
+scandone <= <GND>
+sclkout0 <= <GND>
+sclkout1 <= <GND>
+phasedone <= <GND>
+vcooverrange <= <GND>
+vcounderrange <= <GND>
+fbout <= <GND>
+fref <= <GND>
+icdrclk <= <GND>
+
+
+|DCE01_3|altpll2:inst176|altpll:altpll_component|altpll2_altpll:auto_generated
+areset => pll1.ARESET
+clk[0] <= pll1.CLK
+clk[1] <= pll1.CLK1
+clk[2] <= pll1.CLK2
+clk[3] <= pll1.CLK3
+clk[4] <= pll1.CLK4
+inclk[0] => pll1.CLK
+inclk[1] => pll1.CLK1
+
+
+|DCE01_3|unifilter4:inst129
+Out <= 92.DB_MAX_OUTPUT_PORT_TYPE
+D0 => 109.IN0
+D0 => 113.IN0
+RST => 125.IN0
+RST => 59.PRESET
+RST => 131.IN0
+RST => 130.IN1
+RST => 67.ACLR
+In => 74.IN0
+In => 133.IN0
+In => 130.IN0
+In => 92.DATAIN
+CLK => 67.DATAIN
+CLK => 70.IN1
+D1 => 107.IN0
+D1 => 112.IN0
+D2 => 105.IN0
+D2 => 111.IN0
+D3 => 104.IN0
+D3 => 102.IN0
+
+
+|DCE01_3|f0_former:inst106
+F0 <= 27.DB_MAX_OUTPUT_PORT_TYPE
+RST => 6.ACLR
+RST => 7.ACLR
+RST => 11.ACLR
+RST => 15.ACLR
+RST => 14.ACLR
+RST => 19.ACLR
+RST => 18.ACLR
+RST => 23.ACLR
+RST => 22.ACLR
+ENA => 6.IN0
+ENA => 6.ENA
+ENA => 8.IN0
+ENA => 7.ENA
+ENA => 11.ENA
+ENA => 15.ENA
+ENA => 14.ENA
+ENA => 19.ENA
+ENA => 18.ENA
+ENA => 23.ENA
+ENA => 22.ENA
+CLK => 6.CLK
+CLK => 7.CLK
+CLK => 11.CLK
+CLK => 15.CLK
+CLK => 14.CLK
+CLK => 19.CLK
+CLK => 18.CLK
+CLK => 23.CLK
+CLK => 22.CLK
+
+
+|DCE01_3|stbus_ctrl2:inst1
+CLR_SHIFTREG <= inst.DB_MAX_OUTPUT_PORT_TYPE
+F0 => inst2.IN0
+F0 => 48.IN0
+RST => inst2.IN1
+RST => 81.ACLR
+RST => 82.ACLR
+RST => 26.ACLR
+RST => 27.ACLR
+RST => 28.ACLR
+RST => 25.ACLR
+SPI_CLK => inst5.IN0
+SPI_CLK => inst1.IN1
+CLK_High => 81.CLK
+CLK_High => 82.CLK
+CLK_DST_ENA => 10.IN0
+CLK_DST_ENA => cpu_int_form2:inst6.CLK_SHFTRG_ENA
+CLK_DST_ENA => cpu_int_form2:inst10.CLK_SHFTRG_ENA
+PKT_LEN[0] => 66.IN0
+PKT_LEN[1] => 67.IN1
+PKT_LEN[2] => 68.IN1
+PKT_LEN[3] => 69.IN1
+E[0] <= 25.DB_MAX_OUTPUT_PORT_TYPE
+E[1] <= 26.DB_MAX_OUTPUT_PORT_TYPE
+E[2] <= 27.DB_MAX_OUTPUT_PORT_TYPE
+E[3] <= 28.DB_MAX_OUTPUT_PORT_TYPE
+ENA => 37.IN0
+ENA => 26.ENA
+ENA => 27.ENA
+ENA => 28.ENA
+ENA => 63.IN0
+ENA => 64.IN0
+ENA => 25.ENA
+T1 <= 25.DB_MAX_OUTPUT_PORT_TYPE
+CPU_INT <= cpu_int_form2:inst6.INT
+DLY_CLK => cpu_int_form2:inst6.CLK
+DLY_CLK => cpu_int_form2:inst10.CLK
+CLK_SHFTRG_IN <= 4.DB_MAX_OUTPUT_PORT_TYPE
+CLK_DSTO_IN => 8.IN1
+CLK_SHFTRG_OUT <= 3.DB_MAX_OUTPUT_PORT_TYPE
+CLK_DSTI_OUT => 6.IN1
+ALERT <= cpu_int_form2:inst10.INT
+
+
+|DCE01_3|stbus_ctrl2:inst1|cpu_int_form2:inst6
+INT <= 9.DB_MAX_OUTPUT_PORT_TYPE
+RST => 2.ACLR
+RST => 22.PRESET
+RST => 11.PRESET
+RST => 14.ACLR
+RST => 17.ACLR
+CLK_SHFTRG_ENA => 3.IN0
+BIF => 2.ENA
+CLK => 11.CLK
+CLK => 14.CLK
+CLK => 17.CLK
+CLK => 22.CLK
+
+
+|DCE01_3|stbus_ctrl2:inst1|cpu_int_form2:inst10
+INT <= 9.DB_MAX_OUTPUT_PORT_TYPE
+RST => 2.ACLR
+RST => 22.PRESET
+RST => 11.PRESET
+RST => 14.ACLR
+RST => 17.ACLR
+CLK_SHFTRG_ENA => 3.IN0
+BIF => 2.ENA
+CLK => 11.CLK
+CLK => 14.CLK
+CLK => 17.CLK
+CLK => 22.CLK
+
+
+|DCE01_3|div5-1123:inst205
+CLK_OUT <= 82.DB_MAX_OUTPUT_PORT_TYPE
+ENA => 40.IN1
+ENA => 30.IN1
+ENA => 6.ENA
+ENA => 7.ENA
+ENA => 8.ENA
+ENA => 41.ENA
+CLK_IN => 6.CLK
+CLK_IN => 7.CLK
+CLK_IN => 8.CLK
+CLK_IN => 68.IN0
+CLK_IN => 77.IN2
+RST => 6.ACLR
+RST => 7.ACLR
+RST => 8.ACLR
+RST => 41.ACLR
+TST1 <= 80.DB_MAX_OUTPUT_PORT_TYPE
+TST0 <= 77.DB_MAX_OUTPUT_PORT_TYPE
+TST3 <= <GND>
+TST_2 <= <GND>
+
+
+|DCE01_3|unifilter4:inst184
+Out <= 92.DB_MAX_OUTPUT_PORT_TYPE
+D0 => 109.IN0
+D0 => 113.IN0
+RST => 125.IN0
+RST => 59.PRESET
+RST => 131.IN0
+RST => 130.IN1
+RST => 67.ACLR
+In => 74.IN0
+In => 133.IN0
+In => 130.IN0
+In => 92.DATAIN
+CLK => 67.DATAIN
+CLK => 70.IN1
+D1 => 107.IN0
+D1 => 112.IN0
+D2 => 105.IN0
+D2 => 111.IN0
+D3 => 104.IN0
+D3 => 102.IN0
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst209
+shiftin[0] => shift_taps_fln:auto_generated.shiftin[0]
+clock => shift_taps_fln:auto_generated.clock
+clken => shift_taps_fln:auto_generated.clken
+shiftout[0] <= shift_taps_fln:auto_generated.shiftout[0]
+taps[0] <= <GND>
+aclr => shift_taps_fln:auto_generated.aclr
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst209|shift_taps_fln:auto_generated
+aclr => dffe4.IN0
+aclr => cntr_dch:cntr3.aset
+clken => altsyncram_m5b1:altsyncram2.clocken0
+clken => cntr_nsf:cntr1.clk_en
+clken => cntr_dch:cntr3.clk_en
+clken => dffe4.ENA
+clock => altsyncram_m5b1:altsyncram2.clock0
+clock => cntr_nsf:cntr1.clock
+clock => cntr_dch:cntr3.clock
+clock => dffe4.CLK
+shiftin[0] => altsyncram_m5b1:altsyncram2.data_a[0]
+shiftout[0] <= altsyncram_m5b1:altsyncram2.q_b[0]
+taps[0] <= altsyncram_m5b1:altsyncram2.q_b[0]
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst209|shift_taps_fln:auto_generated|altsyncram_m5b1:altsyncram2
+aclr0 => ram_block5a0.CLR0
+address_a[0] => ram_block5a0.PORTAADDR
+address_a[1] => ram_block5a0.PORTAADDR1
+address_a[2] => ram_block5a0.PORTAADDR2
+address_a[3] => ram_block5a0.PORTAADDR3
+address_a[4] => ram_block5a0.PORTAADDR4
+address_a[5] => ram_block5a0.PORTAADDR5
+address_a[6] => ram_block5a0.PORTAADDR6
+address_a[7] => ram_block5a0.PORTAADDR7
+address_a[8] => ram_block5a0.PORTAADDR8
+address_b[0] => ram_block5a0.PORTBADDR
+address_b[1] => ram_block5a0.PORTBADDR1
+address_b[2] => ram_block5a0.PORTBADDR2
+address_b[3] => ram_block5a0.PORTBADDR3
+address_b[4] => ram_block5a0.PORTBADDR4
+address_b[5] => ram_block5a0.PORTBADDR5
+address_b[6] => ram_block5a0.PORTBADDR6
+address_b[7] => ram_block5a0.PORTBADDR7
+address_b[8] => ram_block5a0.PORTBADDR8
+clock0 => ram_block5a0.CLK0
+clocken0 => ram_block5a0.ENA0
+data_a[0] => ram_block5a0.PORTADATAIN
+q_b[0] <= ram_block5a0.PORTBDATAOUT
+wren_a => ram_block5a0.PORTAWE
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst209|shift_taps_fln:auto_generated|cntr_nsf:cntr1
+clk_en => counter_reg_bit[8].IN0
+clock => counter_reg_bit[8].CLK
+clock => counter_reg_bit[7].CLK
+clock => counter_reg_bit[6].CLK
+clock => counter_reg_bit[5].CLK
+clock => counter_reg_bit[4].CLK
+clock => counter_reg_bit[3].CLK
+clock => counter_reg_bit[2].CLK
+clock => counter_reg_bit[1].CLK
+clock => counter_reg_bit[0].CLK
+q[0] <= counter_reg_bit[0].DB_MAX_OUTPUT_PORT_TYPE
+q[1] <= counter_reg_bit[1].DB_MAX_OUTPUT_PORT_TYPE
+q[2] <= counter_reg_bit[2].DB_MAX_OUTPUT_PORT_TYPE
+q[3] <= counter_reg_bit[3].DB_MAX_OUTPUT_PORT_TYPE
+q[4] <= counter_reg_bit[4].DB_MAX_OUTPUT_PORT_TYPE
+q[5] <= counter_reg_bit[5].DB_MAX_OUTPUT_PORT_TYPE
+q[6] <= counter_reg_bit[6].DB_MAX_OUTPUT_PORT_TYPE
+q[7] <= counter_reg_bit[7].DB_MAX_OUTPUT_PORT_TYPE
+q[8] <= counter_reg_bit[8].DB_MAX_OUTPUT_PORT_TYPE
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst209|shift_taps_fln:auto_generated|cntr_nsf:cntr1|cmpr_vgc:cmpr6
+aeb <= aeb_result_wire[0].DB_MAX_OUTPUT_PORT_TYPE
+dataa[0] => data_wire[2].IN0
+dataa[1] => data_wire[2].IN0
+dataa[2] => data_wire[3].IN0
+dataa[3] => data_wire[3].IN0
+dataa[4] => data_wire[4].IN0
+dataa[5] => data_wire[4].IN0
+dataa[6] => data_wire[5].IN0
+dataa[7] => data_wire[5].IN0
+dataa[8] => data_wire[6].IN0
+datab[0] => data_wire[2].IN1
+datab[1] => data_wire[2].IN1
+datab[2] => data_wire[3].IN1
+datab[3] => data_wire[3].IN1
+datab[4] => data_wire[4].IN1
+datab[5] => data_wire[4].IN1
+datab[6] => data_wire[5].IN1
+datab[7] => data_wire[5].IN1
+datab[8] => data_wire[6].IN1
+
+
+|DCE01_3|ALTSHIFT_TAPS:inst209|shift_taps_fln:auto_generated|cntr_dch:cntr3
+aset => counter_reg_bit[8].IN0
+clk_en => counter_reg_bit[8].IN0
+clock => counter_reg_bit[8].CLK
+clock => counter_reg_bit[7].CLK
+clock => counter_reg_bit[6].CLK
+clock => counter_reg_bit[5].CLK
+clock => counter_reg_bit[4].CLK
+clock => counter_reg_bit[3].CLK
+clock => counter_reg_bit[2].CLK
+clock => counter_reg_bit[1].CLK
+clock => counter_reg_bit[0].CLK
+cnt_en => _.IN0
+cout <= cout_actual.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|DCE01_3|div5:inst150
+CLK_OUT <= 41.DB_MAX_OUTPUT_PORT_TYPE
+ENA => 40.IN1
+ENA => 7.ENA
+ENA => 30.IN1
+ENA => 6.ENA
+ENA => 8.ENA
+ENA => 41.ENA
+CLK_IN => 21.IN0
+RST => 7.ACLR
+RST => 6.ACLR
+RST => 8.ACLR
+RST => 41.ACLR
+
+

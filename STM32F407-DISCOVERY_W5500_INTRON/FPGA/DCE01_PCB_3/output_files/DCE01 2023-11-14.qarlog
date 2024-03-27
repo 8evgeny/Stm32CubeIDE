@@ -1,0 +1,54 @@
+Quartus II Archive log --	D:/altera/DCE01/output_files/DCE01 2023-11-14.qarlog
+
+Archive:	D:/altera/DCE01/output_files/DCE01 2023-11-14.qar
+Date:		Tue Nov 14 09:35:14 2023
+Quartus II 64-Bit		13.0.1 Build 232 06/12/2013 SP 1 SJ Web Edition
+
+	=========== Files Selected: ===========
+D:/altera/DCE01/DCDR01.bsf
+D:/altera/DCE01/DCE01.bdf
+D:/altera/DCE01/DCE01.qpf
+D:/altera/DCE01/DCE01.qsf
+D:/altera/DCE01/DCE01_SFL.bsf
+D:/altera/DCE01/DCE01_SFL.cmp
+D:/altera/DCE01/DCE01_SFL.inc
+D:/altera/DCE01/DCE01_SFL.qip
+D:/altera/DCE01/DCE01_SFL.vhd
+D:/altera/DCE01/DCE01_SFL_inst.vhd
+D:/altera/DCE01/altpll1.bsf
+D:/altera/DCE01/altpll1.cmp
+D:/altera/DCE01/altpll1.ppf
+D:/altera/DCE01/altpll1.qip
+D:/altera/DCE01/altpll1.vhd
+D:/altera/DCE01/altpll2.bsf
+D:/altera/DCE01/altpll2.cmp
+D:/altera/DCE01/altpll2.ppf
+D:/altera/DCE01/altpll2.qip
+D:/altera/DCE01/altpll2.vhd
+D:/altera/DCE01/blinker.bdf
+D:/altera/DCE01/ch_clk_ctrl2.bdf
+D:/altera/DCE01/cntr7.bdf
+D:/altera/DCE01/codeind.bdf
+D:/altera/DCE01/cpu_int_form.bdf
+D:/altera/DCE01/cpu_int_form2.bdf
+D:/altera/DCE01/dbltff.bdf
+D:/altera/DCE01/dcdr01.vhd
+D:/altera/DCE01/div125.bdf
+D:/altera/DCE01/div15.bdf
+D:/altera/DCE01/div15.bsf
+D:/altera/DCE01/div5-1123.bdf
+D:/altera/DCE01/div5.bdf
+D:/altera/DCE01/f0_former.bdf
+D:/altera/DCE01/incremental_db/compiled_partitions/DCE01.db_info
+D:/altera/DCE01/output_files/altpll0.qip
+D:/altera/DCE01/plsgen.bdf
+D:/altera/DCE01/shrg_ctrl5.bdf
+D:/altera/DCE01/shrg_ctrl6.bdf
+D:/altera/DCE01/slctr.bdf
+D:/altera/DCE01/stbus_ctrl2.bdf
+D:/altera/DCE01/unifilter4.bdf
+c:/altera/13.0sp1/quartus/bin64/assignment_defaults.qdf
+	======= Total: 43 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.

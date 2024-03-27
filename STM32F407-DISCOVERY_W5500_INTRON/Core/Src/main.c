@@ -111,6 +111,8 @@ extern uint8_t test4[MAX_PACKET_LEN];
 extern uint8_t test5[MAX_PACKET_LEN];
 extern uint8_t test6[MAX_PACKET_LEN];
 extern uint8_t test7[MAX_PACKET_LEN];
+extern uint8_t test8[MAX_PACKET_LEN];
+extern uint8_t test9[MAX_PACKET_LEN];
 extern uint8_t zeroStr[MAX_PACKET_LEN];
 
 I2C_HandleTypeDef hi2c1;
@@ -1561,13 +1563,13 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     dataToDx ,
                                     #endif
                                     #ifdef  fpgaToCpuAbonTestData
-                                    test4 ,
+                                    test6 ,
                                     #endif
                                     #ifndef  cpuToFpgaAbonTestData
                                     dataFromDx ,
                                     #endif
                                     #ifdef  cpuToFpgaAbonTestData
-                                    test4 ,
+                                    test1 ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);

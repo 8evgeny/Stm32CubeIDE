@@ -59,7 +59,7 @@ WOLFSSL*     server_ssl = NULL;
 #else
     #define HEAP_HINT_SERVER NULL
 #endif /* WOLFSSL_STATIC_MEMORY */
-void UART_Printf(const char* fmt, ...);
+void printf_DMA(const char* fmt, ...);
 
 /* Buffer for server connection to allocate dynamic memory from. */
 unsigned char client_buffer[BUFFER_SIZE];

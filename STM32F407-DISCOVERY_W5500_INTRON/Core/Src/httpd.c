@@ -23,7 +23,7 @@ extern char *pmain;
 extern char *psettingsIP;
 char * pfile;
 
-extern void UART_Printf(const char* fmt, ...);
+extern void printf_DMA(const char* fmt, ...);
 extern lfs_t lfs;
 extern lfs_file_t file;
 http_sock_prop_ptr httpsockprop[2];

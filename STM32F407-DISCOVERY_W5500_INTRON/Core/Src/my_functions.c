@@ -67,7 +67,7 @@ uint8_t test9[MAX_PACKET_LEN] = {0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
                                  0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00};
 
 
-void UART_Printf(const char* fmt, ...) {
+void printf_DMA(const char* fmt, ...) {
     char buff[512];
     va_list args;
     va_start(args, fmt);
@@ -334,7 +334,7 @@ void prepeareAnswerToBase(uint8_t * dataFromBase, uint32_t currTime){
     strcpy((char*)(substring_ptr + 3), tmp);
 }
 void printTestNetData(uint8_t data[MAX_PACKET_LEN]) {
-        UART_Printf("%.48s\r\n", data );
+        printf_DMA("%.48s\r\n", data );
 }
 void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
 //В полученный пакет добавляем метку времени базы
@@ -358,7 +358,7 @@ void analiseDataFromAbonent(uint8_t * dataFromAbon, uint32_t currTime){
     timeSend[len] = 0x00;
     uint32_t time_send = atol(timeSend);
     if ((numSendDiagnosticPacket % 500 == 0)){
-        UART_Printf("timeSend: %d timeReceive: %d\r\n",time_send, HAL_GetTick());
+        printf_DMA("timeSend: %d timeReceive: %d\r\n",time_send, HAL_GetTick());
     }
 
 }

@@ -25,7 +25,7 @@ int32_t loopback_tcps(uint8_t sn, uint8_t* buf, uint16_t port)
 			getSn_DIPR(sn, destip);
 			destport = getSn_DPORT(sn);
 
-			UART_Printf("%d:Connected - %d.%d.%d.%d : %d\r\n",sn, destip[0], destip[1], destip[2], destip[3], destport);
+            printf_DMA("%d:Connected - %d.%d.%d.%d : %d\r\n",sn, destip[0], destip[1], destip[2], destip[3], destport);
 #endif
 			setSn_IR(sn,Sn_IR_CON);
          }
@@ -56,12 +56,12 @@ int32_t loopback_tcps(uint8_t sn, uint8_t* buf, uint16_t port)
 #endif
          if((ret = disconnect(sn)) != SOCK_OK) return ret;
 #ifdef _LOOPBACK_DEBUG_
-         UART_Printf("%d:Socket Closed\r\n", sn);
+         printf_DMA("%d:Socket Closed\r\n", sn);
 #endif
          break;
       case SOCK_INIT :
 #ifdef _LOOPBACK_DEBUG_
-    	 UART_Printf("%d:Listen, TCP server loopback, port [%d]\r\n", sn, port);
+         printf_DMA("%d:Listen, TCP server loopback, port [%d]\r\n", sn, port);
 #endif
          if( (ret = listen(sn)) != SOCK_OK) return ret;
          break;
@@ -103,7 +103,7 @@ int32_t loopback_tcpc(uint8_t sn, uint8_t* buf, uint8_t* destip, uint16_t destpo
          if(getSn_IR(sn) & Sn_IR_CON)	// Socket n interrupt register mask; TCP CON interrupt = connection with peer is successful
          {
 #ifdef _LOOPBACK_DEBUG_
-			UART_Printf("%d:Connected to - %d.%d.%d.%d : %d\r\n",sn, destip[0], destip[1], destip[2], destip[3], destport);
+            printf_DMA("%d:Connected to - %d.%d.%d.%d : %d\r\n",sn, destip[0], destip[1], destip[2], destip[3], destport);
 #endif
 			setSn_IR(sn, Sn_IR_CON);  // this interrupt should be write the bit cleared to '1'
          }
@@ -141,13 +141,13 @@ int32_t loopback_tcpc(uint8_t sn, uint8_t* buf, uint8_t* destip, uint16_t destpo
 #endif
          if((ret=disconnect(sn)) != SOCK_OK) return ret;
 #ifdef _LOOPBACK_DEBUG_
-         UART_Printf("%d:Socket Closed\r\n", sn);
+         printf_DMA("%d:Socket Closed\r\n", sn);
 #endif
          break;
 
       case SOCK_INIT :
 #ifdef _LOOPBACK_DEBUG_
-    	 UART_Printf("%d:Try to connect to the %d.%d.%d.%d : %d\r\n", sn, destip[0], destip[1], destip[2], destip[3], destport);
+         printf_DMA("%d:Try to connect to the %d.%d.%d.%d : %d\r\n", sn, destip[0], destip[1], destip[2], destip[3], destport);
 #endif
     	 if( (ret = connect(sn, destip, destport)) != SOCK_OK) return ret;	//	Try to TCP connect to the TCP server (destination)
          break;
@@ -183,16 +183,16 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
          if((size = getSn_RX_RSR(sn)) > 0)
          {
              HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-             UART_Printf("Was receve message.\r\n");
-             UART_Printf((uint8_t*)buf);
-             UART_Printf("\r\n");
+             printf_DMA("Was receve message.\r\n");
+             printf_DMA((uint8_t*)buf);
+             printf_DMA("\r\n");
 					 HAL_Delay(300);
             if(size > DATA_BUF_SIZE) size = DATA_BUF_SIZE;
             ret = recvfrom(sn, buf, size, destip, (uint16_t*)&destport);
             if(ret <= 0)
             {
 #ifdef _LOOPBACK_DEBUG_
-               UART_Printf("%d: recvfrom error. %ld\r\n",sn,ret);
+               printf_DMA("%d: recvfrom error. %ld\r\n",sn,ret);
 #endif
                return ret;
             }
@@ -212,25 +212,25 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
                     socket(sn, Sn_MR_UDP, port, 0x00);
 //                    HAL_Delay(1);
                 }
-								UART_Printf("Message was returned.\r\n");
-								UART_Printf("\r\n");
+                                printf_DMA("Message was returned.\r\n");
+                                printf_DMA("\r\n");
                                 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 								//HAL_Delay(500);
                if(ret < 0)
                {
 #ifdef _LOOPBACK_DEBUG_
-                  UART_Printf("%d: sendto error. %ld\r\n",sn,ret);
+                  printf_DMA("%d: sendto error. %ld\r\n",sn,ret);
 #endif
                   return ret;
                } 
 							sentsize += ret; // Don't care SOCKERR_BUSY, because it is zero.	 
             }
          }
-				 //UART_Printf("%d = getSn_RX_RSR(sn)\r\n",size);
+                 //printf_DMA("%d = getSn_RX_RSR(sn)\r\n",size);
          break;
 				 
       case SOCK_CLOSED:
-				//UART_Printf("SOCK are CLOSED:\r\n",sn);
+                //printf_DMA("SOCK are CLOSED:\r\n",sn);
 #ifdef _LOOPBACK_DEBUG_
          
 #endif
@@ -239,7 +239,7 @@ int32_t loopback_udps(uint8_t sn, uint8_t* buf, uint16_t port)
             return ret;
 #ifdef _LOOPBACK_DEBUG_
 
-//         UART_Printf("%d:Opened, UDP loopback, port [%d]\r\n", sn, port);
+//         printf_DMA("%d:Opened, UDP loopback, port [%d]\r\n", sn, port);
 
 #endif
          break;

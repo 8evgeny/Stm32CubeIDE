@@ -10,7 +10,7 @@ extern void Printf(const char* fmt, ...);
 //-----------------------------------------------
 extern char str1[60];
 extern tcp_prop_ptr tcpprop;
-extern void UART_Printf(const char* fmt, ...);
+extern void printf_DMA(const char* fmt, ...);
 char tmpbuf[30] __attribute__ ((aligned (4)));
 uint8_t sect[515] __attribute__ ((aligned (4)));
 //extern http_sock_prop_ptr httpsockprop[8];
@@ -256,9 +256,9 @@ void w5500_ini(void)
 delayUS_ASM(100000);//Иначе сокет иногда виснет
     OpenSocket(0,Mode_TCP);
 delayUS_ASM(100000);
-UART_Printf("SocketInitWait\r\n"); delayUS_ASM(10000);
+printf_DMA("SocketInitWait\r\n"); delayUS_ASM(10000);
     SocketInitWait(0);
-UART_Printf("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
+printf_DMA("SocketInitWait_OK\r\n"); delayUS_ASM(10000);
     //Начинаем слушать сокет
     ListenSocket(0);
     SocketListenWait(0);

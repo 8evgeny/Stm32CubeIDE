@@ -1527,16 +1527,20 @@ void sendReceiveUDP(uint8_t udpSocket)
                 if (compareDataInChannelState == ERROR_1){
                     numGoodPackets2Channel = 0;
                     bridgeState = CONNECTION_NO;
-                    printf_DMA("*** Connection state NO *** \r\n");
-                    }
-
-                    ++numBadPackets2Channel; //Инкрементируем счетчик
-                    numGoodPackets2Channel = 0;
-                    if (SEGGER){
-                        SEGGER_RTT_SetTerminal(6);
-                        SEGGER_RTT_printf(0, "bad packets: %d\r\n", numBadPackets2Channel);
-                        SEGGER_RTT_SetTerminal(0);
-                    }
+                    uint32_t currTime = HAL_GetTick();
+                    printf_DMA("*** Connection LOST ******* System time %dd %dh %dm %ds \r\n",
+                                currTime/(24 * 3600000),
+                                (currTime/3600000) % 24,
+                                (currTime/60000) % 60,
+                                (currTime/1000) % 60);
+                }
+                ++numBadPackets2Channel; //Инкрементируем счетчик
+                numGoodPackets2Channel = 0;
+                if (SEGGER){
+                    SEGGER_RTT_SetTerminal(6);
+                    SEGGER_RTT_printf(0, "bad packets: %d\r\n", numBadPackets2Channel);
+                    SEGGER_RTT_SetTerminal(0);
+                }
             }
             else {
                 ++numGoodPackets2Channel;
@@ -1544,7 +1548,12 @@ void sendReceiveUDP(uint8_t udpSocket)
                     numBadPackets2Channel = 0;
                     compareDataInChannelState = NO_ERRORS;
                     bridgeState = CONNECTION_YES;
-                    printf_DMA("*** Connection state YES ***\r\n");
+                    uint32_t currTime = HAL_GetTick();
+                    printf_DMA("*** Connection state OK *** System time %dd %dh %dm %ds \r\n",
+                               currTime/(24 * 3600000),
+                               (currTime/3600000) % 24,
+                               (currTime/60000) % 60,
+                               (currTime/1000) % 60);
                     bridgeState = CONNECTION_YES;
                 }//100
             }//совпало

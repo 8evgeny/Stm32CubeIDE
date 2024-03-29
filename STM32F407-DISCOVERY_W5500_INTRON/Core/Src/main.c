@@ -1468,7 +1468,8 @@ void sendReceiveUDP(uint8_t udpSocket)
         }
     }
 
-    if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET) // CPU_INT Жду пока плис поднимет флаг
+// CPU_INT Жду пока плис поднимет флаг
+    if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET)
     {
         HAL_GPIO_TogglePin(GPIOD, Red_Led_Pin);
         if (ABONENT_or_BASE == BASE) {

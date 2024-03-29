@@ -1505,9 +1505,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 
 
 
-#if 0
-//На время поиска телеграммы отключаю RTT и REBOOT
-
+//#if 0
 
 //Тут вывожу все каналы, полученные от базы  dataFromBase
 //Формируем массив из байтов 3 канала
@@ -1557,7 +1555,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 netDiagnosticBase();
 
             }
-#endif
+//#endif
 
 
             sendPackets(udpSocket, destip, local_port_udp);
@@ -3010,9 +3008,9 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     uint32_t currTime = HAL_GetTick();
-    //После 100 секунд работы каждые 15 секунд пропускаем пакет для избегания рассинхрона
+    //После 100 секунд работы каждые 30 секунд пропускаем пакет для избегания рассинхрона
     ++num_rcvd_SEGGER;
-    if ((currTime > 100000) && (num_rcvd_SEGGER % 10000 == 0)) {
+    if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
 
         ++num_skip_packet;
         if (SEGGER)

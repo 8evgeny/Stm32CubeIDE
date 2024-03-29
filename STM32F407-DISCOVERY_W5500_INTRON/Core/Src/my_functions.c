@@ -176,7 +176,7 @@ void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_
         strncpy((char *)dataForControl + i , (const char*)dataFromBase + 1 + i * 4 , 1);
     }
 }
-uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]) {
+uint8_t compare_data_in_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]) {
     if ( strncmp ((const char*)data, (const char*)trueData, 12) == 0){
         return 0;
     }

@@ -198,6 +198,23 @@ enum Commands{
     NET_DIAGNOSTIC,
     NO_COMMAND
 };
+enum stateBridge{
+    CONNECTION_YES,
+    CONNECTION_NO,
+};
+enum stateCompareDataInChannel{
+    NO_ERRORS,
+    ERROR_1,
+    ERROR_2,
+    ERROR_3,
+    ERROR_4,
+    ERROR_5,
+    ERROR_6,
+    ERROR_7,
+    ERROR_8,
+    ERROR_9,
+    ERROR_10,
+    };
 
 void sendPackets(uint8_t, uint8_t* , uint16_t );
 void receivePackets(uint8_t, uint8_t* , uint16_t );
@@ -235,7 +252,7 @@ void print_3_Channel(uint8_t data[MAX_PACKET_LEN]);
 void print_3_Channel_control(uint8_t data[MAX_PACKET_LEN]);
 void print_4_Channel(uint8_t data[MAX_PACKET_LEN]);
 void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]);
-uint8_t check_2_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]);
+uint8_t compare_data_in_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]);
 void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]);
 uint8_t checkCommands(uint8_t dataToDx[MAX_PACKET_LEN]);
 void printWiznetReg(void);

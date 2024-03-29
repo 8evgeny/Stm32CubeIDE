@@ -63,7 +63,9 @@ uint8_t SEGGER = 0;
 uint8_t NET_DIAGNOSTIC_BASE = 0;
 uint8_t NET_DIAGNOSTIC_ABON = 0;
 uint32_t numBadPackets2Channel = 0;
-uint8_t numGoodPackets2Channel = 0;
+uint32_t numGoodPackets2Channel = 0;
+uint32_t bridgeState = CONNECTION_NO;
+uint32_t compareDataInChannelState = NO_ERRORS;
 uint32_t startHttpTime = 0;
 #ifdef LFS
 extern lfs_t lfs;
@@ -1204,7 +1206,7 @@ void net_ini_WIZNET(uint8_t socketTCP)
     }
 
     ctlnetwork(CN_SET_NETINFO, (void*) &defaultNetInfo);
-    print_network_information();
+//    print_network_information();
     socket(sn_TCP, Sn_MR_TCP, local_port_web, 0/*SF_UNI_BLOCK*/); //У W5500 4 флага
     if (SOCK_OK == listen(sn_TCP))
         printf("socket %d (WEB) listening\r\n", sn_TCP);
@@ -1239,7 +1241,7 @@ void isSdCartOn()
         sdCartOn = 0;
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_2, GPIO_PIN_SET);     //EEPROM SPI
         HAL_GPIO_WritePin(GPIOE, GPIO_PIN_2, GPIO_PIN_RESET);   //SD
-        printf("********** SD not contain IP settings **********\r\n");
+        printf("******** IP setting loading from eeprom ********\r\n");
     }
     f_close(&fil);
 }
@@ -1514,28 +1516,38 @@ void sendReceiveUDP(uint8_t udpSocket)
 
             if (SEGGER){
                 print_1_Channel(dataFromBase);  // команды проскакивают в установившемся режиме одно и то же случайное значение
-//                print_2_Channel(dataFromBase);  // в установившемся режиме - EE
                 print_2_Channel_control(receivedDataFrom_2_Channel);
                 print_3_Channel(dataFromBase);  // в установившемся режиме - 2C (почти всегда)
                 print_4_Channel(dataFromBase);  // аудиоданные если нет - FF если есть 50 и далее в зависимости от уровня
-//                printAllChannel(dataFromBase);
             }
 
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
-            if (check_2_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
-                ++numBadPackets2Channel; //Инкрементируем счетчик
-                numGoodPackets2Channel = 0;
-                if (SEGGER){
-                    SEGGER_RTT_SetTerminal(6);
-                    SEGGER_RTT_printf(0, "bad packets: %d\r\n", numBadPackets2Channel);
-                    SEGGER_RTT_SetTerminal(0);
-                }
+            if (compare_data_in_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
+                ++compareDataInChannelState;
+                if (compareDataInChannelState == ERROR_1){
+                    numGoodPackets2Channel = 0;
+                    bridgeState = CONNECTION_NO;
+                    printf_DMA("*** Connection state NO *** \r\n");
+                    }
+
+                    ++numBadPackets2Channel; //Инкрементируем счетчик
+                    numGoodPackets2Channel = 0;
+                    if (SEGGER){
+                        SEGGER_RTT_SetTerminal(6);
+                        SEGGER_RTT_printf(0, "bad packets: %d\r\n", numBadPackets2Channel);
+                        SEGGER_RTT_SetTerminal(0);
+                    }
             }
             else {
                 ++numGoodPackets2Channel;
-                if (numGoodPackets2Channel == 100) //Подряд 100 хороших пакетов
+                if (numGoodPackets2Channel == 100){ //Подряд 100 хороших пакетов
                     numBadPackets2Channel = 0;
-            }
+                    compareDataInChannelState = NO_ERRORS;
+                    bridgeState = CONNECTION_YES;
+                    printf_DMA("*** Connection state YES ***\r\n");
+                    bridgeState = CONNECTION_YES;
+                }//100
+            }//совпало
 
             if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
 // Команда абоненту на перезагрузку
@@ -2233,7 +2245,7 @@ int main(void)
 
 
 //    ReadProtect(); //   <---------------------- защита от считывания
-    printf("************************************************\r\n");
+    printf("************* Start main firmware **************\r\n");
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
     dataToNewSectionInFlash[0][0] = ' '; //Фиктивный вызов чтобы возникла секция
     printf("build: %.4d-%.2d-%.2d %.2dh:%.2dm:%.2ds\r\n", 2000 + year_FW, month_FW, day_FW, hour_FW, minute_FW, second_FW);
@@ -2308,7 +2320,7 @@ int main(void)
     net_ini_WIZNET(HTTP_SOCKET); //TCP socket 0
 
     //Выводим регистры Wiznet(
-    printWiznetReg();
+//    printWiznetReg();
 
   /* USER CODE END 2 */
 
@@ -2322,7 +2334,7 @@ int main(void)
     uint8_t i;
     httpServer_init(TX_BUF_WEB, RX_BUF_WEB, MAX_HTTPSOCK, socknumlist);
     wep_define_func();
-    display_reg_webContent_list(); //Зарегистрированный web контент
+//    display_reg_webContent_list(); //Зарегистрированный web контент
 #endif
     if (SEGGER){
 //        SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);//При отключении JLINK - блокируется MK

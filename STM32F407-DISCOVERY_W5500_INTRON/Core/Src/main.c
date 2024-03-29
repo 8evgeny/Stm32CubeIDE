@@ -3035,12 +3035,21 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
 
         ++num_skip_packet;
+
         if (SEGGER)
             SEGGER_RTT_printf(0, "Received packet %d, System time %dd %dh %dm %ds \r\n", num_rcvd_SEGGER,
-                              currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
+                              currTime/(24 * 3600000),
+                              (currTime/3600000) % 24,
+                              (currTime/60000) % 60,
+                              (currTime/1000) % 60);
         //uart в DMA режиме
-        printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n", num_rcvd_SEGGER,
-                    currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
+        printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n",
+                    num_rcvd_SEGGER,
+                    currTime/(24 * 3600000),
+                   (currTime/3600000) % 24,
+                   (currTime/60000) % 60,
+                   (currTime/1000) % 60);
+
         ++num_rcvd_SEGGER;
         return;
     }

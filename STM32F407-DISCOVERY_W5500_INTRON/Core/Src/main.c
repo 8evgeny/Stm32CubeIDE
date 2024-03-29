@@ -206,7 +206,7 @@ static void MX_I2C2_Init(void);
 static void MX_IWDG_Init_abonent(void);
 static void MX_IWDG_Init_base(void);
 void testSpiEepromReadPage(uint32_t adr);
-void UART_Printf(const char* fmt, ...);
+void printf_DMA(const char* fmt, ...);
 extern void print_network_information(void);
 //void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //{
@@ -464,7 +464,7 @@ void printFileFromEEPROM(const char* nameFile_onEEPROM)
 void testReadFile(const char* nameFile_onEEPROM)
 {
 #ifdef LFS
-    UART_Printf("test read %s ... ", nameFile_onEEPROM); delayUS_ASM(1000);
+    printf_DMA("test read %s ... ", nameFile_onEEPROM); delayUS_ASM(1000);
     uint32_t time = HAL_GetTick();
     lfs_file_open(&lfs, &file, nameFile_onEEPROM, LFS_O_RDONLY );
     uint32_t numByteFile = lfs_file_size(&lfs, &file);
@@ -474,7 +474,7 @@ void testReadFile(const char* nameFile_onEEPROM)
     free (pindex);
     char tmp[30];
     sprintf(tmp,"%ds\n", (HAL_GetTick() - time)/1000 );
-    UART_Printf(tmp); delayUS_ASM(5000);
+    printf_DMA(tmp); delayUS_ASM(5000);
 #endif
 }
 
@@ -1082,7 +1082,7 @@ void SetParaametersFromEEPROM()
     char tmp[100];
     char tmp5[23];
     char tmp6[3];
-    UART_Printf("Load data from EEPROM\r\n"); delayUS_ASM(10000);
+    printf_DMA("Load data from EEPROM\r\n"); delayUS_ASM(10000);
     lfs_file_open(&lfs, &file, "host_IP", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_read(&lfs, &file, &tmp5, sizeof (tmp5));
     lfs_file_close(&lfs, &file);
@@ -1496,6 +1496,17 @@ void sendReceiveUDP(uint8_t udpSocket)
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
+//Поиск телеграммы
+
+
+
+
+
+
+
+
+//#if 0
+
 //Тут вывожу все каналы, полученные от базы  dataFromBase
 //Формируем массив из байтов 3 канала
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
@@ -1544,6 +1555,8 @@ void sendReceiveUDP(uint8_t udpSocket)
                 netDiagnosticBase();
 
             }
+//#endif
+
 
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);
@@ -2995,16 +3008,16 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     uint32_t currTime = HAL_GetTick();
-    //После 100 секунд работы каждые 15 секунд пропускаем пакет для избегания рассинхрона
+    //После 100 секунд работы каждые 30 секунд пропускаем пакет для избегания рассинхрона
     ++num_rcvd_SEGGER;
-    if ((currTime > 100000) && (num_rcvd_SEGGER % 10000 == 0)) {
+    if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
 
         ++num_skip_packet;
         if (SEGGER)
             SEGGER_RTT_printf(0, "Received packet %d, System time %dd %dh %dm %ds \r\n", num_rcvd_SEGGER,
                               currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
         //uart в DMA режиме
-        UART_Printf("Received packet %d, System time %dd %dh %dm %ds \r\n", num_rcvd_SEGGER,
+        printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n", num_rcvd_SEGGER,
                     currTime/(24 * 3600000), (currTime/3600000) % 24, (currTime/60000) % 60, (currTime/1000) % 60);
         ++num_rcvd_SEGGER;
         return;

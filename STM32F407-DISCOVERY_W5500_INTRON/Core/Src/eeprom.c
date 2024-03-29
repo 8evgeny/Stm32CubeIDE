@@ -1,7 +1,7 @@
 #include "eeprom.h"
 #include <string.h>
 #include "main.h"
-extern void UART_Printf(const char* fmt, ...);
+extern void printf_DMA(const char* fmt, ...);
 extern int AT24C_ReadBytes (uint16_t addr, uint8_t *buf, uint16_t bytes_count);
 extern int AT24C_WriteBytes (uint16_t addr,uint8_t *buf, uint16_t bytes_count);
 
@@ -29,7 +29,7 @@ int user_provided_block_device_read(const struct lfs_config *c,
                                     lfs_block_t block, lfs_off_t off,
                                     void *buffer, lfs_size_t size)
 {
-//    UART_Printf("*** device_read ***\n"); delayUS_ASM(2000);
+//    printf_DMA("*** device_read ***\n"); delayUS_ASM(2000);
     uint32_t addr = (uint32_t)(block * c->block_size + off);
     uint16_t NumByteToRead = (uint16_t)size;
     uint8_t *buffer_data = (uint8_t *)buffer;
@@ -42,7 +42,7 @@ int user_provided_block_device_prog(const struct lfs_config *c,
                                     lfs_block_t block, lfs_off_t off,
                                     const void *buffer, lfs_size_t size)
 {
-//    UART_Printf("*** device_prog ***\n"); delayUS_ASM(2000);
+//    printf_DMA("*** device_prog ***\n"); delayUS_ASM(2000);
     uint32_t addr = (uint32_t)(block * c->block_size + off);
     uint8_t *buffer_data = (uint8_t *)buffer;
 //    AT24C_WriteBytes(addr, buffer_data, size);
@@ -52,7 +52,7 @@ int user_provided_block_device_prog(const struct lfs_config *c,
 
 int user_provided_block_device_erase(const struct lfs_config *c, lfs_block_t block)
 {
-//    UART_Printf("*** user_provided_block_device_erase ***"); delayUS_ASM(10000);
+//    printf_DMA("*** user_provided_block_device_erase ***"); delayUS_ASM(10000);
     uint16_t i;
     uint32_t addr = (uint32_t)( block * c->block_size);
     memset((void *)littlefs_mem[addr], c->block_size, 0);
@@ -137,9 +137,9 @@ void FsForEeprom_test()
         if (fileToEEPROM_2[i] != fileFromEEPROM_2[i]) error = true;
     }
     if(error)
-        UART_Printf("FAILED\r\n"); delayUS_ASM(10000);
+        printf_DMA("FAILED\r\n"); delayUS_ASM(10000);
     if(!error)
-        UART_Printf("OK\r\n"); delayUS_ASM(10000);
+        printf_DMA("OK\r\n"); delayUS_ASM(10000);
 
 }
 #endif

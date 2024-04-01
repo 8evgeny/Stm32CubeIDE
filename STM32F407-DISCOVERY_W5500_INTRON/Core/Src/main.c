@@ -1608,6 +1608,8 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+//Очищаю сдвиговый регистр приема MISO
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
             //После обмена с ПЛИС конверсия данных
             convertToBaseData();
@@ -1616,8 +1618,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 //                print_2_Channel(dataFromDx);
 //            }
 
-            //Очищаю сдвиговый регистр приема MISO
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+
 
             if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
                 // После перезагрузки

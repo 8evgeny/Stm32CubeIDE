@@ -3031,54 +3031,55 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     ++num_rcvd_SEGGER;
-if (ABONENT_or_BASE == ABONENT) {
-//После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
+
+    if (ABONENT_or_BASE == ABONENT) {
+    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
         uint32_t currTime = HAL_GetTick();
         if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
             ++num_skip_packet;
-            if (SEGGER)
-                SEGGER_RTT_printf(0, "Received packet %d, System time %dd %dh %dm %ds \r\n", num_rcvd_SEGGER,
-                                  currTime/(24 * 3600000),
-                                  (currTime/3600000) % 24,
-                                  (currTime/60000) % 60,
-                                  (currTime/1000) % 60);
             //uart в DMA режиме
-            printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n",
+            printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
                         num_rcvd_SEGGER,
                         currTime/(24 * 3600000),
                        (currTime/3600000) % 24,
                        (currTime/60000) % 60,
                        (currTime/1000) % 60);
-            ++num_rcvd_SEGGER;
             return;
         }
-    }
-
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
-    if (ABONENT_or_BASE == BASE) {
-        recvfrom(sn, (uint8_t *)dataToBase, MAX_PACKET_LEN, destip, &destport);
-    }
-    if (ABONENT_or_BASE == ABONENT) {
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
 
         if (REBOOT == checkCommands(dataToDx)){
             red_blink  red_blink  red_blink
-            printf("Received command Reboot from Base\r\n");
+                printf("Received command Reboot from Base\r\n");
             reboot();
         }
-        if (NET_DIAGNOSTIC == checkCommands(dataToDx)){
-            red_blink  red_blink  red_blink
-            printf("Received command Net Diagnostic from Base\r\n");
-            //Записываем флаг диагностики в EEPROM
-            uint8_t netDiagnostic[1];
-            netDiagnostic[0] = 0x88;
-            EEPROM_SPI_WriteBuffer(netDiagnostic, netDiagnosticFlag, 1);
-            printf("netDiagnosticFlag set ON\r\n");
-            reboot();
-        }
-
+        //        if (NET_DIAGNOSTIC == checkCommands(dataToDx)){
+        //            red_blink  red_blink  red_blink
+        //            printf("Received command Net Diagnostic from Base\r\n");
+        //            //Записываем флаг диагностики в EEPROM
+        //            uint8_t netDiagnostic[1];
+        //            netDiagnostic[0] = 0x88;
+        //            EEPROM_SPI_WriteBuffer(netDiagnostic, netDiagnosticFlag, 1);
+        //            printf("netDiagnosticFlag set ON\r\n");
+        //            reboot();
+        //        }
     }
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
+
+    if (ABONENT_or_BASE == BASE) {
+        uint32_t currTime = HAL_GetTick();
+        if (num_rcvd_SEGGER % 20000 == 0) {
+            ++num_skip_packet;
+            //uart в DMA режиме
+            printf_DMA("Base received packet %d, System time %dd %dh %dm %ds \r\n",
+                       num_rcvd_SEGGER,
+                       currTime/(24 * 3600000),
+                       (currTime/3600000) % 24,
+                       (currTime/60000) % 60,
+                       (currTime/1000) % 60);
+        }
+        recvfrom(sn, (uint8_t *)dataToBase, MAX_PACKET_LEN, destip, &destport);
+    }
+
     indicateReceive(20,40);
 }
 

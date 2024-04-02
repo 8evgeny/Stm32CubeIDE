@@ -1398,16 +1398,11 @@ PE15  - cs Wifi
 
 void prepearUDP_PLIS(uint8_t udpSocket)
 {
-//    printf("prepearUDP_PLIS\r\n");
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
-
-    //Это будет INPUT - сигнал от ПЛИС 10 такт
-//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET); //CLK_EN (ПЛИС)
 }
 
 void convertToBaseData()
 {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
 //        dataFromDx[i] &= 0xF0;
 //        dataFromDx[i] |= 0x05; //Последнее E меняем на 5
@@ -1421,12 +1416,10 @@ void convertToBaseData()
         dataFromDx[i] = ~dataFromDx[i];
         dataFromDx[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
     }
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
 }
 
 void convertToAbonData()
 {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
     for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
 //        dataToDx[i] &= 0xF0;
 //        dataToDx[i] |= 0x05; //Последнее E меняем на 5
@@ -1440,7 +1433,6 @@ void convertToAbonData()
         dataToDx[i] = ~dataToDx[i];
         dataToDx[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
     }
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
 }
 
 void sendReceiveUDP(uint8_t udpSocket)
@@ -1476,9 +1468,9 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_TogglePin(GPIOD, Red_Led_Pin);
         if (ABONENT_or_BASE == BASE) {
             //Очищаю сдвиговый регистр передачи MOSI
-            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             //Обмен с ПЛИС
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
 
             HAL_SPI_TransmitReceive(&hspi2,
                                     #ifndef  fpgaToCpuBaseTestData
@@ -1495,9 +1487,9 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
 
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
             //Очищаю сдвиговый регистр приема MISO
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
 //Поиск телеграммы
 
@@ -1590,9 +1582,9 @@ void sendReceiveUDP(uint8_t udpSocket)
             convertToAbonData();
 
             //Очищаю сдвиговый регистр передачи MOSI
-            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             //Обмен с ПЛИС
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
             HAL_SPI_TransmitReceive(&hspi2,
                                     #ifndef  fpgaToCpuAbonTestData
                                     dataToDx ,
@@ -1607,9 +1599,9 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     test1 ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 //Очищаю сдвиговый регистр приема MISO
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
             //После обмена с ПЛИС конверсия данных
             convertToBaseData();

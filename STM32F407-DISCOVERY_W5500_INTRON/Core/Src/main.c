@@ -210,6 +210,22 @@ static void MX_IWDG_Init_base(void);
 void testSpiEepromReadPage(uint32_t adr);
 void printf_DMA(const char* fmt, ...);
 extern void print_network_information(void);
+
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if(GPIO_Pin== GPIO_PIN_15) {
+
+        SEGGER_RTT_SetTerminal(5);
+        SEGGER_RTT_printf(0, "EXTI\r\n");
+
+    } else{
+        __NOP();
+    }
+}
+
+
+
 //void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //{
 //// Этот обратный вызов автоматически вызывается HAL при возникновении события UEV

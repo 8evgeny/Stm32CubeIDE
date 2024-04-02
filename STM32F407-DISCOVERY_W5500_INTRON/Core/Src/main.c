@@ -1465,7 +1465,8 @@ void sendReceiveUDP(uint8_t udpSocket)
 // CPU_INT Жду пока плис поднимет флаг
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET)
     {
-        HAL_GPIO_TogglePin(GPIOD, Red_Led_Pin);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
         if (ABONENT_or_BASE == BASE) {
             //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
@@ -3022,6 +3023,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
     ++num_rcvd_SEGGER;
 
     if (ABONENT_or_BASE == ABONENT) {
@@ -3073,6 +3075,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     indicateReceive(20,40);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
 }
 
 int convertHexToDecimal(char hexadecimalnumber[2])

@@ -216,15 +216,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if(GPIO_Pin== GPIO_PIN_15) {
 
-        SEGGER_RTT_SetTerminal(5);
-        SEGGER_RTT_printf(0, "EXTI\r\n");
-
+//        SEGGER_RTT_SetTerminal(5);
+//        SEGGER_RTT_printf(0, "EXTI\r\n");
+//        SEGGER_RTT_SetTerminal(0);
     } else{
         __NOP();
     }
 }
-
-
 
 //void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //{

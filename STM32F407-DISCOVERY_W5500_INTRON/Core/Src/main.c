@@ -1465,7 +1465,6 @@ void sendReceiveUDP(uint8_t udpSocket)
 // CPU_INT Жду пока плис поднимет флаг
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET)
     {
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
         if (ABONENT_or_BASE == BASE) {
             //Очищаю сдвиговый регистр передачи MOSI
@@ -1491,7 +1490,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 //Поиск телеграммы
 
 
@@ -1606,6 +1605,8 @@ void sendReceiveUDP(uint8_t udpSocket)
 
             //После обмена с ПЛИС конверсия данных
             convertToBaseData();
+
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
 //            if (SEGGER){
 //                print_2_Channel(dataFromDx);

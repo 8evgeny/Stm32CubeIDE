@@ -1491,6 +1491,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
 //Поиск телеграммы
 
 
@@ -1570,7 +1571,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 
             }
 //#endif
-
+            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);
@@ -1611,7 +1612,6 @@ void sendReceiveUDP(uint8_t udpSocket)
 //            if (SEGGER){
 //                print_2_Channel(dataFromDx);
 //            }
-
 
 
             if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
@@ -3028,7 +3028,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     ++num_rcvd_SEGGER;
 
     if (ABONENT_or_BASE == ABONENT) {
-    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
+    //После 100 секунд работы каждые 60 секунд пропускаем на абоненте пакет для избегания рассинхрона
         uint32_t currTime = HAL_GetTick();
         if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
             ++num_skip_packet;
@@ -3063,8 +3063,6 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     if (ABONENT_or_BASE == BASE) {
         uint32_t currTime = HAL_GetTick();
         if (num_rcvd_SEGGER % 20000 == 0) {
-            ++num_skip_packet;
-            //uart в DMA режиме
             printf_DMA("Base received packet %d, System time %dd %dh %dm %ds \r\n",
                        num_rcvd_SEGGER,
                        currTime/(24 * 3600000),

@@ -3028,7 +3028,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     ++num_rcvd_SEGGER;
 
     if (ABONENT_or_BASE == ABONENT) {
-    //После 100 секунд работы каждые 60 секунд пропускаем на абоненте пакет для избегания рассинхрона
+    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
         uint32_t currTime = HAL_GetTick();
         if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
             ++num_skip_packet;

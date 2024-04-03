@@ -1533,7 +1533,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 ++compareDataInChannelState;
                 if (compareDataInChannelState == ERROR_1){
         printAllChannel(dataFromBase);
-        printAllChannel(dataToBase);
+//        printAllChannel(dataToBase);
                     numGoodPackets2Channel = 0;
                     bridgeState = CONNECTION_NO;
                     uint32_t currTime = HAL_GetTick();

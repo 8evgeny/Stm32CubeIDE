@@ -3063,22 +3063,38 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //Сигнал в ПЛИС
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET); //Логический анализатор
+    uint32_t currTime = HAL_GetTick();
     ++num_rcvd_SEGGER;
-
-    if (ABONENT_or_BASE == ABONENT) {
-    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
-        uint32_t currTime = HAL_GetTick();
-        if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
-            ++num_skip_packet;
-            //uart в DMA режиме
-            printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
+    if ((currTime > 100000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
+        if(nextPacketSkip == 1){
+            nextPacketSkip = 0;
+            printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n",
                         num_rcvd_SEGGER,
                         currTime/(24 * 3600000),
                        (currTime/3600000) % 24,
                        (currTime/60000) % 60,
                        (currTime/1000) % 60);
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
             return;
         }
+    }
+
+
+
+    if (ABONENT_or_BASE == ABONENT) {
+//    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
+//        uint32_t currTime = HAL_GetTick();
+//        if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
+//            ++num_skip_packet;
+//            //uart в DMA режиме
+//            printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
+//                        num_rcvd_SEGGER,
+//                        currTime/(24 * 3600000),
+//                       (currTime/3600000) % 24,
+//                       (currTime/60000) % 60,
+//                       (currTime/1000) % 60);
+//            return;
+//        }
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
 
         if (REBOOT == checkCommands(dataToDx)){
@@ -3099,15 +3115,14 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     if (ABONENT_or_BASE == BASE) {
-        uint32_t currTime = HAL_GetTick();
-        if (num_rcvd_SEGGER % 20000 == 0) {
-            printf_DMA("Base received packet %d, System time %dd %dh %dm %ds \r\n",
-                       num_rcvd_SEGGER,
-                       currTime/(24 * 3600000),
-                       (currTime/3600000) % 24,
-                       (currTime/60000) % 60,
-                       (currTime/1000) % 60);
-        }
+//        if (num_rcvd_SEGGER % 20000 == 0) {
+//            printf_DMA("Base received packet %d, System time %dd %dh %dm %ds \r\n",
+//                       num_rcvd_SEGGER,
+//                       currTime/(24 * 3600000),
+//                       (currTime/3600000) % 24,
+//                       (currTime/60000) % 60,
+//                       (currTime/1000) % 60);
+//        }
         recvfrom(sn, (uint8_t *)dataToBase, MAX_PACKET_LEN, destip, &destport);
     }
 

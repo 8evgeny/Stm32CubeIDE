@@ -60,7 +60,6 @@ uint32_t num_rcvd = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
 uint8_t nextPacketSkip = 0;
-uint32_t timeLastSkipPacket;
 uint8_t SEGGER = 0;
 uint8_t NET_DIAGNOSTIC_BASE = 0;
 uint8_t NET_DIAGNOSTIC_ABON = 0;
@@ -3078,28 +3077,26 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         if ((currTime > 100000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
             if(nextPacketSkip == 1){
                 nextPacketSkip = 0;
-                printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n",
+                printf_DMA("************************* packet %d, System time %dd %dh %dm %ds \r\n",
                            num_rcvd_SEGGER,
                            currTime/(24 * 3600000),
                            (currTime/3600000) % 24,
                            (currTime/60000) % 60,
                            (currTime/1000) % 60);
                 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
-                timeLastSkipPacket = currTime;
                 return;
             }
-//            if (currTime > timeLastSkipPacket + 60000){//Гарантированный отброс раз в минуту
-//                printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n",
-//                           num_rcvd_SEGGER,
-//                           currTime/(24 * 3600000),
-//                           (currTime/3600000) % 24,
-//                           (currTime/60000) % 60,
-//                           (currTime/1000) % 60);
-//                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
-//                timeLastSkipPacket = currTime;
-//                return;
-//            }
         }
+
+        if (num_rcvd_SEGGER % 120000 == 0) { //каждые 3 минуты - диагностическое сообщение
+            printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
+                       num_rcvd_SEGGER,
+                       currTime/(24 * 3600000),
+                       (currTime/3600000) % 24,
+                       (currTime/60000) % 60,
+                       (currTime/1000) % 60);
+        }
+
 
 
 //    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
@@ -3135,7 +3132,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     if (ABONENT_or_BASE == BASE) {
-        if (num_rcvd_SEGGER % 20000 == 0) {
+        if (num_rcvd_SEGGER % 120000 == 0) { //каждые 3 минуты - диагностическое сообщение
             printf_DMA("Base received packet %d, System time %dd %dh %dm %ds \r\n",
                        num_rcvd_SEGGER,
                        currTime/(24 * 3600000),

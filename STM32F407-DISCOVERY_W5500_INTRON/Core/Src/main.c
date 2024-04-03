@@ -59,6 +59,7 @@ uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
+uint8_t nextPacketSkip = 0;
 uint8_t SEGGER = 0;
 uint8_t NET_DIAGNOSTIC_BASE = 0;
 uint8_t NET_DIAGNOSTIC_ABON = 0;
@@ -3060,7 +3061,8 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //Сигнал в ПЛИС
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET); //Логический анализатор
     ++num_rcvd_SEGGER;
 
     if (ABONENT_or_BASE == ABONENT) {
@@ -3110,7 +3112,11 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     indicateReceive(20,40);
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
+        nextPacketSkip = 1;
+    }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
 }
 
 int convertHexToDecimal(char hexadecimalnumber[2])

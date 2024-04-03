@@ -1,4 +1,4 @@
-/* USER CODE BEGIN Header */
+﻿/* USER CODE BEGIN Header */
 
 #include "socket.h"
 #include "w5500.h"
@@ -60,6 +60,7 @@ uint32_t num_rcvd = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
 uint8_t nextPacketSkip = 0;
+uint32_t timeLastSkipPacket;
 uint8_t SEGGER = 0;
 uint8_t NET_DIAGNOSTIC_BASE = 0;
 uint8_t NET_DIAGNOSTIC_ABON = 0;
@@ -3081,6 +3082,18 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                        (currTime/60000) % 60,
                        (currTime/1000) % 60);
             HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
+            timeLastSkipPacket = currTime;
+            return;
+        }
+        if (currTime > timeLastSkipPacket + 60000){//Гарантированный отброс раз в минуту
+            printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n",
+                       num_rcvd_SEGGER,
+                       currTime/(24 * 3600000),
+                       (currTime/3600000) % 24,
+                       (currTime/60000) % 60,
+                       (currTime/1000) % 60);
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
+            timeLastSkipPacket = currTime;
             return;
         }
     }

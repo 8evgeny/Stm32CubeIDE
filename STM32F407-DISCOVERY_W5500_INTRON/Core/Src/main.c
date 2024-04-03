@@ -1,4 +1,4 @@
-/* USER CODE BEGIN Header */
+﻿/* USER CODE BEGIN Header */
 
 #include "socket.h"
 #include "w5500.h"
@@ -59,6 +59,8 @@ uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
+uint8_t nextPacketSkip = 0;
+uint32_t timeLastSkipPacket;
 uint8_t SEGGER = 0;
 uint8_t NET_DIAGNOSTIC_BASE = 0;
 uint8_t NET_DIAGNOSTIC_ABON = 0;
@@ -2895,6 +2897,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|GPIO_PIN_10|Green_Led_Pin|Orange_Led_Pin
                           |Red_Led_Pin|Blue_Led_Pin|GPIO_PIN_0|GPIO_PIN_1
                           |GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6
@@ -2937,6 +2942,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = GPIO_PIN_2;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB14 */
+  GPIO_InitStruct.Pin = GPIO_PIN_14;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB15 */
@@ -3050,23 +3068,53 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //Сигнал в ПЛИС
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET); //Логический анализатор
+    uint32_t currTime = HAL_GetTick();
     ++num_rcvd_SEGGER;
 
     if (ABONENT_or_BASE == ABONENT) {
-    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
-        uint32_t currTime = HAL_GetTick();
-        if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
-            ++num_skip_packet;
-            //uart в DMA режиме
-            printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
-                        num_rcvd_SEGGER,
-                        currTime/(24 * 3600000),
-                       (currTime/3600000) % 24,
-                       (currTime/60000) % 60,
-                       (currTime/1000) % 60);
-            return;
+
+        if ((currTime > 100000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
+            if(nextPacketSkip == 1){
+                nextPacketSkip = 0;
+                printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n",
+                           num_rcvd_SEGGER,
+                           currTime/(24 * 3600000),
+                           (currTime/3600000) % 24,
+                           (currTime/60000) % 60,
+                           (currTime/1000) % 60);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
+                timeLastSkipPacket = currTime;
+                return;
+            }
+//            if (currTime > timeLastSkipPacket + 60000){//Гарантированный отброс раз в минуту
+//                printf_DMA("Received packet %d, System time %dd %dh %dm %ds \r\n",
+//                           num_rcvd_SEGGER,
+//                           currTime/(24 * 3600000),
+//                           (currTime/3600000) % 24,
+//                           (currTime/60000) % 60,
+//                           (currTime/1000) % 60);
+//                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
+//                timeLastSkipPacket = currTime;
+//                return;
+//            }
         }
+
+
+//    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
+//        uint32_t currTime = HAL_GetTick();
+//        if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
+//            ++num_skip_packet;
+//            //uart в DMA режиме
+//            printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
+//                        num_rcvd_SEGGER,
+//                        currTime/(24 * 3600000),
+//                       (currTime/3600000) % 24,
+//                       (currTime/60000) % 60,
+//                       (currTime/1000) % 60);
+//            return;
+//        }
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
 
         if (REBOOT == checkCommands(dataToDx)){
@@ -3087,7 +3135,6 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     if (ABONENT_or_BASE == BASE) {
-        uint32_t currTime = HAL_GetTick();
         if (num_rcvd_SEGGER % 20000 == 0) {
             printf_DMA("Base received packet %d, System time %dd %dh %dm %ds \r\n",
                        num_rcvd_SEGGER,
@@ -3100,7 +3147,11 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     indicateReceive(20,40);
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
+        nextPacketSkip = 1;
+    }
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
 }
 
 int convertHexToDecimal(char hexadecimalnumber[2])

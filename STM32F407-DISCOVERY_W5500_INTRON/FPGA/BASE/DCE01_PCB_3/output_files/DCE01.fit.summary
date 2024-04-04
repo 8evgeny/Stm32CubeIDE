@@ -1,0 +1,16 @@
+Fitter Status : Successful - Thu Feb 29 14:35:41 2024
+Quartus II 64-Bit Version : 13.0.1 Build 232 06/12/2013 SP 1 SJ Web Edition
+Revision Name : DCE01
+Top-level Entity Name : DCE01
+Family : Cyclone IV E
+Device : EP4CE6E22I7
+Timing Models : Final
+Total logic elements : 297 / 6,272 ( 5 % )
+    Total combinational functions : 268 / 6,272 ( 4 % )
+    Dedicated logic registers : 183 / 6,272 ( 3 % )
+Total registers : 183
+Total pins : 50 / 92 ( 54 % )
+Total virtual pins : 0
+Total memory bits : 1,146 / 276,480 ( < 1 % )
+Embedded Multiplier 9-bit elements : 0 / 30 ( 0 % )
+Total PLLs : 2 / 2 ( 100 % )

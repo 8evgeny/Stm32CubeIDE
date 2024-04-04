@@ -1,0 +1,139 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 1991-2013 Altera Corporation
+# Your use of Altera Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Altera Program License 
+# Subscription Agreement, Altera MegaCore Function License 
+# Agreement, or other applicable license agreement, including, 
+# without limitation, that your use is for the sole purpose of 
+# programming logic devices manufactured by Altera and sold by 
+# Altera or its authorized distributors.  Please refer to the 
+# applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus II 64-Bit
+# Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
+# Date created = 22:47:21  July 30, 2023
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		DCE01_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus II software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE6E22I7
+set_global_assignment -name TOP_LEVEL_ENTITY DCE01
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "22:47:21  JULY 30, 2023"
+set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
+set_global_assignment -name BDF_FILE DCE01.bdf
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP "-40"
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 100
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
+set_location_assignment PIN_23 -to CLK_50MHz
+set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name USE_CONFIGURATION_DEVICE ON
+set_global_assignment -name CYCLONEIII_CONFIGURATION_DEVICE EPCS4
+set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
+set_global_assignment -name ON_CHIP_BITSTREAM_DECOMPRESSION OFF
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_global_assignment -name CYCLONEIII_CONFIGURATION_SCHEME "ACTIVE SERIAL"
+set_global_assignment -name DEVICE_FILTER_PACKAGE "ANY QFP"
+set_global_assignment -name DEVICE_FILTER_PIN_COUNT 144
+set_global_assignment -name DEVICE_FILTER_SPEED_GRADE 7
+set_global_assignment -name GENERATE_TTF_FILE ON
+set_global_assignment -name TRI_STATE_SPI_PINS ON
+set_global_assignment -name GENERATE_SVF_FILE ON
+set_global_assignment -name GENERATE_JAM_FILE ON
+set_global_assignment -name GENERATE_JBC_FILE ON
+set_global_assignment -name FORCE_CONFIGURATION_VCCIO ON
+set_location_assignment PIN_32 -to LED_32
+set_location_assignment PIN_33 -to LED_33
+set_global_assignment -name CDF_FILE output_files/Chain2.cdf
+set_location_assignment PIN_76 -to PWR_ON
+set_global_assignment -name BDF_FILE div15.bdf
+set_global_assignment -name BSF_FILE div15.bsf
+set_global_assignment -name QIP_FILE output_files/altpll0.qip
+set_location_assignment PIN_1 -to PMODE0
+set_location_assignment PIN_2 -to PMODE1
+set_location_assignment PIN_3 -to PMODE2
+set_location_assignment PIN_42 -to CLK_WIZNET
+set_location_assignment PIN_124 -to CLK_CPU
+set_location_assignment PIN_80 -to PLL_1_CLK_OUT
+set_location_assignment PIN_89 -to CSC_PLL_CLK
+set_location_assignment PIN_54 -to CLK_10_24MHz
+set_global_assignment -name QIP_FILE altpll1.qip
+set_location_assignment PIN_53 -to LOUT_DIS_DTS
+set_location_assignment PIN_68 -to DSTI
+set_global_assignment -name QIP_FILE DCE01_SFL.qip
+set_location_assignment PIN_69 -to WP_FLASH
+set_location_assignment PIN_49 -to SCK
+set_location_assignment PIN_52 -to MOSI
+set_location_assignment PIN_127 -to TEST_PIN_127
+set_location_assignment PIN_128 -to TEST_PIN_128
+set_location_assignment PIN_129 -to TEST_PIN_129
+set_location_assignment PIN_132 -to TEST_PIN_132
+set_location_assignment PIN_70 -to C4_LVDS
+set_location_assignment PIN_71 -to DSTI_LVDS
+set_location_assignment PIN_72 -to CDSTI_LVDS
+set_location_assignment PIN_84 -to F0_LVDS
+set_location_assignment PIN_85 -to DSTO_LVDS
+set_location_assignment PIN_86 -to CDSTO_LVDS
+set_location_assignment PIN_138 -to LED_G_138
+set_location_assignment PIN_125 -to LED_R_125
+set_location_assignment PIN_133 -to LED_R_133
+set_location_assignment PIN_135 -to LED_R_135
+set_location_assignment PIN_11 -to CPU_INT
+set_location_assignment PIN_51 -to MISO
+set_location_assignment PIN_50 -to WP_SPI_EEPROM
+set_location_assignment PIN_31 -to FPGA_ENA
+set_location_assignment PIN_58 -to EXT_Out
+set_location_assignment PIN_59 -to EXT_In
+set_location_assignment PIN_28 -to SHIFT_RST
+set_location_assignment PIN_66 -to RST_WIZNET
+set_global_assignment -name BDF_FILE codeind.bdf
+set_global_assignment -name VHDL_FILE dcdr01.vhd
+set_global_assignment -name BSF_FILE DCDR01.bsf
+set_location_assignment PIN_73 -to JUMP_1
+set_location_assignment PIN_74 -to JUMP_2
+set_location_assignment PIN_75 -to JUMP_3
+set_location_assignment PIN_83 -to JUMP_4
+set_location_assignment PIN_60 -to F0
+set_location_assignment PIN_55 -to C4
+set_location_assignment PIN_30 -to MODE
+set_global_assignment -name BDF_FILE "div5-1123.bdf"
+set_location_assignment PIN_64 -to EXT_In2
+set_global_assignment -name BDF_FILE shrg_ctrl6.bdf
+set_global_assignment -name QIP_FILE altpll2.qip
+set_location_assignment PIN_126 -to ALERT
+set_global_assignment -name BSF_FILE shrg_ctrl7.bsf
+set_global_assignment -name BDF_FILE shrg_ctrl7.bdf
+set_global_assignment -name BSF_FILE shrg_ctrl8.bsf
+set_global_assignment -name BDF_FILE shrg_ctrl8.bdf
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

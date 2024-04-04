@@ -186,6 +186,7 @@ extern char dest_IP[16];
 extern char gate_IP[16];
 extern char mask_IP[16];
 extern char mac[18];
+extern char version[6];
 FATFS fs;
 FIL fil;
 /* USER CODE END PV */
@@ -2265,10 +2266,13 @@ int main(void)
 //  printf("end address APP %d\r\n", (uint32_t*)&_eapp);
 //  printf("start address SHARED_MEMORY %d\r\n", (uint32_t*)&_smem);
 
+// char version[6]  =  "02_02";
+
 
 //    ReadProtect(); //   <---------------------- защита от считывания
     printf("************* Start main firmware **************\r\n");
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
+    sprintf(version, "%.2d_%.2d",main_FW, patch_FW);
     dataToNewSectionInFlash[0][0] = ' '; //Фиктивный вызов чтобы возникла секция
     printf("build: %.4d-%.2d-%.2d %.2dh:%.2dm:%.2ds\r\n", 2000 + year_FW, month_FW, day_FW, hour_FW, minute_FW, second_FW);
 

@@ -839,7 +839,7 @@ char dest_IP[16] =  "192.168.001.200";
 char gate_IP[16] =  "192.168.001.001";
 char mask_IP[16] =  "255.255.255.000";
 char mac[18]     =  "00:15:42:BF:F0:50";
-char version[6]  =  "02_02";
+char version[6]  =  "00_00";
 
 #ifndef PROD
 //Код WIZNET

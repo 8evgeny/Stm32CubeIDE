@@ -1182,6 +1182,7 @@ void wep_define_func(void)
     reg_httpServer_webContent((uint8_t *)"gate_IP", (uint8_t *)gate_IP);
     reg_httpServer_webContent((uint8_t *)"mask_IP", (uint8_t *)mask_IP);
     reg_httpServer_webContent((uint8_t *)"mac_adr", (uint8_t *)mac);
+    reg_httpServer_webContent((uint8_t *)"version", (uint8_t *)version);
 #endif
 #ifndef   PROD
     reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET

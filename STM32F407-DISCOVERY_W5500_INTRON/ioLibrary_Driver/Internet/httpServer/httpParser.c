@@ -98,6 +98,7 @@ void find_http_uri_type(
 
 	if 	(strstr(buf, ".htm")	|| strstr(buf, ".html"))	*type = PTYPE_HTML;
     else if  (
+        strstr(buf, "mode") ||
         strstr(buf, "version") ||
         strstr(buf, "mac_adr") ||
         strstr(buf, "host_IP") ||

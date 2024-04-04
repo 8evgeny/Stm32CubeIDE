@@ -187,6 +187,8 @@ extern char gate_IP[16];
 extern char mask_IP[16];
 extern char mac[18];
 extern char version[6];
+extern char mode[8];
+
 FATFS fs;
 FIL fil;
 /* USER CODE END PV */
@@ -1184,6 +1186,7 @@ void wep_define_func(void)
     reg_httpServer_webContent((uint8_t *)"mask_IP", (uint8_t *)mask_IP);
     reg_httpServer_webContent((uint8_t *)"mac_adr", (uint8_t *)mac);
     reg_httpServer_webContent((uint8_t *)"version", (uint8_t *)version);
+    reg_httpServer_webContent((uint8_t *)"mode", (uint8_t *)mode);
 #endif
 #ifndef   PROD
     reg_httpServer_webContent((uint8_t *)"index.html", (uint8_t *)index_page_WIZNET);       //web сервер WIZNET
@@ -2279,11 +2282,13 @@ int main(void)
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = BASE;
         printf("work in BASE\r\n");
+        sprintf(mode, "Base   ");
         MX_IWDG_Init_base(); //Часть моста ближняя к базе перезагружается через 22 секунды
     }
     else { //Я в абоненте - сигналл выдает ПЛИС
         ABONENT_or_BASE = ABONENT;
         printf("work in ABONENT\r\n");
+        sprintf(mode, "Abonent");
         MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 26 секунд
     }
     f_mount(&fs, "", 0);

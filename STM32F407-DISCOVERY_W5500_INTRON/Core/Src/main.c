@@ -3087,7 +3087,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef abonSendTestData
-        sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
+        sendto(sn, (uint8_t *)dataFromDx, MAX_PACKET_LEN, destip, destport);
 #endif
     }
 

@@ -85,7 +85,8 @@ extern int8_t http_disconnect(uint8_t sn);
 
 uint8_t CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
 uint8_t CCMRAMDATA dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
-uint8_t CCMRAMDATA bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер
+uint8_t CCMRAMDATA dataFromBase2[MAX_PACKET_LEN];
+char CCMRAMDATA bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер
 uint8_t CCMRAMDATA indexFpgaBufData = 0;
 uint8_t CCMRAMDATA indexSendBufData = 0;
 uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
@@ -1505,15 +1506,18 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     #endif
                                     #ifndef  cpuToFpgaBaseTestData
                                     dataFromBase ,
-//                                    (uint8_t*)bufDataFromBase[indexFpgaBufData * MAX_PACKET_LEN],
+//                                    (uint8_t*)(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData) ,
                                     #endif
                                     #ifdef  cpuToFpgaBaseTestData
                                     TEST_DATA ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
 
-            strncpy(bufDataFromBase[MAX_PACKET_LEN * indexFpgaBufData],
-                    dataFromBase, MAX_PACKET_LEN );
+            strncpy(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData,
+                    (char *) dataFromBase, MAX_PACKET_LEN );
+
+//            strncpy((char *)bufDataFromBase[MAX_PACKET_LEN * indexFpgaBufData],
+//                    (const char *)dataFromBase, MAX_PACKET_LEN );
 //            ++indexFpgaBufData;
 //            if (indexFpgaBufData == BUF_PACKET_SIZE)
 //                indexFpgaBufData = 0;
@@ -3070,8 +3074,11 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef baseSendTestData
+
+        strncpy((char *)dataFromBase, bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData, MAX_PACKET_LEN );
+
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
-//        sendto(sn, (uint8_t *)bufDataFromBase[MAX_PACKET_LEN * indexFpgaBufData], MAX_PACKET_LEN, destip, destport);
+
 //        ++indexSendBufData;
 //        if (indexSendBufData == BUF_PACKET_SIZE)
 //            indexFpgaBufData = 0;

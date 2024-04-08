@@ -1642,6 +1642,13 @@ void sendReceiveUDP(uint8_t udpSocket)
             //После обмена с ПЛИС конверсия данных
             convertToBaseData();
 
+//Копирую данные для отправки базе в буфер
+//            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
+//                    (char *) dataFromDx, MAX_PACKET_LEN );
+//            ++indexFpgaBufData;
+//            if (indexFpgaBufData == BUF_PACKET_SIZE)
+//                indexFpgaBufData = 0;
+
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
 //            if (SEGGER){
@@ -3087,6 +3094,10 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef abonSendTestData
+//        strncpy((char *)dataFromDx, bufDataFromAbon + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
+//        ++indexSendBufData;
+//        if (indexSendBufData == BUF_PACKET_SIZE)
+//            indexSendBufData = 0;
         sendto(sn, (uint8_t *)dataFromDx, MAX_PACKET_LEN, destip, destport);
 #endif
     }

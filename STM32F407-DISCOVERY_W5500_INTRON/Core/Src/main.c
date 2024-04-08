@@ -1528,14 +1528,6 @@ void sendReceiveUDP(uint8_t udpSocket)
 //Поиск телеграммы
 
 
-
-
-
-
-
-
-//#if 0
-
 //Тут вывожу все каналы, полученные от базы  dataFromBase
 //Формируем массив из байтов 3 канала
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
@@ -1552,7 +1544,6 @@ void sendReceiveUDP(uint8_t udpSocket)
                 ++compareDataInChannelState;
                 if (compareDataInChannelState == ERROR_1){
         printAllChannel(dataFromBase);
-//        printAllChannel(dataToBase);
                     numGoodPackets2Channel = 0;
                     bridgeState = CONNECTION_NO;
                     uint32_t currTime = HAL_GetTick();
@@ -1638,11 +1629,11 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     MAX_PACKET_LEN, 0x1000);
 
 //Копирую данные для отправки базе в буфер
-            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
-                    (char *) dataFromDx, MAX_PACKET_LEN );
-            ++indexFpgaBufData;
-            if (indexFpgaBufData == BUF_PACKET_SIZE)
-                indexFpgaBufData = 0;
+//            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
+//                    (char *) dataFromDx, MAX_PACKET_LEN );
+//            ++indexFpgaBufData;
+//            if (indexFpgaBufData == BUF_PACKET_SIZE)
+//                indexFpgaBufData = 0;
 
 //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
@@ -3083,10 +3074,10 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         ++indexSendBufData;
         if (indexSendBufData == BUF_PACKET_SIZE)
             indexSendBufData = 0;
+
         // Перед отправкой конверсия данных
         convertToAbonData();
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
-
 
 #endif
     }
@@ -3095,10 +3086,13 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef abonSendTestData
+
+// Если раскомментировать то все ломается - буфер только на базе
 //        strncpy((char *)dataFromDx, bufDataFromAbon + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
 //        ++indexSendBufData;
 //        if (indexSendBufData == BUF_PACKET_SIZE)
 //            indexSendBufData = 0;
+
         //После обмена с ПЛИС конверсия данных
         convertToBaseData();
         sendto(sn, (uint8_t *)dataFromDx, MAX_PACKET_LEN, destip, destport);

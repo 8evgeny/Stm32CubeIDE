@@ -1506,21 +1506,18 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     #endif
                                     #ifndef  cpuToFpgaBaseTestData
                                     dataFromBase ,
-//                                    (uint8_t*)(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData) ,
                                     #endif
                                     #ifdef  cpuToFpgaBaseTestData
                                     TEST_DATA ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
 
+//Копирую данные для отправки абоненту в буфер
             strncpy(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData,
                     (char *) dataFromBase, MAX_PACKET_LEN );
-
-//            strncpy((char *)bufDataFromBase[MAX_PACKET_LEN * indexFpgaBufData],
-//                    (const char *)dataFromBase, MAX_PACKET_LEN );
-//            ++indexFpgaBufData;
-//            if (indexFpgaBufData == BUF_PACKET_SIZE)
-//                indexFpgaBufData = 0;
+            ++indexFpgaBufData;
+            if (indexFpgaBufData == BUF_PACKET_SIZE)
+                indexFpgaBufData = 0;
 
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
@@ -3075,13 +3072,13 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #endif
 #ifndef baseSendTestData
 
-        strncpy((char *)dataFromBase, bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData, MAX_PACKET_LEN );
-
+        strncpy((char *)dataFromBase, bufDataFromBase + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
+        ++indexSendBufData;
+        if (indexSendBufData == BUF_PACKET_SIZE)
+            indexSendBufData = 0;
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
 
-//        ++indexSendBufData;
-//        if (indexSendBufData == BUF_PACKET_SIZE)
-//            indexFpgaBufData = 0;
+
 #endif
     }
     if (ABONENT_or_BASE == ABONENT) {

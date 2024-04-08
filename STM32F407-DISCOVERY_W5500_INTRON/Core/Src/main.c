@@ -85,6 +85,11 @@ extern int8_t http_disconnect(uint8_t sn);
 
 uint8_t CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
 uint8_t CCMRAMDATA dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
+uint8_t CCMRAMDATA dataFromBase2[MAX_PACKET_LEN];
+char CCMRAMDATA bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер базы
+char CCMRAMDATA bufDataFromAbon[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер абонента
+uint16_t CCMRAMDATA indexFpgaBufData = 0;
+uint16_t CCMRAMDATA indexSendBufData = BUF_PACKET_SIZE/2;
 uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
 uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
 uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
@@ -1450,8 +1455,8 @@ void convertToAbonData()
 //        dataToDx[i] |= tmp;
 
 //Без tmp
-        dataToDx[i] = ~dataToDx[i];
-        dataToDx[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
+        dataFromBase[i] = ~dataFromBase[i];
+        dataFromBase[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
     }
 }
 
@@ -1491,6 +1496,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             //Обмен с ПЛИС
+            //Данные от ПЛИС кладу в буфер
 
             HAL_SPI_TransmitReceive(&hspi2,
                                     #ifndef  fpgaToCpuBaseTestData
@@ -1507,6 +1513,13 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
 
+//Копирую данные для отправки абоненту в буфер
+            strncpy(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData,
+                    (char *) dataFromBase, MAX_PACKET_LEN );
+            ++indexFpgaBufData;
+            if (indexFpgaBufData == BUF_PACKET_SIZE)
+                indexFpgaBufData = 0;
+
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
@@ -1514,14 +1527,6 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
 //Поиск телеграммы
 
-
-
-
-
-
-
-
-//#if 0
 
 //Тут вывожу все каналы, полученные от базы  dataFromBase
 //Формируем массив из байтов 3 канала
@@ -1539,7 +1544,6 @@ void sendReceiveUDP(uint8_t udpSocket)
                 ++compareDataInChannelState;
                 if (compareDataInChannelState == ERROR_1){
         printAllChannel(dataFromBase);
-//        printAllChannel(dataToBase);
                     numGoodPackets2Channel = 0;
                     bridgeState = CONNECTION_NO;
                     uint32_t currTime = HAL_GetTick();
@@ -1573,7 +1577,8 @@ void sendReceiveUDP(uint8_t udpSocket)
                 }//100
             }//совпало
 
-            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
+            if (numBadPackets2Channel == 6000) {
+//            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
 // Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
                 printf("Sending command Reboot to abonent\r\n");
@@ -1601,8 +1606,8 @@ void sendReceiveUDP(uint8_t udpSocket)
         }
 
         if (ABONENT_or_BASE == ABONENT) {
-            //Перед обменом с ПЛИС конверсия данных
-            convertToAbonData();
+//            Перед обменом с ПЛИС конверсия данных - теперь в Базе перед отправкой пакета
+//            convertToAbonData();
 
             //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
@@ -1622,12 +1627,17 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     test1 ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
+
+//Копирую данные для отправки базе в буфер
+//            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
+//                    (char *) dataFromDx, MAX_PACKET_LEN );
+//            ++indexFpgaBufData;
+//            if (indexFpgaBufData == BUF_PACKET_SIZE)
+//                indexFpgaBufData = 0;
+
 //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
-            //После обмена с ПЛИС конверсия данных
-            convertToBaseData();
 
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
@@ -2277,7 +2287,7 @@ int main(void)
     printf("version firmware: %.2d_%.2d\r\n", main_FW, patch_FW);
     sprintf(version, "%.2d_%.2d",main_FW, patch_FW);
     dataToNewSectionInFlash[0][0] = ' '; //Фиктивный вызов чтобы возникла секция
-    printf("build: %.4d-%.2d-%.2d %.2dh:%.2dm:%.2ds\r\n", 2000 + year_FW, month_FW, day_FW, hour_FW, minute_FW, second_FW);
+    printf("build: %.4d-%.2d-%.2d %.2X:%.2X:%.2X\r\n", 2000 + year_FW, month_FW, day_FW, hour_FW, minute_FW, second_FW);
 
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET){ //Я в централи - сигналл выдает ПЛИС
         ABONENT_or_BASE = BASE;
@@ -3059,7 +3069,16 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef baseSendTestData
+
+        strncpy((char *)dataFromBase, bufDataFromBase + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
+        ++indexSendBufData;
+        if (indexSendBufData == BUF_PACKET_SIZE)
+            indexSendBufData = 0;
+
+        // Перед отправкой конверсия данных
+        convertToAbonData();
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
+
 #endif
     }
     if (ABONENT_or_BASE == ABONENT) {
@@ -3067,6 +3086,15 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef abonSendTestData
+
+// Если раскомментировать то все ломается - буфер только на базе
+//        strncpy((char *)dataFromDx, bufDataFromAbon + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
+//        ++indexSendBufData;
+//        if (indexSendBufData == BUF_PACKET_SIZE)
+//            indexSendBufData = 0;
+
+        //После обмена с ПЛИС конверсия данных
+        convertToBaseData();
         sendto(sn, (uint8_t *)dataFromDx, MAX_PACKET_LEN, destip, destport);
 #endif
     }

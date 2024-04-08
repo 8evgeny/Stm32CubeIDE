@@ -1640,9 +1640,6 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-            //После обмена с ПЛИС конверсия данных
-            convertToBaseData();
-
 //Копирую данные для отправки базе в буфер
 //            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
 //                    (char *) dataFromDx, MAX_PACKET_LEN );
@@ -3099,6 +3096,8 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 //        ++indexSendBufData;
 //        if (indexSendBufData == BUF_PACKET_SIZE)
 //            indexSendBufData = 0;
+        //После обмена с ПЛИС конверсия данных
+        convertToBaseData();
         sendto(sn, (uint8_t *)dataFromDx, MAX_PACKET_LEN, destip, destport);
 #endif
     }

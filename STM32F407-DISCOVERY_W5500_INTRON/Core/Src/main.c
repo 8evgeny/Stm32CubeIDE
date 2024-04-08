@@ -1636,9 +1636,6 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     test1 ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
-//Очищаю сдвиговый регистр приема MISO
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
 //Копирую данные для отправки базе в буфер
             strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
@@ -1646,6 +1643,10 @@ void sendReceiveUDP(uint8_t udpSocket)
             ++indexFpgaBufData;
             if (indexFpgaBufData == BUF_PACKET_SIZE)
                 indexFpgaBufData = 0;
+
+//Очищаю сдвиговый регистр приема MISO
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 

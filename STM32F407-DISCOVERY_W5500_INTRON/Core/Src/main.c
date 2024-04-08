@@ -2308,8 +2308,6 @@ int main(void)
         printf("work in ABONENT\r\n");
         sprintf(mode, "Abonent");
         MX_IWDG_Init_abonent(); //Часть моста ближняя к абоненту перезагружается через 26 секунд
-
-        indexSendBufData = 0;
     }
     f_mount(&fs, "", 0);
     isSdCartOn();       //Проверка вставлена ли SD карта

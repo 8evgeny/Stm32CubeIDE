@@ -1455,8 +1455,8 @@ void convertToAbonData()
 //        dataToDx[i] |= tmp;
 
 //Без tmp
-        dataToDx[i] = ~dataToDx[i];
-        dataToDx[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
+        dataFromBase[i] = ~dataFromBase[i];
+        dataFromBase[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
     }
 }
 
@@ -1615,8 +1615,8 @@ void sendReceiveUDP(uint8_t udpSocket)
         }
 
         if (ABONENT_or_BASE == ABONENT) {
-            //Перед обменом с ПЛИС конверсия данных
-            convertToAbonData();
+//            Перед обменом с ПЛИС конверсия данных - теперь в Базе перед отправкой пакета
+//            convertToAbonData();
 
             //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
@@ -1641,11 +1641,11 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
 //Копирую данные для отправки базе в буфер
-//            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
-//                    (char *) dataFromDx, MAX_PACKET_LEN );
-//            ++indexFpgaBufData;
-//            if (indexFpgaBufData == BUF_PACKET_SIZE)
-//                indexFpgaBufData = 0;
+            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
+                    (char *) dataFromDx, MAX_PACKET_LEN );
+            ++indexFpgaBufData;
+            if (indexFpgaBufData == BUF_PACKET_SIZE)
+                indexFpgaBufData = 0;
 
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
@@ -3082,6 +3082,8 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         ++indexSendBufData;
         if (indexSendBufData == BUF_PACKET_SIZE)
             indexSendBufData = 0;
+        // Перед отправкой конверсия данных
+        convertToAbonData();
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
 
 

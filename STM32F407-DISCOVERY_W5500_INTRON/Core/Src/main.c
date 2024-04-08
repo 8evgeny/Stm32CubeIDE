@@ -86,9 +86,10 @@ extern int8_t http_disconnect(uint8_t sn);
 uint8_t CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
 uint8_t CCMRAMDATA dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
 uint8_t CCMRAMDATA dataFromBase2[MAX_PACKET_LEN];
-char CCMRAMDATA bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер
-uint8_t CCMRAMDATA indexFpgaBufData = 0;
-uint8_t CCMRAMDATA indexSendBufData = BUF_PACKET_SIZE/2;
+char CCMRAMDATA bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер базы
+char CCMRAMDATA bufDataFromAbon[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер абонента
+uint16_t CCMRAMDATA indexFpgaBufData = 0;
+uint16_t CCMRAMDATA indexSendBufData = BUF_PACKET_SIZE/2;
 uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
 uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
 uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];

@@ -159,7 +159,7 @@ extern "C" {
 #include "stdio.h"
 
 #define MAX_PACKET_LEN 48
-#define BUF_PACKET_SIZE 200
+#define BUF_PACKET_SIZE 100
 
 #define TEST_DATA test6
 enum netDiagnostic{

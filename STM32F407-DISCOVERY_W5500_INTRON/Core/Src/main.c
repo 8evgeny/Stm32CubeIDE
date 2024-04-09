@@ -1494,9 +1494,11 @@ void sendReceiveUDP(uint8_t udpSocket)
     {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
         if (ABONENT_or_BASE == BASE) {
+#ifdef  enable_RESET_FPGA
 //Очищаю сдвиговый регистр передачи MOSI
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+#endif
             //Обмен с ПЛИС
             //Данные от ПЛИС кладу в буфер
 
@@ -1522,10 +1524,11 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             if (indexFpgaBufData == BUF_PACKET_SIZE)
                 indexFpgaBufData = 0;
 #endif
+#ifdef  enable_RESET_FPGA
 //Очищаю сдвиговый регистр приема MISO
-HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+#endif
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
 //Поиск телеграммы
@@ -1580,7 +1583,7 @@ HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
                 }//100
             }//совпало
 
-            if (numBadPackets2Channel == 6000) {
+            if (numBadPackets2Channel == 3000) {//За 4.5 секунды связь не встала
 //            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
 // Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
@@ -1608,12 +1611,11 @@ HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
         }
 
         if (ABONENT_or_BASE == ABONENT) {
-//            Перед обменом с ПЛИС конверсия данных - теперь в Базе перед отправкой пакета
-//            convertToAbonData();
-
+#ifdef  enable_RESET_FPGA
 //Очищаю сдвиговый регистр передачи MOSI
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+#endif
             //Обмен с ПЛИС
             HAL_SPI_TransmitReceive(&hspi2,
                                     #ifndef  fpgaToCpuAbonTestData
@@ -1638,10 +1640,11 @@ HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             if (indexFpgaBufData == BUF_PACKET_SIZE)
                 indexFpgaBufData = 0;
 #endif
+#ifdef  enable_RESET_FPGA
 //Очищаю сдвиговый регистр приема MISO
-HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+#endif
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
 //            if (SEGGER){

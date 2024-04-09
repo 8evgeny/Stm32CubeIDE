@@ -17,6 +17,7 @@ add_definitions(-DCS_WIZNET_PE4)      #во второй ревизии CS - PD1
 #add_definitions(-Denable_twin_reset_to_restore_default_IP)
 add_definitions(-Denable_SEGGER) #on/off SEGGER
 #add_definitions(-Denable_BUFFER) #on/off BUFFER
+add_definitions(-Denable_RESET_FPGA) #сброс регистров в ПЛИС
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета
 #add_definitions(-DTLS_ON)         #Режим http / https
 add_definitions(-DEEPROMADRESS8bit) #Если EEPROM i2c большая (адрес 16 бит - строчку закомментировать)

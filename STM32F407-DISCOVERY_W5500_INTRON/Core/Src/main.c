@@ -3106,7 +3106,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     HAL_GPIO_WritePin(GPIOD, DEBUG1_Pin, GPIO_PIN_RESET);
-    indicateSend(2,4);
+    indicateSend(1,2);
 }
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
@@ -3172,7 +3172,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         recvfrom(sn, (uint8_t *)dataToBase, MAX_PACKET_LEN, destip, &destport);
     }
 
-    indicateReceive(2,4);
+    indicateReceive(1,2);
 //    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
 //        nextPacketSkip = 1;
 //    }

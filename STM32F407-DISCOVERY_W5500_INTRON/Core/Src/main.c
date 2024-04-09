@@ -1430,7 +1430,7 @@ void prepearUDP_PLIS(uint8_t udpSocket)
 
 void convertToBaseData()
 {
-    for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
+    for (uint16_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
 //        dataFromDx[i] &= 0xF0;
 //        dataFromDx[i] |= 0x05; //Последнее E меняем на 5
 //        uint8_t tmp = dataFromDx[i]; //Первый октет инвертируем
@@ -1447,7 +1447,7 @@ void convertToBaseData()
 
 void convertToAbonData()
 {
-    for (uint8_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
+    for (uint16_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
 //        dataToDx[i] &= 0xF0;
 //        dataToDx[i] |= 0x05; //Последнее E меняем на 5
 //        uint8_t tmp = dataToDx[i]; //Первый октет инвертируем
@@ -1529,8 +1529,8 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 #endif
-        HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
-        HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
+//        HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
 //Поиск телеграммы
 
 
@@ -1546,63 +1546,63 @@ void sendReceiveUDP(uint8_t udpSocket)
             }
 
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
-            if (compare_data_in_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
-                ++compareDataInChannelState;
-                if (compareDataInChannelState == ERROR_1){
-        printAllChannel(dataFromBase);
-                    numGoodPackets2Channel = 0;
-                    bridgeState = CONNECTION_NO;
-                    uint32_t currTime = HAL_GetTick();
-                    printf_DMA("*** Connection LOST ******* System time %dd %dh %dm %ds \r\n",
-                                currTime/(24 * 3600000),
-                                (currTime/3600000) % 24,
-                                (currTime/60000) % 60,
-                                (currTime/1000) % 60);
-                }
-                ++numBadPackets2Channel; //Инкрементируем счетчик
-                numGoodPackets2Channel = 0;
-                if (SEGGER){
-                    SEGGER_RTT_SetTerminal(6);
-                    SEGGER_RTT_printf(0, "bad packets: %d\r\n", numBadPackets2Channel);
-                    SEGGER_RTT_SetTerminal(0);
-                }
-            }
-            else {
-                ++numGoodPackets2Channel;
-                if (numGoodPackets2Channel == 100){ //Подряд 100 хороших пакетов
-                    numBadPackets2Channel = 0;
-                    compareDataInChannelState = NO_ERRORS;
-                    bridgeState = CONNECTION_YES;
-                    uint32_t currTime = HAL_GetTick();
-                    printf_DMA("*** Connection state OK *** System time %dd %dh %dm %ds \r\n",
-                               currTime/(24 * 3600000),
-                               (currTime/3600000) % 24,
-                               (currTime/60000) % 60,
-                               (currTime/1000) % 60);
-                    bridgeState = CONNECTION_YES;
-                }//100
-            }//совпало
+//            if (compare_data_in_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
+//                ++compareDataInChannelState;
+//                if (compareDataInChannelState == ERROR_1){
+//        printAllChannel(dataFromBase);
+//                    numGoodPackets2Channel = 0;
+//                    bridgeState = CONNECTION_NO;
+//                    uint32_t currTime = HAL_GetTick();
+//                    printf_DMA("*** Connection LOST ******* System time %dd %dh %dm %ds \r\n",
+//                                currTime/(24 * 3600000),
+//                                (currTime/3600000) % 24,
+//                                (currTime/60000) % 60,
+//                                (currTime/1000) % 60);
+//                }
+//                ++numBadPackets2Channel; //Инкрементируем счетчик
+//                numGoodPackets2Channel = 0;
+//                if (SEGGER){
+//                    SEGGER_RTT_SetTerminal(6);
+//                    SEGGER_RTT_printf(0, "bad packets: %d\r\n", numBadPackets2Channel);
+//                    SEGGER_RTT_SetTerminal(0);
+//                }
+//            }
+//            else {
+//                ++numGoodPackets2Channel;
+//                if (numGoodPackets2Channel == 100){ //Подряд 100 хороших пакетов
+//                    numBadPackets2Channel = 0;
+//                    compareDataInChannelState = NO_ERRORS;
+//                    bridgeState = CONNECTION_YES;
+//                    uint32_t currTime = HAL_GetTick();
+//                    printf_DMA("*** Connection state OK *** System time %dd %dh %dm %ds \r\n",
+//                               currTime/(24 * 3600000),
+//                               (currTime/3600000) % 24,
+//                               (currTime/60000) % 60,
+//                               (currTime/1000) % 60);
+//                    bridgeState = CONNECTION_YES;
+//                }//100
+//            }//совпало
 
-            if (numBadPackets2Channel == 3000) {//За 4.5 секунды связь не встала
-//            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
-// Команда абоненту на перезагрузку
-                sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
-                printf("Sending command Reboot to abonent\r\n");
-                red_blink  red_blink  red_blink
-                reboot();
-            }
+//            if (numBadPackets2Channel == 3000) {//За 4.5 секунды связь не встала
+////            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
+//// Команда абоненту на перезагрузку
+//                sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
+//                printf("Sending command Reboot to abonent\r\n");
+//                red_blink  red_blink  red_blink
+//                reboot();
+//            }
 
-            if ((NET_DIAGNOSTIC_BASE == 1) && (NET_DIAGNOSTIC_ABON == 0) ){
-// Команда абоненту - перейти в диагностический режим
-                sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN, destip, local_port_udp);
-                printf("Send commant to abonent: net diagnostic mode\r\n");
-                red_blink  red_blink  red_blink
-                NET_DIAGNOSTIC_ABON = 1;
-                HAL_Delay(1000);
-//Тут дальше диагностика от базы
-                netDiagnosticBase();
+//            if ((NET_DIAGNOSTIC_BASE == 1) && (NET_DIAGNOSTIC_ABON == 0) ){
+//// Команда абоненту - перейти в диагностический режим
+//                sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN, destip, local_port_udp);
+//                printf("Send commant to abonent: net diagnostic mode\r\n");
+//                red_blink  red_blink  red_blink
+//                NET_DIAGNOSTIC_ABON = 1;
+//                HAL_Delay(1000);
+////Тут дальше диагностика от базы
+//                netDiagnosticBase();
 
-            }
+//            }
             HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);
 
             sendPackets(udpSocket, destip, local_port_udp);
@@ -1652,11 +1652,11 @@ void sendReceiveUDP(uint8_t udpSocket)
 //            }
 
 
-            if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
-                // После перезагрузки
-                printf("After reboot start net diagnostic mode\r\n");
-                netDiagnosticAbon();
-            }
+//            if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
+//                // После перезагрузки
+//                printf("After reboot start net diagnostic mode\r\n");
+//                netDiagnosticAbon();
+//            }
             receivePackets(udpSocket, destip, local_port_udp);
             sendPackets(udpSocket, destip, local_port_udp);
         }
@@ -3106,7 +3106,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
     HAL_GPIO_WritePin(GPIOD, DEBUG1_Pin, GPIO_PIN_RESET);
-    indicateSend(20,40);
+    indicateSend(2,4);
 }
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
@@ -3172,10 +3172,10 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         recvfrom(sn, (uint8_t *)dataToBase, MAX_PACKET_LEN, destip, &destport);
     }
 
-    indicateReceive(20,40);
-    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
-        nextPacketSkip = 1;
-    }
+    indicateReceive(2,4);
+//    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
+//        nextPacketSkip = 1;
+//    }
     HAL_GPIO_WritePin(GPIOD, DEBUG2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
 }

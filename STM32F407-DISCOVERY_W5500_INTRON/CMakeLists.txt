@@ -15,7 +15,7 @@ add_definitions(-DDATA_IN_CCM)      #Разрешение data в CCM
 add_definitions(-DCS_WIZNET_PE4)      #во второй ревизии CS - PD11   в третьей ревизии CS - PE4
 #add_definitions(-Denable_write_MAC) #Разрешение технологической прошивки / записи MAC
 #add_definitions(-Denable_twin_reset_to_restore_default_IP)
-#add_definitions(-Denable_SEGGER) #on/off SEGGER
+add_definitions(-Denable_SEGGER) #on/off SEGGER
 #add_definitions(-Denable_BUFFER) #on/off BUFFER
 #add_definitions(-Denable_RESET_FPGA) #сброс регистров в ПЛИС
 add_definitions(-Denable_BIG_PACKET) #Большой пакет данных

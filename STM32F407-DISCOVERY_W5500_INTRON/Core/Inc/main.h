@@ -158,7 +158,12 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 
+#ifndef enable_BIG_PACKET
 #define MAX_PACKET_LEN 48
+#endif
+#ifdef enable_BIG_PACKET
+#define MAX_PACKET_LEN 1152 //288*4
+#endif
 #ifdef enable_BUFFER
 #define BUF_PACKET_SIZE 100
 #endif

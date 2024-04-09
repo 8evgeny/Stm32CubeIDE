@@ -1408,9 +1408,9 @@ void workSPI_EEPROM()
 GPIO для дебага
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_0, GPIO_PIN_SET); //81 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET); //82 pin
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET); //84 pin  1 pin Debug  send
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET); //85 pin  2 pin Debug  receive
-HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); //86 pin  3 pin Debug  Обмен с ПЛИС
+HAL_GPIO_WritePin(GPIOD, DEBUG1_Pin, GPIO_PIN_SET); //84 pin  1 pin Debug  send
+HAL_GPIO_WritePin(GPIOD, DEBUG2_Pin, GPIO_PIN_SET); //85 pin  2 pin Debug  receive
+HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET); //86 pin  3 pin Debug  Обмен с ПЛИС
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_6, GPIO_PIN_SET); //87 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_7, GPIO_PIN_SET); //88 pin
 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, GPIO_PIN_SET); //56 pin
@@ -1492,7 +1492,7 @@ void sendReceiveUDP(uint8_t udpSocket)
 // CPU_INT Жду пока плис поднимет флаг
     if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15) == GPIO_PIN_SET)
     {
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
         if (ABONENT_or_BASE == BASE) {
 #ifdef  enable_RESET_FPGA
 //Очищаю сдвиговый регистр передачи MOSI
@@ -1529,8 +1529,8 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 #endif
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
+        HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
 //Поиск телеграммы
 
 
@@ -1603,7 +1603,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 netDiagnosticBase();
 
             }
-            HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);
 
             sendPackets(udpSocket, destip, local_port_udp);
             receivePackets(udpSocket, destip, local_port_udp);
@@ -1645,7 +1645,7 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 #endif
-        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
+        HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
 //            if (SEGGER){
 //                print_2_Channel(dataFromDx);
@@ -2403,7 +2403,7 @@ int main(void)
     }
     while (1)
     {
-//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET); //Debug 3
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET); //Debug 3
 #ifdef   NEW_HTTP_SERVER
         if ((UDP_or_TCP == TCP) && (startHttpTime + 300000 < HAL_GetTick())){
             printf("Long HTTP session - Reboot\r\n");
@@ -3068,7 +3068,7 @@ static void MX_IWDG_Init_base(void)
 
 void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, DEBUG1_Pin, GPIO_PIN_SET);
     if (ABONENT_or_BASE == BASE) {
 
 #ifdef baseSendTestData
@@ -3105,14 +3105,14 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #endif
     }
 
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_3, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, DEBUG1_Pin, GPIO_PIN_RESET);
     indicateSend(20,40);
 }
 
 void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 {
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET); //Сигнал в ПЛИС
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_SET); //Логический анализатор
+    HAL_GPIO_WritePin(GPIOD, DEBUG2_Pin, GPIO_PIN_SET); //Логический анализатор
     uint32_t currTime = HAL_GetTick();
     ++num_rcvd_SEGGER;
 
@@ -3141,21 +3141,6 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                        (currTime/1000) % 60);
         }
 
-
-
-//    //После 100 секунд работы каждые 30 секунд пропускаем на абоненте пакет для избегания рассинхрона
-//        uint32_t currTime = HAL_GetTick();
-//        if ((currTime > 100000) && (num_rcvd_SEGGER % 20000 == 0)) {
-//            ++num_skip_packet;
-//            //uart в DMA режиме
-//            printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
-//                        num_rcvd_SEGGER,
-//                        currTime/(24 * 3600000),
-//                       (currTime/3600000) % 24,
-//                       (currTime/60000) % 60,
-//                       (currTime/1000) % 60);
-//            return;
-//        }
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
 
         if (REBOOT == checkCommands(dataToDx)){
@@ -3191,7 +3176,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
         nextPacketSkip = 1;
     }
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, DEBUG2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
 }
 

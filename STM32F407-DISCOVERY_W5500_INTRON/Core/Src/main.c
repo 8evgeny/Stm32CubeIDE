@@ -86,10 +86,12 @@ extern int8_t http_disconnect(uint8_t sn);
 uint8_t CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
 uint8_t CCMRAMDATA dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
 uint8_t CCMRAMDATA dataFromBase2[MAX_PACKET_LEN];
-char CCMRAMDATA bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер базы
-char CCMRAMDATA bufDataFromAbon[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер абонента
+#ifdef enable_BUFFER
+char bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер базы
+char bufDataFromAbon[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер абонента (не работает)
 uint16_t CCMRAMDATA indexFpgaBufData = 0;
 uint16_t CCMRAMDATA indexSendBufData = BUF_PACKET_SIZE/2;
+#endif
 uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
 uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
 uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
@@ -1492,9 +1494,9 @@ void sendReceiveUDP(uint8_t udpSocket)
     {
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
         if (ABONENT_or_BASE == BASE) {
-            //Очищаю сдвиговый регистр передачи MOSI
-            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+//Очищаю сдвиговый регистр передачи MOSI
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             //Обмен с ПЛИС
             //Данные от ПЛИС кладу в буфер
 
@@ -1512,17 +1514,18 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     TEST_DATA ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
-
+#ifdef enable_BUFFER
 //Копирую данные для отправки абоненту в буфер
             strncpy(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData,
                     (char *) dataFromBase, MAX_PACKET_LEN );
             ++indexFpgaBufData;
             if (indexFpgaBufData == BUF_PACKET_SIZE)
                 indexFpgaBufData = 0;
+#endif
+//Очищаю сдвиговый регистр приема MISO
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
-            //Очищаю сдвиговый регистр приема MISO
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_SET);
 //Поиск телеграммы
@@ -1597,7 +1600,6 @@ void sendReceiveUDP(uint8_t udpSocket)
                 netDiagnosticBase();
 
             }
-//#endif
             HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);
 
             sendPackets(udpSocket, destip, local_port_udp);
@@ -1609,9 +1611,9 @@ void sendReceiveUDP(uint8_t udpSocket)
 //            Перед обменом с ПЛИС конверсия данных - теперь в Базе перед отправкой пакета
 //            convertToAbonData();
 
-            //Очищаю сдвиговый регистр передачи MOSI
-            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
+//Очищаю сдвиговый регистр передачи MOSI
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
+HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
             //Обмен с ПЛИС
             HAL_SPI_TransmitReceive(&hspi2,
                                     #ifndef  fpgaToCpuAbonTestData
@@ -1628,16 +1630,17 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
 
+#ifdef enable_BUFFER
 //Копирую данные для отправки базе в буфер
-//            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
-//                    (char *) dataFromDx, MAX_PACKET_LEN );
-//            ++indexFpgaBufData;
-//            if (indexFpgaBufData == BUF_PACKET_SIZE)
-//                indexFpgaBufData = 0;
-
+            strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
+                    (char *) dataFromDx, MAX_PACKET_LEN );
+            ++indexFpgaBufData;
+            if (indexFpgaBufData == BUF_PACKET_SIZE)
+                indexFpgaBufData = 0;
+#endif
 //Очищаю сдвиговый регистр приема MISO
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_5, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
@@ -3069,12 +3072,12 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef baseSendTestData
-
+#ifdef enable_BUFFER
         strncpy((char *)dataFromBase, bufDataFromBase + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
         ++indexSendBufData;
         if (indexSendBufData == BUF_PACKET_SIZE)
             indexSendBufData = 0;
-
+#endif
         // Перед отправкой конверсия данных
         convertToAbonData();
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
@@ -3086,13 +3089,13 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef abonSendTestData
-
+#ifdef enable_BUFFER
 // Если раскомментировать то все ломается - буфер только на базе
 //        strncpy((char *)dataFromDx, bufDataFromAbon + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
 //        ++indexSendBufData;
 //        if (indexSendBufData == BUF_PACKET_SIZE)
 //            indexSendBufData = 0;
-
+#endif
         //После обмена с ПЛИС конверсия данных
         convertToBaseData();
         sendto(sn, (uint8_t *)dataFromDx, MAX_PACKET_LEN, destip, destport);

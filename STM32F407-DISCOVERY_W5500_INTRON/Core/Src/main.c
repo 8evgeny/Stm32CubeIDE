@@ -1,4 +1,4 @@
-﻿/* USER CODE BEGIN Header */
+/* USER CODE BEGIN Header */
 
 #include "socket.h"
 #include "w5500.h"
@@ -2927,7 +2927,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9|GPIO_PIN_10|Green_Led_Pin|Orange_Led_Pin
                           |Red_Led_Pin|Blue_Led_Pin|GPIO_PIN_0|GPIO_PIN_1
-                          |GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6
+                          |DEBUG1_Pin|DEBUG2_Pin|DEBUG3_Pin|GPIO_PIN_6
                           |GPIO_PIN_7, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -2996,11 +2996,11 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : PD9 PD10 PD11 Green_Led_Pin
                            Orange_Led_Pin Red_Led_Pin Blue_Led_Pin PD0
-                           PD1 PD3 PD4 PD5
+                           PD1 DEBUG1_Pin DEBUG2_Pin DEBUG3_Pin
                            PD7 */
   GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|Green_Led_Pin
                           |Orange_Led_Pin|Red_Led_Pin|Blue_Led_Pin|GPIO_PIN_0
-                          |GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
+                          |GPIO_PIN_1|DEBUG1_Pin|DEBUG2_Pin|DEBUG3_Pin
                           |GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;

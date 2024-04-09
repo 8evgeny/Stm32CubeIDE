@@ -328,6 +328,12 @@ void Error_Handler(void);
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
+#define DEBUG1_Pin GPIO_PIN_3
+#define DEBUG1_GPIO_Port GPIOD
+#define DEBUG2_Pin GPIO_PIN_4
+#define DEBUG2_GPIO_Port GPIOD
+#define DEBUG3_Pin GPIO_PIN_5
+#define DEBUG3_GPIO_Port GPIOD
 #define HOLD_EEPROM_Pin GPIO_PIN_1
 #define HOLD_EEPROM_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */

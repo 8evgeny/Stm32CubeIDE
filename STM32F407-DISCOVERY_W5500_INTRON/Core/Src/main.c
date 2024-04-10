@@ -3192,9 +3192,9 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #endif
 
 
-//    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
-//        nextPacketSkip = 1;
-//    }
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
+        nextPacketSkip = 1;
+    }
     HAL_GPIO_WritePin(GPIOD, DEBUG2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
 }

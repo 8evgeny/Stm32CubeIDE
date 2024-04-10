@@ -162,6 +162,8 @@ RTC_HandleTypeDef hrtc;
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
+DMA_HandleTypeDef hdma_spi1_tx;
+DMA_HandleTypeDef hdma_spi1_rx;
 
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart6;
@@ -2385,7 +2387,6 @@ int main(void)
 //        SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);//При отключении JLINK - блокируется MK
         SEGGER_RTT_SetTerminal(0); // Select terminal 0
         SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
-//        SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);
         SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_YELLOW);
         SEGGER_RTT_SetTerminal(1);
         SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_GREEN);
@@ -2401,7 +2402,8 @@ int main(void)
     }
     while (1)
     {
-//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET); //Debug 3
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);
 #ifdef   NEW_HTTP_SERVER
         if ((UDP_or_TCP == TCP) && (startHttpTime + 300000 < HAL_GetTick())){
             printf("Long HTTP session - Reboot\r\n");
@@ -2432,7 +2434,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);
   }
 
 
@@ -2884,6 +2887,12 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* DMA interrupt init */
+  /* DMA2_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+  /* DMA2_Stream3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
   /* DMA2_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
@@ -3183,9 +3192,9 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #endif
 
 
-//    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
-//        nextPacketSkip = 1;
-//    }
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
+        nextPacketSkip = 1;
+    }
     HAL_GPIO_WritePin(GPIOD, DEBUG2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
 }

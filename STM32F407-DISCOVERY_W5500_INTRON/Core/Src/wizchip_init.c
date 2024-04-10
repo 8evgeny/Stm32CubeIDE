@@ -51,15 +51,27 @@ void WIZCHIPInitialize(){
     printf("link_ON\r\n");
 }
 
-void wizchip_spi_readburst(uint8_t* pBuf, uint16_t len)
-{
+#ifndef enable_WIZNET_DMA
+void wizchip_spi_readburst(uint8_t* pBuf, uint16_t len){
     HAL_SPI_Receive(&hspi1, pBuf, len , 1000);
 }
-
-void wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len)
-{
+void wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len){
     HAL_SPI_Transmit(&hspi1, pBuf, len , 1000);
 }
+#endif
+#ifdef enable_WIZNET_DMA
+void wizchip_spi_readburst(uint8_t* pBuf, uint16_t len){
+    HAL_SPI_Receive_DMA(&hspi1, pBuf, len);
+//    HAL_SPI_TransmitReceive_DMA(&hspi1, w5500.spiRXBuffer, w5500.spiTXBuffer, len);
+//    memcpy(pBuf, w5500.spiRXBuffer, len);
+}
+void wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len){
+    HAL_SPI_Transmit_DMA(&hspi1, pBuf, len);
+//    memcpy(w5500.spiTXBuffer, pBuf, len);
+//    HAL_SPI_Transmit_DMA(&hspi3, w5500.spiTXBuffer, len);
+}
+#endif
+
 #ifndef CS_WIZNET_PE4
 void wizchip_cs_deselect(void)
 {

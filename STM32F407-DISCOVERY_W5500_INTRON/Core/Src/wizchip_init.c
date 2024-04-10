@@ -62,9 +62,13 @@ void wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len){
 #ifdef enable_WIZNET_DMA
 void wizchip_spi_readburst(uint8_t* pBuf, uint16_t len){
     HAL_SPI_Receive_DMA(&hspi1, pBuf, len);
+//    HAL_SPI_TransmitReceive_DMA(&hspi1, w5500.spiRXBuffer, w5500.spiTXBuffer, len);
+//    memcpy(pBuf, w5500.spiRXBuffer, len);
 }
 void wizchip_spi_writeburst(uint8_t* pBuf, uint16_t len){
     HAL_SPI_Transmit_DMA(&hspi1, pBuf, len);
+//    memcpy(w5500.spiTXBuffer, pBuf, len);
+//    HAL_SPI_Transmit_DMA(&hspi3, w5500.spiTXBuffer, len);
 }
 #endif
 

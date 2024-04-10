@@ -19,7 +19,7 @@ add_definitions(-Denable_SEGGER) #on/off SEGGER
 #add_definitions(-Denable_BUFFER) #on/off BUFFER
 add_definitions(-Denable_RESET_FPGA) #сброс регистров в ПЛИС
 #add_definitions(-Denable_BIG_PACKET) #Большой пакет данных
-#add_definitions(-Denable_WIZNET_DMA) #DMA режим WIZNET
+add_definitions(-Denable_WIZNET_DMA) #DMA режим WIZNET
 
 
 add_definitions(-DNEW_HTTP_SERVER) #Основной сервер WIZNET или пример из инета

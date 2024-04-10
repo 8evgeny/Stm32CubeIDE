@@ -2385,7 +2385,6 @@ int main(void)
 //        SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);//При отключении JLINK - блокируется MK
         SEGGER_RTT_SetTerminal(0); // Select terminal 0
         SEGGER_RTT_printf(0, "\r\nSystem Time: %d\r\n", HAL_GetTick()/1000);
-//        SEGGER_RTT_printf(0,RTT_CTRL_BG_WHITE);
         SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_YELLOW);
         SEGGER_RTT_SetTerminal(1);
         SEGGER_RTT_printf(0,RTT_CTRL_TEXT_BRIGHT_GREEN);
@@ -2401,7 +2400,8 @@ int main(void)
     }
     while (1)
     {
-//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET); HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET); //Debug 3
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);
 #ifdef   NEW_HTTP_SERVER
         if ((UDP_or_TCP == TCP) && (startHttpTime + 300000 < HAL_GetTick())){
             printf("Long HTTP session - Reboot\r\n");
@@ -2432,7 +2432,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
+//HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);
   }
 
 

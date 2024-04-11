@@ -163,7 +163,7 @@ extern "C" {
 #endif
 #ifdef enable_BIG_PACKET
 //#define MAX_PACKET_LEN 1152 //288*4
-#define MAX_PACKET_LEN 80 //20*4
+#define MAX_PACKET_LEN 48 //12*4
 #endif
 #ifdef enable_BUFFER
 #define BUF_PACKET_SIZE 100

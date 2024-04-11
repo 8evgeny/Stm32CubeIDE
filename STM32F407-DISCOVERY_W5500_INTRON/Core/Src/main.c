@@ -3101,7 +3101,18 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #endif
         // Перед отправкой конверсия данных
         convertToAbonData();
+#ifndef enable_smallBUFFER
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
+#endif
+#ifdef enable_smallBUFFER
+        strncpy((char *)(smallBufDataFromBase + smallBufDataFromBaseIndex * MAX_PACKET_LEN),
+                (const char*)dataFromBase, MAX_PACKET_LEN);
+        ++smallBufDataFromBaseIndex;
+        if (smallBufDataFromBaseIndex == SMALL_BUFF_SIZE){
+            sendto(sn, (uint8_t *)smallBufDataFromBase, MAX_PACKET_LEN * SMALL_BUFF_SIZE, destip, destport);
+            smallBufDataFromBaseIndex = 0;
+        }
+#endif
 
 #endif
     }

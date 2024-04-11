@@ -168,7 +168,7 @@ extern "C" {
 #define BUF_PACKET_SIZE 100
 #endif
 #ifdef enable_smallBUFFER
-#define SMALL_BUFF_SIZE 1
+#define SMALL_BUFF_SIZE 2
 #endif
 
 #define TEST_DATA test6

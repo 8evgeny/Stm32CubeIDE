@@ -86,14 +86,25 @@ extern int8_t http_disconnect(uint8_t sn);
 uint8_t CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
 uint8_t CCMRAMDATA dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
 uint8_t CCMRAMDATA dataFromBase2[MAX_PACKET_LEN];
+uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
+uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
+#ifdef enable_smallBUFFER
+uint8_t CCMRAMDATA smallBufDataToBase[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
+uint8_t smallBufDataToBaseIndex = 0;
+uint8_t CCMRAMDATA smallBufDataFromBase[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
+uint8_t smallBufDataFromBaseIndex = 0;
+uint8_t CCMRAMDATA smallBufDataToDx[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
+uint8_t smallBufDataToDxIndex = 0;
+uint8_t CCMRAMDATA smallBufDataFromDx[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
+uint8_t smallBufDataFromDxIndex = 0;
+#endif
+
 #ifdef enable_BUFFER
 char bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер базы
 char bufDataFromAbon[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер абонента (не работает)
 uint16_t CCMRAMDATA indexFpgaBufData = 0;
 uint16_t CCMRAMDATA indexSendBufData = BUF_PACKET_SIZE/2;
 #endif
-uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы принятые по Ethernet
-uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
 uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
 uint8_t CCMRAMDATA trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
 

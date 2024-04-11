@@ -167,6 +167,9 @@ extern "C" {
 #ifdef enable_BUFFER
 #define BUF_PACKET_SIZE 100
 #endif
+#ifdef enable_smallBUFFER
+#define SMALL_BUFF_SIZE 1
+#endif
 
 #define TEST_DATA test6
 enum netDiagnostic{

@@ -3130,7 +3130,18 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #endif
         //После обмена с ПЛИС конверсия данных
         convertToBaseData();
+#ifndef enable_smallBUFFER
         sendto(sn, (uint8_t *)dataFromDx, MAX_PACKET_LEN, destip, destport);
+#endif
+#ifdef enable_smallBUFFER
+        strncpy((char *)(smallBufDataFromDx + smallBufDataFromDxIndex * MAX_PACKET_LEN),
+                (const char*)dataFromDx, MAX_PACKET_LEN);
+        ++smallBufDataFromDxIndex;
+        if (smallBufDataFromDxIndex == SMALL_BUFF_SIZE){
+            sendto(sn, (uint8_t *)smallBufDataFromDx, MAX_PACKET_LEN * SMALL_BUFF_SIZE, destip, destport);
+            smallBufDataFromDxIndex = 0;
+        }
+#endif
 #endif
     }
 
@@ -3217,7 +3228,21 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                        (currTime/60000) % 60,
                        (currTime/1000) % 60);
         }
+#ifndef enable_smallBUFFER
         recvfrom(sn, (uint8_t *)dataToBase, MAX_PACKET_LEN, destip, &destport);
+#endif
+#ifdef enable_smallBUFFER
+        if (smallBufDataToBaseIndex == SMALL_BUFF_SIZE){
+            recvfrom(sn, (uint8_t *)smallBufDataToBase, MAX_PACKET_LEN * SMALL_BUFF_SIZE, destip, &destport);
+            strncpy((char *)dataToBase, (const char*)smallBufDataToBase , MAX_PACKET_LEN);
+            smallBufDataToBaseIndex = 1;
+        }
+        else {
+            strncpy((char *)dataToBase,
+                    (const char*)smallBufDataToBase + smallBufDataToBaseIndex * MAX_PACKET_LEN, MAX_PACKET_LEN);
+            ++smallBufDataToBaseIndex;
+        }
+#endif
     }
 
 #ifdef   enable_BIG_PACKET

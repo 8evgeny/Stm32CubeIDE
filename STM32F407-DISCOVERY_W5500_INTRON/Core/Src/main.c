@@ -1544,7 +1544,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 print_3_Channel(dataFromBase);  // в установившемся режиме - 2C (почти всегда)
                 print_4_Channel(dataFromBase);  // аудиоданные если нет - FF если есть 50 и далее в зависимости от уровня
             }
-
+#ifdef enable_CONTROL
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
             if (compare_data_in_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
                 ++compareDataInChannelState;
@@ -1591,7 +1591,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 red_blink  red_blink  red_blink
                 reboot();
             }
-
+#endif
             if ((NET_DIAGNOSTIC_BASE == 1) && (NET_DIAGNOSTIC_ABON == 0) ){
 // Команда абоненту - перейти в диагностический режим
                 sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN, destip, local_port_udp);

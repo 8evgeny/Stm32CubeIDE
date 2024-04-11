@@ -90,11 +90,11 @@ uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы 
 uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
 #ifdef enable_smallBUFFER
 uint8_t CCMRAMDATA smallBufDataToBase[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
-uint8_t smallBufDataToBaseIndex = 0;
+uint8_t smallBufDataToBaseIndex = SMALL_BUFF_SIZE;
 uint8_t CCMRAMDATA smallBufDataFromBase[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
 uint8_t smallBufDataFromBaseIndex = 0;
 uint8_t CCMRAMDATA smallBufDataToDx[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
-uint8_t smallBufDataToDxIndex = 0;
+uint8_t smallBufDataToDxIndex = SMALL_BUFF_SIZE;
 uint8_t CCMRAMDATA smallBufDataFromDx[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
 uint8_t smallBufDataFromDxIndex = 0;
 #endif
@@ -3175,7 +3175,21 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                        (currTime/1000) % 60);
         }
 
+#ifndef enable_smallBUFFER
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
+#endif
+#ifdef enable_smallBUFFER
+        if (smallBufDataToDxIndex == SMALL_BUFF_SIZE){
+            recvfrom(sn, (uint8_t *)smallBufDataToDx, MAX_PACKET_LEN * SMALL_BUFF_SIZE, destip, &destport);
+            strncpy((char *)dataToDx, (const char*)smallBufDataToDx , MAX_PACKET_LEN);
+            smallBufDataToDxIndex = 1;
+        }
+        else {
+            strncpy((char *)dataToDx,
+                    (const char*)smallBufDataToDx + smallBufDataToDxIndex * MAX_PACKET_LEN, MAX_PACKET_LEN);
+            ++smallBufDataToDxIndex;
+        }
+#endif
 
         if (REBOOT == checkCommands(dataToDx)){
             red_blink  red_blink  red_blink

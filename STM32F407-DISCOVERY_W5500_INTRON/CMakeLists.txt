@@ -17,7 +17,8 @@ add_definitions(-DCS_WIZNET_PE4)      #во второй ревизии CS - PD1
 #add_definitions(-Denable_twin_reset_to_restore_default_IP)
 add_definitions(-Denable_SEGGER) #on/off SEGGER
 #add_definitions(-Denable_BUFFER) #on/off BUFFER
-#add_definitions(-Denable_RESET_FPGA) #сброс регистров в ПЛИС
+#add_definitions(-Denable_RESET_FPGA_MOSI) #сброс приемного регистра ПЛИС (ПЛИС сама формирует сигнал)
+add_definitions(-Denable_RESET_FPGA_MISO) #сброс передающего регистра ПЛИС
 add_definitions(-Denable_BIG_PACKET) #Большой пакет данных
 #add_definitions(-Denable_CONTROL)
 #add_definitions(-Denable_WIZNET_DMA) #DMA режим WIZNET - не работает (см примеры в Doc)

@@ -1496,7 +1496,7 @@ void sendReceiveUDP(uint8_t udpSocket)
     {
         HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
         if (ABONENT_or_BASE == BASE) {
-#ifdef  enable_RESET_FPGA
+#ifdef  enable_RESET_FPGA_MOSI
 //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
@@ -1518,6 +1518,12 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     TEST_DATA ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
+#ifdef  enable_RESET_FPGA_MISO
+            //Очищаю сдвиговый регистр приема MISO
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+#endif
+
 #ifdef enable_BUFFER
 //Копирую данные для отправки абоненту в буфер
             strncpy(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData,
@@ -1526,11 +1532,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             if (indexFpgaBufData == BUF_PACKET_SIZE)
                 indexFpgaBufData = 0;
 #endif
-#ifdef  enable_RESET_FPGA
-//Очищаю сдвиговый регистр приема MISO
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-#endif
+
 //Поиск телеграммы
 
 
@@ -1611,7 +1613,7 @@ void sendReceiveUDP(uint8_t udpSocket)
         }
 
         if (ABONENT_or_BASE == ABONENT) {
-#ifdef  enable_RESET_FPGA
+#ifdef  enable_RESET_FPGA_MOSI
 //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
@@ -1631,6 +1633,11 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     test1 ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
+#ifdef  enable_RESET_FPGA_MISO
+            //Очищаю сдвиговый регистр приема MISO
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+#endif
 
 #ifdef enable_BUFFER
 //Копирую данные для отправки базе в буфер
@@ -1640,16 +1647,16 @@ void sendReceiveUDP(uint8_t udpSocket)
             if (indexFpgaBufData == BUF_PACKET_SIZE)
                 indexFpgaBufData = 0;
 #endif
-#ifdef  enable_RESET_FPGA
-//Очищаю сдвиговый регистр приема MISO
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-#endif
+
         HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
-//            if (SEGGER){
-//                print_2_Channel(dataFromDx);
-//            }
+        //Тут вывожу все каналы, полученные от абонента  dataFromDx
+        if (SEGGER){
+            print_1_Channel(dataFromDx);
+            print_2_Channel(dataFromDx);
+            print_3_Channel(dataFromDx);
+            print_4_Channel(dataFromDx);
+        }
 
 
 //            if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){

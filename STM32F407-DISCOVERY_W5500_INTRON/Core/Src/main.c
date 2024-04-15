@@ -1541,11 +1541,14 @@ void sendReceiveUDP(uint8_t udpSocket)
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
 
             if (SEGGER){
-                print_1_Channel(dataToBase);
-//                print_1_Channel(dataFromBase);
+                print_1_Channel(dataFromBase);
                 print_2_Channel_control(receivedDataFrom_2_Channel);
-                print_3_Channel(dataFromBase);  // в установившемся режиме - 2C (почти всегда)
-                print_4_Channel(dataFromBase);  // аудиоданные если нет - FF если есть 50 и далее в зависимости от уровня
+                print_3_Channel(dataFromBase);
+                print_4_Channel(dataFromBase);
+//                print_1_Channel(dataToBase);
+//                print_2_Channel(dataToBase);
+//                print_3_Channel(dataToBase);
+//                print_4_Channel(dataToBase);
             }
 #ifdef enable_CONTROL
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
@@ -1652,12 +1655,12 @@ void sendReceiveUDP(uint8_t udpSocket)
         HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
         //Тут вывожу все каналы, полученные от абонента  dataFromDx
-//        if (SEGGER){
-//            print_1_Channel(dataFromDx);
-//            print_2_Channel(dataFromDx);
-//            print_3_Channel(dataFromDx);
-//            print_4_Channel(dataFromDx);
-//        }
+        if (SEGGER){
+            print_1_Channel(dataFromDx);
+            print_2_Channel(dataFromDx);
+            print_3_Channel(dataFromDx);
+            print_4_Channel(dataFromDx);
+        }
 
 
 //            if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
@@ -3138,7 +3141,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     if (ABONENT_or_BASE == ABONENT) {
 
-        if ((currTime > 100000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
+        if ((currTime > 20000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
             if(nextPacketSkip == 1){
                 nextPacketSkip = 0;
                 printf_DMA("************************* packet %d, System time %dd %dh %dm %ds \r\n",

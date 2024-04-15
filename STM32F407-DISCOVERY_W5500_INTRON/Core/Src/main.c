@@ -1583,7 +1583,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 }//100
             }//совпало
 
-            if (numBadPackets2Channel == 3000) {//За 4.5 секунды связь не встала
+            if (numBadPackets2Channel == 5000) {//За 7.5 секунды связь не встала
 //            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
 // Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);

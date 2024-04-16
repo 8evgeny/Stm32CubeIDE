@@ -59,7 +59,9 @@ uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
+#ifdef enable_SKIP_Packets
 uint8_t nextPacketSkip = 0;
+#endif
 uint8_t SEGGER = 0;
 uint8_t NET_DIAGNOSTIC_BASE = 0;
 uint8_t NET_DIAGNOSTIC_ABON = 0;
@@ -1696,7 +1698,6 @@ void sendHANDSHAKE(uint8_t udpSocket) {
     }
 }
 
-
 void testSpiEepromWriteRead()
 {
     //25AA1024  page = 256 byte,  512 pages
@@ -3140,7 +3141,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     ++num_rcvd_SEGGER;
 
     if (ABONENT_or_BASE == ABONENT) {
-
+#ifdef enable_SKIP_Packets
         if ((currTime > 20000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
             if(nextPacketSkip == 1){
                 nextPacketSkip = 0;
@@ -3154,7 +3155,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                 return;
             }
         }
-
+#endif
         if (num_rcvd_SEGGER % 120000 == 0) { //каждые 3 минуты - диагностическое сообщение
             printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
                        num_rcvd_SEGGER,
@@ -3202,10 +3203,11 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     indicateReceive(20, 40);
 #endif
 
-
+#ifdef enable_SKIP_Packets
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
         nextPacketSkip = 1;
     }
+#endif
     HAL_GPIO_WritePin(GPIOD, DEBUG2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
 }

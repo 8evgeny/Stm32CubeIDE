@@ -16,9 +16,10 @@ add_definitions(-DCS_WIZNET_PE4)      #во второй ревизии CS - PD1
 #add_definitions(-Denable_write_MAC) #Разрешение технологической прошивки / записи MAC
 #add_definitions(-Denable_twin_reset_to_restore_default_IP)
 add_definitions(-Denable_SEGGER) #on/off SEGGER
-#add_definitions(-Denable_BUFFER) #on/off BUFFER
-#add_definitions(-Denable_RESET_FPGA_MOSI) #сброс приемного регистра ПЛИС (ПЛИС сама формирует сигнал)
+#add_definitions(-Denable_BUFFER) #on/off BUFFER (из кода убрать - сейчас это делает ПЛИС)
+#add_definitions(-Denable_RESET_FPGA_MOSI) #сброс приемного регистра ПЛИС (должен быть закомментирован - ПЛИС сама формирует сигнал)
 add_definitions(-Denable_RESET_FPGA_MISO) #сброс передающего регистра ПЛИС
+add_definitions(-Denable_SKIP_Packets) #пропуск пакетов по сигналу ПЛИС
 add_definitions(-Denable_BIG_PACKET) #Большой пакет данных
 add_definitions(-Denable_CONTROL) # Контроль EE в С канале на базе и общая перезагрузка если не встает за n секунд
 #add_definitions(-Denable_WIZNET_DMA) #DMA режим WIZNET - не работает (см примеры в Doc)

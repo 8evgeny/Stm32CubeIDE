@@ -3132,6 +3132,15 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                            (currTime/3600000) % 24,
                            (currTime/60000) % 60,
                            (currTime/1000) % 60);
+                if (SEGGER){
+                    SEGGER_RTT_SetTerminal(0);
+                    SEGGER_RTT_printf(0, "************************* packet %d, System time %dd %dh %dm %ds \r\n",
+                                      num_rcvd_SEGGER,
+                                      currTime/(24 * 3600000),
+                                      (currTime/3600000) % 24,
+                                      (currTime/60000) % 60,
+                                      (currTime/1000) % 60);
+                }
                 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
                 return;
             }

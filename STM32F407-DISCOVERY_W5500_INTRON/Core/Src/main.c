@@ -1432,37 +1432,19 @@ void prepearUDP_PLIS(uint8_t udpSocket)
     socket(udpSocket, Sn_MR_UDP, local_port_udp , 0x00);
 }
 
-void convertToBaseData()
-{
+void convertToBaseData(){ //в С канале инвертируем все кроме 2 бита
     for (uint16_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
-//        dataFromDx[i] &= 0xF0;
-//        dataFromDx[i] |= 0x05; //Последнее E меняем на 5
-//        uint8_t tmp = dataFromDx[i]; //Первый октет инвертируем
-//        tmp = ~tmp;
-//        tmp &= 0xF0;
-//        dataFromDx[i] &= 0x0F;
-//        dataFromDx[i] |= tmp;
-
-        //Без tmp
-        dataFromDx[i] = ~dataFromDx[i];
-        dataFromDx[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
+//        dataFromDx[i] = ~dataFromDx[i];
+//        dataFromDx[i] ^= 0x04;
+        dataFromDx[i] ^= 0xFB;
     }
 }
 
-void convertToAbonData()
-{
+void convertToAbonData(){ //в С канале инвертируем все кроме 2 бита
     for (uint16_t i = 1; i <= MAX_PACKET_LEN - 3; i = i + 4) {
-//        dataToDx[i] &= 0xF0;
-//        dataToDx[i] |= 0x05; //Последнее E меняем на 5
-//        uint8_t tmp = dataToDx[i]; //Первый октет инвертируем
-//        tmp = ~tmp;
-//        tmp &= 0xF0;
-//        dataToDx[i] &= 0x0F;
-//        dataToDx[i] |= tmp;
-
-//Без tmp
-        dataFromBase[i] = ~dataFromBase[i];
-        dataFromBase[i] ^= 0x04; //Последнее E( после инверсии 1) меняем на 5
+//        dataFromBase[i] = ~dataFromBase[i];
+//        dataFromBase[i] ^= 0x04;
+        dataFromBase[i] ^= 0xFB;
     }
 }
 

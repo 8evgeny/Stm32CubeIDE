@@ -1573,8 +1573,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 }//100
             }//совпало
 
-            if (numBadPackets2Channel == 10000) {//За 15 секунды связь не встала
-//            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
+            if (numBadPackets2Channel == 6700) {//За 10 секунды связь не встала (666*10)
 // Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
                 printf("Sending command Reboot to abonent\r\n");
@@ -3124,7 +3123,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     if (ABONENT_or_BASE == ABONENT) {
 #ifdef enable_SKIP_Packets
-        if ((bridgeState == CONNECTION_YES) && (num_rcvd_SEGGER % 1300 == 0)){ //Пропуск пакета возможен раз в 2 секунды
+        if ((bridgeState == CONNECTION_YES) && (num_rcvd_SEGGER % 7000 == 0)){ //Пропуск пакета возможен раз в 10 секунд
             if(nextPacketSkip == 1){
                 nextPacketSkip = 0;
                 printf_DMA("************************* packet %d, System time %dd %dh %dm %ds \r\n",
@@ -3133,6 +3132,15 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                            (currTime/3600000) % 24,
                            (currTime/60000) % 60,
                            (currTime/1000) % 60);
+                if (SEGGER){
+                    SEGGER_RTT_SetTerminal(0);
+                    SEGGER_RTT_printf(0, "************************* packet %d, System time %dd %dh %dm %ds \r\n",
+                                      num_rcvd_SEGGER,
+                                      currTime/(24 * 3600000),
+                                      (currTime/3600000) % 24,
+                                      (currTime/60000) % 60,
+                                      (currTime/1000) % 60);
+                }
                 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
                 return;
             }

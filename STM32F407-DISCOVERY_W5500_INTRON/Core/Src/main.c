@@ -59,7 +59,9 @@ uint32_t num_send = 0;
 uint32_t num_rcvd = 0;
 uint32_t num_rcvd_SEGGER = 0;
 uint32_t num_skip_packet = 0;
+#ifdef enable_SKIP_Packets
 uint8_t nextPacketSkip = 0;
+#endif
 uint8_t SEGGER = 0;
 uint8_t NET_DIAGNOSTIC_BASE = 0;
 uint8_t NET_DIAGNOSTIC_ABON = 0;
@@ -1496,7 +1498,7 @@ void sendReceiveUDP(uint8_t udpSocket)
     {
         HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_SET);
         if (ABONENT_or_BASE == BASE) {
-#ifdef  enable_RESET_FPGA
+#ifdef  enable_RESET_FPGA_MOSI
 //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
@@ -1518,6 +1520,12 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     TEST_DATA ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
+#ifdef  enable_RESET_FPGA_MISO
+            //Очищаю сдвиговый регистр приема MISO
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+#endif
+
 #ifdef enable_BUFFER
 //Копирую данные для отправки абоненту в буфер
             strncpy(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData,
@@ -1526,11 +1534,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             if (indexFpgaBufData == BUF_PACKET_SIZE)
                 indexFpgaBufData = 0;
 #endif
-#ifdef  enable_RESET_FPGA
-//Очищаю сдвиговый регистр приема MISO
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-#endif
+
 //Поиск телеграммы
 
 
@@ -1539,12 +1543,16 @@ void sendReceiveUDP(uint8_t udpSocket)
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
 
             if (SEGGER){
-                print_1_Channel(dataToBase);  // команды проскакивают в установившемся режиме одно и то же случайное значение
+                print_1_Channel(dataFromBase);
                 print_2_Channel_control(receivedDataFrom_2_Channel);
-                print_3_Channel(dataFromBase);  // в установившемся режиме - 2C (почти всегда)
-                print_4_Channel(dataFromBase);  // аудиоданные если нет - FF если есть 50 и далее в зависимости от уровня
+                print_3_Channel(dataFromBase);
+                print_4_Channel(dataFromBase);
+//                print_1_Channel(dataToBase);
+//                print_2_Channel(dataToBase);
+//                print_3_Channel(dataToBase);
+//                print_4_Channel(dataToBase);
             }
-
+#ifdef enable_CONTROL
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
             if (compare_data_in_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
                 ++compareDataInChannelState;
@@ -1583,7 +1591,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 }//100
             }//совпало
 
-            if (numBadPackets2Channel == 5000) {//За 7.5 секунды связь не встала
+            if (numBadPackets2Channel == 10000) {//За 15 секунды связь не встала
 //            if (numBadPackets2Channel == 27000) {//За 40 секунд связь не встала (666*40)
 // Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
@@ -1591,7 +1599,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 red_blink  red_blink  red_blink
                 reboot();
             }
-
+#endif
             if ((NET_DIAGNOSTIC_BASE == 1) && (NET_DIAGNOSTIC_ABON == 0) ){
 // Команда абоненту - перейти в диагностический режим
                 sendto(UDP_SOCKET, (uint8_t *)commandfromBaseToAbonentNetDiagnostic, MAX_PACKET_LEN, destip, local_port_udp);
@@ -1611,7 +1619,7 @@ void sendReceiveUDP(uint8_t udpSocket)
         }
 
         if (ABONENT_or_BASE == ABONENT) {
-#ifdef  enable_RESET_FPGA
+#ifdef  enable_RESET_FPGA_MOSI
 //Очищаю сдвиговый регистр передачи MOSI
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_SET);
             HAL_GPIO_WritePin(GPIOC, GPIO_PIN_5, GPIO_PIN_RESET);
@@ -1631,6 +1639,11 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     test1 ,
                                     #endif
                                     MAX_PACKET_LEN, 0x1000);
+#ifdef  enable_RESET_FPGA_MISO
+            //Очищаю сдвиговый регистр приема MISO
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+#endif
 
 #ifdef enable_BUFFER
 //Копирую данные для отправки базе в буфер
@@ -1640,16 +1653,16 @@ void sendReceiveUDP(uint8_t udpSocket)
             if (indexFpgaBufData == BUF_PACKET_SIZE)
                 indexFpgaBufData = 0;
 #endif
-#ifdef  enable_RESET_FPGA
-//Очищаю сдвиговый регистр приема MISO
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-#endif
+
         HAL_GPIO_WritePin(GPIOD, DEBUG3_Pin, GPIO_PIN_RESET);//Дебаг обмен с ПЛИС завершен
 
-//            if (SEGGER){
-//                print_2_Channel(dataFromDx);
-//            }
+        //Тут вывожу все каналы, полученные от абонента  dataFromDx
+        if (SEGGER){
+            print_1_Channel(dataFromDx);
+            print_2_Channel(dataFromDx);
+            print_3_Channel(dataFromDx);
+            print_4_Channel(dataFromDx);
+        }
 
 
 //            if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
@@ -1684,7 +1697,6 @@ void sendHANDSHAKE(uint8_t udpSocket) {
             HAL_NVIC_SystemReset();
     }
 }
-
 
 void testSpiEepromWriteRead()
 {
@@ -2910,8 +2922,8 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
@@ -3129,8 +3141,8 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     ++num_rcvd_SEGGER;
 
     if (ABONENT_or_BASE == ABONENT) {
-
-        if ((currTime > 100000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
+#ifdef enable_SKIP_Packets
+        if ((currTime > 20000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
             if(nextPacketSkip == 1){
                 nextPacketSkip = 0;
                 printf_DMA("************************* packet %d, System time %dd %dh %dm %ds \r\n",
@@ -3143,7 +3155,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                 return;
             }
         }
-
+#endif
         if (num_rcvd_SEGGER % 120000 == 0) { //каждые 3 минуты - диагностическое сообщение
             printf_DMA("Abonent received packet %d, System time %dd %dh %dm %ds \r\n",
                        num_rcvd_SEGGER,
@@ -3191,10 +3203,11 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     indicateReceive(20, 40);
 #endif
 
-
+#ifdef enable_SKIP_Packets
     if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_14) == GPIO_PIN_SET){
         nextPacketSkip = 1;
     }
+#endif
     HAL_GPIO_WritePin(GPIOD, DEBUG2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET); //Сигнал в ПЛИС
 }

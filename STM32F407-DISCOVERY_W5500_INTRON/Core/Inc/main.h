@@ -159,10 +159,11 @@ extern "C" {
 #include "stdio.h"
 
 #ifndef enable_BIG_PACKET
-#define MAX_PACKET_LEN 48
+#define MAX_PACKET_LEN 48  //12*4
 #endif
 #ifdef enable_BIG_PACKET
-#define MAX_PACKET_LEN 1152 //288*4
+//#define MAX_PACKET_LEN 1152 //288*4
+#define MAX_PACKET_LEN 48 //12*4
 #endif
 #ifdef enable_BUFFER
 #define BUF_PACKET_SIZE 100
@@ -309,8 +310,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define CS_EEPROM_Pin GPIO_PIN_2
 #define CS_EEPROM_GPIO_Port GPIOE
-#define PC14_OSC32_IN_Pin GPIO_PIN_14
-#define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PH0_OSC_IN_Pin GPIO_PIN_0
 #define PH0_OSC_IN_GPIO_Port GPIOH
 #define PH1_OSC_OUT_Pin GPIO_PIN_1

@@ -20,7 +20,7 @@ add_definitions(-Denable_SEGGER) #on/off SEGGER
 #add_definitions(-Denable_RESET_FPGA_MOSI) #сброс приемного регистра ПЛИС (должен быть закомментирован - ПЛИС сама формирует сигнал)
 add_definitions(-Denable_RESET_FPGA_MISO) #сброс передающего регистра ПЛИС
 #add_definitions(-Denable_SKIP_Packets) #пропуск пакетов по сигналу ПЛИС
-add_definitions(-Denable_BIG_PACKET) #Большой пакет данных
+#add_definitions(-Denable_BIG_PACKET) #Большой пакет данных
 add_definitions(-Denable_CONTROL) # Контроль EE в С канале на базе и общая перезагрузка если не встает за n секунд
 #add_definitions(-Denable_WIZNET_DMA) #DMA режим WIZNET - не работает (см примеры в Doc)
 

@@ -1645,12 +1645,12 @@ void sendReceiveUDP(uint8_t udpSocket)
             print_4_Channel(dataFromDx);
         }
 
+            if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
+                // После перезагрузки
+                printf("After reboot start net diagnostic mode\r\n");
+                netDiagnosticAbon();
+            }
 
-//            if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
-//                // После перезагрузки
-//                printf("After reboot start net diagnostic mode\r\n");
-//                netDiagnosticAbon();
-//            }
             receivePackets(udpSocket, destip, local_port_udp);
             sendPackets(udpSocket, destip, local_port_udp);
         }

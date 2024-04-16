@@ -3142,7 +3142,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     if (ABONENT_or_BASE == ABONENT) {
 #ifdef enable_SKIP_Packets
-        if ((currTime > 20000) && (num_rcvd_SEGGER % 3000 == 0)){ //Пропуск пакета возможен раз в 5 секунд
+        if ((bridgeState == CONNECTION_YES) && (num_rcvd_SEGGER % 1300 == 0)){ //Пропуск пакета возможен раз в 2 секунды
             if(nextPacketSkip == 1){
                 nextPacketSkip = 0;
                 printf_DMA("************************* packet %d, System time %dd %dh %dm %ds \r\n",

@@ -1,5 +1,5 @@
 Timing Analyzer report for DCE01_3
-Wed Apr 17 11:27:25 2024
+Wed Apr 17 12:51:00 2024
 Quartus Prime Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
 
 
@@ -353,13 +353,13 @@ https://fpgasoftware.intel.com/eula.
 ; Number detected on machine ; 12          ;
 ; Maximum allowed            ; 6           ;
 ;                            ;             ;
-; Average used               ; 1.09        ;
+; Average used               ; 1.10        ;
 ; Maximum used               ; 6           ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;   4.1%      ;
-;     Processor 3            ;   2.2%      ;
+;     Processor 2            ;   4.6%      ;
+;     Processor 3            ;   2.3%      ;
 ;     Processor 4            ;   1.8%      ;
 ;     Processors 5-6         ;   0.5%      ;
 +----------------------------+-------------+
@@ -1297,8 +1297,8 @@ HTML report is unavailable in plain text report export.
 ; 0.110  ; net_ctrl:inst110|45 ; net_ctrl:inst110|47 ; inst66              ; inst66      ; 1.000        ; -0.047     ; 0.861      ;
 ; 0.144  ; net_ctrl:inst110|48 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 1.000        ; -0.047     ; 0.827      ;
 ; 0.148  ; net_ctrl:inst110|48 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 1.000        ; -0.047     ; 0.823      ;
-; 0.203  ; net_ctrl:inst110|47 ; net_ctrl:inst110|47 ; inst66              ; inst66      ; 1.000        ; -0.043     ; 0.772      ;
 ; 0.203  ; net_ctrl:inst110|46 ; net_ctrl:inst110|46 ; inst66              ; inst66      ; 1.000        ; -0.043     ; 0.772      ;
+; 0.203  ; net_ctrl:inst110|47 ; net_ctrl:inst110|47 ; inst66              ; inst66      ; 1.000        ; -0.043     ; 0.772      ;
 ; 0.203  ; net_ctrl:inst110|48 ; net_ctrl:inst110|48 ; inst66              ; inst66      ; 1.000        ; -0.043     ; 0.772      ;
 ; 0.203  ; net_ctrl:inst110|74 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 1.000        ; -0.043     ; 0.772      ;
 ; 0.203  ; net_ctrl:inst110|77 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 1.000        ; -0.043     ; 0.772      ;
@@ -1421,13 +1421,13 @@ HTML report is unavailable in plain text report export.
 ; 0.418  ; test_seq2:inst121|81                                                                               ; test_seq2:inst121|81                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.070      ; 0.674      ;
 ; 0.421  ; stbus_ctrl3:inst1|25                                                                               ; stbus_ctrl3:inst1|25                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.071      ; 0.678      ;
 ; 0.422  ; test_seq2:inst121|79                                                                               ; test_seq2:inst121|79                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.070      ; 0.678      ;
+; 0.444  ; shrg_ctrl9:inst5|22                                                                                ; shrg_ctrl9:inst5|22                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
+; 0.444  ; shrg_ctrl9:inst5|31                                                                                ; shrg_ctrl9:inst5|31                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
 ; 0.444  ; shrg_ctrl9:inst5|26                                                                                ; shrg_ctrl9:inst5|26                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
 ; 0.444  ; shrg_ctrl9:inst5|38                                                                                ; shrg_ctrl9:inst5|38                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
-; 0.444  ; shrg_ctrl9:inst5|22                                                                                ; shrg_ctrl9:inst5|22                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
-; 0.444  ; shrg_ctrl9:inst5|21                                                                                ; shrg_ctrl9:inst5|21                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
 ; 0.444  ; shrg_ctrl9:inst5|25                                                                                ; shrg_ctrl9:inst5|25                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
-; 0.444  ; shrg_ctrl9:inst5|31                                                                                ; shrg_ctrl9:inst5|31                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
 ; 0.444  ; test_seq2:inst121|38                                                                               ; test_seq2:inst121|38                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
+; 0.444  ; shrg_ctrl9:inst5|21                                                                                ; shrg_ctrl9:inst5|21                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
 ; 0.444  ; shrg_ctrl9:inst5|110                                                                               ; shrg_ctrl9:inst5|110                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.044      ; 0.674      ;
 ; 0.445  ; shrg_ctrl9:inst5|116                                                                               ; shrg_ctrl9:inst5|116                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.043      ; 0.674      ;
 ; 0.627  ; stbus_ctrl3:inst1|112                                                                              ; stbus_ctrl3:inst1|117                                                                                                        ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.071      ; 0.884      ;
@@ -4406,11 +4406,11 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 ; 0.232  ; net_ctrl:inst110|45 ; net_ctrl:inst110|47 ; inst66              ; inst66      ; 1.000        ; -0.040     ; 0.748      ;
 ; 0.257  ; net_ctrl:inst110|48 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 1.000        ; -0.040     ; 0.723      ;
 ; 0.261  ; net_ctrl:inst110|48 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 1.000        ; -0.040     ; 0.719      ;
-; 0.320  ; net_ctrl:inst110|48 ; net_ctrl:inst110|48 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
-; 0.320  ; net_ctrl:inst110|77 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
-; 0.320  ; net_ctrl:inst110|47 ; net_ctrl:inst110|47 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
-; 0.320  ; net_ctrl:inst110|74 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
 ; 0.320  ; net_ctrl:inst110|46 ; net_ctrl:inst110|46 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
+; 0.320  ; net_ctrl:inst110|77 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
+; 0.320  ; net_ctrl:inst110|48 ; net_ctrl:inst110|48 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
+; 0.320  ; net_ctrl:inst110|74 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
+; 0.320  ; net_ctrl:inst110|47 ; net_ctrl:inst110|47 ; inst66              ; inst66      ; 1.000        ; -0.038     ; 0.662      ;
 +--------+---------------------+---------------------+---------------------+-------------+--------------+------------+------------+
 
 
@@ -4531,13 +4531,13 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 ; 0.359  ; test_seq2:inst121|79                                                                               ; test_seq2:inst121|79                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.061      ; 0.588      ;
 ; 0.360  ; stbus_ctrl3:inst1|25                                                                               ; stbus_ctrl3:inst1|25                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.060      ; 0.588      ;
 ; 0.368  ; shrg_ctrl9:inst5|116                                                                               ; shrg_ctrl9:inst5|116                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.038      ; 0.574      ;
+; 0.369  ; shrg_ctrl9:inst5|26                                                                                ; shrg_ctrl9:inst5|26                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
+; 0.369  ; shrg_ctrl9:inst5|31                                                                                ; shrg_ctrl9:inst5|31                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
 ; 0.369  ; shrg_ctrl9:inst5|22                                                                                ; shrg_ctrl9:inst5|22                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
 ; 0.369  ; shrg_ctrl9:inst5|38                                                                                ; shrg_ctrl9:inst5|38                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
 ; 0.369  ; shrg_ctrl9:inst5|25                                                                                ; shrg_ctrl9:inst5|25                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
-; 0.369  ; shrg_ctrl9:inst5|26                                                                                ; shrg_ctrl9:inst5|26                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
-; 0.369  ; shrg_ctrl9:inst5|31                                                                                ; shrg_ctrl9:inst5|31                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
-; 0.369  ; shrg_ctrl9:inst5|21                                                                                ; shrg_ctrl9:inst5|21                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
 ; 0.369  ; test_seq2:inst121|38                                                                               ; test_seq2:inst121|38                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
+; 0.369  ; shrg_ctrl9:inst5|21                                                                                ; shrg_ctrl9:inst5|21                                                                                                          ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
 ; 0.369  ; shrg_ctrl9:inst5|110                                                                               ; shrg_ctrl9:inst5|110                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.037      ; 0.574      ;
 ; 0.454  ; DBL_BUF:inst|altshift_taps:inst211|shift_taps_dln:auto_generated|cntr_jdh:cntr3|counter_reg_bit[9] ; DBL_BUF:inst|altshift_taps:inst211|shift_taps_dln:auto_generated|cntr_jdh:cntr3|counter_reg_bit[9]                           ; SCK                                                 ; JUMP_1      ; 0.000        ; 1.690      ; 2.352      ;
 ; 0.507  ; DBL_BUF:inst|inst3                                                                                 ; DBL_BUF:inst|altshift_taps:inst211|shift_taps_dln:auto_generated|altsyncram_28b1:altsyncram2|ram_block5a0~porta_datain_reg0  ; shrg_ctrl9:inst5|inst4                              ; JUMP_1      ; 0.000        ; 5.982      ; 6.704      ;
@@ -7512,8 +7512,8 @@ Worst Case Available Settling Time: 0.293 ns
 ; -0.004 ; net_ctrl:inst110|42 ; net_ctrl:inst110|74 ; net_ctrl:inst110|42 ; inst66      ; 0.500        ; 0.600      ; 1.215      ;
 ; -0.002 ; net_ctrl:inst110|42 ; net_ctrl:inst110|77 ; net_ctrl:inst110|42 ; inst66      ; 0.500        ; 0.600      ; 1.213      ;
 ; 0.021  ; net_ctrl:inst110|46 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 1.000        ; -0.022     ; 0.965      ;
-; 0.023  ; net_ctrl:inst110|46 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 1.000        ; -0.022     ; 0.963      ;
 ; 0.023  ; net_ctrl:inst110|45 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 1.000        ; -0.022     ; 0.963      ;
+; 0.023  ; net_ctrl:inst110|46 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 1.000        ; -0.022     ; 0.963      ;
 ; 0.025  ; net_ctrl:inst110|42 ; net_ctrl:inst110|44 ; net_ctrl:inst110|42 ; inst66      ; 0.500        ; 0.600      ; 1.186      ;
 ; 0.025  ; net_ctrl:inst110|45 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 1.000        ; -0.022     ; 0.961      ;
 ; 0.059  ; net_ctrl:inst110|42 ; net_ctrl:inst110|42 ; net_ctrl:inst110|42 ; inst66      ; 0.500        ; 0.600      ; 1.152      ;
@@ -7623,12 +7623,12 @@ Worst Case Available Settling Time: 0.293 ns
 ; 0.184  ; stbus_ctrl3:inst1|25                                                                                                         ; stbus_ctrl3:inst1|25                                                                                                        ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.034      ; 0.300      ;
 ; 0.193  ; shrg_ctrl9:inst5|116                                                                                                         ; shrg_ctrl9:inst5|116                                                                                                        ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193  ; shrg_ctrl9:inst5|31                                                                                                          ; shrg_ctrl9:inst5|31                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
-; 0.193  ; shrg_ctrl9:inst5|26                                                                                                          ; shrg_ctrl9:inst5|26                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193  ; shrg_ctrl9:inst5|22                                                                                                          ; shrg_ctrl9:inst5|22                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
+; 0.193  ; shrg_ctrl9:inst5|26                                                                                                          ; shrg_ctrl9:inst5|26                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193  ; shrg_ctrl9:inst5|38                                                                                                          ; shrg_ctrl9:inst5|38                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193  ; shrg_ctrl9:inst5|25                                                                                                          ; shrg_ctrl9:inst5|25                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
-; 0.193  ; shrg_ctrl9:inst5|21                                                                                                          ; shrg_ctrl9:inst5|21                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193  ; test_seq2:inst121|38                                                                                                         ; test_seq2:inst121|38                                                                                                        ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
+; 0.193  ; shrg_ctrl9:inst5|21                                                                                                          ; shrg_ctrl9:inst5|21                                                                                                         ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193  ; shrg_ctrl9:inst5|110                                                                                                         ; shrg_ctrl9:inst5|110                                                                                                        ; JUMP_1                                              ; JUMP_1      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.204  ; test_seq2:inst121|81                                                                                                         ; test_seq2:inst121|81                                                                                                        ; inst176|altpll_component|auto_generated|pll1|clk[0] ; JUMP_1      ; 0.000        ; -0.090     ; 0.296      ;
 ; 0.204  ; test_seq2:inst121|82                                                                                                         ; test_seq2:inst121|82                                                                                                        ; inst176|altpll_component|auto_generated|pll1|clk[0] ; JUMP_1      ; 0.000        ; -0.090     ; 0.296      ;
@@ -8002,9 +8002,9 @@ Worst Case Available Settling Time: 0.293 ns
 ; 0.166 ; net_ctrl:inst110|42 ; net_ctrl:inst110|44 ; net_ctrl:inst110|42 ; inst66      ; 0.000        ; 0.635      ; 0.986      ;
 ; 0.193 ; net_ctrl:inst110|46 ; net_ctrl:inst110|46 ; inst66              ; inst66      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193 ; net_ctrl:inst110|77 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 0.000        ; 0.021      ; 0.296      ;
-; 0.193 ; net_ctrl:inst110|47 ; net_ctrl:inst110|47 ; inst66              ; inst66      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193 ; net_ctrl:inst110|48 ; net_ctrl:inst110|48 ; inst66              ; inst66      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.193 ; net_ctrl:inst110|74 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 0.000        ; 0.021      ; 0.296      ;
+; 0.193 ; net_ctrl:inst110|47 ; net_ctrl:inst110|47 ; inst66              ; inst66      ; 0.000        ; 0.021      ; 0.296      ;
 ; 0.204 ; net_ctrl:inst110|48 ; net_ctrl:inst110|77 ; inst66              ; inst66      ; 0.000        ; 0.022      ; 0.308      ;
 ; 0.207 ; net_ctrl:inst110|48 ; net_ctrl:inst110|74 ; inst66              ; inst66      ; 0.000        ; 0.022      ; 0.311      ;
 ; 0.214 ; net_ctrl:inst110|42 ; net_ctrl:inst110|42 ; net_ctrl:inst110|42 ; inst66      ; 0.000        ; 0.635      ; 1.034      ;
@@ -10486,7 +10486,7 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime Timing Analyzer
     Info: Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
-    Info: Processing started: Wed Apr 17 11:27:21 2024
+    Info: Processing started: Wed Apr 17 12:50:56 2024
 Info: Command: quartus_sta DCE01_3 -c DCE01_3
 Info: qsta_default_script.tcl version: #1
 Info (20030): Parallel compilation is enabled and will use 6 of the 6 processors detected
@@ -10998,8 +10998,8 @@ Info (332114): Report Metastability: Found 3 synchronizer chains.
 Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
 Info: Quartus Prime Timing Analyzer was successful. 0 errors, 14 warnings
-    Info: Peak virtual memory: 477 megabytes
-    Info: Processing ended: Wed Apr 17 11:27:25 2024
+    Info: Peak virtual memory: 489 megabytes
+    Info: Processing ended: Wed Apr 17 12:51:00 2024
     Info: Elapsed time: 00:00:04
     Info: Total CPU time (on all processors): 00:00:04
 

@@ -11934,23 +11934,13 @@ https://fpgasoftware.intel.com/eula.
 	(bus)
 )
 (connector
-	(text "PKT_LEN1" (rect 2790 3520 2843 3532)(font "Arial" ))
 	(pt 2896 3536)
 	(pt 2760 3536)
-)
-(connector
-	(pt 2896 3536)
-	(pt 2896 3560)
 )
 (connector
 	(pt 2760 3536)
 	(pt 2760 3560)
 	(bus)
-)
-(connector
-	(text "PKT_LEN0" (rect 2788 3496 2841 3508)(font "Arial" ))
-	(pt 2760 3512)
-	(pt 2856 3512)
 )
 (connector
 	(pt 2760 3352)
@@ -11961,6 +11951,15 @@ https://fpgasoftware.intel.com/eula.
 	(pt 2760 3512)
 	(pt 2760 3536)
 	(bus)
+)
+(connector
+	(pt 2896 3536)
+	(pt 2896 3560)
+)
+(connector
+	(text "PKT_LEN0" (rect 2788 3496 2841 3508)(font "Arial" ))
+	(pt 2760 3512)
+	(pt 2856 3512)
 )
 (connector
 	(pt 2856 3512)

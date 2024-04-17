@@ -902,9 +902,9 @@ https://fpgasoftware.intel.com/eula.
 	)
 )
 (symbol
-	(rect 688 552 864 664)
+	(rect 688 -48 864 64)
 	(text "ALTSHIFT_TAPS" (rect 23 1 142 18)(font "Arial" (font_size 10)))
-	(text "inst208" (rect 8 88 48 100)(font "Arial" ))
+	(text "inst211" (rect 8 88 48 100)(font "Arial" ))
 	(port
 		(pt 0 80)
 		(input)
@@ -968,76 +968,7 @@ https://fpgasoftware.intel.com/eula.
 		(line (pt 16 40)(pt 24 48))
 		(rectangle (rect 16 16 160 88))
 	)
-	(annotation_block (parameter)(rect 688 496 856 556))
-)
-(symbol
-	(rect 688 352 864 464)
-	(text "ALTSHIFT_TAPS" (rect 23 1 142 18)(font "Arial" (font_size 10)))
-	(text "inst209" (rect 8 88 48 100)(font "Arial" ))
-	(port
-		(pt 0 80)
-		(input)
-		(text "aclr" (rect 24 72 48 86)(font "Arial" (font_size 8)))
-		(text "aclr" (rect 24 72 48 86)(font "Arial" (font_size 8)))
-		(line (pt 0 80)(pt 16 80))
-	)
-	(port
-		(pt 0 64)
-		(input)
-		(text "clken" (rect 0 0 28 12)(font "Arial" ))
-		(text "clken" (rect 21 57 56 71)(font "Arial" (font_size 8)))
-		(line (pt 0 64)(pt 16 64))
-	)
-	(port
-		(pt 0 48)
-		(input)
-		(text "clock" (rect 0 0 29 12)(font "Arial" ))
-		(text "clock" (rect 21 41 56 55)(font "Arial" (font_size 8))(invisible))
-		(line (pt 0 48)(pt 16 48))
-	)
-	(port
-		(pt 0 32)
-		(input)
-		(text "shiftin[0]" (rect 0 0 48 12)(font "Arial" ))
-		(text "shiftin[0]" (rect 21 25 80 39)(font "Arial" (font_size 8)))
-		(line (pt 0 32)(pt 16 32)(line_width 3))
-	)
-	(port
-		(pt 176 32)
-		(output)
-		(text "shiftout[0]" (rect -176 0 -121 12)(font "Arial" ))
-		(text "shiftout[0]" (rect 88 24 156 38)(font "Arial" (font_size 8)))
-		(line (pt 176 32)(pt 160 32)(line_width 3))
-	)
-	(port
-		(pt 176 48)
-		(output)
-		(text "taps[(WIDTH*NUMBER_OF_TAPS) -1..0]" (rect -176 0 31 12)(font "Arial" ))
-		(text "taps[]" (rect 120 40 158 54)(font "Arial" (font_size 8)))
-		(line (pt 176 48)(pt 160 48)(line_width 3))
-		(unused)
-	)
-	(parameter
-		"NUMBER_OF_TAPS"
-		"1"
-		"Number of output taps, each separated by TAP_DISTANCE clock cycles"
-	)
-	(parameter
-		"TAP_DISTANCE"
-		"544"
-		"Number of shift positions between output taps"
-	)
-	(parameter
-		"WIDTH"
-		"1"
-		"Number of bits for the shiftin input"
-	)
-	(drawing
-		(line (pt 16 56)(pt 24 48))
-		(line (pt 16 40)(pt 24 48))
-		(rectangle (rect 16 16 160 88))
-	)
-	(annotation_block (parameter)(rect 688 296 856 356))
+	(annotation_block (parameter)(rect 688 -104 856 -44))
 )
 (symbol
 	(rect 688 152 864 264)
@@ -1109,9 +1040,9 @@ https://fpgasoftware.intel.com/eula.
 	(annotation_block (parameter)(rect 688 96 856 156))
 )
 (symbol
-	(rect 688 -48 864 64)
+	(rect 688 352 864 464)
 	(text "ALTSHIFT_TAPS" (rect 23 1 142 18)(font "Arial" (font_size 10)))
-	(text "inst211" (rect 8 88 48 100)(font "Arial" ))
+	(text "inst209" (rect 8 88 48 100)(font "Arial" ))
 	(port
 		(pt 0 80)
 		(input)
@@ -1175,7 +1106,76 @@ https://fpgasoftware.intel.com/eula.
 		(line (pt 16 40)(pt 24 48))
 		(rectangle (rect 16 16 160 88))
 	)
-	(annotation_block (parameter)(rect 688 -104 856 -44))
+	(annotation_block (parameter)(rect 688 296 856 356))
+)
+(symbol
+	(rect 688 552 864 664)
+	(text "ALTSHIFT_TAPS" (rect 23 1 142 18)(font "Arial" (font_size 10)))
+	(text "inst208" (rect 8 88 48 100)(font "Arial" ))
+	(port
+		(pt 0 80)
+		(input)
+		(text "aclr" (rect 24 72 48 86)(font "Arial" (font_size 8)))
+		(text "aclr" (rect 24 72 48 86)(font "Arial" (font_size 8)))
+		(line (pt 0 80)(pt 16 80))
+	)
+	(port
+		(pt 0 64)
+		(input)
+		(text "clken" (rect 0 0 28 12)(font "Arial" ))
+		(text "clken" (rect 21 57 56 71)(font "Arial" (font_size 8)))
+		(line (pt 0 64)(pt 16 64))
+	)
+	(port
+		(pt 0 48)
+		(input)
+		(text "clock" (rect 0 0 29 12)(font "Arial" ))
+		(text "clock" (rect 21 41 56 55)(font "Arial" (font_size 8))(invisible))
+		(line (pt 0 48)(pt 16 48))
+	)
+	(port
+		(pt 0 32)
+		(input)
+		(text "shiftin[0]" (rect 0 0 48 12)(font "Arial" ))
+		(text "shiftin[0]" (rect 21 25 80 39)(font "Arial" (font_size 8)))
+		(line (pt 0 32)(pt 16 32)(line_width 3))
+	)
+	(port
+		(pt 176 32)
+		(output)
+		(text "shiftout[0]" (rect -176 0 -121 12)(font "Arial" ))
+		(text "shiftout[0]" (rect 88 24 156 38)(font "Arial" (font_size 8)))
+		(line (pt 176 32)(pt 160 32)(line_width 3))
+	)
+	(port
+		(pt 176 48)
+		(output)
+		(text "taps[(WIDTH*NUMBER_OF_TAPS) -1..0]" (rect -176 0 31 12)(font "Arial" ))
+		(text "taps[]" (rect 120 40 158 54)(font "Arial" (font_size 8)))
+		(line (pt 176 48)(pt 160 48)(line_width 3))
+		(unused)
+	)
+	(parameter
+		"NUMBER_OF_TAPS"
+		"1"
+		"Number of output taps, each separated by TAP_DISTANCE clock cycles"
+	)
+	(parameter
+		"TAP_DISTANCE"
+		"544"
+		"Number of shift positions between output taps"
+	)
+	(parameter
+		"WIDTH"
+		"1"
+		"Number of bits for the shiftin input"
+	)
+	(drawing
+		(line (pt 16 56)(pt 24 48))
+		(line (pt 16 40)(pt 24 48))
+		(rectangle (rect 16 16 160 88))
+	)
+	(annotation_block (parameter)(rect 688 496 856 556))
 )
 (connector
 	(pt 864 384)

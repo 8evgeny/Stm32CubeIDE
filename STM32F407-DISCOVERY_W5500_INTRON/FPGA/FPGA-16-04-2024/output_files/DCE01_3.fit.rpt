@@ -1,5 +1,5 @@
 Fitter report for DCE01_3
-Wed Apr 17 11:27:18 2024
+Wed Apr 17 12:50:53 2024
 Quartus Prime Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
 
 
@@ -73,7 +73,7 @@ https://fpgasoftware.intel.com/eula.
 +-----------------------------------------------------------------------------------------+
 ; Fitter Summary                                                                          ;
 +------------------------------------+----------------------------------------------------+
-; Fitter Status                      ; Successful - Wed Apr 17 11:27:18 2024              ;
+; Fitter Status                      ; Successful - Wed Apr 17 12:50:53 2024              ;
 ; Quartus Prime Version              ; 22.1std.0 Build 915 10/25/2022 SC Standard Edition ;
 ; Revision Name                      ; DCE01_3                                            ;
 ; Top-level Entity Name              ; DCE01_3                                            ;
@@ -161,15 +161,15 @@ https://fpgasoftware.intel.com/eula.
 ; Number detected on machine ; 12          ;
 ; Maximum allowed            ; 6           ;
 ;                            ;             ;
-; Average used               ; 1.15        ;
+; Average used               ; 1.16        ;
 ; Maximum used               ; 6           ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;   6.2%      ;
-;     Processor 3            ;   2.5%      ;
-;     Processor 4            ;   2.1%      ;
-;     Processors 5-6         ;   1.9%      ;
+;     Processor 2            ;   6.9%      ;
+;     Processor 3            ;   2.6%      ;
+;     Processor 4            ;   2.2%      ;
+;     Processors 5-6         ;   2.0%      ;
 +----------------------------+-------------+
 
 
@@ -1680,7 +1680,7 @@ Info (170195): Router estimated average interconnect usage is 2% of the availabl
 Info (170199): The Fitter performed an Auto Fit compilation.  Optimizations were skipped to reduce compilation time.
     Info (170201): Optimizations that may affect the design's routability were skipped
 Info (170194): Fitter routing operations ending: elapsed time is 00:00:03
-Info (11888): Total time spent on timing analysis during the Fitter is 2.09 seconds.
+Info (11888): Total time spent on timing analysis during the Fitter is 1.89 seconds.
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
 Info (334003): Started post-fitting delay annotation
@@ -1690,10 +1690,10 @@ Warning (15062): PLL "altpll1:inst169|altpll:altpll_component|altpll1_altpll:aut
 Warning (171167): Found invalid Fitter assignments. See the Ignored Assignments panel in the Fitter Compilation Report for more information.
 Info (144001): Generated suppressed messages file /home/evg/Stm32CubeIDE/STM32F407-DISCOVERY_W5500_INTRON/FPGA/FPGA-16-04-2024/output_files/DCE01_3.fit.smsg
 Info: Quartus Prime Fitter was successful. 0 errors, 11 warnings
-    Info: Peak virtual memory: 1123 megabytes
-    Info: Processing ended: Wed Apr 17 11:27:18 2024
-    Info: Elapsed time: 00:00:09
-    Info: Total CPU time (on all processors): 00:00:14
+    Info: Peak virtual memory: 1119 megabytes
+    Info: Processing ended: Wed Apr 17 12:50:53 2024
+    Info: Elapsed time: 00:00:07
+    Info: Total CPU time (on all processors): 00:00:13
 
 
 +----------------------------+

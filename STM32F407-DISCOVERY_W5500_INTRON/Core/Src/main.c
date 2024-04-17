@@ -1525,15 +1525,10 @@ void sendReceiveUDP(uint8_t udpSocket)
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
 
             if (SEGGER){
-                print_1_Channel(dataFromBase);
-                print_2_Channel(dataFromBase);
-                print_3_Channel(dataFromBase);
-                print_4_Channel(dataFromBase);
-//                print_2_Channel_control(receivedDataFrom_2_Channel);
-//                print_1_Channel(dataToBase);
-//                print_2_Channel(dataToBase);
-//                print_3_Channel(dataToBase);
-//                print_4_Channel(dataToBase);
+                print_Channel(1, dataFromBase);
+                print_Channel(2, dataFromBase);
+                print_Channel(3, dataFromBase);
+                print_Channel(4, dataFromBase);
             }
 #ifdef enable_CONTROL
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
@@ -1640,10 +1635,10 @@ void sendReceiveUDP(uint8_t udpSocket)
 
         //Тут вывожу все каналы, полученные от абонента  dataFromDx
         if (SEGGER){
-            print_1_Channel(dataFromDx);
-            print_2_Channel(dataFromDx);
-            print_3_Channel(dataFromDx);
-            print_4_Channel(dataFromDx);
+            print_Channel(1, dataFromDx);
+            print_Channel(2, dataFromDx);
+            print_Channel(3, dataFromDx);
+            print_Channel(4, dataFromDx);
         }
 
             if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){

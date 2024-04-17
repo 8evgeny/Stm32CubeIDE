@@ -1,0 +1,104 @@
+Assembler report for DCE01_3
+Wed Apr 17 11:27:20 2024
+Quartus Prime Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Assembler Summary
+  3. Assembler Settings
+  4. Assembler Generated Files
+  5. Assembler Device Options: DCE01_3.sof
+  6. Assembler Device Options: DCE01_3.pof
+  7. Assembler Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2022  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++---------------------------------------------------------------+
+; Assembler Summary                                             ;
++-----------------------+---------------------------------------+
+; Assembler Status      ; Successful - Wed Apr 17 11:27:20 2024 ;
+; Revision Name         ; DCE01_3                               ;
+; Top-level Entity Name ; DCE01_3                               ;
+; Family                ; Cyclone IV E                          ;
+; Device                ; EP4CE6E22I7                           ;
++-----------------------+---------------------------------------+
+
+
++----------------------------------+
+; Assembler Settings               ;
++--------+---------+---------------+
+; Option ; Setting ; Default Value ;
++--------+---------+---------------+
+
+
++-------------------------------------------------------------------------------------------------------+
+; Assembler Generated Files                                                                             ;
++-------------------------------------------------------------------------------------------------------+
+; File Name                                                                                             ;
++-------------------------------------------------------------------------------------------------------+
+; /home/evg/Stm32CubeIDE/STM32F407-DISCOVERY_W5500_INTRON/FPGA/FPGA-16-04-2024/output_files/DCE01_3.sof ;
+; /home/evg/Stm32CubeIDE/STM32F407-DISCOVERY_W5500_INTRON/FPGA/FPGA-16-04-2024/output_files/DCE01_3.pof ;
++-------------------------------------------------------------------------------------------------------+
+
+
++---------------------------------------+
+; Assembler Device Options: DCE01_3.sof ;
++----------------+----------------------+
+; Option         ; Setting              ;
++----------------+----------------------+
+; JTAG usercode  ; 0x000DCD4E           ;
+; Checksum       ; 0x000DCD4E           ;
++----------------+----------------------+
+
+
++---------------------------------------+
+; Assembler Device Options: DCE01_3.pof ;
++--------------------+------------------+
+; Option             ; Setting          ;
++--------------------+------------------+
+; JTAG usercode      ; 0x00000000       ;
+; Checksum           ; 0x06724897       ;
+; Compression Ratio  ; 3                ;
++--------------------+------------------+
+
+
++--------------------+
+; Assembler Messages ;
++--------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Assembler
+    Info: Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
+    Info: Processing started: Wed Apr 17 11:27:19 2024
+Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off DCE01_3 -c DCE01_3
+Info (115031): Writing out detailed assembly data for power analysis
+Info (115030): Assembler is generating device programming files
+Info: Quartus Prime Assembler was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 358 megabytes
+    Info: Processing ended: Wed Apr 17 11:27:20 2024
+    Info: Elapsed time: 00:00:01
+    Info: Total CPU time (on all processors): 00:00:01
+
+

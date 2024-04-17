@@ -1,0 +1,169 @@
+Restore Archived Project report for DCE01_3
+Wed Apr 03 10:34:25 2024
+Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Restore Archived Project Summary
+  3. Restore Archived Project Messages
+  4. Files Restored
+  5. Files Not Restored
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 1991-2013 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+
+
+
++-------------------------------------------------------------------------+
+; Restore Archived Project Summary                                        ;
++---------------------------------+---------------------------------------+
+; Restore Archived Project Status ; Successful - Wed Apr 03 10:34:25 2024 ;
+; Revision Name                   ; DCE01_3                               ;
+; Top-level Entity Name           ; DCE01_3                               ;
+; Family                          ; Cyclone IV E                          ;
++---------------------------------+---------------------------------------+
+
+
++-----------------------------------+
+; Restore Archived Project Messages ;
++-----------------------------------+
+Info: Successfully restored 'D:/altera/DCE01_PCB_3/output_files/DCE01_3-27_03_2023-WORKING FIRMWARE.qar' into the 'D:/altera/DCE01_3-27_03_2023-02/' directory
+Info: Generated report 'DCE01_3.restore.rpt'
+Info (23030): Evaluation of Tcl script c:/altera/13.0sp1/quartus/common/tcl/apps/qpm/qar.tcl was successful
+Info: Quartus II 64-Bit Shell was successful. 0 errors, 2 warnings
+    Info: Peak virtual memory: 281 megabytes
+    Info: Processing ended: Wed Apr 03 10:34:25 2024
+    Info: Elapsed time: 00:00:02
+    Info: Total CPU time (on all processors): 00:00:01
+
+
++----------------------------------------------------+
+; Files Restored                                     ;
++----------------------------------------------------+
+; File Name                                          ;
++----------------------------------------------------+
+; assignment_defaults.qdf                            ;
+; megafunctions/aglobal130.inc                       ;
+; megafunctions/altdpram.inc                         ;
+; megafunctions/altpll.tdf                           ;
+; megafunctions/altshift_taps.tdf                    ;
+; megafunctions/cbx.lst                              ;
+; megafunctions/cycloneii_pll.inc                    ;
+; megafunctions/lpm_compare.inc                      ;
+; megafunctions/lpm_constant.inc                     ;
+; megafunctions/lpm_counter.inc                      ;
+; megafunctions/stratix_pll.inc                      ;
+; megafunctions/stratixii_pll.inc                    ;
+; prmtvs_b.vhd                                       ;
+; prmtvs_p.vhd                                       ;
+; timing_b.vhd                                       ;
+; timing_p.vhd                                       ;
+; ABONENT.v                                          ;
+; ALTSHIFT_TAPS.bsf                                  ;
+; DCDR01.bsf                                         ;
+; DCE01_3.bdf                                        ;
+; DCE01_3.qpf                                        ;
+; DCE01_3.qsf                                        ;
+; DCE01_SFL.bsf                                      ;
+; abonent.bsf                                        ;
+; altpll0.bsf                                        ;
+; altpll0.cmp                                        ;
+; altpll0.vhd                                        ;
+; altpll1.bsf                                        ;
+; altpll1.cmp                                        ;
+; altpll1.vhd                                        ;
+; altpll2.bsf                                        ;
+; altpll2.cmp                                        ;
+; altpll2.vhd                                        ;
+; blinker.bdf                                        ;
+; blinker.bsf                                        ;
+; ch_clk_ctrl.bdf                                    ;
+; ch_clk_ctrl.bsf                                    ;
+; ch_clk_ctrl2.bdf                                   ;
+; ch_clk_ctrl2.bsf                                   ;
+; cntr7.bdf                                          ;
+; cntr7.bsf                                          ;
+; codeind.bsf                                        ;
+; converter.bsf                                      ;
+; converter.cmp                                      ;
+; cpu_int_form.bdf                                   ;
+; cpu_int_form.bsf                                   ;
+; cpu_int_form2.bdf                                  ;
+; cpu_int_form2.bsf                                  ;
+; DCE01_3.cbx.xml                                    ;
+; db/altpll1_altpll.v                                ;
+; db/altpll2_altpll.v                                ;
+; db/altsyncram_m5b1.tdf                             ;
+; db/cmpr_vgc.tdf                                    ;
+; db/cntr_dch.tdf                                    ;
+; db/cntr_nsf.tdf                                    ;
+; db/shift_taps_fln.tdf                              ;
+; dbltff.bdf                                         ;
+; dbltff.bsf                                         ;
+; dcdr01.vhd                                         ;
+; div125.bdf                                         ;
+; div125.bsf                                         ;
+; div15.bdf                                          ;
+; div15.bsf                                          ;
+; div5-1123.bdf                                      ;
+; div5-1123.bsf                                      ;
+; div5.bdf                                           ;
+; div5.bsf                                           ;
+; div59.bdf                                          ;
+; div59.bsf                                          ;
+; div61.bdf                                          ;
+; div61.bsf                                          ;
+; f0_former.bdf                                      ;
+; f0_former.bsf                                      ;
+; incremental_db/compiled_partitions/DCE01_3.db_info ;
+; plsgen.bdf                                         ;
+; plsgen.bsf                                         ;
+; shrg_ctrl.bsf                                      ;
+; shrg_ctrl2.bsf                                     ;
+; shrg_ctrl3.bsf                                     ;
+; shrg_ctrl4.bsf                                     ;
+; shrg_ctrl5.bsf                                     ;
+; shrg_ctrl6.bdf                                     ;
+; shrg_ctrl6.bsf                                     ;
+; shrg_ctrl7.bdf                                     ;
+; shrg_ctrl7.bsf                                     ;
+; shrg_ctrl8.bsf                                     ;
+; slctr.bdf                                          ;
+; slctr.bsf                                          ;
+; stbus_ctrl.bdf                                     ;
+; stbus_ctrl.bsf                                     ;
+; stbus_ctrl2.bdf                                    ;
+; stbus_ctrl2.bsf                                    ;
+; unifilter4.bdf                                     ;
+; unifilter4.bsf                                     ;
++----------------------------------------------------+
+
+
++-------------------------+
+; Files Not Restored      ;
++-------------------------+
+; File Name               ;
++-------------------------+
+; assignment_defaults.qdf ;
++-------------------------+
+
+

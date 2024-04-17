@@ -132,10 +132,6 @@
 					"strict" : false
 				},
 				{
-					"name" : "CLR_SHFTRG_MISO",
-					"strict" : false
-				},
-				{
 					"name" : "PWR_ON",
 					"strict" : false
 				},
@@ -153,6 +149,10 @@
 				},
 				{
 					"name" : "CPU_NET_RCV",
+					"strict" : false
+				},
+				{
+					"name" : "CLR_SHFTRG_MISO",
 					"strict" : false
 				},
 				{

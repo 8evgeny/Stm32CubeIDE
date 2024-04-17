@@ -11854,11 +11854,6 @@ https://fpgasoftware.intel.com/eula.
 	(pt 2504 1080)
 )
 (connector
-	(text "PKT_LEN2" (rect 2790 3544 2843 3556)(font "Arial" ))
-	(pt 2896 3560)
-	(pt 2760 3560)
-)
-(connector
 	(pt 2896 3728)
 	(pt 2896 3776)
 )
@@ -11866,15 +11861,6 @@ https://fpgasoftware.intel.com/eula.
 	(text "PKT_LEN3" (rect 2791 3568 2844 3580)(font "Arial" ))
 	(pt 2896 3584)
 	(pt 2760 3584)
-)
-(connector
-	(pt 2760 3560)
-	(pt 2760 3584)
-	(bus)
-)
-(connector
-	(pt 2896 3560)
-	(pt 2896 3584)
 )
 (connector
 	(text "PKT_LEN4" (rect 2793 3592 2846 3604)(font "Arial" ))
@@ -11934,13 +11920,37 @@ https://fpgasoftware.intel.com/eula.
 	(bus)
 )
 (connector
-	(text "PKT_LEN1" (rect 2790 3520 2843 3532)(font "Arial" ))
+	(pt 2760 3352)
+	(pt 2760 3512)
+	(bus)
+)
+(connector
+	(pt 2856 3608)
+	(pt 2856 3776)
+)
+(connector
+	(text "PKT_LEN2" (rect 2790 3544 2843 3556)(font "Arial" ))
+	(pt 2856 3560)
+	(pt 2760 3560)
+)
+(connector
+	(pt 2760 3560)
+	(pt 2760 3584)
+	(bus)
+)
+(connector
+	(pt 2856 3560)
+	(pt 2856 3608)
+)
+(connector
+	(text "PKT_LEN1" (rect 2770 3520 2820 3532)(font "Intel Clear" ))
 	(pt 2896 3536)
 	(pt 2760 3536)
 )
 (connector
-	(pt 2896 3536)
-	(pt 2896 3560)
+	(pt 2760 3512)
+	(pt 2760 3536)
+	(bus)
 )
 (connector
 	(pt 2760 3536)
@@ -11948,27 +11958,17 @@ https://fpgasoftware.intel.com/eula.
 	(bus)
 )
 (connector
+	(pt 2896 3512)
+	(pt 2896 3536)
+)
+(connector
 	(text "PKT_LEN0" (rect 2788 3496 2841 3508)(font "Arial" ))
 	(pt 2760 3512)
-	(pt 2856 3512)
+	(pt 2896 3512)
 )
 (connector
-	(pt 2760 3352)
-	(pt 2760 3512)
-	(bus)
-)
-(connector
-	(pt 2760 3512)
-	(pt 2760 3536)
-	(bus)
-)
-(connector
-	(pt 2856 3512)
-	(pt 2856 3608)
-)
-(connector
-	(pt 2856 3608)
-	(pt 2856 3776)
+	(pt 2896 3536)
+	(pt 2896 3584)
 )
 (junction (pt 928 752))
 (junction (pt 936 888))
@@ -12224,11 +12224,11 @@ https://fpgasoftware.intel.com/eula.
 (junction (pt 1936 1120))
 (junction (pt 2504 1128))
 (junction (pt 2504 1064))
-(junction (pt 2896 3560))
 (junction (pt 2896 3584))
 (junction (pt 2896 3632))
 (junction (pt 2896 3704))
 (junction (pt 2856 3608))
+(junction (pt 2896 3536))
 (text "2048 kHz" (rect 2016 696 2077 710)(font "Arial" (color 255 255 255)(font_size 8)))
 (text "1024 kHz" (rect 2016 832 2077 846)(font "Arial" (color 255 255 255)(font_size 8)))
 (text "512 kHz" (rect 2016 968 2069 982)(font "Arial" (color 255 255 255)(font_size 8)))

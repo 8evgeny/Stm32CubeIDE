@@ -955,7 +955,7 @@ https://fpgasoftware.intel.com/eula.
 	)
 	(parameter
 		"TAP_DISTANCE"
-		"544"
+		"640"
 		"Number of shift positions between output taps"
 	)
 	(parameter
@@ -1024,7 +1024,7 @@ https://fpgasoftware.intel.com/eula.
 	)
 	(parameter
 		"TAP_DISTANCE"
-		"544"
+		"640"
 		"Number of shift positions between output taps"
 	)
 	(parameter
@@ -1093,7 +1093,7 @@ https://fpgasoftware.intel.com/eula.
 	)
 	(parameter
 		"TAP_DISTANCE"
-		"544"
+		"640"
 		"Number of shift positions between output taps"
 	)
 	(parameter
@@ -1162,7 +1162,7 @@ https://fpgasoftware.intel.com/eula.
 	)
 	(parameter
 		"TAP_DISTANCE"
-		"544"
+		"640"
 		"Number of shift positions between output taps"
 	)
 	(parameter
@@ -1690,44 +1690,44 @@ https://fpgasoftware.intel.com/eula.
 	(pt 208 -16)
 )
 (connector
-	(pt 304 -272)
-	(pt 568 -272)
-)
-(connector
-	(pt 304 -208)
-	(pt 552 -208)
-)
-(connector
 	(pt 448 -320)
 	(pt 688 -320)
-)
-(connector
-	(pt 448 -88)
-	(pt 448 -320)
-)
-(connector
-	(pt 304 -88)
-	(pt 448 -88)
-)
-(connector
-	(pt 448 -88)
-	(pt 584 -88)
 )
 (connector
 	(pt 464 -296)
 	(pt 688 -296)
 )
 (connector
-	(pt 464 -296)
-	(pt 464 -24)
-)
-(connector
-	(pt 520 -24)
-	(pt 464 -24)
-)
-(connector
-	(pt 464 -24)
 	(pt 304 -24)
+	(pt 520 -24)
+)
+(connector
+	(pt 304 -88)
+	(pt 584 -88)
+)
+(connector
+	(pt 448 -272)
+	(pt 448 -320)
+)
+(connector
+	(pt 304 -272)
+	(pt 448 -272)
+)
+(connector
+	(pt 448 -272)
+	(pt 568 -272)
+)
+(connector
+	(pt 464 -296)
+	(pt 464 -208)
+)
+(connector
+	(pt 304 -208)
+	(pt 464 -208)
+)
+(connector
+	(pt 464 -208)
+	(pt 552 -208)
 )
 (junction (pt 928 -192))
 (junction (pt 928 8))
@@ -1748,8 +1748,8 @@ https://fpgasoftware.intel.com/eula.
 (junction (pt 144 -336))
 (junction (pt 224 -200))
 (junction (pt 224 -80))
-(junction (pt 448 -88))
-(junction (pt 464 -24))
+(junction (pt 448 -272))
+(junction (pt 464 -208))
 (text "CHNL 1 - CPU WRITE" (rect 944 -32 1077 -18)(font "Arial" (font_size 8)))
 (text "CHNL 0 - CPU WRITE" (rect 944 168 1077 182)(font "Arial" (font_size 8)))
 (text "CHNL 0 - CPU READ" (rect 944 368 1072 382)(font "Arial" (font_size 8)))

@@ -1,4 +1,4 @@
-Analysis & Synthesis Status : Successful - Wed Apr 17 12:50:45 2024
+Analysis & Synthesis Status : Successful - Wed Apr 17 13:36:36 2024
 Quartus Prime Version : 22.1std.0 Build 915 10/25/2022 SC Standard Edition
 Revision Name : DCE01_3
 Top-level Entity Name : DCE01_3
@@ -9,6 +9,6 @@ Total logic elements : 352
 Total registers : 216
 Total pins : 47
 Total virtual pins : 0
-Total memory bits : 2,168
+Total memory bits : 2,552
 Embedded Multiplier 9-bit elements : 0
 Total PLLs : 2

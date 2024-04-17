@@ -19,7 +19,7 @@ add_definitions(-Denable_SEGGER) #on/off SEGGER
 #add_definitions(-Denable_BUFFER) #on/off BUFFER (из кода убрать - сейчас это делает ПЛИС)
 #add_definitions(-Denable_RESET_FPGA_MOSI) #сброс приемного регистра ПЛИС (должен быть закомментирован - ПЛИС сама формирует сигнал)
 add_definitions(-Denable_RESET_FPGA_MISO) #сброс передающего регистра ПЛИС
-add_definitions(-Denable_SKIP_Packets) #пропуск пакетов по сигналу ПЛИС
+#add_definitions(-Denable_SKIP_Packets) #пропуск пакетов по сигналу ПЛИС
 add_definitions(-Denable_BIG_PACKET) #Большой пакет данных
 #add_definitions(-Denable_CONTROL) # Контроль EE в С канале на базе и общая перезагрузка если не встает за n секунд
 #add_definitions(-Denable_WIZNET_DMA) #DMA режим WIZNET - не работает (см примеры в Doc)
@@ -34,10 +34,10 @@ add_definitions(-DPROD)  #Основной файл index.html или приме
 #TЕСТОВАЯ  ОТПРАВКА  ДАННЫХ
 #add_definitions(-DbaseSendTestData)  #Отправка c базы тестовых данных абоненту
 #add_definitions(-DabonSendTestData)  #Отправка от абонента тестовых данных в базу
-#add_definitions(-DfpgaToCpuBaseTestData)  #Отдаю из FPGA в CPU тестовые данные на базе
-#add_definitions(-DfpgaToCpuAbonTestData)  #Отдаю из FPGA в CPU тестовые данные на абоненте
-#add_definitions(-DcpuToFpgaBaseTestData)  #Отдаю из CPU в FPGA тестовые данные на базе
-#add_definitions(-DcpuToFpgaAbonTestData)  #Отдаю из CPU в FPGA тестовые данные на абоненте
+#add_definitions(-DfpgaToCpuBaseTestData)  #Отдаю из CPU в FPGA тестовые данные на базе
+#add_definitions(-DfpgaToCpuAbonTestData)  #Отдаю из CPU в FPGA тестовые данные на абоненте
+#add_definitions(-DcpuToFpgaBaseTestData)  #Отдаю из FPGA в CPU тестовые данные на базе
+#add_definitions(-DcpuToFpgaAbonTestData)  #Отдаю из FPGA в CPU тестовые данные на абоненте
 add_definitions(-DWOLFSSL_X509_INCLUDED)
 add_definitions(-DOPENSSL_ALL)
 add_definitions(-UWOLFSSL_TLS13)

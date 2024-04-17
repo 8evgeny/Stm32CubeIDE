@@ -1493,15 +1493,15 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     dataToBase ,
                                     #endif
                                     #ifdef  fpgaToCpuBaseTestData
-                                    TEST_DATA ,
+                                    test1 ,
                                     #endif
                                     #ifndef  cpuToFpgaBaseTestData
                                     dataFromBase ,
                                     #endif
                                     #ifdef  cpuToFpgaBaseTestData
-                                    TEST_DATA ,
+                                    test1 ,
                                     #endif
-                                    MAX_PACKET_LEN, 0x1000);
+                                    MAX_PACKET_LEN, 0x10000);
 #ifdef  enable_RESET_FPGA_MISO
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
@@ -1522,13 +1522,20 @@ void sendReceiveUDP(uint8_t udpSocket)
 
 //Тут вывожу все каналы, полученные от базы  dataFromBase
 //Формируем массив из байтов 3 канала
+#ifdef enable_CONTROL
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
-
+#endif
             if (SEGGER){
-                print_Channel(1, dataFromBase);
-                print_Channel(2, dataFromBase);
-                print_Channel(3, dataFromBase);
-                print_Channel(4, dataFromBase);
+//                print_Channel(1, dataFromBase);
+//                print_Channel(2, dataFromBase);
+//                print_Channel(3, dataFromBase);
+//                print_Channel(4, dataFromBase);
+//                print_Channel(1, dataToBase);
+//                print_Channel(2, dataToBase);
+//                print_Channel(3, dataToBase);
+//                print_Channel(4, dataToBase);
+
+                print_ALL_Channel(dataFromBase);
             }
 #ifdef enable_CONTROL
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
@@ -1607,7 +1614,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     dataToDx ,
                                     #endif
                                     #ifdef  fpgaToCpuAbonTestData
-                                    test6 ,
+                                    test1 ,
                                     #endif
                                     #ifndef  cpuToFpgaAbonTestData
                                     dataFromDx ,
@@ -1615,7 +1622,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                                     #ifdef  cpuToFpgaAbonTestData
                                     test1 ,
                                     #endif
-                                    MAX_PACKET_LEN, 0x1000);
+                                    MAX_PACKET_LEN, 0x10000);
 #ifdef  enable_RESET_FPGA_MISO
             //Очищаю сдвиговый регистр приема MISO
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
@@ -1635,10 +1642,16 @@ void sendReceiveUDP(uint8_t udpSocket)
 
         //Тут вывожу все каналы, полученные от абонента  dataFromDx
         if (SEGGER){
-            print_Channel(1, dataFromDx);
-            print_Channel(2, dataFromDx);
-            print_Channel(3, dataFromDx);
-            print_Channel(4, dataFromDx);
+//            print_Channel(1, dataFromDx);
+//            print_Channel(2, dataFromDx);
+//            print_Channel(3, dataFromDx);
+//            print_Channel(4, dataFromDx);
+//            print_Channel(1, dataToDx);
+//            print_Channel(2, dataToDx);
+//            print_Channel(3, dataToDx);
+//            print_Channel(4, dataToDx);
+
+            print_ALL_Channel(dataFromDx);
         }
 
             if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){

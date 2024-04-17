@@ -162,13 +162,12 @@ extern "C" {
 #define MAX_PACKET_LEN 48  //12*4
 #endif
 #ifdef enable_BIG_PACKET
-#define MAX_PACKET_LEN 17 * 4
+#define MAX_PACKET_LEN 20 * 4
 #endif
 #ifdef enable_BUFFER
 #define BUF_PACKET_SIZE 100
 #endif
 
-#define TEST_DATA test6
 enum netDiagnostic{
     netDiagnosticON,
     netDiagnosticOFF
@@ -254,7 +253,7 @@ void setNewDestIP(char * buf);
 void setNewPassword(char * buf);
 int convertHexToDecimal();
 void testSPI_EEPROM();
-void printAllChannel(uint8_t data[MAX_PACKET_LEN]);
+void print_ALL_Channel(uint8_t data[MAX_PACKET_LEN]);
 void print_Channel(uint8_t channel, uint8_t data[MAX_PACKET_LEN]);
 void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]);
 uint8_t compare_data_in_Channel(uint8_t data[MAX_PACKET_LEN / 4], uint8_t trueData[MAX_PACKET_LEN / 4]);

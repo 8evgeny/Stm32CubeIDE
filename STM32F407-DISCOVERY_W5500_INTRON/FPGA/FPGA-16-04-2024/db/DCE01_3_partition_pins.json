@@ -1,0 +1,169 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "MISO",
+					"strict" : false
+				},
+				{
+					"name" : "CPU_INT",
+					"strict" : false
+				},
+				{
+					"name" : "EXT_Out",
+					"strict" : false
+				},
+				{
+					"name" : "CLK_10_24MHz",
+					"strict" : false
+				},
+				{
+					"name" : "WP_FLASH",
+					"strict" : false
+				},
+				{
+					"name" : "LED_G_138",
+					"strict" : false
+				},
+				{
+					"name" : "LED_R_125",
+					"strict" : false
+				},
+				{
+					"name" : "LED_R_133",
+					"strict" : false
+				},
+				{
+					"name" : "LED_R_135",
+					"strict" : false
+				},
+				{
+					"name" : "CLK_WIZNET",
+					"strict" : false
+				},
+				{
+					"name" : "ALERT",
+					"strict" : false
+				},
+				{
+					"name" : "MS2",
+					"strict" : false
+				},
+				{
+					"name" : "DIR_ISDN",
+					"strict" : false
+				},
+				{
+					"name" : "MODE",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_A2",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_A3",
+					"strict" : false
+				},
+				{
+					"name" : "HF_TEST",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_C4",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_C1",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_C2",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_C3",
+					"strict" : false
+				},
+				{
+					"name" : "CPU_NET_RCV_HIGH_DLY",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_B2",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_B1",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_A4",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_A1",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_B3",
+					"strict" : false
+				},
+				{
+					"name" : "TEST_PIN_B4",
+					"strict" : false
+				},
+				{
+					"name" : "C4",
+					"strict" : false
+				},
+				{
+					"name" : "F0",
+					"strict" : false
+				},
+				{
+					"name" : "JUMP_3",
+					"strict" : false
+				},
+				{
+					"name" : "JUMP_1",
+					"strict" : false
+				},
+				{
+					"name" : "CLR_SHFTRG_MISO",
+					"strict" : false
+				},
+				{
+					"name" : "PWR_ON",
+					"strict" : false
+				},
+				{
+					"name" : "MOSI",
+					"strict" : false
+				},
+				{
+					"name" : "CLK_50MHz",
+					"strict" : false
+				},
+				{
+					"name" : "SCK",
+					"strict" : false
+				},
+				{
+					"name" : "CPU_NET_RCV",
+					"strict" : false
+				},
+				{
+					"name" : "EXT_In",
+					"strict" : false
+				},
+				{
+					"name" : "JUMP_4",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

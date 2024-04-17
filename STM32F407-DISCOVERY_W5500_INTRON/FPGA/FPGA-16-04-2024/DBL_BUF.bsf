@@ -1,0 +1,169 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 1991-2013 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+*/
+(header "symbol" (version "1.2"))
+(symbol
+	(rect 56 56 240 328)
+	(text "DBL_BUF" (rect 72 0 126 14)(font "Arial" (font_size 8)))
+	(text "inst" (rect 0 256 17 268)(font "Arial" ))
+	(port
+		(pt 184 168)
+		(input)
+		(text "SPI_CLK" (rect -16 8 32 22)(font "Arial" (font_size 8)))
+		(text "SPI_CLK" (rect 112 160 160 174)(font "Arial" (font_size 8)))
+		(line (pt 168 168)(pt 184 168))
+	)
+	(port
+		(pt 0 40)
+		(input)
+		(text "CLK_RG_OUT" (rect 0 8 80 22)(font "Arial" (font_size 8)))
+		(text "CLK_RG_OUT" (rect 21 35 101 49)(font "Arial" (font_size 8)))
+		(line (pt 0 40)(pt 16 40))
+	)
+	(port
+		(pt 0 56)
+		(input)
+		(text "CLK_RG_IN" (rect 0 8 66 22)(font "Arial" (font_size 8)))
+		(text "CLK_RG_IN" (rect 21 51 87 65)(font "Arial" (font_size 8)))
+		(line (pt 0 56)(pt 16 56))
+	)
+	(port
+		(pt 0 184)
+		(input)
+		(text "CPU_INT" (rect 0 8 48 22)(font "Arial" (font_size 8)))
+		(text "CPU_INT" (rect 21 179 69 193)(font "Arial" (font_size 8)))
+		(line (pt 0 184)(pt 16 184))
+	)
+	(port
+		(pt 0 216)
+		(input)
+		(text "CLR" (rect 0 8 23 22)(font "Arial" (font_size 8)))
+		(text "CLR" (rect 21 211 44 225)(font "Arial" (font_size 8)))
+		(line (pt 0 216)(pt 16 216))
+	)
+	(port
+		(pt 0 160)
+		(input)
+		(text "CLR_BUF" (rect 0 8 54 22)(font "Arial" (font_size 8)))
+		(text "CLR_BUF" (rect 21 155 75 169)(font "Arial" (font_size 8)))
+		(line (pt 0 160)(pt 16 160))
+	)
+	(port
+		(pt 0 200)
+		(input)
+		(text "RST_SHFTRG" (rect 0 8 79 22)(font "Arial" (font_size 8)))
+		(text "RST_SHFTRG" (rect 21 195 100 209)(font "Arial" (font_size 8)))
+		(line (pt 0 200)(pt 16 200))
+	)
+	(port
+		(pt 0 144)
+		(input)
+		(text "SHFTRG_LOCK" (rect 0 8 88 22)(font "Arial" (font_size 8)))
+		(text "SHFTRG_LOCK" (rect 21 139 109 153)(font "Arial" (font_size 8)))
+		(line (pt 0 144)(pt 16 144))
+	)
+	(port
+		(pt 184 184)
+		(input)
+		(text "SPI_MOSI" (rect -16 8 38 22)(font "Arial" (font_size 8)))
+		(text "SPI_MOSI" (rect 112 176 166 190)(font "Arial" (font_size 8)))
+		(line (pt 168 184)(pt 184 184))
+	)
+	(port
+		(pt 184 200)
+		(input)
+		(text "EXT_IN" (rect -16 8 24 22)(font "Arial" (font_size 8)))
+		(text "EXT_IN" (rect 120 192 160 206)(font "Arial" (font_size 8)))
+		(line (pt 168 200)(pt 184 200))
+	)
+	(port
+		(pt 0 248)
+		(input)
+		(text "CLR_MISO_BUF" (rect 24 232 114 246)(font "Arial" (font_size 8)))
+		(text "CLR_MISO_BUF" (rect 24 240 114 254)(font "Arial" (font_size 8)))
+		(line (pt 0 248)(pt 16 248))
+	)
+	(port
+		(pt 184 40)
+		(output)
+		(text "CHNL" (rect -16 8 15 22)(font "Arial" (font_size 8)))
+		(text "CHNL" (rect 132 35 163 49)(font "Arial" (font_size 8)))
+		(line (pt 184 40)(pt 168 40))
+	)
+	(port
+		(pt 184 152)
+		(output)
+		(text "EXT_OUT" (rect -16 8 38 22)(font "Arial" (font_size 8)))
+		(text "EXT_OUT" (rect 112 144 166 158)(font "Arial" (font_size 8)))
+		(line (pt 184 152)(pt 168 152))
+	)
+	(port
+		(pt 184 216)
+		(output)
+		(text "SPI_MISO" (rect -16 8 38 22)(font "Arial" (font_size 8)))
+		(text "SPI_MISO" (rect 112 208 166 222)(font "Arial" (font_size 8)))
+		(line (pt 184 216)(pt 168 216))
+	)
+	(port
+		(pt 184 80)
+		(output)
+		(text "CHNL0_CLK_MOSI_BUF" (rect 133 192 269 206)(font "Arial" (font_size 8)))
+		(text "CHNL0_CLK_MOSI_BUF" (rect 48 72 184 86)(font "Arial" (font_size 8)))
+		(line (pt 184 80)(pt 168 80))
+	)
+	(port
+		(pt 184 96)
+		(output)
+		(text "CHNL0_CLK_MISO_BUF" (rect 133 168 269 182)(font "Arial" (font_size 8)))
+		(text "CHNL0_CLK_MISO_BUF" (rect 48 88 184 102)(font "Arial" (font_size 8)))
+		(line (pt 184 96)(pt 168 96))
+	)
+	(port
+		(pt 184 112)
+		(output)
+		(text "CHNL1_CLK_MOSI_BUF" (rect 133 80 269 94)(font "Arial" (font_size 8)))
+		(text "CHNL1_CLK_MOSI_BUF" (rect 48 104 184 118)(font "Arial" (font_size 8)))
+		(line (pt 184 112)(pt 168 112))
+	)
+	(port
+		(pt 184 128)
+		(output)
+		(text "CHNL1_CLK_MISO_BUF" (rect 133 96 269 110)(font "Arial" (font_size 8)))
+		(text "CHNL1_CLK_MISO_BUF" (rect 48 120 184 134)(font "Arial" (font_size 8)))
+		(line (pt 184 128)(pt 168 128))
+	)
+	(port
+		(pt 184 232)
+		(output)
+		(text "CLR_BUF0" (rect 133 224 194 238)(font "Arial" (font_size 8)))
+		(text "CLR_BUF0" (rect 104 224 165 238)(font "Arial" (font_size 8)))
+		(line (pt 184 232)(pt 168 232))
+	)
+	(port
+		(pt 184 248)
+		(output)
+		(text "CLR_BUF1" (rect 133 240 194 254)(font "Arial" (font_size 8)))
+		(text "CLR_BUF1" (rect 104 240 165 254)(font "Arial" (font_size 8)))
+		(line (pt 184 248)(pt 168 248))
+	)
+	(drawing
+		(rectangle (rect 16 16 168 256))
+	)
+)

@@ -1,0 +1,176 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 1991-2013 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+*/
+(header "symbol" (version "1.2"))
+(symbol
+	(rect 64 64 312 392)
+	(text "shrg_ctrl9" (rect 5 0 62 14)(font "Arial" (font_size 8)))
+	(text "inst" (rect 8 312 25 324)(font "Arial" ))
+	(port
+		(pt 0 80)
+		(input)
+		(text "CLK" (rect 0 0 23 14)(font "Arial" (font_size 8)))
+		(text "CLK" (rect 21 75 44 89)(font "Arial" (font_size 8)))
+		(line (pt 0 80)(pt 16 80))
+	)
+	(port
+		(pt 0 96)
+		(input)
+		(text "ENA" (rect 0 0 24 14)(font "Arial" (font_size 8)))
+		(text "ENA" (rect 21 91 45 105)(font "Arial" (font_size 8)))
+		(line (pt 0 96)(pt 16 96))
+	)
+	(port
+		(pt 0 64)
+		(input)
+		(text "F0" (rect 0 0 14 14)(font "Arial" (font_size 8)))
+		(text "F0" (rect 21 59 35 73)(font "Arial" (font_size 8)))
+		(line (pt 0 64)(pt 16 64))
+	)
+	(port
+		(pt 248 160)
+		(input)
+		(text "BUF_END" (rect 0 0 54 14)(font "Arial" (font_size 8)))
+		(text "BUF_END" (rect 169 152 223 166)(font "Arial" (font_size 8)))
+		(line (pt 232 160)(pt 248 160))
+	)
+	(port
+		(pt 0 112)
+		(input)
+		(text "CLR" (rect 0 0 23 14)(font "Arial" (font_size 8)))
+		(text "CLR" (rect 21 107 44 121)(font "Arial" (font_size 8)))
+		(line (pt 0 112)(pt 16 112))
+	)
+	(port
+		(pt 0 144)
+		(input)
+		(text "CLK_High" (rect 0 0 55 14)(font "Arial" (font_size 8)))
+		(text "CLK_High" (rect 21 139 76 153)(font "Arial" (font_size 8)))
+		(line (pt 0 144)(pt 16 144))
+	)
+	(port
+		(pt 0 304)
+		(output)
+		(text "E[8..0]" (rect 0 0 35 14)(font "Arial" (font_size 8)))
+		(text "E[8..0]" (rect 24 296 59 310)(font "Arial" (font_size 8)))
+		(line (pt 16 304)(pt 0 304)(line_width 3))
+	)
+	(port
+		(pt 0 256)
+		(output)
+		(text "TST_0" (rect 0 0 36 14)(font "Arial" (font_size 8)))
+		(text "TST_0" (rect 24 248 60 262)(font "Arial" (font_size 8)))
+		(line (pt 16 256)(pt 0 256))
+	)
+	(port
+		(pt 0 224)
+		(output)
+		(text "CLK_OUT_DIV_ENA" (rect 0 0 114 14)(font "Arial" (font_size 8)))
+		(text "CLK_OUT_DIV_ENA" (rect 24 216 138 230)(font "Arial" (font_size 8)))
+		(line (pt 16 224)(pt 0 224))
+	)
+	(port
+		(pt 248 64)
+		(output)
+		(text "CLK_EXT_OUT_ENA" (rect 0 0 116 14)(font "Arial" (font_size 8)))
+		(text "CLK_EXT_OUT_ENA" (rect 111 59 227 73)(font "Arial" (font_size 8)))
+		(line (pt 248 64)(pt 232 64))
+	)
+	(port
+		(pt 248 32)
+		(output)
+		(text "CLK_EXT_OUT" (rect 0 0 84 14)(font "Arial" (font_size 8)))
+		(text "CLK_EXT_OUT" (rect 143 27 227 41)(font "Arial" (font_size 8)))
+		(line (pt 248 32)(pt 232 32))
+	)
+	(port
+		(pt 0 240)
+		(output)
+		(text "CLK_DIV_ENA" (rect 0 0 82 14)(font "Arial" (font_size 8)))
+		(text "CLK_DIV_ENA" (rect 24 232 106 246)(font "Arial" (font_size 8)))
+		(line (pt 16 240)(pt 0 240))
+	)
+	(port
+		(pt 248 96)
+		(output)
+		(text "EXT_OUT_SHFTRG_ENA" (rect 0 0 141 14)(font "Arial" (font_size 8)))
+		(text "EXT_OUT_SHFTRG_ENA" (rect 86 91 227 105)(font "Arial" (font_size 8)))
+		(line (pt 248 96)(pt 232 96))
+	)
+	(port
+		(pt 248 48)
+		(output)
+		(text "CLK_EXT_IN" (rect 0 0 70 14)(font "Arial" (font_size 8)))
+		(text "CLK_EXT_IN" (rect 157 43 227 57)(font "Arial" (font_size 8)))
+		(line (pt 248 48)(pt 232 48))
+	)
+	(port
+		(pt 248 136)
+		(output)
+		(text "CLK_EXT_IN_ENA" (rect 0 0 102 14)(font "Arial" (font_size 8)))
+		(text "CLK_EXT_IN_ENA" (rect 125 131 227 145)(font "Arial" (font_size 8)))
+		(line (pt 248 136)(pt 232 136))
+	)
+	(port
+		(pt 0 272)
+		(output)
+		(text "CLK_IN_DIV_ENA" (rect 0 0 100 14)(font "Arial" (font_size 8)))
+		(text "CLK_IN_DIV_ENA" (rect 24 264 124 278)(font "Arial" (font_size 8)))
+		(line (pt 16 272)(pt 0 272))
+	)
+	(port
+		(pt 248 112)
+		(output)
+		(text "SHFTRG_LOCK" (rect 0 0 88 14)(font "Arial" (font_size 8)))
+		(text "SHFTRG_LOCK" (rect 139 107 227 121)(font "Arial" (font_size 8)))
+		(line (pt 248 112)(pt 232 112))
+	)
+	(port
+		(pt 248 304)
+		(output)
+		(text "CLR_EXT_IN_BUF" (rect 0 0 101 14)(font "Arial" (font_size 8)))
+		(text "CLR_EXT_IN_BUF" (rect 136 296 237 310)(font "Arial" (font_size 8)))
+		(line (pt 248 304)(pt 232 304))
+	)
+	(port
+		(pt 248 288)
+		(output)
+		(text "CLR_EXT_OUT_BUF" (rect 0 0 115 14)(font "Arial" (font_size 8)))
+		(text "CLR_EXT_OUT_BUF" (rect 128 280 243 294)(font "Arial" (font_size 8)))
+		(line (pt 248 288)(pt 232 288))
+	)
+	(port
+		(pt 0 288)
+		(output)
+		(text "REINIT" (rect 0 0 35 14)(font "Arial" (font_size 8)))
+		(text "REINIT" (rect 24 280 59 294)(font "Arial" (font_size 8)))
+		(line (pt 16 288)(pt 0 288))
+	)
+	(port
+		(pt 248 176)
+		(output)
+		(text "INT" (rect 0 0 17 14)(font "Arial" (font_size 8)))
+		(text "INT" (rect 208 168 225 182)(font "Arial" (font_size 8)))
+		(line (pt 248 176)(pt 232 176))
+	)
+	(drawing
+		(rectangle (rect 16 16 232 312))
+	)
+)

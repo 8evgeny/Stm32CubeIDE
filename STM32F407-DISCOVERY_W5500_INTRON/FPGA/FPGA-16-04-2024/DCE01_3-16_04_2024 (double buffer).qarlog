@@ -1,0 +1,78 @@
+Quartus II Archive log --	D:/altera/DCE01_3-27_03_2023-02/DCE01_3-16_04_2024 (double buffer).qarlog
+
+Archive:	D:/altera/DCE01_3-27_03_2023-02/DCE01_3-16_04_2024 (double buffer).qar
+Date:		Tue Apr 16 08:41:34 2024
+Quartus II 64-Bit		13.0.1 Build 232 06/12/2013 SP 1 SJ Web Edition
+
+	=========== Files Selected: ===========
+C:/altera/13.0sp1/quartus/libraries/vhdl/ieee/prmtvs_b.vhd
+C:/altera/13.0sp1/quartus/libraries/vhdl/ieee/prmtvs_p.vhd
+C:/altera/13.0sp1/quartus/libraries/vhdl/ieee/timing_b.vhd
+C:/altera/13.0sp1/quartus/libraries/vhdl/ieee/timing_p.vhd
+D:/altera/DCE01_3-27_03_2023-02/ABONENT.v
+D:/altera/DCE01_3-27_03_2023-02/DBL_BUF.bdf
+D:/altera/DCE01_3-27_03_2023-02/DCE01_3.bdf
+D:/altera/DCE01_3-27_03_2023-02/DCE01_3.qpf
+D:/altera/DCE01_3-27_03_2023-02/DCE01_3.qsf
+D:/altera/DCE01_3-27_03_2023-02/altpll0.cmp
+D:/altera/DCE01_3-27_03_2023-02/altpll0.vhd
+D:/altera/DCE01_3-27_03_2023-02/altpll1.cmp
+D:/altera/DCE01_3-27_03_2023-02/altpll1.vhd
+D:/altera/DCE01_3-27_03_2023-02/altpll2.cmp
+D:/altera/DCE01_3-27_03_2023-02/altpll2.vhd
+D:/altera/DCE01_3-27_03_2023-02/assignment_defaults.qdf
+D:/altera/DCE01_3-27_03_2023-02/blinker.bdf
+D:/altera/DCE01_3-27_03_2023-02/ch_clk_ctrl.bdf
+D:/altera/DCE01_3-27_03_2023-02/ch_clk_ctrl2.bdf
+D:/altera/DCE01_3-27_03_2023-02/cntr7.bdf
+D:/altera/DCE01_3-27_03_2023-02/converter.cmp
+D:/altera/DCE01_3-27_03_2023-02/cpu_int_form.bdf
+D:/altera/DCE01_3-27_03_2023-02/cpu_int_form2.bdf
+D:/altera/DCE01_3-27_03_2023-02/db/DCE01_3.cbx.xml
+D:/altera/DCE01_3-27_03_2023-02/db/altpll1_altpll.v
+D:/altera/DCE01_3-27_03_2023-02/db/altpll2_altpll.v
+D:/altera/DCE01_3-27_03_2023-02/db/altsyncram_m5b1.tdf
+D:/altera/DCE01_3-27_03_2023-02/db/cmpr_vgc.tdf
+D:/altera/DCE01_3-27_03_2023-02/db/cntr_dch.tdf
+D:/altera/DCE01_3-27_03_2023-02/db/cntr_nsf.tdf
+D:/altera/DCE01_3-27_03_2023-02/db/shift_taps_fln.tdf
+D:/altera/DCE01_3-27_03_2023-02/dbltff.bdf
+D:/altera/DCE01_3-27_03_2023-02/dcdr01.vhd
+D:/altera/DCE01_3-27_03_2023-02/div125.bdf
+D:/altera/DCE01_3-27_03_2023-02/div15.bdf
+D:/altera/DCE01_3-27_03_2023-02/div5-1123.bdf
+D:/altera/DCE01_3-27_03_2023-02/div5.bdf
+D:/altera/DCE01_3-27_03_2023-02/div59.bdf
+D:/altera/DCE01_3-27_03_2023-02/div61.bdf
+D:/altera/DCE01_3-27_03_2023-02/f0_former.bdf
+D:/altera/DCE01_3-27_03_2023-02/fpga_cpu_clk_sel.gdf
+D:/altera/DCE01_3-27_03_2023-02/incremental_db/compiled_partitions/DCE01_3.db_info
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/aglobal130.inc
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/altdpram.inc
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/altpll.tdf
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/altshift_taps.tdf
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/cbx.lst
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/cycloneii_pll.inc
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/lpm_compare.inc
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/lpm_constant.inc
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/lpm_counter.inc
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/stratix_pll.inc
+D:/altera/DCE01_3-27_03_2023-02/megafunctions/stratixii_pll.inc
+D:/altera/DCE01_3-27_03_2023-02/mux.bdf
+D:/altera/DCE01_3-27_03_2023-02/net_ctrl.bdf
+D:/altera/DCE01_3-27_03_2023-02/output_files/DCE01_3.jdi
+D:/altera/DCE01_3-27_03_2023-02/output_files/DCE01_3.pof
+D:/altera/DCE01_3-27_03_2023-02/output_files/DCE01_3.sof
+D:/altera/DCE01_3-27_03_2023-02/plsgen.bdf
+D:/altera/DCE01_3-27_03_2023-02/shrg_ctrl7.bdf
+D:/altera/DCE01_3-27_03_2023-02/shrg_ctrl9.bdf
+D:/altera/DCE01_3-27_03_2023-02/slctr.bdf
+D:/altera/DCE01_3-27_03_2023-02/stbus_ctrl.bdf
+D:/altera/DCE01_3-27_03_2023-02/stbus_ctrl2.bdf
+D:/altera/DCE01_3-27_03_2023-02/stbus_ctrl3.bdf
+D:/altera/DCE01_3-27_03_2023-02/test_seq2.bdf
+D:/altera/DCE01_3-27_03_2023-02/unifilter4.bdf
+	======= Total: 67 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.

@@ -127,6 +127,8 @@ void printAllChannel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(0);
 
 }
+
+#ifdef print_12_byte_in_packet
 void print_1_Channel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(1);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
@@ -151,14 +153,6 @@ void print_3_Channel(uint8_t data[MAX_PACKET_LEN]) {
                       );
     SEGGER_RTT_SetTerminal(0);
 }
-void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]) {
-    SEGGER_RTT_SetTerminal(2);
-    SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
-                      data[0], data[1], data[2], data[3], data[4], data[5],
-                      data[6], data[7], data[8], data[9], data[10], data[11]
-                      );
-    SEGGER_RTT_SetTerminal(0);
-}
 void print_4_Channel(uint8_t data[MAX_PACKET_LEN]) {
     SEGGER_RTT_SetTerminal(4);
     SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
@@ -167,6 +161,76 @@ void print_4_Channel(uint8_t data[MAX_PACKET_LEN]) {
                       );
     SEGGER_RTT_SetTerminal(0);
 }
+#endif
+#ifndef print_12_byte_in_packet
+void print_1_Channel(uint8_t data[MAX_PACKET_LEN]) {
+    uint8_t channel = 1;
+    uint8_t i = channel - 1;
+    SEGGER_RTT_SetTerminal(channel);
+    SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X "
+                         "\r\n",
+                      data[i], data[i+4], data[i+8], data[i+12], data[i+16], data[i+20], data[i+24], data[i+28],
+                      data[i+32], data[i+36], data[i+40], data[i+44], data[i+48], data[i+52], data[i+56], data[i+60],
+                      data[i+64]
+                      );
+    SEGGER_RTT_SetTerminal(0);
+}
+void print_2_Channel(uint8_t data[MAX_PACKET_LEN]) {
+    uint8_t channel = 2;
+    uint8_t i = channel - 1;
+    SEGGER_RTT_SetTerminal(channel);
+    SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X "
+                         "\r\n",
+                      data[i], data[i+4], data[i+8], data[i+12], data[i+16], data[i+20], data[i+24], data[i+28],
+                      data[i+32], data[i+36], data[i+40], data[i+44], data[i+48], data[i+52], data[i+56], data[i+60],
+                      data[i+64]
+                      );
+    SEGGER_RTT_SetTerminal(0);
+}
+void print_3_Channel(uint8_t data[MAX_PACKET_LEN]) {
+    uint8_t channel = 3;
+    uint8_t i = channel - 1;
+    SEGGER_RTT_SetTerminal(channel);
+    SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X "
+                         "\r\n",
+                      data[i], data[i+4], data[i+8], data[i+12], data[i+16], data[i+20], data[i+24], data[i+28],
+                      data[i+32], data[i+36], data[i+40], data[i+44], data[i+48], data[i+52], data[i+56], data[i+60],
+                      data[i+64]
+                      );
+    SEGGER_RTT_SetTerminal(0);
+}
+void print_4_Channel(uint8_t data[MAX_PACKET_LEN]) {
+    uint8_t channel = 4;
+    uint8_t i = channel - 1;
+    SEGGER_RTT_SetTerminal(channel);
+    SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X "
+                         "%.2X "
+                         "\r\n",
+                      data[i], data[i+4], data[i+8], data[i+12], data[i+16], data[i+20], data[i+24], data[i+28],
+                      data[i+32], data[i+36], data[i+40], data[i+44], data[i+48], data[i+52], data[i+56], data[i+60],
+                      data[i+64]
+                      );
+    SEGGER_RTT_SetTerminal(0);
+}
+
+
+#endif
+void print_2_Channel_control(uint8_t data[MAX_PACKET_LEN / 4]) {
+    SEGGER_RTT_SetTerminal(2);
+    SEGGER_RTT_printf(0, "%.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X %.2X \r\n",
+                      data[0], data[1], data[2], data[3], data[4], data[5],
+                      data[6], data[7], data[8], data[9], data[10], data[11]
+                      );
+    SEGGER_RTT_SetTerminal(0);
+}
+
 void create_2_channelDataForControl(uint8_t dataFromBase[MAX_PACKET_LEN], uint8_t dataForControl[MAX_PACKET_LEN / 4]){
     for (int i = 0; i < 12; ++i) {
         strncpy((char *)dataForControl + i , (const char*)dataFromBase + 1 + i * 4 , 1);

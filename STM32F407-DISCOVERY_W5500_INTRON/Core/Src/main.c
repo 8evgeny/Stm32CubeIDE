@@ -1526,9 +1526,10 @@ void sendReceiveUDP(uint8_t udpSocket)
 
             if (SEGGER){
                 print_1_Channel(dataFromBase);
-                print_2_Channel_control(receivedDataFrom_2_Channel);
+                print_2_Channel(dataFromBase);
                 print_3_Channel(dataFromBase);
                 print_4_Channel(dataFromBase);
+//                print_2_Channel_control(receivedDataFrom_2_Channel);
 //                print_1_Channel(dataToBase);
 //                print_2_Channel(dataToBase);
 //                print_3_Channel(dataToBase);

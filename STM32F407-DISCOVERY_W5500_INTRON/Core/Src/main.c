@@ -1575,7 +1575,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 }//100
             }//совпало
 
-            if (numBadPackets2Channel == 30000/MAX_PACKET_LEN) {//Время до перезагрузки)
+            if (numBadPackets2Channel == 50000/MAX_PACKET_LEN) {//Время до перезагрузки)
 // Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
                 printf("Sending command Reboot to abonent\r\n");
@@ -3115,7 +3115,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 
     HAL_GPIO_WritePin(GPIOD, DEBUG1_Pin, GPIO_PIN_RESET);
 #ifdef   enable_BIG_PACKET
-    indicateSend(1, 2);
+    indicateSend(3, 6);
 #endif
 #ifndef   enable_BIG_PACKET
     indicateSend(20, 40);
@@ -3195,7 +3195,7 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
     }
 
 #ifdef   enable_BIG_PACKET
-    indicateReceive(1, 2);
+    indicateReceive(3, 6);
 #endif
 #ifndef   enable_BIG_PACKET
     indicateReceive(20, 40);

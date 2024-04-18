@@ -1,14 +1,14 @@
-Analysis & Synthesis Status : Successful - Thu Apr 18 11:59:25 2024
+Analysis & Synthesis Status : Successful - Thu Apr 18 13:05:54 2024
 Quartus Prime Version : 22.1std.0 Build 915 10/25/2022 SC Standard Edition
 Revision Name : DCE01_3
 Top-level Entity Name : DCE01_3
 Family : Cyclone IV E
-Total logic elements : 361
-    Total combinational functions : 351
-    Dedicated logic registers : 224
-Total registers : 224
+Total logic elements : 369
+    Total combinational functions : 359
+    Dedicated logic registers : 232
+Total registers : 232
 Total pins : 47
 Total virtual pins : 0
-Total memory bits : 6,648
+Total memory bits : 12,280
 Embedded Multiplier 9-bit elements : 0
 Total PLLs : 2

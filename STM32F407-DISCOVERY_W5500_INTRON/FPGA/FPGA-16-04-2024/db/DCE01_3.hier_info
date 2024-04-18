@@ -180,31 +180,31 @@ In1 => 4.IN1
 
 
 |DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209
-shiftin[0] => shift_taps_1nn:auto_generated.shiftin[0]
-clock => shift_taps_1nn:auto_generated.clock
-clken => shift_taps_1nn:auto_generated.clken
-shiftout[0] <= shift_taps_1nn:auto_generated.shiftout[0]
+shiftin[0] => shift_taps_smn:auto_generated.shiftin[0]
+clock => shift_taps_smn:auto_generated.clock
+clken => shift_taps_smn:auto_generated.clken
+shiftout[0] <= shift_taps_smn:auto_generated.shiftout[0]
 taps[0] <= <GND>
-aclr => shift_taps_1nn:auto_generated.aclr
+aclr => shift_taps_smn:auto_generated.aclr
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_1nn:auto_generated
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_smn:auto_generated
 aclr => dffe4.IN0
-aclr => cntr_8fh:cntr3.aset
-clken => altsyncram_cbb1:altsyncram2.clocken0
-clken => cntr_ivf:cntr1.clk_en
-clken => cntr_8fh:cntr3.clk_en
+aclr => cntr_4fh:cntr3.aset
+clken => altsyncram_4bb1:altsyncram2.clocken0
+clken => cntr_evf:cntr1.clk_en
+clken => cntr_4fh:cntr3.clk_en
 clken => dffe4.ENA
-clock => altsyncram_cbb1:altsyncram2.clock0
-clock => cntr_ivf:cntr1.clock
-clock => cntr_8fh:cntr3.clock
+clock => altsyncram_4bb1:altsyncram2.clock0
+clock => cntr_evf:cntr1.clock
+clock => cntr_4fh:cntr3.clock
 clock => dffe4.CLK
-shiftin[0] => altsyncram_cbb1:altsyncram2.data_a[0]
-shiftout[0] <= altsyncram_cbb1:altsyncram2.q_b[0]
-taps[0] <= altsyncram_cbb1:altsyncram2.q_b[0]
+shiftin[0] => altsyncram_4bb1:altsyncram2.data_a[0]
+shiftout[0] <= altsyncram_4bb1:altsyncram2.q_b[0]
+taps[0] <= altsyncram_4bb1:altsyncram2.q_b[0]
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_1nn:auto_generated|altsyncram_cbb1:altsyncram2
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_smn:auto_generated|altsyncram_4bb1:altsyncram2
 aclr0 => ram_block5a0.CLR0
 address_a[0] => ram_block5a0.PORTAADDR
 address_a[1] => ram_block5a0.PORTAADDR1
@@ -217,6 +217,7 @@ address_a[7] => ram_block5a0.PORTAADDR7
 address_a[8] => ram_block5a0.PORTAADDR8
 address_a[9] => ram_block5a0.PORTAADDR9
 address_a[10] => ram_block5a0.PORTAADDR10
+address_a[11] => ram_block5a0.PORTAADDR11
 address_b[0] => ram_block5a0.PORTBADDR
 address_b[1] => ram_block5a0.PORTBADDR1
 address_b[2] => ram_block5a0.PORTBADDR2
@@ -228,6 +229,7 @@ address_b[7] => ram_block5a0.PORTBADDR7
 address_b[8] => ram_block5a0.PORTBADDR8
 address_b[9] => ram_block5a0.PORTBADDR9
 address_b[10] => ram_block5a0.PORTBADDR10
+address_b[11] => ram_block5a0.PORTBADDR11
 clock0 => ram_block5a0.CLK0
 clocken0 => ram_block5a0.ENA0
 data_a[0] => ram_block5a0.PORTADATAIN
@@ -235,8 +237,9 @@ q_b[0] <= ram_block5a0.PORTBDATAOUT
 wren_a => ram_block5a0.PORTAWE
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_1nn:auto_generated|cntr_ivf:cntr1
-clk_en => counter_reg_bit[10].IN0
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_smn:auto_generated|cntr_evf:cntr1
+clk_en => counter_reg_bit[11].IN0
+clock => counter_reg_bit[11].CLK
 clock => counter_reg_bit[10].CLK
 clock => counter_reg_bit[9].CLK
 clock => counter_reg_bit[8].CLK
@@ -259,9 +262,10 @@ q[7] <= counter_reg_bit[7].DB_MAX_OUTPUT_PORT_TYPE
 q[8] <= counter_reg_bit[8].DB_MAX_OUTPUT_PORT_TYPE
 q[9] <= counter_reg_bit[9].DB_MAX_OUTPUT_PORT_TYPE
 q[10] <= counter_reg_bit[10].DB_MAX_OUTPUT_PORT_TYPE
+q[11] <= counter_reg_bit[11].DB_MAX_OUTPUT_PORT_TYPE
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_1nn:auto_generated|cntr_ivf:cntr1|cmpr_8ic:cmpr6
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_smn:auto_generated|cntr_evf:cntr1|cmpr_9ic:cmpr6
 aeb <= aeb_result_wire[0].DB_MAX_OUTPUT_PORT_TYPE
 dataa[0] => data_wire[2].IN0
 dataa[1] => data_wire[2].IN0
@@ -274,6 +278,7 @@ dataa[7] => data_wire[5].IN0
 dataa[8] => data_wire[6].IN0
 dataa[9] => data_wire[6].IN0
 dataa[10] => data_wire[7].IN0
+dataa[11] => data_wire[7].IN0
 datab[0] => data_wire[2].IN1
 datab[1] => data_wire[2].IN1
 datab[2] => data_wire[3].IN1
@@ -285,11 +290,13 @@ datab[7] => data_wire[5].IN1
 datab[8] => data_wire[6].IN1
 datab[9] => data_wire[6].IN1
 datab[10] => data_wire[7].IN1
+datab[11] => data_wire[7].IN1
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_1nn:auto_generated|cntr_8fh:cntr3
-aset => counter_reg_bit[10].IN0
-clk_en => counter_reg_bit[10].IN0
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst209|shift_taps_smn:auto_generated|cntr_4fh:cntr3
+aset => counter_reg_bit[11].IN0
+clk_en => counter_reg_bit[11].IN0
+clock => counter_reg_bit[11].CLK
 clock => counter_reg_bit[10].CLK
 clock => counter_reg_bit[9].CLK
 clock => counter_reg_bit[8].CLK
@@ -335,31 +342,31 @@ Out1 <= inst1.DB_MAX_OUTPUT_PORT_TYPE
 
 
 |DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208
-shiftin[0] => shift_taps_1nn:auto_generated.shiftin[0]
-clock => shift_taps_1nn:auto_generated.clock
-clken => shift_taps_1nn:auto_generated.clken
-shiftout[0] <= shift_taps_1nn:auto_generated.shiftout[0]
+shiftin[0] => shift_taps_smn:auto_generated.shiftin[0]
+clock => shift_taps_smn:auto_generated.clock
+clken => shift_taps_smn:auto_generated.clken
+shiftout[0] <= shift_taps_smn:auto_generated.shiftout[0]
 taps[0] <= <GND>
-aclr => shift_taps_1nn:auto_generated.aclr
+aclr => shift_taps_smn:auto_generated.aclr
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_1nn:auto_generated
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_smn:auto_generated
 aclr => dffe4.IN0
-aclr => cntr_8fh:cntr3.aset
-clken => altsyncram_cbb1:altsyncram2.clocken0
-clken => cntr_ivf:cntr1.clk_en
-clken => cntr_8fh:cntr3.clk_en
+aclr => cntr_4fh:cntr3.aset
+clken => altsyncram_4bb1:altsyncram2.clocken0
+clken => cntr_evf:cntr1.clk_en
+clken => cntr_4fh:cntr3.clk_en
 clken => dffe4.ENA
-clock => altsyncram_cbb1:altsyncram2.clock0
-clock => cntr_ivf:cntr1.clock
-clock => cntr_8fh:cntr3.clock
+clock => altsyncram_4bb1:altsyncram2.clock0
+clock => cntr_evf:cntr1.clock
+clock => cntr_4fh:cntr3.clock
 clock => dffe4.CLK
-shiftin[0] => altsyncram_cbb1:altsyncram2.data_a[0]
-shiftout[0] <= altsyncram_cbb1:altsyncram2.q_b[0]
-taps[0] <= altsyncram_cbb1:altsyncram2.q_b[0]
+shiftin[0] => altsyncram_4bb1:altsyncram2.data_a[0]
+shiftout[0] <= altsyncram_4bb1:altsyncram2.q_b[0]
+taps[0] <= altsyncram_4bb1:altsyncram2.q_b[0]
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_1nn:auto_generated|altsyncram_cbb1:altsyncram2
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_smn:auto_generated|altsyncram_4bb1:altsyncram2
 aclr0 => ram_block5a0.CLR0
 address_a[0] => ram_block5a0.PORTAADDR
 address_a[1] => ram_block5a0.PORTAADDR1
@@ -372,6 +379,7 @@ address_a[7] => ram_block5a0.PORTAADDR7
 address_a[8] => ram_block5a0.PORTAADDR8
 address_a[9] => ram_block5a0.PORTAADDR9
 address_a[10] => ram_block5a0.PORTAADDR10
+address_a[11] => ram_block5a0.PORTAADDR11
 address_b[0] => ram_block5a0.PORTBADDR
 address_b[1] => ram_block5a0.PORTBADDR1
 address_b[2] => ram_block5a0.PORTBADDR2
@@ -383,6 +391,7 @@ address_b[7] => ram_block5a0.PORTBADDR7
 address_b[8] => ram_block5a0.PORTBADDR8
 address_b[9] => ram_block5a0.PORTBADDR9
 address_b[10] => ram_block5a0.PORTBADDR10
+address_b[11] => ram_block5a0.PORTBADDR11
 clock0 => ram_block5a0.CLK0
 clocken0 => ram_block5a0.ENA0
 data_a[0] => ram_block5a0.PORTADATAIN
@@ -390,8 +399,9 @@ q_b[0] <= ram_block5a0.PORTBDATAOUT
 wren_a => ram_block5a0.PORTAWE
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_1nn:auto_generated|cntr_ivf:cntr1
-clk_en => counter_reg_bit[10].IN0
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_smn:auto_generated|cntr_evf:cntr1
+clk_en => counter_reg_bit[11].IN0
+clock => counter_reg_bit[11].CLK
 clock => counter_reg_bit[10].CLK
 clock => counter_reg_bit[9].CLK
 clock => counter_reg_bit[8].CLK
@@ -414,9 +424,10 @@ q[7] <= counter_reg_bit[7].DB_MAX_OUTPUT_PORT_TYPE
 q[8] <= counter_reg_bit[8].DB_MAX_OUTPUT_PORT_TYPE
 q[9] <= counter_reg_bit[9].DB_MAX_OUTPUT_PORT_TYPE
 q[10] <= counter_reg_bit[10].DB_MAX_OUTPUT_PORT_TYPE
+q[11] <= counter_reg_bit[11].DB_MAX_OUTPUT_PORT_TYPE
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_1nn:auto_generated|cntr_ivf:cntr1|cmpr_8ic:cmpr6
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_smn:auto_generated|cntr_evf:cntr1|cmpr_9ic:cmpr6
 aeb <= aeb_result_wire[0].DB_MAX_OUTPUT_PORT_TYPE
 dataa[0] => data_wire[2].IN0
 dataa[1] => data_wire[2].IN0
@@ -429,6 +440,7 @@ dataa[7] => data_wire[5].IN0
 dataa[8] => data_wire[6].IN0
 dataa[9] => data_wire[6].IN0
 dataa[10] => data_wire[7].IN0
+dataa[11] => data_wire[7].IN0
 datab[0] => data_wire[2].IN1
 datab[1] => data_wire[2].IN1
 datab[2] => data_wire[3].IN1
@@ -440,11 +452,13 @@ datab[7] => data_wire[5].IN1
 datab[8] => data_wire[6].IN1
 datab[9] => data_wire[6].IN1
 datab[10] => data_wire[7].IN1
+datab[11] => data_wire[7].IN1
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_1nn:auto_generated|cntr_8fh:cntr3
-aset => counter_reg_bit[10].IN0
-clk_en => counter_reg_bit[10].IN0
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst208|shift_taps_smn:auto_generated|cntr_4fh:cntr3
+aset => counter_reg_bit[11].IN0
+clk_en => counter_reg_bit[11].IN0
+clock => counter_reg_bit[11].CLK
 clock => counter_reg_bit[10].CLK
 clock => counter_reg_bit[9].CLK
 clock => counter_reg_bit[8].CLK
@@ -480,31 +494,31 @@ In1 => 4.IN1
 
 
 |DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211
-shiftin[0] => shift_taps_1nn:auto_generated.shiftin[0]
-clock => shift_taps_1nn:auto_generated.clock
-clken => shift_taps_1nn:auto_generated.clken
-shiftout[0] <= shift_taps_1nn:auto_generated.shiftout[0]
+shiftin[0] => shift_taps_smn:auto_generated.shiftin[0]
+clock => shift_taps_smn:auto_generated.clock
+clken => shift_taps_smn:auto_generated.clken
+shiftout[0] <= shift_taps_smn:auto_generated.shiftout[0]
 taps[0] <= <GND>
-aclr => shift_taps_1nn:auto_generated.aclr
+aclr => shift_taps_smn:auto_generated.aclr
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_1nn:auto_generated
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_smn:auto_generated
 aclr => dffe4.IN0
-aclr => cntr_8fh:cntr3.aset
-clken => altsyncram_cbb1:altsyncram2.clocken0
-clken => cntr_ivf:cntr1.clk_en
-clken => cntr_8fh:cntr3.clk_en
+aclr => cntr_4fh:cntr3.aset
+clken => altsyncram_4bb1:altsyncram2.clocken0
+clken => cntr_evf:cntr1.clk_en
+clken => cntr_4fh:cntr3.clk_en
 clken => dffe4.ENA
-clock => altsyncram_cbb1:altsyncram2.clock0
-clock => cntr_ivf:cntr1.clock
-clock => cntr_8fh:cntr3.clock
+clock => altsyncram_4bb1:altsyncram2.clock0
+clock => cntr_evf:cntr1.clock
+clock => cntr_4fh:cntr3.clock
 clock => dffe4.CLK
-shiftin[0] => altsyncram_cbb1:altsyncram2.data_a[0]
-shiftout[0] <= altsyncram_cbb1:altsyncram2.q_b[0]
-taps[0] <= altsyncram_cbb1:altsyncram2.q_b[0]
+shiftin[0] => altsyncram_4bb1:altsyncram2.data_a[0]
+shiftout[0] <= altsyncram_4bb1:altsyncram2.q_b[0]
+taps[0] <= altsyncram_4bb1:altsyncram2.q_b[0]
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_1nn:auto_generated|altsyncram_cbb1:altsyncram2
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_smn:auto_generated|altsyncram_4bb1:altsyncram2
 aclr0 => ram_block5a0.CLR0
 address_a[0] => ram_block5a0.PORTAADDR
 address_a[1] => ram_block5a0.PORTAADDR1
@@ -517,6 +531,7 @@ address_a[7] => ram_block5a0.PORTAADDR7
 address_a[8] => ram_block5a0.PORTAADDR8
 address_a[9] => ram_block5a0.PORTAADDR9
 address_a[10] => ram_block5a0.PORTAADDR10
+address_a[11] => ram_block5a0.PORTAADDR11
 address_b[0] => ram_block5a0.PORTBADDR
 address_b[1] => ram_block5a0.PORTBADDR1
 address_b[2] => ram_block5a0.PORTBADDR2
@@ -528,6 +543,7 @@ address_b[7] => ram_block5a0.PORTBADDR7
 address_b[8] => ram_block5a0.PORTBADDR8
 address_b[9] => ram_block5a0.PORTBADDR9
 address_b[10] => ram_block5a0.PORTBADDR10
+address_b[11] => ram_block5a0.PORTBADDR11
 clock0 => ram_block5a0.CLK0
 clocken0 => ram_block5a0.ENA0
 data_a[0] => ram_block5a0.PORTADATAIN
@@ -535,8 +551,9 @@ q_b[0] <= ram_block5a0.PORTBDATAOUT
 wren_a => ram_block5a0.PORTAWE
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_1nn:auto_generated|cntr_ivf:cntr1
-clk_en => counter_reg_bit[10].IN0
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_smn:auto_generated|cntr_evf:cntr1
+clk_en => counter_reg_bit[11].IN0
+clock => counter_reg_bit[11].CLK
 clock => counter_reg_bit[10].CLK
 clock => counter_reg_bit[9].CLK
 clock => counter_reg_bit[8].CLK
@@ -559,9 +576,10 @@ q[7] <= counter_reg_bit[7].DB_MAX_OUTPUT_PORT_TYPE
 q[8] <= counter_reg_bit[8].DB_MAX_OUTPUT_PORT_TYPE
 q[9] <= counter_reg_bit[9].DB_MAX_OUTPUT_PORT_TYPE
 q[10] <= counter_reg_bit[10].DB_MAX_OUTPUT_PORT_TYPE
+q[11] <= counter_reg_bit[11].DB_MAX_OUTPUT_PORT_TYPE
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_1nn:auto_generated|cntr_ivf:cntr1|cmpr_8ic:cmpr6
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_smn:auto_generated|cntr_evf:cntr1|cmpr_9ic:cmpr6
 aeb <= aeb_result_wire[0].DB_MAX_OUTPUT_PORT_TYPE
 dataa[0] => data_wire[2].IN0
 dataa[1] => data_wire[2].IN0
@@ -574,6 +592,7 @@ dataa[7] => data_wire[5].IN0
 dataa[8] => data_wire[6].IN0
 dataa[9] => data_wire[6].IN0
 dataa[10] => data_wire[7].IN0
+dataa[11] => data_wire[7].IN0
 datab[0] => data_wire[2].IN1
 datab[1] => data_wire[2].IN1
 datab[2] => data_wire[3].IN1
@@ -585,11 +604,13 @@ datab[7] => data_wire[5].IN1
 datab[8] => data_wire[6].IN1
 datab[9] => data_wire[6].IN1
 datab[10] => data_wire[7].IN1
+datab[11] => data_wire[7].IN1
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_1nn:auto_generated|cntr_8fh:cntr3
-aset => counter_reg_bit[10].IN0
-clk_en => counter_reg_bit[10].IN0
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst211|shift_taps_smn:auto_generated|cntr_4fh:cntr3
+aset => counter_reg_bit[11].IN0
+clk_en => counter_reg_bit[11].IN0
+clock => counter_reg_bit[11].CLK
 clock => counter_reg_bit[10].CLK
 clock => counter_reg_bit[9].CLK
 clock => counter_reg_bit[8].CLK
@@ -624,31 +645,31 @@ Out1 <= inst1.DB_MAX_OUTPUT_PORT_TYPE
 
 
 |DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210
-shiftin[0] => shift_taps_1nn:auto_generated.shiftin[0]
-clock => shift_taps_1nn:auto_generated.clock
-clken => shift_taps_1nn:auto_generated.clken
-shiftout[0] <= shift_taps_1nn:auto_generated.shiftout[0]
+shiftin[0] => shift_taps_smn:auto_generated.shiftin[0]
+clock => shift_taps_smn:auto_generated.clock
+clken => shift_taps_smn:auto_generated.clken
+shiftout[0] <= shift_taps_smn:auto_generated.shiftout[0]
 taps[0] <= <GND>
-aclr => shift_taps_1nn:auto_generated.aclr
+aclr => shift_taps_smn:auto_generated.aclr
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_1nn:auto_generated
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_smn:auto_generated
 aclr => dffe4.IN0
-aclr => cntr_8fh:cntr3.aset
-clken => altsyncram_cbb1:altsyncram2.clocken0
-clken => cntr_ivf:cntr1.clk_en
-clken => cntr_8fh:cntr3.clk_en
+aclr => cntr_4fh:cntr3.aset
+clken => altsyncram_4bb1:altsyncram2.clocken0
+clken => cntr_evf:cntr1.clk_en
+clken => cntr_4fh:cntr3.clk_en
 clken => dffe4.ENA
-clock => altsyncram_cbb1:altsyncram2.clock0
-clock => cntr_ivf:cntr1.clock
-clock => cntr_8fh:cntr3.clock
+clock => altsyncram_4bb1:altsyncram2.clock0
+clock => cntr_evf:cntr1.clock
+clock => cntr_4fh:cntr3.clock
 clock => dffe4.CLK
-shiftin[0] => altsyncram_cbb1:altsyncram2.data_a[0]
-shiftout[0] <= altsyncram_cbb1:altsyncram2.q_b[0]
-taps[0] <= altsyncram_cbb1:altsyncram2.q_b[0]
+shiftin[0] => altsyncram_4bb1:altsyncram2.data_a[0]
+shiftout[0] <= altsyncram_4bb1:altsyncram2.q_b[0]
+taps[0] <= altsyncram_4bb1:altsyncram2.q_b[0]
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_1nn:auto_generated|altsyncram_cbb1:altsyncram2
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_smn:auto_generated|altsyncram_4bb1:altsyncram2
 aclr0 => ram_block5a0.CLR0
 address_a[0] => ram_block5a0.PORTAADDR
 address_a[1] => ram_block5a0.PORTAADDR1
@@ -661,6 +682,7 @@ address_a[7] => ram_block5a0.PORTAADDR7
 address_a[8] => ram_block5a0.PORTAADDR8
 address_a[9] => ram_block5a0.PORTAADDR9
 address_a[10] => ram_block5a0.PORTAADDR10
+address_a[11] => ram_block5a0.PORTAADDR11
 address_b[0] => ram_block5a0.PORTBADDR
 address_b[1] => ram_block5a0.PORTBADDR1
 address_b[2] => ram_block5a0.PORTBADDR2
@@ -672,6 +694,7 @@ address_b[7] => ram_block5a0.PORTBADDR7
 address_b[8] => ram_block5a0.PORTBADDR8
 address_b[9] => ram_block5a0.PORTBADDR9
 address_b[10] => ram_block5a0.PORTBADDR10
+address_b[11] => ram_block5a0.PORTBADDR11
 clock0 => ram_block5a0.CLK0
 clocken0 => ram_block5a0.ENA0
 data_a[0] => ram_block5a0.PORTADATAIN
@@ -679,8 +702,9 @@ q_b[0] <= ram_block5a0.PORTBDATAOUT
 wren_a => ram_block5a0.PORTAWE
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_1nn:auto_generated|cntr_ivf:cntr1
-clk_en => counter_reg_bit[10].IN0
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_smn:auto_generated|cntr_evf:cntr1
+clk_en => counter_reg_bit[11].IN0
+clock => counter_reg_bit[11].CLK
 clock => counter_reg_bit[10].CLK
 clock => counter_reg_bit[9].CLK
 clock => counter_reg_bit[8].CLK
@@ -703,9 +727,10 @@ q[7] <= counter_reg_bit[7].DB_MAX_OUTPUT_PORT_TYPE
 q[8] <= counter_reg_bit[8].DB_MAX_OUTPUT_PORT_TYPE
 q[9] <= counter_reg_bit[9].DB_MAX_OUTPUT_PORT_TYPE
 q[10] <= counter_reg_bit[10].DB_MAX_OUTPUT_PORT_TYPE
+q[11] <= counter_reg_bit[11].DB_MAX_OUTPUT_PORT_TYPE
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_1nn:auto_generated|cntr_ivf:cntr1|cmpr_8ic:cmpr6
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_smn:auto_generated|cntr_evf:cntr1|cmpr_9ic:cmpr6
 aeb <= aeb_result_wire[0].DB_MAX_OUTPUT_PORT_TYPE
 dataa[0] => data_wire[2].IN0
 dataa[1] => data_wire[2].IN0
@@ -718,6 +743,7 @@ dataa[7] => data_wire[5].IN0
 dataa[8] => data_wire[6].IN0
 dataa[9] => data_wire[6].IN0
 dataa[10] => data_wire[7].IN0
+dataa[11] => data_wire[7].IN0
 datab[0] => data_wire[2].IN1
 datab[1] => data_wire[2].IN1
 datab[2] => data_wire[3].IN1
@@ -729,11 +755,13 @@ datab[7] => data_wire[5].IN1
 datab[8] => data_wire[6].IN1
 datab[9] => data_wire[6].IN1
 datab[10] => data_wire[7].IN1
+datab[11] => data_wire[7].IN1
 
 
-|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_1nn:auto_generated|cntr_8fh:cntr3
-aset => counter_reg_bit[10].IN0
-clk_en => counter_reg_bit[10].IN0
+|DCE01_3|DBL_BUF:inst|ALTSHIFT_TAPS:inst210|shift_taps_smn:auto_generated|cntr_4fh:cntr3
+aset => counter_reg_bit[11].IN0
+clk_en => counter_reg_bit[11].IN0
+clock => counter_reg_bit[11].CLK
 clock => counter_reg_bit[10].CLK
 clock => counter_reg_bit[9].CLK
 clock => counter_reg_bit[8].CLK

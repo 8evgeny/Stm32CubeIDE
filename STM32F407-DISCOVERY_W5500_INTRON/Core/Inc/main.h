@@ -162,10 +162,10 @@ extern "C" {
 #define MAX_PACKET_LEN 48  //12*4
 #endif
 #ifdef enable_BIG_PACKET
-#define MAX_PACKET_LEN 52 * 4
+#define MAX_PACKET_LEN 96 * 4
 #endif
 #ifdef enable_BUFFER
-#define BUF_PACKET_SIZE 250
+#define BUF_PACKET_SIZE 2
 #endif
 
 enum netDiagnostic{

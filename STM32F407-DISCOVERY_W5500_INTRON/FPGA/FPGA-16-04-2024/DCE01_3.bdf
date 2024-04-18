@@ -11895,52 +11895,17 @@ https://fpgasoftware.intel.com/eula.
 	(bus)
 )
 (connector
-	(pt 2896 3704)
-	(pt 2896 3728)
-)
-(connector
 	(pt 2896 3512)
 	(pt 2896 3536)
-)
-(connector
-	(pt 2856 3680)
-	(pt 2856 3776)
 )
 (connector
 	(pt 2072 3648)
 	(pt 3120 3648)
 )
 (connector
-	(text "PKT_LEN5" (rect 2792 3616 2845 3628)(font "Arial" ))
-	(pt 2896 3632)
-	(pt 2760 3632)
-)
-(connector
-	(pt 2896 3608)
-	(pt 2896 3632)
-)
-(connector
-	(pt 2896 3632)
-	(pt 2896 3704)
-)
-(connector
-	(pt 2760 3608)
-	(pt 2760 3632)
-	(bus)
-)
-(connector
-	(pt 2760 3632)
-	(pt 2760 3680)
-	(bus)
-)
-(connector
 	(text "PKT_LEN3" (rect 2791 3568 2844 3580)(font "Arial" ))
 	(pt 2896 3584)
 	(pt 2760 3584)
-)
-(connector
-	(pt 2896 3584)
-	(pt 2896 3608)
 )
 (connector
 	(pt 2760 3584)
@@ -11969,6 +11934,41 @@ https://fpgasoftware.intel.com/eula.
 (connector
 	(pt 2896 3560)
 	(pt 2896 3584)
+)
+(connector
+	(pt 2896 3704)
+	(pt 2896 3728)
+)
+(connector
+	(pt 2896 3584)
+	(pt 2896 3608)
+)
+(connector
+	(pt 2896 3608)
+	(pt 2896 3704)
+)
+(connector
+	(text "PKT_LEN5" (rect 2792 3616 2845 3628)(font "Arial" ))
+	(pt 2856 3632)
+	(pt 2760 3632)
+)
+(connector
+	(pt 2760 3608)
+	(pt 2760 3632)
+	(bus)
+)
+(connector
+	(pt 2760 3632)
+	(pt 2760 3680)
+	(bus)
+)
+(connector
+	(pt 2856 3632)
+	(pt 2856 3680)
+)
+(connector
+	(pt 2856 3680)
+	(pt 2856 3776)
 )
 (junction (pt 928 752))
 (junction (pt 936 888))
@@ -12226,9 +12226,9 @@ https://fpgasoftware.intel.com/eula.
 (junction (pt 2896 3536))
 (junction (pt 2896 3608))
 (junction (pt 2896 3728))
-(junction (pt 2896 3632))
 (junction (pt 2896 3584))
 (junction (pt 2896 3560))
+(junction (pt 2856 3680))
 (text "2048 kHz" (rect 2016 696 2077 710)(font "Arial" (color 255 255 255)(font_size 8)))
 (text "1024 kHz" (rect 2016 832 2077 846)(font "Arial" (color 255 255 255)(font_size 8)))
 (text "512 kHz" (rect 2016 968 2069 982)(font "Arial" (color 255 255 255)(font_size 8)))

@@ -3,115 +3,119 @@ Timing Analyzer Summary
 ------------------------------------------------------------
 
 Type  : Slow 1200mV 100C Model Setup 'SCK'
-Slack : -10.372
-TNS   : -754.026
+Slack : -9.716
+TNS   : -814.559
 
 Type  : Slow 1200mV 100C Model Setup 'JUMP_1'
-Slack : -9.074
-TNS   : -578.017
+Slack : -9.307
+TNS   : -633.894
 
 Type  : Slow 1200mV 100C Model Setup 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -7.754
-TNS   : -487.396
-
-Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst184|59'
-Slack : -6.402
-TNS   : -6.402
+Slack : -7.188
+TNS   : -477.609
 
 Type  : Slow 1200mV 100C Model Setup 'PWR_ON'
-Slack : -6.061
-TNS   : -13.777
+Slack : -6.929
+TNS   : -13.695
 
-Type  : Slow 1200mV 100C Model Setup 'CLK_50MHz'
-Slack : -5.586
-TNS   : -7.636
-
-Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst184|80'
-Slack : -4.746
-TNS   : -5.426
+Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst184|59'
+Slack : -6.890
+TNS   : -6.890
 
 Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst184|79'
-Slack : -4.746
-TNS   : -5.077
+Slack : -6.346
+TNS   : -6.759
+
+Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst184|80'
+Slack : -6.215
+TNS   : -6.556
+
+Type  : Slow 1200mV 100C Model Setup 'CLK_50MHz'
+Slack : -6.178
+TNS   : -8.491
 
 Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst184|81'
-Slack : -4.043
-TNS   : -4.043
+Slack : -5.932
+TNS   : -5.932
 
 Type  : Slow 1200mV 100C Model Setup 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -2.796
-TNS   : -13.943
-
-Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst129|59'
-Slack : -2.295
-TNS   : -2.295
-
-Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst128|59'
-Slack : -1.972
-TNS   : -1.972
-
-Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst128|80'
-Slack : -1.576
-TNS   : -2.286
+Slack : -2.656
+TNS   : -13.501
 
 Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst128|79'
-Slack : -1.511
-TNS   : -1.905
+Slack : -1.430
+TNS   : -1.888
 
-Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst128|81'
-Slack : -1.437
-TNS   : -1.437
+Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst128|59'
+Slack : -1.397
+TNS   : -1.397
 
 Type  : Slow 1200mV 100C Model Setup 'inst66'
-Slack : -1.364
-TNS   : -10.023
+Slack : -1.391
+TNS   : -10.654
+
+Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst128|81'
+Slack : -1.331
+TNS   : -1.331
+
+Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst128|80'
+Slack : -1.236
+TNS   : -1.660
+
+Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst129|59'
+Slack : -1.147
+TNS   : -1.147
 
 Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst129|79'
-Slack : -1.121
-TNS   : -1.595
+Slack : -1.076
+TNS   : -1.408
 
 Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst129|80'
-Slack : -0.967
-TNS   : -1.413
+Slack : -0.944
+TNS   : -1.297
 
 Type  : Slow 1200mV 100C Model Setup 'unifilter4:inst129|81'
-Slack : -0.646
-TNS   : -0.646
+Slack : -0.624
+TNS   : -0.624
 
 Type  : Slow 1200mV 100C Model Setup 'inst38'
-Slack : -0.002
-TNS   : -0.002
+Slack : 0.176
+TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Setup 'shrg_ctrl9:inst5|inst4'
 Slack : 0.203
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Hold 'JUMP_1'
-Slack : -3.166
-TNS   : -6.108
+Slack : -2.724
+TNS   : -5.500
 
 Type  : Slow 1200mV 100C Model Hold 'PWR_ON'
-Slack : -2.359
-TNS   : -6.115
+Slack : -2.717
+TNS   : -7.030
 
 Type  : Slow 1200mV 100C Model Hold 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.739
-TNS   : -12.188
+Slack : -1.433
+TNS   : -61.309
 
 Type  : Slow 1200mV 100C Model Hold 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.070
-TNS   : -0.092
+Slack : -0.166
+TNS   : -0.371
 
 Type  : Slow 1200mV 100C Model Hold 'inst66'
-Slack : -0.031
-TNS   : -0.031
-
-Type  : Slow 1200mV 100C Model Hold 'SCK'
-Slack : 0.368
+Slack : 0.276
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Hold 'CLK_50MHz'
 Slack : 0.401
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst129|80'
+Slack : 0.424
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst129|79'
+Slack : 0.447
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Hold 'shrg_ctrl9:inst5|inst4'
@@ -130,229 +134,225 @@ Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst184|81'
 Slack : 0.449
 TNS   : 0.000
 
-Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst129|79'
-Slack : 0.513
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst129|80'
-Slack : 0.540
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst184|79'
-Slack : 0.563
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst128|79'
-Slack : 0.591
-TNS   : 0.000
-
 Type  : Slow 1200mV 100C Model Hold 'inst38'
-Slack : 0.637
+Slack : 0.463
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst128|80'
-Slack : 0.730
+Slack : 0.465
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'SCK'
+Slack : 0.538
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst184|80'
-Slack : 0.751
+Slack : 0.564
 TNS   : 0.000
 
-Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst184|59'
-Slack : 0.905
+Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst184|79'
+Slack : 0.586
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst128|79'
+Slack : 0.655
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst129|59'
-Slack : 1.008
+Slack : 0.801
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst184|59'
+Slack : 0.858
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Hold 'unifilter4:inst128|59'
-Slack : 1.043
+Slack : 0.951
 TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Recovery 'SCK'
-Slack : -7.988
-TNS   : -231.356
 
 Type  : Slow 1200mV 100C Model Recovery 'JUMP_1'
-Slack : -7.669
-TNS   : -319.490
+Slack : -7.749
+TNS   : -346.565
+
+Type  : Slow 1200mV 100C Model Recovery 'SCK'
+Slack : -7.404
+TNS   : -235.574
 
 Type  : Slow 1200mV 100C Model Recovery 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -5.959
-TNS   : -284.176
-
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst129|59'
-Slack : -2.919
-TNS   : -2.919
+Slack : -5.753
+TNS   : -276.030
 
 Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst129|79'
-Slack : -2.913
-TNS   : -2.913
-
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst128|80'
-Slack : -2.719
-TNS   : -2.719
-
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst184|80'
-Slack : -2.592
-TNS   : -2.592
-
-Type  : Slow 1200mV 100C Model Recovery 'inst66'
-Slack : -2.125
-TNS   : -19.125
-
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst129|81'
-Slack : -2.046
-TNS   : -2.046
-
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst128|81'
-Slack : -1.748
-TNS   : -1.748
-
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst129|80'
-Slack : -1.723
-TNS   : -1.723
-
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst128|79'
-Slack : -1.658
-TNS   : -1.658
-
-Type  : Slow 1200mV 100C Model Recovery 'net_ctrl:inst110|42'
-Slack : -1.592
-TNS   : -1.592
-
-Type  : Slow 1200mV 100C Model Recovery 'CLK_50MHz'
-Slack : -1.541
-TNS   : -25.021
-
-Type  : Slow 1200mV 100C Model Recovery 'shrg_ctrl9:inst5|inst4'
-Slack : -1.457
-TNS   : -1.457
-
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst184|81'
-Slack : -1.440
-TNS   : -1.440
+Slack : -2.945
+TNS   : -2.945
 
 Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst184|79'
-Slack : -1.397
-TNS   : -1.397
+Slack : -2.651
+TNS   : -2.651
+
+Type  : Slow 1200mV 100C Model Recovery 'inst66'
+Slack : -2.223
+TNS   : -20.007
+
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst128|80'
+Slack : -1.870
+TNS   : -1.870
+
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst128|81'
+Slack : -1.845
+TNS   : -1.845
+
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst184|81'
+Slack : -1.835
+TNS   : -1.835
+
+Type  : Slow 1200mV 100C Model Recovery 'CLK_50MHz'
+Slack : -1.833
+TNS   : -43.647
+
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst129|81'
+Slack : -1.808
+TNS   : -1.808
+
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst128|79'
+Slack : -1.776
+TNS   : -1.776
+
+Type  : Slow 1200mV 100C Model Recovery 'shrg_ctrl9:inst5|inst4'
+Slack : -1.721
+TNS   : -1.721
+
+Type  : Slow 1200mV 100C Model Recovery 'net_ctrl:inst110|42'
+Slack : -1.714
+TNS   : -1.714
 
 Type  : Slow 1200mV 100C Model Recovery 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -1.316
-TNS   : -6.712
+Slack : -1.591
+TNS   : -9.678
 
-Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst128|59'
-Slack : -1.225
-TNS   : -1.225
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst184|80'
+Slack : -1.499
+TNS   : -1.499
 
 Type  : Slow 1200mV 100C Model Recovery 'inst38'
-Slack : -1.187
-TNS   : -2.374
+Slack : -1.455
+TNS   : -2.910
+
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst129|80'
+Slack : -1.338
+TNS   : -1.338
+
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst128|59'
+Slack : -0.966
+TNS   : -0.966
 
 Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst184|59'
-Slack : -1.051
-TNS   : -1.051
+Slack : -0.733
+TNS   : -0.733
 
 Type  : Slow 1200mV 100C Model Recovery 'PWR_ON'
-Slack : -0.720
-TNS   : -1.358
+Slack : -0.652
+TNS   : -1.691
+
+Type  : Slow 1200mV 100C Model Recovery 'unifilter4:inst129|59'
+Slack : -0.650
+TNS   : -0.650
 
 Type  : Slow 1200mV 100C Model Removal 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -1.995
-TNS   : -41.785
+Slack : -1.518
+TNS   : -59.527
 
 Type  : Slow 1200mV 100C Model Removal 'PWR_ON'
-Slack : -1.599
-TNS   : -3.299
+Slack : -0.995
+TNS   : -1.473
 
 Type  : Slow 1200mV 100C Model Removal 'JUMP_1'
-Slack : -0.969
-TNS   : -7.644
+Slack : -0.586
+TNS   : -15.997
 
 Type  : Slow 1200mV 100C Model Removal 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.611
-TNS   : -0.873
-
-Type  : Slow 1200mV 100C Model Removal 'CLK_50MHz'
-Slack : 0.131
-TNS   : 0.000
+Slack : -0.071
+TNS   : -0.108
 
 Type  : Slow 1200mV 100C Model Removal 'SCK'
-Slack : 0.452
+Slack : 0.449
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Removal 'net_ctrl:inst110|42'
-Slack : 0.534
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'inst66'
-Slack : 1.046
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'inst38'
-Slack : 1.142
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst184|59'
-Slack : 1.213
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst128|59'
-Slack : 1.385
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'shrg_ctrl9:inst5|inst4'
-Slack : 1.423
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst184|81'
-Slack : 1.451
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst129|80'
-Slack : 1.475
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst184|79'
-Slack : 1.507
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst128|81'
-Slack : 1.513
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst128|79'
-Slack : 1.517
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst129|81'
-Slack : 1.715
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst128|80'
-Slack : 2.534
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst129|79'
-Slack : 2.635
-TNS   : 0.000
-
-Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst184|80'
-Slack : 2.651
+Slack : 0.539
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst129|59'
-Slack : 2.999
+Slack : 0.815
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst184|59'
+Slack : 0.871
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst184|80'
+Slack : 0.945
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'inst66'
+Slack : 0.999
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst128|59'
+Slack : 1.097
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst129|80'
+Slack : 1.127
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst184|81'
+Slack : 1.184
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'CLK_50MHz'
+Slack : 1.292
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst128|81'
+Slack : 1.388
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'inst38'
+Slack : 1.412
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst128|79'
+Slack : 1.430
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst129|81'
+Slack : 1.508
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst128|80'
+Slack : 1.529
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'shrg_ctrl9:inst5|inst4'
+Slack : 1.689
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst184|79'
+Slack : 2.068
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'unifilter4:inst129|79'
+Slack : 2.700
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Minimum Pulse Width 'JUMP_1'
 Slack : -3.000
-TNS   : -310.240
+TNS   : -377.387
 
 Type  : Slow 1200mV 100C Model Minimum Pulse Width 'SCK'
 Slack : -3.000
-TNS   : -164.580
+TNS   : -174.860
 
 Type  : Slow 1200mV 100C Model Minimum Pulse Width 'PWR_ON'
 Slack : -3.000
@@ -423,95 +423,95 @@ Slack : -1.285
 TNS   : -1.285
 
 Type  : Slow 1200mV 100C Model Minimum Pulse Width 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : 2.840
+Slack : 2.823
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Minimum Pulse Width 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : 4.525
+Slack : 4.443
 TNS   : 0.000
 
 Type  : Slow 1200mV 100C Model Minimum Pulse Width 'CLK_50MHz'
-Slack : 9.730
+Slack : 9.729
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Setup 'SCK'
-Slack : -9.245
-TNS   : -672.427
+Slack : -8.901
+TNS   : -724.068
 
 Type  : Slow 1200mV -40C Model Setup 'JUMP_1'
-Slack : -8.080
-TNS   : -518.623
+Slack : -8.367
+TNS   : -569.468
 
 Type  : Slow 1200mV -40C Model Setup 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -6.733
-TNS   : -427.345
+Slack : -6.383
+TNS   : -422.996
 
 Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst184|59'
-Slack : -5.581
-TNS   : -5.581
+Slack : -6.005
+TNS   : -6.005
 
 Type  : Slow 1200mV -40C Model Setup 'PWR_ON'
-Slack : -5.183
-TNS   : -11.094
+Slack : -5.900
+TNS   : -10.882
 
 Type  : Slow 1200mV -40C Model Setup 'CLK_50MHz'
-Slack : -5.108
-TNS   : -6.813
+Slack : -5.668
+TNS   : -7.547
 
 Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst184|79'
-Slack : -4.031
-TNS   : -4.303
+Slack : -5.442
+TNS   : -5.731
 
 Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst184|80'
-Slack : -4.018
-TNS   : -4.573
+Slack : -5.324
+TNS   : -5.603
 
 Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst184|81'
-Slack : -3.479
-TNS   : -3.479
+Slack : -5.118
+TNS   : -5.118
 
 Type  : Slow 1200mV -40C Model Setup 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -2.514
-TNS   : -12.590
-
-Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst129|59'
-Slack : -2.112
-TNS   : -2.112
+Slack : -2.378
+TNS   : -12.063
 
 Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst128|59'
-Slack : -1.750
-TNS   : -1.750
+Slack : -1.315
+TNS   : -1.315
 
 Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst128|81'
-Slack : -1.305
-TNS   : -1.305
-
-Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst128|80'
-Slack : -1.176
-TNS   : -1.744
-
-Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst128|79'
-Slack : -1.140
-TNS   : -1.437
+Slack : -1.231
+TNS   : -1.231
 
 Type  : Slow 1200mV -40C Model Setup 'inst66'
-Slack : -1.076
-TNS   : -7.707
+Slack : -1.123
+TNS   : -8.326
+
+Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst129|59'
+Slack : -1.099
+TNS   : -1.099
+
+Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst128|79'
+Slack : -1.072
+TNS   : -1.420
+
+Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst128|80'
+Slack : -0.883
+TNS   : -1.195
 
 Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst129|79'
-Slack : -0.802
-TNS   : -1.156
-
-Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst129|80'
-Slack : -0.667
-TNS   : -1.009
+Slack : -0.734
+TNS   : -0.976
 
 Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst129|81'
-Slack : -0.616
-TNS   : -0.616
+Slack : -0.627
+TNS   : -0.627
+
+Type  : Slow 1200mV -40C Model Setup 'unifilter4:inst129|80'
+Slack : -0.615
+TNS   : -0.884
 
 Type  : Slow 1200mV -40C Model Setup 'inst38'
-Slack : 0.124
+Slack : 0.293
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Setup 'shrg_ctrl9:inst5|inst4'
@@ -519,31 +519,27 @@ Slack : 0.320
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Hold 'JUMP_1'
-Slack : -2.950
-TNS   : -13.344
+Slack : -2.532
+TNS   : -9.584
 
 Type  : Slow 1200mV -40C Model Hold 'PWR_ON'
-Slack : -2.191
-TNS   : -5.733
+Slack : -2.514
+TNS   : -6.540
 
 Type  : Slow 1200mV -40C Model Hold 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.850
-TNS   : -32.476
+Slack : -1.667
+TNS   : -81.973
 
 Type  : Slow 1200mV -40C Model Hold 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.240
-TNS   : -0.620
+Slack : -0.333
+TNS   : -0.803
 
 Type  : Slow 1200mV -40C Model Hold 'inst66'
-Slack : -0.061
-TNS   : -0.061
+Slack : 0.200
+TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Hold 'CLK_50MHz'
 Slack : 0.330
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Hold 'SCK'
-Slack : 0.360
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Hold 'shrg_ctrl9:inst5|inst4'
@@ -563,228 +559,232 @@ Slack : 0.382
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst129|79'
-Slack : 0.460
+Slack : 0.404
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst129|80'
-Slack : 0.510
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst184|79'
-Slack : 0.535
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst128|79'
-Slack : 0.547
+Slack : 0.414
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Hold 'inst38'
-Slack : 0.567
+Slack : 0.415
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst128|80'
-Slack : 0.665
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst184|80'
-Slack : 0.674
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst184|59'
-Slack : 0.788
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst129|59'
-Slack : 0.895
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst128|59'
-Slack : 0.921
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Recovery 'SCK'
-Slack : -7.348
-TNS   : -214.826
-
-Type  : Slow 1200mV -40C Model Recovery 'JUMP_1'
-Slack : -6.971
-TNS   : -292.440
-
-Type  : Slow 1200mV -40C Model Recovery 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -5.328
-TNS   : -243.032
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst129|59'
-Slack : -2.676
-TNS   : -2.676
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst129|79'
-Slack : -2.547
-TNS   : -2.547
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst128|80'
-Slack : -2.379
-TNS   : -2.379
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst184|80'
-Slack : -2.372
-TNS   : -2.372
-
-Type  : Slow 1200mV -40C Model Recovery 'inst66'
-Slack : -1.795
-TNS   : -16.155
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst129|81'
-Slack : -1.720
-TNS   : -1.720
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst129|80'
-Slack : -1.548
-TNS   : -1.548
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst128|79'
-Slack : -1.489
-TNS   : -1.489
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst128|81'
-Slack : -1.448
-TNS   : -1.448
-
-Type  : Slow 1200mV -40C Model Recovery 'net_ctrl:inst110|42'
-Slack : -1.339
-TNS   : -1.339
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst184|79'
-Slack : -1.251
-TNS   : -1.251
-
-Type  : Slow 1200mV -40C Model Recovery 'CLK_50MHz'
-Slack : -1.191
-TNS   : -18.066
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst128|59'
-Slack : -1.135
-TNS   : -1.135
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst184|81'
-Slack : -1.117
-TNS   : -1.117
-
-Type  : Slow 1200mV -40C Model Recovery 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -1.114
-TNS   : -6.177
-
-Type  : Slow 1200mV -40C Model Recovery 'shrg_ctrl9:inst5|inst4'
-Slack : -1.109
-TNS   : -1.109
-
-Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst184|59'
-Slack : -0.981
-TNS   : -0.981
-
-Type  : Slow 1200mV -40C Model Recovery 'inst38'
-Slack : -0.859
-TNS   : -1.718
-
-Type  : Slow 1200mV -40C Model Recovery 'PWR_ON'
-Slack : -0.361
-TNS   : -0.627
-
-Type  : Slow 1200mV -40C Model Removal 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -1.906
-TNS   : -48.968
-
-Type  : Slow 1200mV -40C Model Removal 'PWR_ON'
-Slack : -1.436
-TNS   : -2.957
-
-Type  : Slow 1200mV -40C Model Removal 'JUMP_1'
-Slack : -0.878
-TNS   : -9.374
-
-Type  : Slow 1200mV -40C Model Removal 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.513
-TNS   : -1.061
-
-Type  : Slow 1200mV -40C Model Removal 'CLK_50MHz'
-Slack : 0.221
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Removal 'SCK'
-Slack : 0.293
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Removal 'net_ctrl:inst110|42'
 Slack : 0.420
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'inst66'
-Slack : 0.943
+Type  : Slow 1200mV -40C Model Hold 'SCK'
+Slack : 0.424
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst184|59'
-Slack : 1.045
+Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst184|79'
+Slack : 0.534
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'inst38'
-Slack : 1.054
+Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst184|80'
+Slack : 0.536
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst128|59'
-Slack : 1.204
+Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst128|79'
+Slack : 0.601
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst129|80'
-Slack : 1.247
+Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst129|59'
+Slack : 0.705
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst128|79'
-Slack : 1.273
+Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst184|59'
+Slack : 0.740
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst184|81'
-Slack : 1.307
+Type  : Slow 1200mV -40C Model Hold 'unifilter4:inst128|59'
+Slack : 0.844
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'shrg_ctrl9:inst5|inst4'
-Slack : 1.315
+Type  : Slow 1200mV -40C Model Recovery 'JUMP_1'
+Slack : -7.035
+TNS   : -314.740
+
+Type  : Slow 1200mV -40C Model Recovery 'SCK'
+Slack : -6.928
+TNS   : -214.925
+
+Type  : Slow 1200mV -40C Model Recovery 'inst176|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -5.169
+TNS   : -234.842
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst129|79'
+Slack : -2.580
+TNS   : -2.580
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst184|79'
+Slack : -2.312
+TNS   : -2.312
+
+Type  : Slow 1200mV -40C Model Recovery 'inst66'
+Slack : -1.868
+TNS   : -16.812
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst128|80'
+Slack : -1.674
+TNS   : -1.674
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst128|79'
+Slack : -1.592
+TNS   : -1.592
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst128|81'
+Slack : -1.524
+TNS   : -1.524
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst184|81'
+Slack : -1.522
+TNS   : -1.522
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst129|81'
+Slack : -1.498
+TNS   : -1.498
+
+Type  : Slow 1200mV -40C Model Recovery 'net_ctrl:inst110|42'
+Slack : -1.483
+TNS   : -1.483
+
+Type  : Slow 1200mV -40C Model Recovery 'CLK_50MHz'
+Slack : -1.408
+TNS   : -33.890
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst184|80'
+Slack : -1.366
+TNS   : -1.366
+
+Type  : Slow 1200mV -40C Model Recovery 'shrg_ctrl9:inst5|inst4'
+Slack : -1.337
+TNS   : -1.337
+
+Type  : Slow 1200mV -40C Model Recovery 'inst169|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -1.325
+TNS   : -8.074
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst129|80'
+Slack : -1.227
+TNS   : -1.227
+
+Type  : Slow 1200mV -40C Model Recovery 'inst38'
+Slack : -1.085
+TNS   : -2.170
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst128|59'
+Slack : -0.926
+TNS   : -0.926
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst184|59'
+Slack : -0.712
+TNS   : -0.712
+
+Type  : Slow 1200mV -40C Model Recovery 'unifilter4:inst129|59'
+Slack : -0.625
+TNS   : -0.625
+
+Type  : Slow 1200mV -40C Model Recovery 'PWR_ON'
+Slack : -0.268
+TNS   : -0.300
+
+Type  : Slow 1200mV -40C Model Removal 'inst176|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -1.436
+TNS   : -61.139
+
+Type  : Slow 1200mV -40C Model Removal 'PWR_ON'
+Slack : -0.979
+TNS   : -1.560
+
+Type  : Slow 1200mV -40C Model Removal 'JUMP_1'
+Slack : -0.632
+TNS   : -16.877
+
+Type  : Slow 1200mV -40C Model Removal 'inst169|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -0.240
+TNS   : -0.546
+
+Type  : Slow 1200mV -40C Model Removal 'SCK'
+Slack : 0.323
 TNS   : 0.000
 
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst184|79'
-Slack : 1.322
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst128|81'
-Slack : 1.377
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst129|81'
-Slack : 1.570
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst128|80'
-Slack : 2.126
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst129|79'
-Slack : 2.220
-TNS   : 0.000
-
-Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst184|80'
-Slack : 2.234
+Type  : Slow 1200mV -40C Model Removal 'net_ctrl:inst110|42'
+Slack : 0.464
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst129|59'
-Slack : 2.578
+Slack : 0.711
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst184|59'
+Slack : 0.764
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst184|80'
+Slack : 0.801
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'inst66'
+Slack : 0.884
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst128|59'
+Slack : 0.948
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst129|80'
+Slack : 0.965
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst184|81'
+Slack : 1.058
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst128|79'
+Slack : 1.204
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst128|81'
+Slack : 1.253
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'CLK_50MHz'
+Slack : 1.259
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst128|80'
+Slack : 1.290
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'inst38'
+Slack : 1.300
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst129|81'
+Slack : 1.361
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'shrg_ctrl9:inst5|inst4'
+Slack : 1.563
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst184|79'
+Slack : 1.725
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'unifilter4:inst129|79'
+Slack : 2.288
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Minimum Pulse Width 'JUMP_1'
 Slack : -3.000
-TNS   : -274.867
+TNS   : -333.378
 
 Type  : Slow 1200mV -40C Model Minimum Pulse Width 'SCK'
 Slack : -3.000
-TNS   : -163.604
+TNS   : -173.884
 
 Type  : Slow 1200mV -40C Model Minimum Pulse Width 'PWR_ON'
 Slack : -3.000
@@ -855,127 +855,139 @@ Slack : -1.285
 TNS   : -1.285
 
 Type  : Slow 1200mV -40C Model Minimum Pulse Width 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : 2.734
+Slack : 2.764
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Minimum Pulse Width 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : 4.155
+Slack : 4.283
 TNS   : 0.000
 
 Type  : Slow 1200mV -40C Model Minimum Pulse Width 'CLK_50MHz'
-Slack : 9.755
+Slack : 9.754
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Setup 'SCK'
-Slack : -4.952
-TNS   : -346.124
+Slack : -4.476
+TNS   : -374.540
 
 Type  : Fast 1200mV -40C Model Setup 'JUMP_1'
-Slack : -4.394
-TNS   : -272.498
+Slack : -4.460
+TNS   : -298.638
 
 Type  : Fast 1200mV -40C Model Setup 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -3.896
-TNS   : -251.808
-
-Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst184|59'
-Slack : -3.094
-TNS   : -3.094
+Slack : -3.595
+TNS   : -248.581
 
 Type  : Fast 1200mV -40C Model Setup 'PWR_ON'
-Slack : -3.019
-TNS   : -6.787
+Slack : -3.388
+TNS   : -6.759
 
-Type  : Fast 1200mV -40C Model Setup 'CLK_50MHz'
-Slack : -2.553
-TNS   : -3.177
-
-Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst184|80'
-Slack : -2.446
-TNS   : -2.446
+Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst184|59'
+Slack : -3.278
+TNS   : -3.278
 
 Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst184|79'
-Slack : -2.435
-TNS   : -2.435
+Slack : -3.123
+TNS   : -3.123
+
+Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst184|80'
+Slack : -3.062
+TNS   : -3.062
 
 Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst184|81'
-Slack : -2.070
-TNS   : -2.070
+Slack : -2.910
+TNS   : -2.910
+
+Type  : Fast 1200mV -40C Model Setup 'CLK_50MHz'
+Slack : -2.851
+TNS   : -3.652
 
 Type  : Fast 1200mV -40C Model Setup 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -1.260
-TNS   : -6.545
-
-Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst128|80'
-Slack : -0.946
-TNS   : -0.951
+Slack : -1.153
+TNS   : -6.318
 
 Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst128|79'
-Slack : -0.911
-TNS   : -0.911
+Slack : -0.861
+TNS   : -0.861
 
-Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst129|59'
-Slack : -0.706
-TNS   : -0.706
+Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst128|80'
+Slack : -0.788
+TNS   : -0.788
 
 Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst129|79'
-Slack : -0.680
-TNS   : -0.680
-
-Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst128|59'
-Slack : -0.610
-TNS   : -0.610
+Slack : -0.660
+TNS   : -0.660
 
 Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst129|80'
-Slack : -0.610
-TNS   : -0.610
+Slack : -0.599
+TNS   : -0.599
 
 Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst128|81'
-Slack : -0.422
-TNS   : -0.422
+Slack : -0.319
+TNS   : -0.319
+
+Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst128|59'
+Slack : -0.296
+TNS   : -0.296
+
+Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst129|59'
+Slack : -0.174
+TNS   : -0.174
 
 Type  : Fast 1200mV -40C Model Setup 'inst66'
-Slack : -0.105
-TNS   : -0.387
+Slack : -0.113
+TNS   : -0.540
 
 Type  : Fast 1200mV -40C Model Setup 'unifilter4:inst129|81'
-Slack : 0.018
+Slack : 0.055
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Setup 'inst38'
-Slack : 0.564
+Slack : 0.627
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Setup 'shrg_ctrl9:inst5|inst4'
 Slack : 0.642
 TNS   : 0.000
 
-Type  : Fast 1200mV -40C Model Hold 'JUMP_1'
-Slack : -1.395
-TNS   : -6.721
-
 Type  : Fast 1200mV -40C Model Hold 'PWR_ON'
-Slack : -1.068
-TNS   : -2.775
+Slack : -1.240
+TNS   : -3.169
+
+Type  : Fast 1200mV -40C Model Hold 'JUMP_1'
+Slack : -1.212
+TNS   : -4.194
 
 Type  : Fast 1200mV -40C Model Hold 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.420
-TNS   : -6.963
+Slack : -0.536
+TNS   : -9.909
 
 Type  : Fast 1200mV -40C Model Hold 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.130
-TNS   : -0.295
+Slack : -0.185
+TNS   : -0.494
 
 Type  : Fast 1200mV -40C Model Hold 'inst66'
-Slack : -0.033
-TNS   : -0.033
+Slack : 0.116
+TNS   : 0.000
 
-Type  : Fast 1200mV -40C Model Hold 'SCK'
-Slack : 0.147
+Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst129|80'
+Slack : 0.135
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Hold 'CLK_50MHz'
-Slack : 0.173
+Slack : 0.172
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst129|79'
+Slack : 0.172
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst128|80'
+Slack : 0.175
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'inst38'
+Slack : 0.196
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Hold 'shrg_ctrl9:inst5|inst4'
@@ -994,233 +1006,221 @@ Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst184|81'
 Slack : 0.197
 TNS   : 0.000
 
-Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst129|79'
-Slack : 0.198
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst129|80'
-Slack : 0.199
+Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst184|80'
+Slack : 0.202
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst184|79'
-Slack : 0.199
+Slack : 0.215
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst128|79'
-Slack : 0.218
+Slack : 0.246
 TNS   : 0.000
 
-Type  : Fast 1200mV -40C Model Hold 'inst38'
-Slack : 0.271
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst128|80'
-Slack : 0.278
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst184|80'
-Slack : 0.306
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst184|59'
-Slack : 0.386
+Type  : Fast 1200mV -40C Model Hold 'SCK'
+Slack : 0.277
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst129|59'
-Slack : 0.435
+Slack : 0.423
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst184|59'
+Slack : 0.436
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Hold 'unifilter4:inst128|59'
-Slack : 0.447
+Slack : 0.444
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Recovery 'SCK'
-Slack : -4.149
-TNS   : -101.341
+Slack : -3.766
+TNS   : -103.008
 
 Type  : Fast 1200mV -40C Model Recovery 'JUMP_1'
-Slack : -3.594
-TNS   : -156.736
+Slack : -3.616
+TNS   : -166.567
 
 Type  : Fast 1200mV -40C Model Recovery 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -3.586
-TNS   : -167.931
-
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst129|79'
-Slack : -1.121
-TNS   : -1.121
-
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst129|59'
-Slack : -1.115
-TNS   : -1.115
-
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst129|81'
-Slack : -1.047
-TNS   : -1.047
-
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst128|80'
-Slack : -1.030
-TNS   : -1.030
-
-Type  : Fast 1200mV -40C Model Recovery 'inst66'
-Slack : -0.975
-TNS   : -8.775
-
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst184|80'
-Slack : -0.925
-TNS   : -0.925
+Slack : -3.313
+TNS   : -171.031
 
 Type  : Fast 1200mV -40C Model Recovery 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.917
-TNS   : -5.608
+Slack : -1.182
+TNS   : -7.072
 
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst128|81'
-Slack : -0.915
-TNS   : -0.915
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst129|79'
+Slack : -1.169
+TNS   : -1.169
 
 Type  : Fast 1200mV -40C Model Recovery 'CLK_50MHz'
-Slack : -0.905
-TNS   : -16.090
+Slack : -1.073
+TNS   : -25.513
 
 Type  : Fast 1200mV -40C Model Recovery 'shrg_ctrl9:inst5|inst4'
-Slack : -0.883
-TNS   : -0.883
+Slack : -1.016
+TNS   : -1.016
 
-Type  : Fast 1200mV -40C Model Recovery 'net_ctrl:inst110|42'
-Slack : -0.755
-TNS   : -0.755
+Type  : Fast 1200mV -40C Model Recovery 'inst66'
+Slack : -1.013
+TNS   : -9.117
 
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst184|81'
-Slack : -0.752
-TNS   : -0.752
-
-Type  : Fast 1200mV -40C Model Recovery 'inst38'
-Slack : -0.743
-TNS   : -1.486
-
-Type  : Fast 1200mV -40C Model Recovery 'PWR_ON'
-Slack : -0.673
-TNS   : -1.707
-
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst129|80'
-Slack : -0.508
-TNS   : -0.508
-
-Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst128|79'
-Slack : -0.488
-TNS   : -0.488
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst128|81'
+Slack : -0.980
+TNS   : -0.980
 
 Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst184|79'
-Slack : -0.332
-TNS   : -0.332
+Slack : -0.980
+TNS   : -0.980
+
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst184|81'
+Slack : -0.963
+TNS   : -0.963
+
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst129|81'
+Slack : -0.946
+TNS   : -0.946
+
+Type  : Fast 1200mV -40C Model Recovery 'inst38'
+Slack : -0.870
+TNS   : -1.740
+
+Type  : Fast 1200mV -40C Model Recovery 'net_ctrl:inst110|42'
+Slack : -0.806
+TNS   : -0.806
+
+Type  : Fast 1200mV -40C Model Recovery 'PWR_ON'
+Slack : -0.604
+TNS   : -2.169
+
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst128|80'
+Slack : -0.595
+TNS   : -0.595
+
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst128|79'
+Slack : -0.551
+TNS   : -0.551
+
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst184|80'
+Slack : -0.411
+TNS   : -0.411
+
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst129|80'
+Slack : -0.326
+TNS   : -0.326
 
 Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst128|59'
-Slack : -0.291
-TNS   : -0.291
+Slack : -0.125
+TNS   : -0.125
 
 Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst184|59'
-Slack : -0.178
-TNS   : -0.178
+Slack : -0.017
+TNS   : -0.017
+
+Type  : Fast 1200mV -40C Model Recovery 'unifilter4:inst129|59'
+Slack : 0.002
+TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Removal 'inst176|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -1.012
-TNS   : -17.148
+Slack : -0.779
+TNS   : -24.076
 
 Type  : Fast 1200mV -40C Model Removal 'PWR_ON'
-Slack : -0.681
-TNS   : -1.299
+Slack : -0.368
+TNS   : -0.521
 
 Type  : Fast 1200mV -40C Model Removal 'JUMP_1'
-Slack : -0.345
-TNS   : -3.369
+Slack : -0.161
+TNS   : -1.087
 
 Type  : Fast 1200mV -40C Model Removal 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : -0.341
-TNS   : -0.732
-
-Type  : Fast 1200mV -40C Model Removal 'CLK_50MHz'
-Slack : -0.023
-TNS   : -0.207
+Slack : -0.137
+TNS   : -0.374
 
 Type  : Fast 1200mV -40C Model Removal 'SCK'
-Slack : 0.244
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'net_ctrl:inst110|42'
-Slack : 0.441
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'inst66'
-Slack : 0.488
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'inst38'
-Slack : 0.526
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'shrg_ctrl9:inst5|inst4'
-Slack : 0.671
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst184|81'
-Slack : 0.672
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst128|81'
-Slack : 0.676
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst129|80'
-Slack : 0.737
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst129|81'
-Slack : 0.752
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst128|79'
-Slack : 0.766
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst184|79'
-Slack : 0.791
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst184|59'
-Slack : 0.898
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst128|59'
-Slack : 1.001
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst128|80'
-Slack : 1.285
-TNS   : 0.000
-
-Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst129|79'
-Slack : 1.333
+Slack : 0.290
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst184|80'
-Slack : 1.359
+Slack : 0.449
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'inst66'
+Slack : 0.477
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'net_ctrl:inst110|42'
+Slack : 0.500
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst184|81'
+Slack : 0.519
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'CLK_50MHz'
+Slack : 0.555
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst129|80'
+Slack : 0.571
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst128|81'
+Slack : 0.617
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'inst38'
+Slack : 0.639
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst129|81'
+Slack : 0.678
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst129|59'
-Slack : 1.835
+Slack : 0.690
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst128|79'
+Slack : 0.708
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst184|59'
+Slack : 0.726
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst128|80'
+Slack : 0.755
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'shrg_ctrl9:inst5|inst4'
+Slack : 0.791
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst128|59'
+Slack : 0.836
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst184|79'
+Slack : 1.004
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'unifilter4:inst129|79'
+Slack : 1.395
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Minimum Pulse Width 'JUMP_1'
 Slack : -3.000
-TNS   : -196.331
+TNS   : -212.233
 
 Type  : Fast 1200mV -40C Model Minimum Pulse Width 'SCK'
 Slack : -3.000
-TNS   : -137.573
+TNS   : -147.544
 
 Type  : Fast 1200mV -40C Model Minimum Pulse Width 'PWR_ON'
 Slack : -3.000
-TNS   : -10.194
+TNS   : -10.310
 
 Type  : Fast 1200mV -40C Model Minimum Pulse Width 'inst66'
 Slack : -1.000
@@ -1287,7 +1287,7 @@ Slack : -1.000
 TNS   : -1.000
 
 Type  : Fast 1200mV -40C Model Minimum Pulse Width 'inst169|altpll_component|auto_generated|pll1|clk[0]'
-Slack : 2.834
+Slack : 2.838
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Minimum Pulse Width 'inst176|altpll_component|auto_generated|pll1|clk[0]'
@@ -1295,7 +1295,7 @@ Slack : 4.209
 TNS   : 0.000
 
 Type  : Fast 1200mV -40C Model Minimum Pulse Width 'CLK_50MHz'
-Slack : 9.425
+Slack : 9.429
 TNS   : 0.000
 
 ------------------------------------------------------------

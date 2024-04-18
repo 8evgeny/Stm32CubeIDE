@@ -955,7 +955,7 @@ https://fpgasoftware.intel.com/eula.
 	)
 	(parameter
 		"TAP_DISTANCE"
-		"2048"
+		"3072"
 		"Number of shift positions between output taps"
 	)
 	(parameter
@@ -1024,7 +1024,7 @@ https://fpgasoftware.intel.com/eula.
 	)
 	(parameter
 		"TAP_DISTANCE"
-		"2048"
+		"3072"
 		"Number of shift positions between output taps"
 	)
 	(parameter
@@ -1093,7 +1093,7 @@ https://fpgasoftware.intel.com/eula.
 	)
 	(parameter
 		"TAP_DISTANCE"
-		"2048"
+		"3072"
 		"Number of shift positions between output taps"
 	)
 	(parameter
@@ -1162,7 +1162,7 @@ https://fpgasoftware.intel.com/eula.
 	)
 	(parameter
 		"TAP_DISTANCE"
-		"2048"
+		"3072"
 		"Number of shift positions between output taps"
 	)
 	(parameter

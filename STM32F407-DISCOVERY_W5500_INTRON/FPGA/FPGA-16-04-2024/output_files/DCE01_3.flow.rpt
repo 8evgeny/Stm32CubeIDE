@@ -1,5 +1,5 @@
 Flow report for DCE01_3
-Thu Apr 18 10:10:53 2024
+Thu Apr 18 11:59:40 2024
 Quartus Prime Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
 
 
@@ -41,20 +41,20 @@ https://fpgasoftware.intel.com/eula.
 +-----------------------------------------------------------------------------------------+
 ; Flow Summary                                                                            ;
 +------------------------------------+----------------------------------------------------+
-; Flow Status                        ; Successful - Thu Apr 18 10:10:47 2024              ;
+; Flow Status                        ; Successful - Thu Apr 18 11:59:36 2024              ;
 ; Quartus Prime Version              ; 22.1std.0 Build 915 10/25/2022 SC Standard Edition ;
 ; Revision Name                      ; DCE01_3                                            ;
 ; Top-level Entity Name              ; DCE01_3                                            ;
 ; Family                             ; Cyclone IV E                                       ;
 ; Device                             ; EP4CE6E22I7                                        ;
 ; Timing Models                      ; Final                                              ;
-; Total logic elements               ; 379 / 6,272 ( 6 % )                                ;
-;     Total combinational functions  ; 346 / 6,272 ( 6 % )                                ;
-;     Dedicated logic registers      ; 216 / 6,272 ( 3 % )                                ;
-; Total registers                    ; 216                                                ;
+; Total logic elements               ; 386 / 6,272 ( 6 % )                                ;
+;     Total combinational functions  ; 354 / 6,272 ( 6 % )                                ;
+;     Dedicated logic registers      ; 224 / 6,272 ( 4 % )                                ;
+; Total registers                    ; 224                                                ;
 ; Total pins                         ; 47 / 92 ( 51 % )                                   ;
 ; Total virtual pins                 ; 0                                                  ;
-; Total memory bits                  ; 2,552 / 276,480 ( < 1 % )                          ;
+; Total memory bits                  ; 6,648 / 276,480 ( 2 % )                            ;
 ; Embedded Multiplier 9-bit elements ; 0 / 30 ( 0 % )                                     ;
 ; Total PLLs                         ; 2 / 2 ( 100 % )                                    ;
 +------------------------------------+----------------------------------------------------+
@@ -65,7 +65,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 04/18/2024 10:10:22 ;
+; Start date & time ; 04/18/2024 11:59:18 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; DCE01_3             ;
 +-------------------+---------------------+
@@ -76,7 +76,7 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------+----------------------------------------+---------------+-------------+------------+
 ; Assignment Name                                   ; Value                                  ; Default Value ; Entity Name ; Section Id ;
 +---------------------------------------------------+----------------------------------------+---------------+-------------+------------+
-; COMPILER_SIGNATURE_ID                             ; 193662124652367.171342422231621        ; --            ; --          ; --         ;
+; COMPILER_SIGNATURE_ID                             ; 193662124652367.171343075857798        ; --            ; --          ; --         ;
 ; CYCLONEII_OPTIMIZATION_TECHNIQUE                  ; Speed                                  ; Balanced      ; --          ; --         ;
 ; IO_PLACEMENT_OPTIMIZATION                         ; Off                                    ; On            ; --          ; --         ;
 ; MAX_CORE_JUNCTION_TEMP                            ; 100                                    ; --            ; --          ; --         ;
@@ -107,11 +107,11 @@ https://fpgasoftware.intel.com/eula.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:00:12     ; 1.0                     ; 521 MB              ; 00:00:27                           ;
-; Fitter               ; 00:00:11     ; 1.1                     ; 1120 MB             ; 00:00:16                           ;
+; Analysis & Synthesis ; 00:00:07     ; 1.0                     ; 522 MB              ; 00:00:15                           ;
+; Fitter               ; 00:00:08     ; 1.2                     ; 1135 MB             ; 00:00:13                           ;
 ; Assembler            ; 00:00:01     ; 1.0                     ; 358 MB              ; 00:00:01                           ;
-; Timing Analyzer      ; 00:00:05     ; 1.1                     ; 495 MB              ; 00:00:04                           ;
-; Total                ; 00:00:29     ; --                      ; --                  ; 00:00:48                           ;
+; Timing Analyzer      ; 00:00:03     ; 1.1                     ; 481 MB              ; 00:00:04                           ;
+; Total                ; 00:00:19     ; --                      ; --                  ; 00:00:33                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 

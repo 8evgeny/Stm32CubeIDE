@@ -1,5 +1,5 @@
 Analysis & Synthesis report for DCE01_3
-Wed Apr 17 16:20:00 2024
+Thu Apr 18 10:10:33 2024
 Quartus Prime Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
 
 
@@ -56,13 +56,13 @@ https://fpgasoftware.intel.com/eula.
 +-----------------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                            ;
 +------------------------------------+----------------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Wed Apr 17 16:20:00 2024              ;
+; Analysis & Synthesis Status        ; Successful - Thu Apr 18 10:10:33 2024              ;
 ; Quartus Prime Version              ; 22.1std.0 Build 915 10/25/2022 SC Standard Edition ;
 ; Revision Name                      ; DCE01_3                                            ;
 ; Top-level Entity Name              ; DCE01_3                                            ;
 ; Family                             ; Cyclone IV E                                       ;
-; Total logic elements               ; 352                                                ;
-;     Total combinational functions  ; 342                                                ;
+; Total logic elements               ; 353                                                ;
+;     Total combinational functions  ; 343                                                ;
 ;     Dedicated logic registers      ; 216                                                ;
 ; Total registers                    ; 216                                                ;
 ; Total pins                         ; 47                                                 ;
@@ -223,16 +223,16 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------+--------------+
 ; Resource                                    ; Usage        ;
 +---------------------------------------------+--------------+
-; Estimated Total logic elements              ; 352          ;
+; Estimated Total logic elements              ; 353          ;
 ;                                             ;              ;
-; Total combinational functions               ; 342          ;
+; Total combinational functions               ; 343          ;
 ; Logic element usage by number of LUT inputs ;              ;
-;     -- 4 input functions                    ; 114          ;
-;     -- 3 input functions                    ; 68           ;
-;     -- <=2 input functions                  ; 160          ;
+;     -- 4 input functions                    ; 110          ;
+;     -- 3 input functions                    ; 72           ;
+;     -- <=2 input functions                  ; 161          ;
 ;                                             ;              ;
 ; Logic elements by mode                      ;              ;
-;     -- normal mode                          ; 262          ;
+;     -- normal mode                          ; 263          ;
 ;     -- arithmetic mode                      ; 80           ;
 ;                                             ;              ;
 ; Total registers                             ; 216          ;
@@ -249,8 +249,8 @@ https://fpgasoftware.intel.com/eula.
 ;                                             ;              ;
 ; Maximum fan-out node                        ; PWR_ON~input ;
 ; Maximum fan-out                             ; 95           ;
-; Total fan-out                               ; 1865         ;
-; Average fan-out                             ; 2.83         ;
+; Total fan-out                               ; 1863         ;
+; Average fan-out                             ; 2.82         ;
 +---------------------------------------------+--------------+
 
 
@@ -259,7 +259,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------------------------------------------------+------------------+--------------+
 ; Compilation Hierarchy Node                ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                     ; Entity Name      ; Library Name ;
 +-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------------------------------------------------+------------------+--------------+
-; |DCE01_3                                  ; 342 (64)            ; 216 (43)                  ; 2552        ; 0            ; 0       ; 0         ; 47   ; 0            ; |DCE01_3                                                                                                ; DCE01_3          ; work         ;
+; |DCE01_3                                  ; 343 (64)            ; 216 (43)                  ; 2552        ; 0            ; 0       ; 0         ; 47   ; 0            ; |DCE01_3                                                                                                ; DCE01_3          ; work         ;
 ;    |DBL_BUF:inst|                         ; 123 (5)             ; 85 (1)                    ; 2552        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|DBL_BUF:inst                                                                                   ; DBL_BUF          ; work         ;
 ;       |altshift_taps:inst208|             ; 27 (0)              ; 21 (0)                    ; 638         ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|DBL_BUF:inst|altshift_taps:inst208                                                             ; altshift_taps    ; work         ;
 ;          |shift_taps_aln:auto_generated|  ; 27 (0)              ; 21 (1)                    ; 638         ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|DBL_BUF:inst|altshift_taps:inst208|shift_taps_aln:auto_generated                               ; shift_taps_aln   ; work         ;
@@ -300,7 +300,7 @@ https://fpgasoftware.intel.com/eula.
 ;    |div5-1123:inst197|                    ; 6 (6)               ; 4 (4)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|div5-1123:inst197                                                                              ; div5-1123        ; work         ;
 ;    |f0_former:inst106|                    ; 14 (14)             ; 9 (9)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|f0_former:inst106                                                                              ; f0_former        ; work         ;
 ;    |net_ctrl:inst110|                     ; 16 (16)             ; 12 (12)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|net_ctrl:inst110                                                                               ; net_ctrl         ; work         ;
-;    |shrg_ctrl9:inst5|                     ; 40 (40)             ; 16 (16)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|shrg_ctrl9:inst5                                                                               ; shrg_ctrl9       ; work         ;
+;    |shrg_ctrl9:inst5|                     ; 41 (41)             ; 16 (16)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|shrg_ctrl9:inst5                                                                               ; shrg_ctrl9       ; work         ;
 ;    |slctr:inst118|                        ; 1 (1)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|slctr:inst118                                                                                  ; slctr            ; work         ;
 ;    |stbus_ctrl3:inst1|                    ; 16 (16)             ; 10 (10)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|stbus_ctrl3:inst1                                                                              ; stbus_ctrl3      ; work         ;
 ;    |test_seq2:inst121|                    ; 17 (17)             ; 9 (9)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DCE01_3|test_seq2:inst121                                                                              ; test_seq2        ; work         ;
@@ -1231,21 +1231,21 @@ Note: In order to hide this table in the UI and the text report file, please set
 ;     ENA SLD           ; 40                          ;
 ;     plain             ; 3                           ;
 ; cycloneiii_io_obuf    ; 7                           ;
-; cycloneiii_lcell_comb ; 345                         ;
+; cycloneiii_lcell_comb ; 346                         ;
 ;     arith             ; 80                          ;
 ;         1 data inputs ; 4                           ;
 ;         2 data inputs ; 76                          ;
-;     normal            ; 265                         ;
+;     normal            ; 266                         ;
 ;         0 data inputs ; 10                          ;
 ;         1 data inputs ; 21                          ;
-;         2 data inputs ; 52                          ;
-;         3 data inputs ; 68                          ;
-;         4 data inputs ; 114                         ;
+;         2 data inputs ; 53                          ;
+;         3 data inputs ; 72                          ;
+;         4 data inputs ; 110                         ;
 ; cycloneiii_pll        ; 2                           ;
 ; cycloneiii_ram_block  ; 4                           ;
 ;                       ;                             ;
 ; Max LUT depth         ; 8.00                        ;
-; Average LUT depth     ; 2.83                        ;
+; Average LUT depth     ; 2.82                        ;
 +-----------------------+-----------------------------+
 
 
@@ -1264,7 +1264,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
-    Info: Processing started: Wed Apr 17 16:19:52 2024
+    Info: Processing started: Thu Apr 18 10:10:21 2024
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off DCE01_3 -c DCE01_3
 Info (20030): Parallel compilation is enabled and will use 6 of the 6 processors detected
 Info (12021): Found 1 design units, including 1 entities, in source file unifilter4.bdf
@@ -1477,17 +1477,17 @@ Info (128003): Physical synthesis algorithm combinational resynthesis using bool
 Info (128001): Physical synthesis optimizations for speed complete: elapsed time is 00:00:00
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 2 node(s), including 0 DDIO, 2 PLL, 0 transceiver and 0 LCELL
-Info (21057): Implemented 416 device resources after synthesis - the final resource count might be different
+Info (21057): Implemented 417 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 10 input pins
     Info (21059): Implemented 35 output pins
     Info (21060): Implemented 2 bidirectional pins
-    Info (21061): Implemented 363 logic cells
+    Info (21061): Implemented 364 logic cells
     Info (21064): Implemented 4 RAM segments
     Info (21065): Implemented 2 PLLs
 Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 66 warnings
     Info: Peak virtual memory: 521 megabytes
-    Info: Processing ended: Wed Apr 17 16:20:00 2024
-    Info: Elapsed time: 00:00:08
-    Info: Total CPU time (on all processors): 00:00:17
+    Info: Processing ended: Thu Apr 18 10:10:33 2024
+    Info: Elapsed time: 00:00:12
+    Info: Total CPU time (on all processors): 00:00:27
 
 

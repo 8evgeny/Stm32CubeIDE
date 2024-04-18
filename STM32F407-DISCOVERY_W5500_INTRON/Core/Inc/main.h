@@ -165,7 +165,7 @@ extern "C" {
 #define MAX_PACKET_LEN 20 * 4
 #endif
 #ifdef enable_BUFFER
-#define BUF_PACKET_SIZE 100
+#define BUF_PACKET_SIZE 700
 #endif
 
 enum netDiagnostic{

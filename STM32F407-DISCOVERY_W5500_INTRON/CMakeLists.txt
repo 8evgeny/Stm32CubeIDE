@@ -16,7 +16,7 @@ add_definitions(-DCS_WIZNET_PE4)      #во второй ревизии CS - PD1
 #add_definitions(-Denable_write_MAC) #Разрешение технологической прошивки / записи MAC
 #add_definitions(-Denable_twin_reset_to_restore_default_IP)
 add_definitions(-Denable_SEGGER) #on/off SEGGER
-#add_definitions(-Denable_BUFFER) #on/off BUFFER (из кода убрать - сейчас это делает ПЛИС)
+add_definitions(-Denable_BUFFER) #on/off BUFFER_FIFO (Задержка при отправке пакетов)
 #add_definitions(-Denable_RESET_FPGA_MOSI) #сброс приемного регистра ПЛИС (должен быть закомментирован - ПЛИС сама формирует сигнал)
 add_definitions(-Denable_RESET_FPGA_MISO) #сброс передающего регистра ПЛИС
 add_definitions(-Denable_SKIP_Packets) #пропуск пакетов по сигналу ПЛИС

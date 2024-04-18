@@ -1575,7 +1575,7 @@ void sendReceiveUDP(uint8_t udpSocket)
                 }//100
             }//совпало
 
-            if (numBadPackets2Channel == 80000/MAX_PACKET_LEN) {//За 10 секунды связь не встала (8000/MAX_PACKET_LEN * 10)
+            if (numBadPackets2Channel == 20000/MAX_PACKET_LEN) {//За 10 секунды связь не встала (8000/MAX_PACKET_LEN * 10)
 // Команда абоненту на перезагрузку
                 sendto(udpSocket, (uint8_t *)commandfromBaseToAbonentReboot, MAX_PACKET_LEN, destip, local_port_udp);
                 printf("Sending command Reboot to abonent\r\n");

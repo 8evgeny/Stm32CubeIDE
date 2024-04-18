@@ -1,12 +1,12 @@
-Fitter Status : Successful - Wed Apr 17 16:20:10 2024
+Fitter Status : Successful - Thu Apr 18 10:10:45 2024
 Quartus Prime Version : 22.1std.0 Build 915 10/25/2022 SC Standard Edition
 Revision Name : DCE01_3
 Top-level Entity Name : DCE01_3
 Family : Cyclone IV E
 Device : EP4CE6E22I7
 Timing Models : Final
-Total logic elements : 374 / 6,272 ( 6 % )
-    Total combinational functions : 345 / 6,272 ( 6 % )
+Total logic elements : 379 / 6,272 ( 6 % )
+    Total combinational functions : 346 / 6,272 ( 6 % )
     Dedicated logic registers : 216 / 6,272 ( 3 % )
 Total registers : 216
 Total pins : 47 / 92 ( 51 % )

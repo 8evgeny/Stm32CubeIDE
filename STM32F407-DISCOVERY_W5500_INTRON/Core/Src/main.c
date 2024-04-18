@@ -1526,23 +1526,22 @@ void sendReceiveUDP(uint8_t udpSocket)
             create_2_channelDataForControl(dataFromBase, receivedDataFrom_2_Channel);
 #endif
             if (SEGGER){
-//                print_Channel(1, dataFromBase);
-//                print_Channel(2, dataFromBase);
-//                print_Channel(3, dataFromBase);
-//                print_Channel(4, dataFromBase);
+                print_Channel(1, dataFromBase);
+                print_Channel(2, dataFromBase);
+                print_Channel(3, dataFromBase);
+                print_Channel(4, dataFromBase);
 //                print_Channel(1, dataToBase);
 //                print_Channel(2, dataToBase);
 //                print_Channel(3, dataToBase);
 //                print_Channel(4, dataToBase);
 
-                print_ALL_Channel(dataFromBase);
+//                print_ALL_Channel(dataFromBase);
             }
 #ifdef enable_CONTROL
 //Логика перезагрузки - проверяю 2-й канал если не EE в течение 40 сек то перезагрузка
             if (compare_data_in_Channel(receivedDataFrom_2_Channel, trueDataFrom_2_Channel) != 0){
                 ++compareDataInChannelState;
                 if (compareDataInChannelState == ERROR_1){
-        printAllChannel(dataFromBase);
                     numGoodPackets2Channel = 0;
                     bridgeState = CONNECTION_NO;
                     uint32_t currTime = HAL_GetTick();
@@ -1642,16 +1641,16 @@ void sendReceiveUDP(uint8_t udpSocket)
 
         //Тут вывожу все каналы, полученные от абонента  dataFromDx
         if (SEGGER){
-//            print_Channel(1, dataFromDx);
-//            print_Channel(2, dataFromDx);
-//            print_Channel(3, dataFromDx);
-//            print_Channel(4, dataFromDx);
+            print_Channel(1, dataFromDx);
+            print_Channel(2, dataFromDx);
+            print_Channel(3, dataFromDx);
+            print_Channel(4, dataFromDx);
 //            print_Channel(1, dataToDx);
 //            print_Channel(2, dataToDx);
 //            print_Channel(3, dataToDx);
 //            print_Channel(4, dataToDx);
 
-            print_ALL_Channel(dataFromDx);
+//            print_ALL_Channel(dataFromDx);
         }
 
             if ((NET_DIAGNOSTIC_BASE == 0) && (NET_DIAGNOSTIC_ABON == 1) ){
@@ -2760,7 +2759,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

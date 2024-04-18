@@ -1,5 +1,5 @@
 Assembler report for DCE01_3
-Wed Apr 17 16:20:12 2024
+Thu Apr 18 10:10:47 2024
 Quartus Prime Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
 
 
@@ -39,7 +39,7 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Wed Apr 17 16:20:12 2024 ;
+; Assembler Status      ; Successful - Thu Apr 18 10:10:47 2024 ;
 ; Revision Name         ; DCE01_3                               ;
 ; Top-level Entity Name ; DCE01_3                               ;
 ; Family                ; Cyclone IV E                          ;
@@ -69,8 +69,8 @@ https://fpgasoftware.intel.com/eula.
 +----------------+----------------------+
 ; Option         ; Setting              ;
 +----------------+----------------------+
-; JTAG usercode  ; 0x000E0B9D           ;
-; Checksum       ; 0x000E0B9D           ;
+; JTAG usercode  ; 0x000DD976           ;
+; Checksum       ; 0x000DD976           ;
 +----------------+----------------------+
 
 
@@ -80,7 +80,7 @@ https://fpgasoftware.intel.com/eula.
 ; Option             ; Setting          ;
 +--------------------+------------------+
 ; JTAG usercode      ; 0x00000000       ;
-; Checksum           ; 0x0670D598       ;
+; Checksum           ; 0x06707930       ;
 ; Compression Ratio  ; 3                ;
 +--------------------+------------------+
 
@@ -91,13 +91,13 @@ https://fpgasoftware.intel.com/eula.
 Info: *******************************************************************
 Info: Running Quartus Prime Assembler
     Info: Version 22.1std.0 Build 915 10/25/2022 SC Standard Edition
-    Info: Processing started: Wed Apr 17 16:20:11 2024
+    Info: Processing started: Thu Apr 18 10:10:46 2024
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off DCE01_3 -c DCE01_3
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus Prime Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 361 megabytes
-    Info: Processing ended: Wed Apr 17 16:20:12 2024
+    Info: Peak virtual memory: 358 megabytes
+    Info: Processing ended: Thu Apr 18 10:10:47 2024
     Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:01
 

@@ -88,7 +88,7 @@ extern int8_t http_disconnect(uint8_t sn);
 uint8_t CCMRAMDATA dataToBase[MAX_PACKET_LEN];     //Данные от абонента принятые по Ethernet
 uint8_t CCMRAMDATA dataFromBase[MAX_PACKET_LEN];   //Данные для абонента к передаче по Ethernet
 uint8_t CCMRAMDATA dataFromBase2[MAX_PACKET_LEN];
-#ifdef enable_BUFFER
+#ifdef enable_BUFFER_FIFO
 char bufDataFromBase[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер базы
 char bufDataFromAbon[MAX_PACKET_LEN * BUF_PACKET_SIZE]; //Буфер абонента (не работает)
 uint16_t CCMRAMDATA indexFpgaBufData = 0;
@@ -98,6 +98,17 @@ uint8_t CCMRAMDATA dataToDx[MAX_PACKET_LEN];       //Данные от базы 
 uint8_t CCMRAMDATA dataFromDx[MAX_PACKET_LEN];     //Данные для базы к передаче по Ethernet
 uint8_t CCMRAMDATA receivedDataFrom_2_Channel[MAX_PACKET_LEN / 4];
 uint8_t CCMRAMDATA trueDataFrom_2_Channel[MAX_PACKET_LEN / 4] = {0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE, 0xEE};
+
+#ifdef enable_smallBUFFER
+uint8_t CCMRAMDATA smallBufDataToBase[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
+uint8_t smallBufDataToBaseIndex = SMALL_BUFF_SIZE;
+uint8_t CCMRAMDATA smallBufDataFromBase[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
+uint8_t smallBufDataFromBaseIndex = 0;
+uint8_t CCMRAMDATA smallBufDataToDx[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
+uint8_t smallBufDataToDxIndex = SMALL_BUFF_SIZE;
+uint8_t CCMRAMDATA smallBufDataFromDx[MAX_PACKET_LEN * SMALL_BUFF_SIZE];
+uint8_t smallBufDataFromDxIndex = 0;
+#endif
 
 FIRMWARESECTION char dataToNewSectionInFlash [10][4] = //В новой секции 10 ячеек по 32 бита
     {
@@ -1508,7 +1519,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 #endif
 
-#ifdef enable_BUFFER
+#ifdef enable_BUFFER_FIFO
 //Копирую данные для отправки абоненту в буфер
             strncpy(bufDataFromBase + MAX_PACKET_LEN * indexFpgaBufData,
                     (char *) dataFromBase, MAX_PACKET_LEN );
@@ -1628,7 +1639,7 @@ void sendReceiveUDP(uint8_t udpSocket)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 #endif
 
-#ifdef enable_BUFFER
+#ifdef enable_BUFFER_FIFO
 //Копирую данные для отправки базе в буфер
             strncpy(bufDataFromAbon + MAX_PACKET_LEN * indexFpgaBufData,
                     (char *) dataFromDx, MAX_PACKET_LEN );
@@ -3083,7 +3094,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef baseSendTestData
-#ifdef enable_BUFFER
+#ifdef enable_BUFFER_FIFO
         strncpy((char *)dataFromBase, bufDataFromBase + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
         ++indexSendBufData;
         if (indexSendBufData == BUF_PACKET_SIZE)
@@ -3091,7 +3102,18 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
 #endif
         // Перед отправкой конверсия данных
         convertToAbonData();
+#ifndef enable_smallBUFFER
         sendto(sn, (uint8_t *)dataFromBase, MAX_PACKET_LEN, destip, destport);
+#endif
+#ifdef enable_smallBUFFER
+        strncpy((char *)(smallBufDataFromBase + smallBufDataFromBaseIndex * MAX_PACKET_LEN),
+                (const char*)dataFromBase, MAX_PACKET_LEN);
+        ++smallBufDataFromBaseIndex;
+        if (smallBufDataFromBaseIndex == SMALL_BUFF_SIZE){
+            sendto(sn, (uint8_t *)smallBufDataFromBase, MAX_PACKET_LEN * SMALL_BUFF_SIZE, destip, destport);
+            smallBufDataFromBaseIndex = 0;
+        }
+#endif
 
 #endif
     }
@@ -3100,7 +3122,7 @@ void sendPackets(uint8_t sn, uint8_t* destip, uint16_t destport)
         sendto(sn, (uint8_t *)TEST_DATA, MAX_PACKET_LEN, destip, destport);
 #endif
 #ifndef abonSendTestData
-#ifdef enable_BUFFER
+#ifdef enable_BUFFER_FIFO
 // Если раскомментировать то все ломается - буфер только на базе
 //        strncpy((char *)dataFromDx, bufDataFromAbon + MAX_PACKET_LEN * indexSendBufData, MAX_PACKET_LEN );
 //        ++indexSendBufData;
@@ -3163,7 +3185,21 @@ void receivePackets(uint8_t sn, uint8_t* destip, uint16_t destport)
                        (currTime/1000) % 60);
         }
 
+#ifndef enable_smallBUFFER
         recvfrom(sn, (uint8_t *)dataToDx, MAX_PACKET_LEN, destip, &destport);
+#endif
+#ifdef enable_smallBUFFER
+        if (smallBufDataToDxIndex == SMALL_BUFF_SIZE){
+            recvfrom(sn, (uint8_t *)smallBufDataToDx, MAX_PACKET_LEN * SMALL_BUFF_SIZE, destip, &destport);
+            strncpy((char *)dataToDx, (const char*)smallBufDataToDx , MAX_PACKET_LEN);
+            smallBufDataToDxIndex = 1;
+        }
+        else {
+            strncpy((char *)dataToDx,
+                    (const char*)smallBufDataToDx + smallBufDataToDxIndex * MAX_PACKET_LEN, MAX_PACKET_LEN);
+            ++smallBufDataToDxIndex;
+        }
+#endif
 
         if (REBOOT == checkCommands(dataToDx)){
             red_blink  red_blink  red_blink

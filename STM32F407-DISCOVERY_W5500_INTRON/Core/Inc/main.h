@@ -168,6 +168,9 @@ extern "C" {
 #define BUF_PACKET_SIZE 2
 #endif
 
+#ifdef enable_smallBUFFER
+#define SMALL_BUFF_SIZE 2
+#endif
 enum netDiagnostic{
     netDiagnosticON,
     netDiagnosticOFF
